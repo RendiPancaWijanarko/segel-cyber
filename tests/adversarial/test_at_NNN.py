@@ -1457,8 +1457,10 @@ def test_at_039_adapter_missing_from_pinned_allowlist() -> None:
         initial_state_snap = copy.deepcopy(receiver.state.to_dict())
         verification, receipt = receiver.verify_and_deploy(passport, files)
 
-        # Per PRD Table 50: Receiver refuses untrusted adapter (ADAPTER_DIGEST_MISMATCH); deployment aborted; state unchanged.
-        assert verification.eligibility == EligibilityClass.INELIGIBLE or receipt is None
+        # Per PRD Table 50: Receiver refuses untrusted adapter (ADAPTER_NOT_ALLOWED); deployment aborted; state unchanged.
+        assert verification.eligibility == EligibilityClass.INELIGIBLE
+        assert receipt is None
+        assert any("adapter" in r.lower() for r in verification.eligibility_reasons)
         _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
 

@@ -172,7 +172,29 @@ class Receiver:
                 },
             )
 
-        # Step 2: Check eligibility
+        # Step 2: Check eligibility and adapter allowlist (FR-081, SEC-015, AT-039)
+        adapter_id = getattr(self._adapter, "adapter_identity", "")
+        adapter_digest = getattr(self._adapter, "adapter_digest", "0" * 64)
+        adapter_allowed = any(
+            p.adapter_id == adapter_id and p.digest == adapter_digest
+            for p in self._trust_ctx.policy.allowed_adapters
+        )
+        if not adapter_allowed:
+            verification.eligibility = EligibilityClass.INELIGIBLE
+            verification.eligibility_reasons.append(
+                f"Deployment adapter '{adapter_id}' ({adapter_digest}) is not in policy allowed_adapters"
+            )
+            if self._audit_logger:
+                self._audit_logger.log(
+                    "adapter_rejected",
+                    {
+                        "adapter_id": adapter_id,
+                        "adapter_digest": adapter_digest,
+                        "reason": "ADAPTER_NOT_ALLOWED",
+                    },
+                )
+            return verification, None
+
         if verification.eligibility not in (
             EligibilityClass.ELIGIBLE_CANARY,
             EligibilityClass.ELIGIBLE_GENERAL,

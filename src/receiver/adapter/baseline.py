@@ -40,6 +40,7 @@ from segel_core.schemas.attestation import HealthResult
 from segel_core.schemas.manifest import Manifest
 
 ADAPTER_ID = "segel-baseline-adapter/v1"
+ADAPTER_DIGEST = "0" * 64
 
 
 def _safe_rmtree(path: Path | str) -> None:
@@ -96,6 +97,7 @@ class BaselineAdapter:
         deploy_root: str | Path,
         staging_root: str | Path | None = None,
         backup_root: str | Path | None = None,
+        adapter_digest: str = ADAPTER_DIGEST,
     ) -> None:
         """Initialise the adapter.
 
@@ -103,6 +105,7 @@ class BaselineAdapter:
             deploy_root: Target directory for configuration files.
             staging_root: Staging area for validation. Defaults to deploy_root/.staging
             backup_root: Backup directory. Defaults to deploy_root/.backup
+            adapter_digest: Pinned digest of this adapter implementation.
         """
         self._deploy_root = Path(deploy_root).resolve()
         self._staging_root = (
@@ -111,6 +114,7 @@ class BaselineAdapter:
         self._backup_root = (
             Path(backup_root).resolve() if backup_root else self._deploy_root / ".backup"
         )
+        self._adapter_digest = adapter_digest
 
         # Validate paths are not overlapping dangerously
         if not str(self._staging_root).startswith(str(self._deploy_root.parent)):
@@ -121,6 +125,10 @@ class BaselineAdapter:
     @property
     def adapter_identity(self) -> str:
         return ADAPTER_ID
+
+    @property
+    def adapter_digest(self) -> str:
+        return self._adapter_digest
 
     def preflight(self, manifest: Manifest) -> None:
         """Step 1: Check preconditions.
