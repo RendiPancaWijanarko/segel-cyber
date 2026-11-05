@@ -15,7 +15,10 @@ The Receiver is the final line of defence — NO EVIDENCE, NO DEPLOYMENT.
 
 from __future__ import annotations
 
+import contextlib
 import json
+import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -44,6 +47,17 @@ from segel_core.verification.passport import (
     verify_passport,
 )
 from segel_core.verification.trust import TrustContext
+
+_DEPLOY_LOCKS: dict[str, threading.Lock] = {}
+_DEPLOY_LOCKS_GUARD = threading.Lock()
+
+
+def _get_deploy_lock(path: Path) -> threading.Lock:
+    key = str(path.resolve())
+    with _DEPLOY_LOCKS_GUARD:
+        if key not in _DEPLOY_LOCKS:
+            _DEPLOY_LOCKS[key] = threading.Lock()
+        return _DEPLOY_LOCKS[key]
 
 
 @dataclass
@@ -168,77 +182,104 @@ class Receiver:
         if manifest is None:
             return verification, None
 
-        # Step 3: Deploy using the adapter lifecycle
-        deploy_state = DeploymentState()
+        # Step 3: Deploy using the adapter lifecycle with concurrency mutual exclusion (FR-086, AT-029)
+        lock = _get_deploy_lock(self._deploy_root)
+        if not lock.acquire(blocking=False):
+            verification.eligibility = EligibilityClass.INELIGIBLE
+            verification.eligibility_reasons.append("Concurrent deployment in progress on deploy root")
+            return verification, None
 
+        lock_path = self._deploy_root / ".deploy.lock"
+        fd = None
         try:
-            # 1. Preflight
-            self._adapter.preflight(manifest)
-
-            # 2. Snapshot
-            deploy_state.pre_state_digest = self._adapter.snapshot()
-
-            # 3. Stage
-            deploy_state.staged_files = self._adapter.stage(manifest, files)
-
-            # 5. Backup
-            deploy_state.backup_path = self._adapter.backup()
-
-            # 6. Apply
-            self._adapter.apply(manifest)
-
-            # 7. Health check
-            deploy_state.health_results = self._adapter.health_check(manifest)
-
-            # Evaluate health
-            all_healthy = all(hr.passed for hr in deploy_state.health_results)
-
-            if all_healthy:
-                # 8. Commit
-                deploy_state.post_state_digest = self._adapter.commit()
-                deploy_state.overall_result = "healthy"
-                deploy_state.committed = True
-
-                # 10. Cleanup
-                self._adapter.cleanup()
-
-                # Update state
-                self._state.highest_sequence[manifest.release_id] = manifest.sequence
-                self._state.state_version += 1
-                self._save_state()
-            else:
-                # 9. Rollback
-                self._adapter.rollback()
-                deploy_state.overall_result = "unhealthy"
-
-        except Exception:
-            # Rollback on any error
             try:
-                self._adapter.rollback()
+                self._deploy_root.mkdir(parents=True, exist_ok=True)
+                fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            except (FileExistsError, OSError):
+                verification.eligibility = EligibilityClass.INELIGIBLE
+                verification.eligibility_reasons.append("Concurrent deployment in progress on deploy root")
+                return verification, None
+
+            deploy_state = DeploymentState()
+
+            try:
+                # 1. Preflight
+                self._adapter.preflight(manifest)
+
+                # 2. Snapshot
+                deploy_state.pre_state_digest = self._adapter.snapshot()
+
+                # 3. Stage
+                deploy_state.staged_files = self._adapter.stage(manifest, files)
+
+                # 5. Backup
+                deploy_state.backup_path = self._adapter.backup()
+
+                # 6. Apply
+                self._adapter.apply(manifest)
+
+                # 7. Health check
+                deploy_state.health_results = self._adapter.health_check(manifest)
+
+                # Evaluate health
+                all_healthy = all(hr.passed for hr in deploy_state.health_results)
+
+                if all_healthy:
+                    # 8. Commit
+                    deploy_state.post_state_digest = self._adapter.commit()
+                    deploy_state.overall_result = "healthy"
+                    deploy_state.committed = True
+
+                    # 10. Cleanup
+                    self._adapter.cleanup()
+
+                    # Update state
+                    self._state.highest_sequence[manifest.release_id] = manifest.sequence
+                    self._state.state_version += 1
+                    self._save_state()
+                else:
+                    # 9. Rollback
+                    self._adapter.rollback()
+                    deploy_state.overall_result = "unhealthy"
+
             except Exception:
-                # If rollback also fails, enter recovery mode
-                self._state.recovery_mode = True
-                self._save_state()
-            deploy_state.overall_result = "error"
+                # Rollback on any error
+                try:
+                    self._adapter.rollback()
+                except Exception:
+                    # If rollback also fails, enter recovery mode
+                    self._state.recovery_mode = True
+                    self._save_state()
+                deploy_state.overall_result = "error"
 
-        # Step 4: Generate signed deployment receipt
-        receipt_envelope = self._create_receipt(
-            manifest=manifest,
-            deploy_state=deploy_state,
-        )
-
-        if self._audit_logger and manifest:
-            self._audit_logger.log(
-                "deployment_completed",
-                {
-                    "release_id": manifest.release_id,
-                    "sequence": manifest.sequence,
-                    "overall_result": deploy_state.overall_result,
-                    "committed": deploy_state.committed,
-                },
+            # Step 4: Generate signed deployment receipt
+            receipt_envelope = self._create_receipt(
+                manifest=manifest,
+                deploy_state=deploy_state,
             )
 
-        return verification, receipt_envelope
+            if self._audit_logger and manifest:
+                self._audit_logger.log(
+                    "deployment_completed",
+                    {
+                        "release_id": manifest.release_id,
+                        "sequence": manifest.sequence,
+                        "overall_result": deploy_state.overall_result,
+                        "committed": deploy_state.committed,
+                    },
+                )
+
+            return verification, receipt_envelope
+
+        finally:
+            if fd is not None:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+                with contextlib.suppress(OSError):
+                    lock_path.unlink()
+            lock.release()
 
     def _create_receipt(
         self,

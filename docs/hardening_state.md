@@ -22,7 +22,7 @@
   - [x] **Step 3: FR-051, SEC-016 / SEC-FINDING-03 / Red Test C2**: Autonomous ledger evidence verification on append.
   - [x] **Step 4: SEC-017 / SEC-FINDING-15 / Red Test C3**: Local hash-chained append-only audit log in Receiver.
   - [x] **Step 5: FR-066, SEC-013 / SEC-FINDING-10 / Red Test C4**: Trust Update Package (TUP) verification and anti-rollback.
-  - [ ] **Step 6: FR-083, FR-086, AT-029, AT-030 / SEC-FINDING-12, 14 / Red Test C5**: Concurrency lock & crash-safe write-ahead journal.
+  - [x] **Step 6: FR-083, FR-086, AT-029, AT-030 / SEC-FINDING-12, 14 / Red Test C5**: Concurrency lock & crash-safe write-ahead journal.
   - [ ] **Step 7: FR-063, SEC-012, AT-010 / SEC-FINDING-06**: Index-ordered key revocation verification.
   - [ ] **Step 8: FR-081, SEC-015, AT-039 / SEC-FINDING-04**: Adapter policy allowlist verification.
   - [ ] **Step 9: FR-044, AT-024 / SEC-FINDING-09**: Automatic ledger hold placement on canary failure.
