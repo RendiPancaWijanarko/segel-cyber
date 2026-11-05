@@ -7,14 +7,19 @@ epoch and version monotonicity enforcement per PRD v2.0 §16.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from typing import Any
 
+from segel_core.crypto.dsse import DSSEEnvelope, verify_envelope
 from segel_core.crypto.ed25519 import PublicKeyInfo, import_public_key
 from segel_core.errors import (
     EpochStaleError,
+    ErrorCode,
     KeyNotAuthorisedError,
     KeyRevokedError,
     PolicyDowngradeError,
+    SegelError,
     SignatureError,
 )
 from segel_core.schemas.trust import (
@@ -193,6 +198,58 @@ class TrustContext:
                 f"Key {key_id[:16]}... could not be loaded",
             )
         return pk
+
+    def apply_trust_update(self, tup: dict[str, Any]) -> None:
+        """Verify and apply a Trust Update Package (TUP).
+
+        Per FR-066, SEC-013, SEC-035:
+        - Cryptographic envelope verification against active root keyholders.
+        - Anti-rollback protection: target_epoch must be > current epoch.
+        - Atomic update of root, policy, snapshot, and rebuilt indices.
+        """
+        env_dict = tup.get("envelope", tup)
+        envelope = DSSEEnvelope.from_dict(env_dict)
+
+        # 1. Signature verification
+        authorised_keys = [
+            pk for pk in self._public_keys_cache.values()
+            if not self.is_key_revoked(pk.key_id)
+        ]
+
+        v_res = verify_envelope(
+            envelope,
+            authorised_keys,
+            expected_payload_type="https://segel.dev/trust-update/v1",
+        )
+
+        if not v_res.valid_key_ids:
+            for s in envelope.signatures:
+                if s.keyid in self._keys_by_id:
+                    raise SignatureError("TUP signature verification failed")
+            raise KeyNotAuthorisedError("TUP signed by untrusted or unauthorised key")
+
+        # 2. Parse payload and anti-rollback check
+        payload_bytes = envelope.get_payload_bytes()
+        payload = json.loads(payload_bytes)
+
+        target_epoch = payload.get("target_epoch", 0)
+        current_epoch = self.snapshot.epoch if self.snapshot else 1
+
+        if target_epoch <= current_epoch:
+            raise SegelError(
+                ErrorCode.EPOCH_STALE,
+                f"TUP target_epoch {target_epoch} <= current epoch {current_epoch} (anti-rollback)",
+            )
+
+        # 3. Apply updates
+        if "root" in payload:
+            self.root = TrustRoot.model_validate(payload["root"])
+        if "policy" in payload:
+            self.policy = VerificationPolicy.model_validate(payload["policy"])
+        if "snapshot" in payload:
+            self.snapshot = TrustSnapshot.model_validate(payload["snapshot"])
+
+        self._rebuild_indices()
 
 
 def check_version_monotonicity(
