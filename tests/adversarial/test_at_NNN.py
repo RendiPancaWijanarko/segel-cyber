@@ -692,10 +692,31 @@ def test_at_010_revoked_key_index_ordering() -> None:
 
     # Evidence at index 9 MUST be accepted per PRD Table 50
     active_keys_at_9 = [
-        k for k in lab.trust_ctx.get_keys_for_role("approver")
-        if not lab.trust_ctx.is_key_revoked_at_index(k.key_id, 9)
+        k for k in lab.trust_ctx.get_keys_for_role("approver", at_index=9)
     ]
     assert any(k.key_id == revoked_approver.key_id for k in active_keys_at_9)
+
+    # Evidence at index 10 MUST exclude the revoked key
+    active_keys_at_10 = [
+        k for k in lab.trust_ctx.get_keys_for_role("approver", at_index=10)
+    ]
+    assert not any(k.key_id == revoked_approver.key_id for k in active_keys_at_10)
+
+    # End-to-end verification test with passport
+    files, _, passport_9, _ = _build_valid_candidate(lab, release_id="AT-010", sequence=1)
+    passport_9.record_candidate_proof.entry_index = 9
+    res_9 = verify_passport(
+        passport_9, lab.trust_ctx, unit_id="canary-1", unit_role="canary", receiver_state={}
+    )
+    assert res_9.approve.status == StampStatus.VALID
+
+    passport_10 = copy.deepcopy(passport_9)
+    passport_10.record_candidate_proof.entry_index = 10
+    res_10 = verify_passport(
+        passport_10, lab.trust_ctx, unit_id="canary-1", unit_role="canary", receiver_state={}
+    )
+    assert res_10.approve.status == StampStatus.INVALID
+    assert res_10.eligibility == EligibilityClass.INELIGIBLE
 
 
 @pytest.mark.adversarial

@@ -170,10 +170,17 @@ def verify_passport(
     result = PassportVerificationResult()
     result.passport_type = passport.passport_type
 
+    # Ledger index for index-ordered key revocation (SEC-012, FR-063, AT-010)
+    candidate_index = (
+        passport.record_candidate_proof.entry_index
+        if passport.record_candidate_proof is not None
+        else None
+    )
+
     # ---- Step 1: Verify manifest envelope ----
     try:
         manifest_env = DSSEEnvelope.from_dict(passport.manifest_envelope)
-        author_keys = trust_ctx.get_keys_for_role("author")
+        author_keys = trust_ctx.get_keys_for_role("author", at_index=candidate_index)
 
         dsse_result = verify_envelope(
             manifest_env,
@@ -231,7 +238,7 @@ def verify_passport(
     # ---- Step 2: Verify Origin stamp ----
     try:
         origin_env = DSSEEnvelope.from_dict(passport.origin_envelope)
-        builder_keys = trust_ctx.get_keys_for_role("builder")
+        builder_keys = trust_ctx.get_keys_for_role("builder", at_index=candidate_index)
 
         origin_result = verify_envelope(
             origin_env,
@@ -274,7 +281,7 @@ def verify_passport(
     # ---- Step 3: Verify Inspect stamp ----
     try:
         inspect_env = DSSEEnvelope.from_dict(passport.inspect_envelope)
-        inspector_keys = trust_ctx.get_keys_for_role("inspector_signer")
+        inspector_keys = trust_ctx.get_keys_for_role("inspector_signer", at_index=candidate_index)
 
         inspect_result = verify_envelope(
             inspect_env,
@@ -326,7 +333,7 @@ def verify_passport(
     # ---- Step 4: Verify Approve stamp ----
     try:
         approve_env = DSSEEnvelope.from_dict(passport.approve_envelope)
-        approver_keys = trust_ctx.get_keys_for_role("approver")
+        approver_keys = trust_ctx.get_keys_for_role("approver", at_index=candidate_index)
 
         approve_result = verify_envelope(
             approve_env,
@@ -405,7 +412,12 @@ def verify_passport(
             _verify_record_proof(passport.record_promotion_proof, trust_ctx, receiver_state)
 
             # Verify each canary receipt
-            receiver_keys = trust_ctx.get_keys_for_role("receiver")
+            promotion_index = (
+                passport.record_promotion_proof.entry_index
+                if passport.record_promotion_proof is not None
+                else candidate_index
+            )
+            receiver_keys = trust_ctx.get_keys_for_role("receiver", at_index=promotion_index)
             canary_unit_ids = set()
 
             for test_env_dict in passport.test_envelopes:
@@ -492,7 +504,7 @@ def _verify_record_proof(
     )
     note_bytes = checkpoint.to_note_text().encode("utf-8")
 
-    ledger_keys = trust_ctx.get_keys_for_role("ledger")
+    ledger_keys = trust_ctx.get_keys_for_role("ledger", at_index=proof.entry_index)
     ledger_sig_valid = False
     valid_key_id = None
 
@@ -506,9 +518,12 @@ def _verify_record_proof(
             continue
 
     if not ledger_sig_valid:
-        # Check if signed by a revoked ledger key
+        # Check if signed by a revoked ledger key (SEC-012, AT-010, AT-022)
         for key_rec in trust_ctx.root.keys:
-            if key_rec.role == "ledger" and trust_ctx.is_key_revoked(key_rec.key_id):
+            if key_rec.role == "ledger" and (
+                trust_ctx.is_key_revoked_at_index(key_rec.key_id, proof.entry_index)
+                or trust_ctx.is_key_revoked(key_rec.key_id)
+            ):
                 pk = trust_ctx._public_keys_cache.get(key_rec.key_id)
                 if pk is not None:
                     try:

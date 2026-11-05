@@ -85,23 +85,24 @@ class TrustContext:
             for held in self.snapshot.held_releases:
                 self._held_releases.add((held.release_id, held.sequence))
 
-    def get_keys_for_role(self, role: str) -> list[PublicKeyInfo]:
-        """Get all active (non-revoked) public keys for a role.
+    def get_keys_for_role(self, role: str, at_index: int | None = None) -> list[PublicKeyInfo]:
+        """Get all active public keys for a role.
 
         Args:
             role: The role name (e.g., 'approver', 'builder').
+            at_index: Optional ledger index to enforce index-ordered revocation per SEC-012.
 
         Returns:
-            List of PublicKeyInfo for active keys in this role.
+            List of PublicKeyInfo for keys in this role.
         """
         result = []
         for key_rec in self._keys_by_role.get(role, []):
-            if key_rec.key_id in self._revoked_key_ids:
-                continue
             if key_rec.status != "active":
                 continue
             if key_rec.algorithm != "ed25519":
                 continue  # SEC-039: reject unknown algorithms
+            if at_index is not None and self.is_key_revoked_at_index(key_rec.key_id, at_index):
+                continue
             pk = self._public_keys_cache.get(key_rec.key_id)
             if pk is not None:
                 result.append(pk)
