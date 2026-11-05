@@ -70,3 +70,21 @@ This document records technical decisions made during MVP development.
 
 **Rationale**: PRD v2.0 specifies "Jinja2 and HTMX for the initial UI." This keeps the frontend dependency-free (no build step, no node_modules) and maintains the modular monolith architecture without introducing a separate frontend build pipeline.
 
+---
+
+# Hardening Pass Decisions (Phase A–F)
+
+## D1: SEC-004 Key Separation Scope
+- **Decision**: Move only approver keys out of the Release Desk process into a separate signer process (`approver`).
+- **Limitation**: The remaining keys in the demo harness (builder, inspector, ledger, witness) will remain in the demo harness and be explicitly documented as a limitation in `docs/limitations.md`.
+
+## D2: AI Deterministic Isolation Scope
+- **Decision**: The AI pipeline remains deterministic-only for the MVP. Tests AT-016 through AT-019 are relabelled "validator-level" and listed under limitations.
+- **Rule**: Do not implement an external LLM / AI service pipeline.
+
+## D3: Crash-Safe Journal & Audit Log
+- **Decision**: Implement the crash-safe journal (FR-083) and the hash-chained audit log (SEC-017). If any blocker emerges, document as a limitation and report to the user.
+
+## Open Hardening Decisions
+*(Items identified during Phase A will be recorded below with options and recommendations before Gate 1).*
+
