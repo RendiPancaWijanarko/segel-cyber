@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from receiver.adapter.baseline import BaselineAdapter, DeploymentState
+from receiver.audit import AuditLogger
 from segel_core.canonical import canonical_json
 from segel_core.crypto.dsse import DSSEEnvelope, create_envelope
 from segel_core.crypto.ed25519 import KeyPair, generate_evidence_id
@@ -98,6 +99,7 @@ class Receiver:
         receiver_key: KeyPair,
         deploy_root: str | Path,
         state_dir: str | Path | None = None,
+        audit_dir: str | Path | None = None,
     ) -> None:
         self._state = state
         self._trust_ctx = trust_ctx
@@ -105,6 +107,7 @@ class Receiver:
         self._adapter = BaselineAdapter(deploy_root)
         self._state_dir = Path(state_dir) if state_dir else None
         self._deploy_root = Path(deploy_root)
+        self._audit_logger = AuditLogger(audit_dir) if audit_dir is not None else None
 
     @property
     def unit_id(self) -> str:
@@ -142,6 +145,19 @@ class Receiver:
             receiver_state=self._state.to_dict(),
         )
 
+        manifest = verification.manifest_data
+
+        if self._audit_logger:
+            self._audit_logger.log(
+                "verification_completed",
+                {
+                    "release_id": manifest.release_id if manifest else "unknown",
+                    "sequence": manifest.sequence if manifest else 0,
+                    "eligibility": verification.eligibility.value,
+                    "all_stamps_valid": verification.all_stamps_valid,
+                },
+            )
+
         # Step 2: Check eligibility
         if verification.eligibility not in (
             EligibilityClass.ELIGIBLE_CANARY,
@@ -149,7 +165,6 @@ class Receiver:
         ):
             return verification, None
 
-        manifest = verification.manifest_data
         if manifest is None:
             return verification, None
 
@@ -211,6 +226,17 @@ class Receiver:
             manifest=manifest,
             deploy_state=deploy_state,
         )
+
+        if self._audit_logger and manifest:
+            self._audit_logger.log(
+                "deployment_completed",
+                {
+                    "release_id": manifest.release_id,
+                    "sequence": manifest.sequence,
+                    "overall_result": deploy_state.overall_result,
+                    "committed": deploy_state.committed,
+                },
+            )
 
         return verification, receipt_envelope
 
