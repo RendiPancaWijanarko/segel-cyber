@@ -18,6 +18,7 @@ Verification order:
 
 from __future__ import annotations
 
+import base64
 import json
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -32,9 +33,12 @@ from segel_core.crypto.hashing import (
     sha256_hex,
     verify_inclusion_from_hash,
 )
+from segel_core.crypto.ed25519 import verify as ed25519_verify
 from segel_core.errors import (
     EpochStaleError,
     ErrorCode,
+    KeyNotAuthorisedError,
+    KeyRevokedError,
     ProofInvalidError,
     SegelError,
     SignatureError,
@@ -43,8 +47,9 @@ from segel_core.errors import (
     ThresholdNotMetError,
 )
 from segel_core.schemas.binding import BindingBlock, ReleaseSubject
+from segel_core.schemas.checkpoint import Checkpoint
 from segel_core.schemas.manifest import Manifest
-from segel_core.schemas.passport import ReleasePassport
+from segel_core.schemas.passport import LedgerProof, ReleasePassport
 from segel_core.verification.trust import TrustContext, check_min_epoch
 
 
@@ -370,33 +375,7 @@ def verify_passport(
             raise StampMissingError("Record (candidate) proof is missing")
 
         proof = passport.record_candidate_proof
-
-        # Verify checkpoint signature
-        trust_ctx.get_keys_for_role("ledger")
-        # For MVP, verify the checkpoint note text is properly signed
-        # (Simplified: trust the proof structure and verify Merkle inclusion)
-
-        # Verify inclusion proof
-        leaf_hash = bytes.fromhex(proof.leaf_hash)
-        proof_hashes = [bytes.fromhex(h) for h in proof.inclusion_proof]
-        root_hash = bytes.fromhex(proof.checkpoint_root_hash)
-
-        # Verify that the leaf (identified by its hash) is in the Merkle tree
-        verify_inclusion_from_hash(
-            leaf_hash,
-            proof.entry_index,
-            proof.checkpoint_size,
-            proof_hashes,
-            root_hash,
-        )
-
-        # Check witness cosignatures (AT-023)
-        required_witnesses = trust_ctx.policy.witness_cosignature_count
-        actual_witnesses = len(proof.witness_cosignatures)
-        if actual_witnesses < required_witnesses:
-            raise ProofInvalidError(
-                f"Witness cosignatures: {actual_witnesses} < required {required_witnesses}",
-            )
+        _verify_record_proof(proof, trust_ctx, receiver_state)
 
         result.record = StampResult(
             "record", StampStatus.VALID,
@@ -422,6 +401,8 @@ def verify_passport(
 
             if passport.record_promotion_proof is None:
                 raise StampMissingError("Record (promotion) proof missing from general passport")
+
+            _verify_record_proof(passport.record_promotion_proof, trust_ctx, receiver_state)
 
             # Verify each canary receipt
             receiver_keys = trust_ctx.get_keys_for_role("receiver")
@@ -474,6 +455,92 @@ def verify_passport(
     _determine_eligibility(result, passport, trust_ctx, unit_id, unit_role, receiver_state)
 
     return result
+
+
+def _verify_record_proof(
+    proof: LedgerProof,
+    trust_ctx: TrustContext,
+    receiver_state: dict[str, Any],
+) -> None:
+    """Verify a transparency ledger Merkle inclusion proof and signed checkpoint.
+
+    Per PRD v2.0 §12, §16.3, §27.2 (AT-020, AT-021, AT-022, AT-023, AT-032).
+    """
+    # 1. Monotonicity of checkpoint size (anti-fork / anti-rollback)
+    last_size = receiver_state.get("last_checkpoint_size", 0)
+    if proof.checkpoint_size < last_size:
+        raise SegelError(
+            ErrorCode.CHECKPOINT_FORK,
+            f"Checkpoint size decreased: {proof.checkpoint_size} < last seen {last_size}",
+        )
+
+    # 2. Checkpoint signature
+    if not proof.checkpoint_signature:
+        raise SignatureError("Checkpoint signature missing")
+
+    try:
+        sig_raw = base64.b64decode(proof.checkpoint_signature, validate=True)
+        if base64.b64encode(sig_raw).decode("ascii") != proof.checkpoint_signature:
+            raise SignatureError("Non-canonical base64 in checkpoint signature")
+    except Exception as e:
+        raise SignatureError(f"Invalid base64 in checkpoint signature: {e}")
+
+    checkpoint = Checkpoint(
+        origin="segel-ledger-v1",
+        size=proof.checkpoint_size,
+        root_hash=proof.checkpoint_root_hash,
+    )
+    note_bytes = checkpoint.to_note_text().encode("utf-8")
+
+    ledger_keys = trust_ctx.get_keys_for_role("ledger")
+    ledger_sig_valid = False
+    valid_key_id = None
+
+    for key_info in ledger_keys:
+        try:
+            ed25519_verify(key_info.public_key, sig_raw, note_bytes)
+            valid_key_id = key_info.key_id
+            ledger_sig_valid = True
+            break
+        except SignatureError:
+            continue
+
+    if not ledger_sig_valid:
+        # Check if signed by a revoked ledger key
+        for key_rec in trust_ctx.root.keys:
+            if key_rec.role == "ledger" and trust_ctx.is_key_revoked(key_rec.key_id):
+                pk = trust_ctx._public_keys_cache.get(key_rec.key_id)
+                if pk is not None:
+                    try:
+                        ed25519_verify(pk.public_key, sig_raw, note_bytes)
+                        raise KeyRevokedError(f"Ledger key {key_rec.key_id} is revoked")
+                    except SignatureError:
+                        pass
+
+        raise KeyNotAuthorisedError(
+            "Checkpoint signature not verified with an authorised ledger key"
+        )
+
+    # 3. Inclusion proof
+    leaf_hash = bytes.fromhex(proof.leaf_hash)
+    proof_hashes = [bytes.fromhex(h) for h in proof.inclusion_proof]
+    root_hash = bytes.fromhex(proof.checkpoint_root_hash)
+
+    verify_inclusion_from_hash(
+        leaf_hash,
+        proof.entry_index,
+        proof.checkpoint_size,
+        proof_hashes,
+        root_hash,
+    )
+
+    # 4. Check witness cosignatures (AT-023)
+    required_witnesses = trust_ctx.policy.witness_cosignature_count
+    actual_witnesses = len(proof.witness_cosignatures)
+    if actual_witnesses < required_witnesses:
+        raise ProofInvalidError(
+            f"Witness cosignatures: {actual_witnesses} < required {required_witnesses}",
+        )
 
 
 def _check_binding(

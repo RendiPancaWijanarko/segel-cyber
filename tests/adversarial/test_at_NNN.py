@@ -982,28 +982,68 @@ def test_at_021_inclusion_proof_for_different_leaf_or_tree() -> None:
 
 
 @pytest.mark.adversarial
-def test_at_022_checkpoint_signed_by_unknown_or_revoked_ledger_key() -> None:
+def test_at_022_checkpoint_signed_by_unknown_or_revoked_ledger_key(tmp_path: Path) -> None:
     """AT-022: Checkpoint signed by an unknown or revoked ledger key -> Rejected."""
     lab = SyntheticLab()
     files, _, passport, _ = _build_valid_candidate(lab, release_id="AT-022", sequence=1)
 
-    rogue_ledger_key = generate_keypair()
-    # Sign checkpoint with rogue key
-    note_text = passport.record_candidate_proof.checkpoint_root_hash
-    sig_bytes = sign(rogue_ledger_key.private_key, note_text.encode())
-
-    signed_cp = SignedCheckpoint(
-        checkpoint=Checkpoint(
-            size=passport.record_candidate_proof.checkpoint_size,
-            root_hash=passport.record_candidate_proof.checkpoint_root_hash,
-        ),
-        ledger_signature=base64.b64encode(sig_bytes).decode(),
-        ledger_key_id=rogue_ledger_key.key_id,
+    deploy_dir = tmp_path / "deploy"
+    deploy_dir.mkdir()
+    state = ReceiverState(unit_id="canary-1", unit_role="canary")
+    receiver = Receiver(
+        state=state,
+        trust_ctx=lab.trust_ctx,
+        receiver_key=lab.canary_keys[0],
+        deploy_root=deploy_dir,
     )
+    initial_state_snap = copy.deepcopy(receiver.state.to_dict())
 
-    # In PRD v2.0 Section 27.2, receiver MUST verify checkpoint signature against ledger keys
-    ledger_keys = lab.trust_ctx.get_keys_for_role("ledger")
-    assert rogue_ledger_key.key_id not in {k.key_id for k in ledger_keys}
+    # 1. Unknown ledger key signing checkpoint
+    rogue_ledger_key = generate_keypair()
+    cp = Checkpoint(
+        origin="segel-ledger-v1",
+        size=passport.record_candidate_proof.checkpoint_size,
+        root_hash=passport.record_candidate_proof.checkpoint_root_hash,
+    )
+    sig_bytes = sign(rogue_ledger_key.private_key, cp.to_note_text().encode("utf-8"))
+    passport.record_candidate_proof.checkpoint_signature = base64.b64encode(sig_bytes).decode("ascii")
+
+    res = verify_passport(
+        passport=passport,
+        trust_ctx=lab.trust_ctx,
+        unit_id="canary-1",
+        unit_role="canary",
+        receiver_state=receiver.state.to_dict(),
+    )
+    assert res.record.status == StampStatus.INVALID
+    assert res.record.error_code in (ErrorCode.KEY_NOT_AUTHORISED.value, ErrorCode.SIG_INVALID.value)
+    assert res.eligibility == EligibilityClass.INELIGIBLE
+
+    # Receiver verify_and_deploy also rejects and state is unchanged
+    v_res, _ = receiver.verify_and_deploy(passport, files)
+    assert v_res.eligibility == EligibilityClass.INELIGIBLE
+    _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
+
+    # 2. Revoked legitimate ledger key
+    new_snapshot = TrustSnapshot(
+        epoch=1,
+        revoked_keys=[RevokedKey(key_id=lab.ledger_key.key_id, revoked_at_index=0)],
+    )
+    revoked_trust_ctx = TrustContext(root=lab.root, policy=lab.policy, snapshot=new_snapshot)
+    legit_sig = sign(lab.ledger_key.private_key, cp.to_note_text().encode("utf-8"))
+    passport.record_candidate_proof.checkpoint_signature = base64.b64encode(legit_sig).decode("ascii")
+
+    res_rev = verify_passport(
+        passport=passport,
+        trust_ctx=revoked_trust_ctx,
+        unit_id="canary-1",
+        unit_role="canary",
+        receiver_state=receiver.state.to_dict(),
+    )
+    assert res_rev.record.status == StampStatus.INVALID
+    assert res_rev.record.error_code == ErrorCode.KEY_REVOKED.value
+    assert res_rev.eligibility == EligibilityClass.INELIGIBLE
+    _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
 
 @pytest.mark.adversarial

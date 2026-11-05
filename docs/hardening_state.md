@@ -1,8 +1,8 @@
 # SEGEL Hardening State Tracker
 
 - **Branch**: `hardening/p2b-p5`
-- **Active Phase**: Gate 2 — Ready for Implementation Approval (STOP & WAIT for "GO-2")
-- **Last Updated**: 2026-11-05T22:27:00+07:00
+- **Active Phase**: Phase F — Implementation (Gate 2 Approved with "GO-2")
+- **Last Updated**: 2026-11-05T22:58:00+07:00
 - **GitHub Remote**: `https://github.com/RendiPancaWijanarko/segel-cyber.git` (Branches `main` and `hardening/p2b-p5` pushed and up-to-date)
 
 ---
@@ -15,8 +15,18 @@
 - [x] **Gate 1**: Approved by user ("GO-1").
 - [x] **Phase D**: Reconcile IDs and Error Codes -> `docs/id_reconciliation.md` committed.
 - [x] **Phase E**: Security Review (read-only) -> `docs/security_review.md` committed.
-- [x] **Gate 2**: STOPPED. Awaiting explicit user reply `"GO-2"` before any edits under `src/`.
+- [x] **Gate 2**: Approved by user ("GO-2").
 - [ ] **Phase F**: Systematic implementation of fixes one at a time.
+  - [x] **Step 1: AT-022, FR-050 / SEC-FINDING-02**: Enforce ledger checkpoint signature verification in Receiver & Assembler.
+  - [ ] **Step 2: SEC-004, FR-003 / SEC-FINDING-01 / Red Test C1**: Separate approver keys into standalone signer service.
+  - [ ] **Step 3: FR-051, SEC-016 / SEC-FINDING-03 / Red Test C2**: Autonomous ledger evidence verification on append.
+  - [ ] **Step 4: SEC-017 / SEC-FINDING-15 / Red Test C3**: Local hash-chained append-only audit log in Receiver.
+  - [ ] **Step 5: FR-066, SEC-013 / SEC-FINDING-10 / Red Test C4**: Trust Update Package (TUP) verification and anti-rollback.
+  - [ ] **Step 6: FR-083, FR-086, AT-029, AT-030 / SEC-FINDING-12, 14 / Red Test C5**: Concurrency lock & crash-safe write-ahead journal.
+  - [ ] **Step 7: FR-063, SEC-012, AT-010 / SEC-FINDING-06**: Index-ordered key revocation verification.
+  - [ ] **Step 8: FR-081, SEC-015, AT-039 / SEC-FINDING-04**: Adapter policy allowlist verification.
+  - [ ] **Step 9: FR-044, AT-024 / SEC-FINDING-09**: Automatic ledger hold placement on canary failure.
+  - [ ] **Step 10: Rewrite remaining vacuous tests and final suite pass**.
 
 ---
 
