@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import base64
 import contextlib
+import json
 import sqlite3
 import threading
 from dataclasses import dataclass
@@ -32,6 +33,11 @@ from pathlib import Path
 from typing import Any
 
 from segel_core.canonical import canonical_json
+from segel_core.crypto.dsse import (
+    DSSEEnvelope,
+    verify_envelope,
+    verify_threshold,
+)
 from segel_core.crypto.ed25519 import KeyPair, sign
 from segel_core.crypto.hashing import (
     MerkleTree,
@@ -42,8 +48,13 @@ from segel_core.errors import (
     ErrorCode,
     ProofInvalidError,
     SegelError,
+    SignatureError,
+    StampMissingError,
+    SubjectMismatchError,
+    ThresholdNotMetError,
 )
 from segel_core.schemas.checkpoint import Checkpoint, SignedCheckpoint
+from segel_core.schemas.manifest import Manifest
 
 # Valid event types
 VALID_EVENT_TYPES = frozenset({
@@ -159,24 +170,66 @@ class TransparencyLedger:
         with self._lock:
             return self._tree.size
 
-    def append(self, event_type: str, event_data: dict[str, Any]) -> LedgerEntry:
+    def record_candidate(
+        self,
+        candidate_payload: dict[str, Any],
+        trust_ctx: Any | None = None,
+    ) -> LedgerEntry:
+        """Autonomously verify candidate evidence and append candidate_recorded event.
+
+        Per FR-051 / SEC-016.
+        """
+        if trust_ctx is not None:
+            _verify_candidate_evidence(candidate_payload, trust_ctx)
+        return self.append("candidate_recorded", candidate_payload)
+
+    def record_promotion(
+        self,
+        promotion_payload: dict[str, Any],
+        trust_ctx: Any | None = None,
+    ) -> LedgerEntry:
+        """Autonomously verify promotion evidence and append release_promoted event.
+
+        Per FR-051 / SEC-016.
+        """
+        if trust_ctx is not None:
+            _verify_promotion_evidence(promotion_payload, trust_ctx)
+        return self.append("release_promoted", promotion_payload)
+
+    def append(
+        self,
+        event_type: str,
+        event_data: dict[str, Any],
+        trust_ctx: Any | None = None,
+    ) -> LedgerEntry:
         """Append an event to the ledger.
 
         Args:
             event_type: One of VALID_EVENT_TYPES.
             event_data: Dict to be canonically serialised.
+            trust_ctx: Optional TrustContext for autonomous evidence verification per FR-051.
 
         Returns:
             The LedgerEntry with its index and leaf hash.
 
         Raises:
-            SegelError: If the event type is invalid.
+            SegelError: If the event type is invalid or evidence verification fails.
         """
         if event_type not in VALID_EVENT_TYPES:
             raise SegelError(
                 ErrorCode.SCHEMA_UNKNOWN,
                 f"Invalid event type: {event_type}",
             )
+
+        if trust_ctx is not None:
+            if event_type == "candidate_recorded" and (
+                "manifest_envelope" in event_data or "origin_envelope" in event_data
+            ):
+                _verify_candidate_evidence(event_data, trust_ctx)
+            elif event_type == "release_promoted" and (
+                "receipts" in event_data or "canary_receipts" in event_data
+            ):
+                _verify_promotion_evidence(event_data, trust_ctx)
 
         data = canonical_json(event_data)
         data_hex = sha256_hex(data)
@@ -394,4 +447,123 @@ class TransparencyLedger:
 
     def __del__(self) -> None:
         self.close()
+
+
+def _verify_candidate_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
+    """Autonomously verify candidate release evidence per FR-051 and SEC-016.
+
+    Verifies DSSE signatures, stamp bindings, author exclusion, and approver threshold.
+    """
+    # 1. Manifest
+    if "manifest_envelope" not in payload:
+        raise StampMissingError("Manifest envelope missing from candidate evidence")
+    manifest_env = DSSEEnvelope.from_dict(payload["manifest_envelope"])
+    author_keys = trust_ctx.get_keys_for_role("author")
+    m_res = verify_envelope(
+        manifest_env, author_keys, expected_payload_type="application/vnd.segel.manifest+json"
+    )
+    if not m_res.valid_key_ids:
+        raise SignatureError("Manifest envelope signature invalid or unauthorized")
+    manifest_raw = manifest_env.get_payload_bytes()
+    manifest_data = json.loads(manifest_raw)
+    manifest = Manifest.model_validate(manifest_data)
+    expected_release_id = manifest.release_id
+    expected_sequence = manifest.sequence
+    expected_manifest_sha256 = sha256_hex(
+        canonical_json(manifest.model_dump(by_alias=True, mode="json"))
+    )
+
+    # 2. Origin
+    if "origin_envelope" not in payload:
+        raise StampMissingError("Origin envelope missing from candidate evidence")
+    origin_env = DSSEEnvelope.from_dict(payload["origin_envelope"])
+    builder_keys = trust_ctx.get_keys_for_role("builder")
+    o_res = verify_envelope(
+        origin_env, builder_keys, expected_payload_type="application/vnd.segel.origin+json"
+    )
+    if not o_res.valid_key_ids:
+        raise SignatureError("Origin envelope signature invalid or unauthorized")
+    origin_data = json.loads(origin_env.get_payload_bytes())
+    origin_binding = origin_data.get("predicate", {}).get("binding", {})
+    if (
+        origin_binding.get("stamp") != "origin"
+        or origin_binding.get("subject", {}).get("release_id") != expected_release_id
+        or origin_binding.get("subject", {}).get("sequence") != expected_sequence
+        or origin_binding.get("subject", {}).get("manifest_sha256") != expected_manifest_sha256
+    ):
+        raise SubjectMismatchError("Origin binding mismatch with release subject")
+
+    # 3. Inspect
+    if "inspect_envelope" not in payload:
+        raise StampMissingError("Inspect envelope missing from candidate evidence")
+    inspect_env = DSSEEnvelope.from_dict(payload["inspect_envelope"])
+    inspector_keys = trust_ctx.get_keys_for_role("inspector_signer")
+    i_res = verify_envelope(
+        inspect_env, inspector_keys, expected_payload_type="application/vnd.segel.inspect+json"
+    )
+    if not i_res.valid_key_ids:
+        raise SignatureError("Inspect envelope signature invalid or unauthorized")
+    inspect_data = json.loads(inspect_env.get_payload_bytes())
+    inspect_pred = inspect_data.get("predicate", {})
+    inspect_binding = inspect_pred.get("binding", {})
+    if (
+        inspect_binding.get("stamp") != "inspect"
+        or inspect_binding.get("subject", {}).get("release_id") != expected_release_id
+        or inspect_binding.get("subject", {}).get("sequence") != expected_sequence
+        or inspect_binding.get("subject", {}).get("manifest_sha256") != expected_manifest_sha256
+    ):
+        raise SubjectMismatchError("Inspect binding mismatch with release subject")
+    if inspect_pred.get("verdict") == "REJECT":
+        raise SegelError(ErrorCode.POLICY_DOWNGRADE, "Inspect verdict is REJECT")
+
+    # 4. Approve
+    if "approve_envelope" not in payload:
+        raise StampMissingError("Approve envelope missing from candidate evidence")
+    approve_env = DSSEEnvelope.from_dict(payload["approve_envelope"])
+    approver_keys = trust_ctx.get_keys_for_role("approver")
+    a_res = verify_envelope(
+        approve_env, approver_keys, expected_payload_type="application/vnd.segel.approve+json"
+    )
+    threshold = trust_ctx.get_threshold_for_role("approver")
+    excluded = set(m_res.valid_key_ids)
+    counting_keys = verify_threshold(a_res, threshold, excluded_key_ids=excluded)
+    if len(counting_keys) < threshold:
+        raise ThresholdNotMetError(f"Approval threshold {threshold} not met (got {len(counting_keys)})")
+    approve_data = json.loads(approve_env.get_payload_bytes())
+    approve_binding = approve_data.get("predicate", {}).get("binding", {})
+    if (
+        approve_binding.get("stamp") != "approve"
+        or approve_binding.get("subject", {}).get("release_id") != expected_release_id
+        or approve_binding.get("subject", {}).get("sequence") != expected_sequence
+        or approve_binding.get("subject", {}).get("manifest_sha256") != expected_manifest_sha256
+    ):
+        raise SubjectMismatchError("Approve binding mismatch with release subject")
+
+
+def _verify_promotion_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
+    """Autonomously verify canary receipts before promotion per FR-051 and SEC-016."""
+    receipts = payload.get("receipts") or payload.get("canary_receipts") or []
+    required_count = getattr(getattr(trust_ctx, "policy", None), "canary_required_count", 2)
+    if len(receipts) < required_count:
+        raise ThresholdNotMetError(
+            f"Promotion requires at least {required_count} healthy canary receipts, got {len(receipts)}"
+        )
+    healthy_count = 0
+    receiver_keys = trust_ctx.get_keys_for_role("receiver")
+    for r in receipts:
+        if isinstance(r, dict) and "signatures" in r and "payload" in r:
+            env = DSSEEnvelope.from_dict(r)
+            res = verify_envelope(
+                env, receiver_keys, expected_payload_type="application/vnd.segel.test+json"
+            )
+            if res.valid_key_ids:
+                pred = json.loads(env.get_payload_bytes()).get("predicate", {})
+                if pred.get("overall_result") == "healthy":
+                    healthy_count += 1
+        elif isinstance(r, dict) and r.get("overall_result") == "healthy":
+            healthy_count += 1
+    if healthy_count < required_count:
+        raise ThresholdNotMetError(
+            f"Only {healthy_count} healthy canary receipts verified, need {required_count}"
+        )
 
