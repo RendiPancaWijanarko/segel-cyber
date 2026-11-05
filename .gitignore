@@ -48,4 +48,5 @@ lab/corpus/generated/
 *.tmp
 *.bak
 *.log
+.worktree_temp/
 
