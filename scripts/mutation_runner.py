@@ -141,8 +141,12 @@ MUTATIONS = [
         "at_id": "AT-021",
         "file": "src/segel_core/crypto/hashing.py",
         "line": 205,
-        "target": "    if node != expected_root:",
-        "replacement": "    if False:  # MUTATION AT-021",
+        "target": """    node = _root_from_inclusion_proof(leaf_hash, index, size, list(proof))
+
+    if node != expected_root:""",
+        "replacement": """    node = _root_from_inclusion_proof(leaf_hash, index, size, list(proof))
+
+    if False:  # MUTATION AT-021""",
         "test_name": "test_at_021_inclusion_proof_for_different_leaf_or_tree",
         "description": "Skip root comparison in verify_inclusion_from_hash",
     },
