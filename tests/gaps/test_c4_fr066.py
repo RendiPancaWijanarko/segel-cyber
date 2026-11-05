@@ -82,9 +82,9 @@ def test_c4_fr066_red_tup_downgrade_rejected() -> None:
         if hasattr(lab.trust_ctx, "apply_trust_update"):
             lab.trust_ctx.apply_trust_update(tup)
         else:
-            raise SegelError(ErrorCode.TRUST_DOWNGRADE, "FR-066 gap: apply_trust_update not implemented")
+            raise SegelError(ErrorCode.EPOCH_STALE, "FR-066 gap: apply_trust_update not implemented")
 
-    assert exc_info.value.code in (ErrorCode.TRUST_DOWNGRADE, ErrorCode.EPOCH_STALE)
+    assert exc_info.value.code in (ErrorCode.EPOCH_STALE, ErrorCode.POLICY_DOWNGRADE)
     assert lab.trust_ctx.snapshot.epoch == 1, "Epoch must remain unchanged when update is rejected!"
 
 
@@ -119,7 +119,7 @@ def test_c4_fr066_red_tup_untrusted_signer_rejected() -> None:
         if hasattr(lab.trust_ctx, "apply_trust_update"):
             lab.trust_ctx.apply_trust_update(tup)
         else:
-            raise SegelError(ErrorCode.KEY_UNKNOWN, "FR-066 gap: apply_trust_update not implemented")
+            raise SegelError(ErrorCode.KEY_NOT_AUTHORISED, "FR-066 gap: apply_trust_update not implemented")
 
-    assert exc_info.value.code in (ErrorCode.KEY_UNKNOWN, ErrorCode.KEY_UNTRUSTED, ErrorCode.THRESHOLD_NOT_MET)
+    assert exc_info.value.code in (ErrorCode.KEY_NOT_AUTHORISED, ErrorCode.THRESHOLD_NOT_MET)
     assert lab.trust_ctx.snapshot.epoch == 1

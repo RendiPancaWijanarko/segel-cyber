@@ -141,8 +141,7 @@ def test_c2_fr051_red_unverified_promotion_rejected_by_ledger() -> None:
             ledger.append("release_promoted", promotion_payload, trust_ctx=lab.trust_ctx)
 
     assert exc_info.value.code in (
-        ErrorCode.PROMOTION_CRITERIA_UNMET,
-        ErrorCode.CANARY_RECEIPT_MISSING,
         ErrorCode.THRESHOLD_NOT_MET,
+        ErrorCode.STAMP_MISSING,
     )
     assert ledger.size == initial_size, "Ledger state must remain unchanged on invalid promotion!"
