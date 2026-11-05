@@ -127,3 +127,4 @@ The following PRD Table 50 attack scenarios currently have **NO real test covera
 12. **AT-042 (P0)**: Trust Update Package positive installation and negative verification.
 13. **AT-043 (P1)**: Dual independent builders produce differing outputs.
 14. **AT-044 (P0)**: Health probe outside fixed vocabulary refused by adapter.
+

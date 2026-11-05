@@ -458,6 +458,8 @@ def test_at_004_approval_replayed_on_another_sequence() -> None:
             verification.approve.error_code == ErrorCode.SUBJECT_MISMATCH.value
             or "SUBJECT_MISMATCH" in str(verification.eligibility_reasons)
         )
+        # Specifically assert sequence mismatch in reason to kill sequence-check mutations
+        assert any("sequence" in r.lower() for r in verification.eligibility_reasons)
         assert receipt is None
         _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
@@ -1108,15 +1110,18 @@ def test_at_027_path_traversal_absolute_path_symlink_escape() -> None:
 @pytest.mark.adversarial
 def test_at_028_decompression_bomb() -> None:
     """AT-028: Decompression bomb -> Size and ratio limits abort with a clear error."""
-    # Exceeding MAX_TOTAL_SIZE (200 MiB)
+    # Exceeding MAX_TOTAL_SIZE (200 MiB) while each file is <= MAX_FILE_SIZE (50 MiB)
+    chunk = b"0" * (45 * 1024 * 1024)
+    multi_files = {f"file_{i}.dat": chunk for i in range(5)}
     with pytest.raises(PackageMalformedError) as exc_info:
         build_release_package(
-            files={"big.dat": b"0" * (201 * 1024 * 1024)},
+            files=multi_files,
             release_id="AT-028",
             sequence=1,
             purpose="bomb",
         )
     assert exc_info.value.code == ErrorCode.PACKAGE_MALFORMED
+    assert "total package size exceeds" in str(exc_info.value).lower()
 
 
 @pytest.mark.adversarial
@@ -1186,13 +1191,16 @@ def test_at_030_power_loss_mid_deployment_journal_recovery() -> None:
 @pytest.mark.adversarial
 def test_at_031_non_canonical_base64_or_encoding_malleability() -> None:
     """AT-031: Non-canonical base64 or other encoding malleability -> Rejected with SIG_INVALID."""
-    raw = b"12345"
-    canonical_b64 = base64.b64encode(raw).decode("ascii")  # "MTIzNDU="
-    # Non-canonical representation with dirty trailing bit
-    tampered_b64 = "MTIzNDU?"
+    # Strict base64: 32 bytes of zeros has canonical encoding of 43 'A's + '='
+    # Modifying the 43rd character from 'A' to 'B' sets dirty padding bits.
+    # Python base64.b64decode(..., validate=True) succeeds and returns 32 bytes,
+    # but re-encoding produces 'AAA...', which exposes encoding malleability.
+    canonical_b64 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    tampered_b64 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB="
 
-    with pytest.raises((SignatureError, ValueError)):
+    with pytest.raises(SignatureError) as exc_info:
         import_public_key(tampered_b64)
+    assert "Non-canonical" in str(exc_info.value) or "SIG_INVALID" in str(exc_info.value)
 
 
 @pytest.mark.adversarial
@@ -1213,9 +1221,10 @@ def test_at_033_candidate_passport_presented_to_non_canary_unit() -> None:
     with tempfile.TemporaryDirectory() as td:
         deploy_dir = Path(td) / "deploy"
         deploy_dir.mkdir()
-        # Unit 3 is in general role, not canary
+        # Unit ID is in canary_targets ("canary-1") but unit_role is configured as "general",
+        # precisely isolating the role check from the canary_targets membership check.
         receiver = Receiver(
-            state=ReceiverState(unit_id="unit-3", unit_role="general"),
+            state=ReceiverState(unit_id="canary-1", unit_role="general"),
             trust_ctx=lab.trust_ctx,
             receiver_key=lab.general_receiver_key,
             deploy_root=deploy_dir,
@@ -1224,7 +1233,7 @@ def test_at_033_candidate_passport_presented_to_non_canary_unit() -> None:
 
         verification, receipt = receiver.verify_and_deploy(passport, files)
         assert verification.eligibility == EligibilityClass.INELIGIBLE
-        assert any("not in canary role" in r or "canary targets" in r for r in verification.eligibility_reasons)
+        assert any("not in canary role" in r for r in verification.eligibility_reasons)
         assert receipt is None
         _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
@@ -1275,8 +1284,11 @@ def test_at_034_general_passport_without_promotion_record() -> None:
 def test_at_035_evidence_from_release_a_used_in_release_b() -> None:
     """AT-035: Evidence from release A used in release B (every stamp) -> Binding mismatch. Rejected."""
     lab = SyntheticLab()
-    files_a, _, passport_a, _ = _build_valid_candidate(lab, release_id="REL-A", sequence=1)
-    files_b, _, passport_b, _ = _build_valid_candidate(lab, release_id="REL-B", sequence=1)
+    # Match release_id and sequence with differing file contents to isolate manifest_sha256 mismatch
+    files_a = {"config/app.yaml": b"server:\n  mode: a\n"}
+    files_b = {"config/app.yaml": b"server:\n  mode: b\n"}
+    files_a, _, passport_a, _ = _build_valid_candidate(lab, release_id="REL-SAME", sequence=1, files=files_a)
+    files_b, _, passport_b, _ = _build_valid_candidate(lab, release_id="REL-SAME", sequence=1, files=files_b)
 
     # Transplant origin envelope from A to B
     passport_b.origin_envelope = passport_a.origin_envelope
