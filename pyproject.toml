@@ -57,6 +57,7 @@ markers = [
     "adversarial: marks adversarial/security tests",
     "integration: marks integration tests",
     "slow: marks slow tests",
+    "gap: marks hardening gap tests (Phase C red tests)",
 ]
 
 [tool.ruff]
