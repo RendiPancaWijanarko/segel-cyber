@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% set active_page = 'ledger' %}
+
+{% block title %}SEGEL — Transparency Ledger{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Transparency Ledger</h1>
+    <p>Append-only Merkle log (RFC 6962) with signed checkpoints and witness cosignatures.</p>
+</div>
+
+<div class="alert alert-info">
+    <span>ℹ️</span>
+    <div>
+        <strong>Tamper Evidence:</strong> The Merkle tree and signed checkpoints provide
+        tamper evidence — not SQLite triggers (SEC-018). Inclusion and consistency proofs
+        allow offline verification that events were recorded without modification.
+    </div>
+</div>
+
+<!-- Checkpoint -->
+<div class="card">
+    <div class="card-header">
+        <h2>Latest Checkpoint</h2>
+        {% if checkpoint %}
+            <span class="badge badge-green">Signed</span>
+        {% else %}
+            <span class="badge badge-muted">No checkpoint</span>
+        {% endif %}
+    </div>
+
+    {% if checkpoint %}
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Log Size</div>
+            <div class="detail-value">{{ checkpoint.checkpoint.size }} entries</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Merkle Root Hash</div>
+            <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ checkpoint.checkpoint.root_hash }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Origin</div>
+            <div class="detail-value">{{ checkpoint.checkpoint.origin }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Ledger Signer</div>
+            <div class="detail-value" style="font-size:12px;">{{ checkpoint.ledger_key_id[:16] }}...</div>
+        </div>
+    </div>
+
+    {% if checkpoint.witness_cosignatures %}
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+        <h3 style="font-size:14px; margin-bottom:8px; color:var(--text-muted);">Witness Cosignatures</h3>
+        {% for cosig in checkpoint.witness_cosignatures %}
+        <div style="padding:4px 0; font-size:13px;">
+            <span class="badge badge-purple">Witness</span>
+            <code class="hash" style="margin-left:8px;">{{ cosig.key_id[:16] }}...</code>
+            <span style="margin-left:8px; color:var(--green);">✓ cosigned</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+        <h3 style="font-size:14px; margin-bottom:8px; color:var(--text-muted);">C2SP Checkpoint Note</h3>
+        <pre style="background:var(--bg); padding:12px; border-radius:6px; font-size:12px; overflow-x:auto;">{{ checkpoint.checkpoint.origin }}
+{{ checkpoint.checkpoint.size }}
+{{ checkpoint.checkpoint.root_hash }}</pre>
+    </div>
+    {% else %}
+    <div style="text-align:center; padding:20px 0; color:var(--text-muted);">
+        No checkpoint has been created yet. Create a release to generate the first checkpoint.
+    </div>
+    {% endif %}
+</div>
+
+<!-- Ledger Entries -->
+<div class="card">
+    <div class="card-header">
+        <h2>Ledger Entries</h2>
+        <span class="badge badge-muted">{{ entries|length }} entries</span>
+    </div>
+
+    {% if entries %}
+    <table>
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Event Type</th>
+                <th>Data Hash</th>
+                <th>Leaf Hash</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td><strong>#{{ entry.index }}</strong></td>
+                <td>
+                    {% if entry.event_type == 'candidate_recorded' %}
+                        <span class="badge badge-blue">{{ entry.event_type }}</span>
+                    {% elif entry.event_type == 'release_promoted' %}
+                        <span class="badge badge-green">{{ entry.event_type }}</span>
+                    {% elif entry.event_type == 'key_revoked' %}
+                        <span class="badge badge-red">{{ entry.event_type }}</span>
+                    {% else %}
+                        <span class="badge badge-muted">{{ entry.event_type }}</span>
+                    {% endif %}
+                </td>
+                <td><code class="hash">{{ entry.data_hex }}</code></td>
+                <td><code class="hash">{{ entry.leaf_hash }}</code></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center; padding:40px 0; color:var(--text-muted);">
+        <p style="font-size:32px; margin-bottom:8px;">📜</p>
+        <p>The ledger is empty. Events are recorded when releases pass through the pipeline.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Merkle Tree Info -->
+<div class="card">
+    <div class="card-header">
+        <h2>Merkle Tree</h2>
+    </div>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Structure</div>
+            <div class="detail-value">RFC 6962 / RFC 9162 Merkle Hash Tree</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Current Root</div>
+            <div class="detail-value" style="font-size:12px; word-break:break-all;">{{ root_hash }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Leaf Hash</div>
+            <div class="detail-value" style="font-size:12px;">SHA-256(0x00 || data)</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Internal Node</div>
+            <div class="detail-value" style="font-size:12px;">SHA-256(0x01 || left || right)</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

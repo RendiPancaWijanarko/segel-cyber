@@ -1,0 +1,2 @@
+"""SEGEL Core Verification package."""
+

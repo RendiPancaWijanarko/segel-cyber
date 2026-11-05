@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% set active_page = 'error' %}
+
+{% block title %}SEGEL — Error{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Pipeline Error</h1>
+    <p>An error occurred during release processing.</p>
+</div>
+
+<div class="alert alert-error">
+    <span>✕</span>
+    <div>
+        <strong>{{ error_type }}:</strong> {{ error }}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Error Details</h2>
+    </div>
+    <div class="detail-item">
+        <div class="detail-label">Error Type</div>
+        <div class="detail-value">{{ error_type }}</div>
+    </div>
+    <div class="detail-item" style="margin-top:12px;">
+        <div class="detail-label">Message</div>
+        <div class="detail-value" style="word-break:break-all;">{{ error }}</div>
+    </div>
+
+    <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
+        <div class="alert alert-info" style="margin-bottom:16px;">
+            <span>ℹ️</span>
+            <div>
+                <strong>Fail-closed:</strong> SEGEL operations fail closed.
+                No release can proceed through the pipeline with invalid or missing evidence.
+                This is by design (PH-4).
+            </div>
+        </div>
+
+        <div style="display:flex; gap:12px;">
+            <a href="/" class="btn btn-secondary">← Dashboard</a>
+            <a href="/release/new" class="btn btn-primary">Try Again</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

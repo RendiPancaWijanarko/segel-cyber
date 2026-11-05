@@ -1,0 +1,106 @@
+# SPDX-License-Identifier: MIT
+# SEGEL Docker Compose Lab — Synthetic Demonstration Environment
+#
+# This lab demonstrates the SEGEL release lifecycle using Docker containers:
+#   - release-desk:  FastAPI web application (Release Desk)
+#   - canary-1/2:    Canary receiver units
+#   - unit-3:        General receiver (offline-capable)
+#
+# Usage:
+#   docker compose -f lab/compose.yml up --build
+#   # Open http://localhost:8000
+
+services:
+  release-desk:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: segel-release-desk
+    ports:
+      - "8000:8000"
+    environment:
+      - SEGEL_MODE=demo
+      - SEGEL_LOG_LEVEL=info
+    volumes:
+      - shared-data:/data
+    command: >
+      uvicorn release_desk.app:app
+      --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Canary units — these simulate offline receivers that accept
+  # candidate passports for canary deployment.
+  canary-1:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: segel-canary-1
+    environment:
+      - SEGEL_UNIT_ID=canary-1
+      - SEGEL_UNIT_ROLE=canary
+    volumes:
+      - shared-data:/data
+      - canary-1-state:/state
+    command:
+      - python
+      - -c
+      - |
+        import time
+        print('SEGEL Canary-1 receiver ready (waiting for passports)', flush=True)
+        while True:
+            time.sleep(60)
+
+  canary-2:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: segel-canary-2
+    environment:
+      - SEGEL_UNIT_ID=canary-2
+      - SEGEL_UNIT_ROLE=canary
+    volumes:
+      - shared-data:/data
+      - canary-2-state:/state
+    command:
+      - python
+      - -c
+      - |
+        import time
+        print('SEGEL Canary-2 receiver ready (waiting for passports)', flush=True)
+        while True:
+            time.sleep(60)
+
+  # General receiver — simulates an offline unit that verifies
+  # general passports after canary promotion.
+  unit-3:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: segel-unit-3
+    environment:
+      - SEGEL_UNIT_ID=unit-3
+      - SEGEL_UNIT_ROLE=general
+    # No network to simulate offline operation
+    network_mode: none
+    volumes:
+      - shared-data:/data
+      - unit-3-state:/state
+    command:
+      - python
+      - -c
+      - |
+        import time
+        print('SEGEL Unit-3 receiver ready (OFFLINE — no network)', flush=True)
+        while True:
+            time.sleep(60)
+
+volumes:
+  shared-data:
+  canary-1-state:
+  canary-2-state:
+  unit-3-state:
+

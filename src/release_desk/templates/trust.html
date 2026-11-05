@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% set active_page = 'trust' %}
+
+{% block title %}SEGEL — Trust Root{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Trust Root</h1>
+    <p>Cryptographic trust anchors, key roles, verification policy, and epoch management.</p>
+</div>
+
+<div class="alert alert-warning">
+    <span>⚠️</span>
+    <div>
+        <strong>MVP Demo Keys:</strong> These are synthetic Ed25519 keys generated at startup.
+        In production, keys are distributed out-of-band through secure provisioning.
+        Key identity = SHA-256(raw 32-byte public key) per SEC-033.
+    </div>
+</div>
+
+<!-- Trust Metadata -->
+<div class="detail-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2>Trust Root</h2>
+            <span class="badge badge-green">v{{ root_version }}</span>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Root Version</div>
+            <div class="detail-value">{{ root_version }}</div>
+        </div>
+        <div class="detail-item" style="margin-top:12px;">
+            <div class="detail-label">Total Keys</div>
+            <div class="detail-value">{{ keys|length }}</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Verification Policy</h2>
+            <span class="badge badge-blue">v{{ policy_version }}</span>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Policy Version</div>
+            <div class="detail-value">{{ policy_version }}</div>
+        </div>
+        <div class="detail-item" style="margin-top:12px;">
+            <div class="detail-label">Epoch</div>
+            <div class="detail-value">{{ epoch }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Registry -->
+<div class="card">
+    <div class="card-header">
+        <h2>Key Registry</h2>
+        <span class="badge badge-muted">{{ keys|length }} keys</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Key ID (truncated)</th>
+                <th>Role</th>
+                <th>Group</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key in keys %}
+            <tr>
+                <td><code class="hash">{{ key.key_id }}</code></td>
+                <td>
+                    {% if key.role == 'author' %}
+                        <span class="badge badge-blue">{{ key.role }}</span>
+                    {% elif key.role == 'builder' %}
+                        <span class="badge badge-purple">{{ key.role }}</span>
+                    {% elif key.role == 'inspector_signer' %}
+                        <span class="badge badge-yellow">{{ key.role }}</span>
+                    {% elif key.role == 'approver' %}
+                        <span class="badge badge-green">{{ key.role }}</span>
+                    {% elif key.role == 'ledger' %}
+                        <span class="badge badge-muted">{{ key.role }}</span>
+                    {% elif key.role == 'witness' %}
+                        <span class="badge badge-purple">{{ key.role }}</span>
+                    {% elif key.role == 'receiver' %}
+                        <span class="badge badge-blue">{{ key.role }}</span>
+                    {% else %}
+                        <span class="badge badge-muted">{{ key.role }}</span>
+                    {% endif %}
+                </td>
+                <td><code style="font-size:12px;">{{ key.group }}</code></td>
+                <td>
+                    {% if key.status == 'active' %}
+                        <span style="color:var(--green);">● active</span>
+                    {% elif key.status == 'revoked' %}
+                        <span style="color:var(--red);">● revoked</span>
+                    {% else %}
+                        <span style="color:var(--text-muted);">● {{ key.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Role Thresholds -->
+<div class="card">
+    <div class="card-header">
+        <h2>Role Thresholds</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Threshold</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge badge-blue">author</span></td>
+                <td>1</td>
+                <td>Single author signs the manifest</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-purple">builder</span></td>
+                <td>1</td>
+                <td>Single builder produces Origin provenance</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-yellow">inspector_signer</span></td>
+                <td>1</td>
+                <td>Single inspector signer issues Inspect attestation</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-green">approver</span></td>
+                <td>2</td>
+                <td>2-of-3 with per-group minimums (group-0: 1, group-1: 1). Author excluded.</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-muted">ledger</span></td>
+                <td>1</td>
+                <td>Single ledger signer signs checkpoints</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-purple">witness</span></td>
+                <td>1</td>
+                <td>Single witness cosigns checkpoints</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-blue">receiver</span></td>
+                <td>1</td>
+                <td>Each receiver has its own identity for deployment receipts</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Cryptographic Standards -->
+<div class="card">
+    <div class="card-header">
+        <h2>Cryptographic Standards</h2>
+    </div>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Signing Algorithm</div>
+            <div class="detail-value">Ed25519 (RFC 8032)</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Envelope Format</div>
+            <div class="detail-value">DSSE (Dead Simple Signing Envelope)</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Provenance</div>
+            <div class="detail-value">in-toto / SLSA-aligned</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Merkle Proofs</div>
+            <div class="detail-value">RFC 6962 / RFC 9162</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Checkpoint Format</div>
+            <div class="detail-value">C2SP tlog-checkpoint</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Hashing</div>
+            <div class="detail-value">SHA-256</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

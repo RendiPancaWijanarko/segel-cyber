@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% set active_page = 'new' %}
+
+{% block title %}SEGEL — New Release{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Create New Release</h1>
+    <p>Define a configuration release and run it through the 5-stamp pipeline.</p>
+</div>
+
+<div class="alert alert-info">
+    <span>ℹ️</span>
+    <div>
+        <strong>MVP Demo:</strong> This form creates a synthetic release with demo configuration files
+        and runs the full pipeline automatically: Build → Sign → Inspect → Approve → Record.
+        In production, each step would involve separate systems and signing devices.
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Release Details</h2>
+    </div>
+
+    <form action="/release/create" method="post">
+        <div class="detail-grid">
+            <div class="form-group">
+                <label for="release_id">Release ID</label>
+                <input type="text" id="release_id" name="release_id"
+                       placeholder="BASELINE-UNIT-42"
+                       value="BASELINE-UNIT-{{ range(100,999) | random }}"
+                       required
+                       pattern="[A-Za-z0-9_-]+"
+                       title="Alphanumeric, hyphens, and underscores only">
+                <div class="form-hint">Unique identifier for this release (e.g., BASELINE-UNIT-42).</div>
+            </div>
+
+            <div class="form-group">
+                <label for="sequence">Sequence Number</label>
+                <input type="number" id="sequence" name="sequence"
+                       value="1" min="1" max="999999" required>
+                <div class="form-hint">Monotonically increasing sequence number. Anti-rollback enforced.</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="purpose">Purpose</label>
+            <textarea id="purpose" name="purpose" rows="3"
+                      placeholder="Describe the purpose and scope of this release..."
+                      required>Initial baseline configuration deployment</textarea>
+            <div class="form-hint">Brief description of what this release changes and why.</div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="form-group">
+                <label for="canary_targets">Canary Targets</label>
+                <input type="text" id="canary_targets" name="canary_targets"
+                       value="canary-1,canary-2">
+                <div class="form-hint">Comma-separated list of canary unit IDs for initial deployment.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="general_scope">General Scope</label>
+                <input type="text" id="general_scope" name="general_scope"
+                       value="canary-1,canary-2,unit-3">
+                <div class="form-hint">Comma-separated list of all target units after promotion.</div>
+            </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); padding-top:16px; margin-top:8px;">
+            <h3 style="font-size:14px; margin-bottom:12px; color:var(--text-muted);">Pipeline Preview</h3>
+            <div class="stamp-pipeline" style="margin-bottom:16px;">
+                <div class="stamp stamp-pending">
+                    <span class="stamp-icon">📦</span> Create Bundle
+                </div>
+                <span class="stamp-arrow">→</span>
+                <div class="stamp stamp-pending">
+                    <span class="stamp-icon">🏭</span> Build + Origin
+                </div>
+                <span class="stamp-arrow">→</span>
+                <div class="stamp stamp-pending">
+                    <span class="stamp-icon">🔍</span> Inspect
+                </div>
+                <span class="stamp-arrow">→</span>
+                <div class="stamp stamp-pending">
+                    <span class="stamp-icon">✅</span> Approve (2-of-3)
+                </div>
+                <span class="stamp-arrow">→</span>
+                <div class="stamp stamp-pending">
+                    <span class="stamp-icon">📜</span> Record in Ledger
+                </div>
+            </div>
+
+            <div class="alert alert-warning" style="margin-bottom:16px;">
+                <span>⚠️</span>
+                <div>
+                    <strong>Security note:</strong> In the MVP demo, signing keys are synthetic and
+                    all operations happen in-process. In production, the Author Signer, Inspector Signer,
+                    and Approver devices are separate air-gapped systems.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+                🚀 Create Release &amp; Run Pipeline
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

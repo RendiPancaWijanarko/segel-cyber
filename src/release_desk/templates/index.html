@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% set active_page = 'dashboard' %}
+
+{% block title %}SEGEL Release Desk — Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Release Dashboard</h1>
+    <p>Manage and track configuration releases through the 5-stamp verification pipeline.</p>
+</div>
+
+<!-- 5-Stamp Pipeline Overview -->
+<div class="card">
+    <div class="card-header">
+        <h2>5-Stamp Verification Pipeline</h2>
+        <span class="badge badge-blue">{{ releases|length }} release{{ 's' if releases|length != 1 else '' }}</span>
+    </div>
+    <div class="stamp-pipeline" style="justify-content:center; padding: 8px 0;">
+        <div class="stamp stamp-valid">
+            <span class="stamp-icon">🏭</span> Origin
+        </div>
+        <span class="stamp-arrow">→</span>
+        <div class="stamp stamp-valid">
+            <span class="stamp-icon">🔍</span> Inspect
+        </div>
+        <span class="stamp-arrow">→</span>
+        <div class="stamp stamp-valid">
+            <span class="stamp-icon">✅</span> Approve
+        </div>
+        <span class="stamp-arrow">→</span>
+        <div class="stamp stamp-valid">
+            <span class="stamp-icon">📜</span> Record
+        </div>
+        <span class="stamp-arrow">→</span>
+        <div class="stamp stamp-valid">
+            <span class="stamp-icon">🧪</span> Test
+        </div>
+    </div>
+    <p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:8px;">
+        Every release must carry all five independently verifiable security stamps.
+    </p>
+</div>
+
+<!-- Releases Table -->
+<div class="card">
+    <div class="card-header">
+        <h2>Releases</h2>
+        <a href="/release/new" class="btn btn-primary">+ New Release</a>
+    </div>
+
+    {% if releases %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Release ID</th>
+                <th>Seq</th>
+                <th>Status</th>
+                <th>Verdict</th>
+                <th>Caps</th>
+                <th>Approvals</th>
+                <th>Manifest</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rel in releases %}
+            <tr>
+                <td><a href="/release/{{ loop.index0 }}">{{ loop.index0 }}</a></td>
+                <td><a href="/release/{{ loop.index0 }}"><strong>{{ rel.release_id }}</strong></a></td>
+                <td>{{ rel.sequence }}</td>
+                <td>
+                    {% if rel.status == 'CANDIDATE_RECORDED' %}
+                        <span class="badge badge-blue">{{ rel.status }}</span>
+                    {% elif rel.status == 'PROMOTED' %}
+                        <span class="badge badge-green">{{ rel.status }}</span>
+                    {% elif rel.status == 'REJECTED' %}
+                        <span class="badge badge-red">{{ rel.status }}</span>
+                    {% else %}
+                        <span class="badge badge-muted">{{ rel.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if rel.verdict == 'PASS' %}
+                        <span class="badge badge-green">PASS</span>
+                    {% elif rel.verdict == 'WARN' %}
+                        <span class="badge badge-yellow">WARN</span>
+                    {% else %}
+                        <span class="badge badge-red">{{ rel.verdict }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ rel.capabilities }}</td>
+                <td>{{ rel.approvals }}/2</td>
+                <td><code class="hash">{{ rel.manifest_digest }}</code></td>
+                <td style="font-size:12px; color:var(--text-muted);">{{ rel.timestamp[:19] if rel.timestamp else '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center; padding:40px 0; color:var(--text-muted);">
+        <p style="font-size:32px; margin-bottom:8px;">📦</p>
+        <p>No releases yet. <a href="/release/new">Create your first release</a> to start the pipeline.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Ledger Summary -->
+<div class="card">
+    <div class="card-header">
+        <h2>Transparency Ledger</h2>
+        <a href="/ledger" class="btn btn-secondary">View Ledger →</a>
+    </div>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Entries</div>
+            <div class="detail-value">{{ ledger_size }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Type</div>
+            <div class="detail-value">Append-only Merkle Log (RFC 6962)</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

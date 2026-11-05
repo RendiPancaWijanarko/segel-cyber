@@ -1,0 +1,1 @@
+{"allowed_adapters":[],"approval_groups":{"group-0":1,"group-1":1},"approval_threshold":2,"canary_required_count":2,"freshness_mode":"strict","min_inspect_policy_version":1,"policy_version":1,"required_stamps":["origin","inspect","approve","record","test"],"schema_version":"segel.policy/v1","witness_cosignature_count":1}

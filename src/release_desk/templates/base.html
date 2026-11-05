@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SEGEL Release Desk{% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --yellow: #d29922;
+            --red: #f85149;
+            --purple: #bc8cff;
+            --cyan: #39d353;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ── Header ──────────────────────────────────────────── */
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .inner {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        .logo .seal { color: var(--accent); }
+
+        nav { display: flex; gap: 16px; }
+        nav a {
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+        nav a:hover {
+            color: var(--text);
+            background: var(--border);
+            text-decoration: none;
+        }
+        nav a.active {
+            color: var(--text);
+            background: var(--border);
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-green { background: rgba(63,185,80,0.2); color: var(--green); }
+        .badge-yellow { background: rgba(210,153,34,0.2); color: var(--yellow); }
+        .badge-red { background: rgba(248,81,73,0.2); color: var(--red); }
+        .badge-blue { background: rgba(88,166,255,0.2); color: var(--accent); }
+        .badge-purple { background: rgba(188,140,255,0.2); color: var(--purple); }
+        .badge-muted { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+
+        /* ── Cards ────────────────────────────────────────────── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* ── Stamp Pipeline ──────────────────────────────────── */
+        .stamp-pipeline {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .stamp {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .stamp-valid { border-color: var(--green); color: var(--green); }
+        .stamp-invalid { border-color: var(--red); color: var(--red); }
+        .stamp-pending { border-color: var(--text-muted); color: var(--text-muted); }
+        .stamp-warn { border-color: var(--yellow); color: var(--yellow); }
+
+        .stamp-arrow {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .stamp-icon { font-size: 14px; }
+
+        /* ── Table ────────────────────────────────────────────── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover { background: rgba(88,166,255,0.04); }
+
+        /* ── Forms ────────────────────────────────────────────── */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn-primary:hover { background: #4c9aed; }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+        }
+        .btn-secondary:hover { background: var(--border); }
+
+        .btn-danger {
+            background: rgba(248,81,73,0.15);
+            color: var(--red);
+            border-color: var(--red);
+        }
+        .btn-danger:hover { background: rgba(248,81,73,0.25); }
+
+        /* ── Section Headers ─────────────────────────────────── */
+        .page-header {
+            padding: 24px 0;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ── Detail Grid ─────────────────────────────────────── */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+
+        .detail-item {
+            padding: 12px 16px;
+            border-left: 3px solid var(--border);
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-family: 'SFMono-Regular', Consolas, monospace;
+        }
+
+        /* ── Mono ─────────────────────────────────────────────── */
+        code, .mono {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+            font-size: 13px;
+        }
+
+        .hash {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-family: 'SFMono-Regular', Consolas, monospace;
+        }
+
+        /* ── Alerts ───────────────────────────────────────────── */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .alert-success {
+            background: rgba(63,185,80,0.1);
+            border: 1px solid rgba(63,185,80,0.3);
+            color: var(--green);
+        }
+
+        .alert-warning {
+            background: rgba(210,153,34,0.1);
+            border: 1px solid rgba(210,153,34,0.3);
+            color: var(--yellow);
+        }
+
+        .alert-error {
+            background: rgba(248,81,73,0.1);
+            border: 1px solid rgba(248,81,73,0.3);
+            color: var(--red);
+        }
+
+        .alert-info {
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.3);
+            color: var(--accent);
+        }
+
+        /* ── Footer ───────────────────────────────────────────── */
+        footer {
+            padding: 24px 0;
+            margin-top: 48px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ── Loading indicator ────────────────────────────────── */
+        .htmx-indicator {
+            display: none;
+        }
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+
+        /* ── Security Banner ──────────────────────────────────── */
+        .security-banner {
+            background: rgba(210,153,34,0.1);
+            border: 1px solid rgba(210,153,34,0.3);
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--yellow);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="security-banner">
+        ⚠️ MVP DEMO MODE — Synthetic keys generated at startup. Not for production use.
+        Release Desk never holds private signing keys (SEC-004).
+    </div>
+
+    <header>
+        <div class="container inner">
+            <div class="logo"><span class="seal">⬡</span> SEGEL</div>
+            <nav>
+                <a href="/" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
+                <a href="/release/new" {% if active_page == 'new' %}class="active"{% endif %}>New Release</a>
+                <a href="/ledger" {% if active_page == 'ledger' %}class="active"{% endif %}>Ledger</a>
+                <a href="/trust" {% if active_page == 'trust' %}class="active"{% endif %}>Trust Root</a>
+            </nav>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+                <span class="badge badge-blue">v0.1.0-mvp</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda<br>
+            <em>NO EVIDENCE, NO DEPLOYMENT</em> · 5-Stamp Verification Pipeline<br>
+            Origin · Inspect · Approve · Record · Test
+        </div>
+    </footer>
+</body>
+</html>
+
