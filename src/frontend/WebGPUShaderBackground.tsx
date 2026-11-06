@@ -42,48 +42,61 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 fn fs_main(in: VertexOutput) -> @location(0) vec4f {
   let uv = in.uv;
   let aspect = vec2f(u.resolution.x / u.resolution.y, 1.0);
-  let p = (uv - vec2f(-0.05, -0.05)) * aspect;
+  
+  // Origin: Upper-left corner
+  let origin = vec2f(-0.06, -0.06);
+  let p = (uv - origin) * aspect;
   let r = length(p);
   let theta = atan2(p.y, p.x);
 
-  // Transverse Fabric Ripple (Warping)
-  let fold = sin(r * 10.0 - theta * 3.5 + u.time * 0.25) * 0.08 
-           + cos(r * 20.0 + theta * 5.0) * 0.035;
+  // Smooth, subtle fluid silk fold distortion
+  let fold = sin(r * 9.0 - theta * 3.2 + u.time * 0.22) * 0.075 
+           + cos(r * 18.0 + theta * 4.8) * 0.032;
   let warpedTheta = theta + fold;
 
-  // Ray Noise (Multi-Octave 1D Wave Accumulation)
+  // Multi-frequency angular ray generation
   var rays = 0.0;
-  rays += (sin(warpedTheta * 16.0) * 0.5 + 0.5) * 0.45;
-  rays += (sin(warpedTheta * 34.0 + 1.2) * 0.5 + 0.5) * 0.28;
-  rays += (sin(warpedTheta * 68.0 + 2.5) * 0.5 + 0.5) * 0.17;
-  rays += (sin(warpedTheta * 128.0 + 4.1) * 0.5 + 0.5) * 0.10;
-  rays = pow(rays, 2.4) * 2.2;
+  rays += (sin(warpedTheta * 14.0) * 0.5 + 0.5) * 0.44;
+  rays += (sin(warpedTheta * 30.0 + 1.2) * 0.5 + 0.5) * 0.28;
+  rays += (sin(warpedTheta * 62.0 + 2.5) * 0.5 + 0.5) * 0.18;
+  rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
+  rays = pow(rays, 1.8) * 1.6;
 
-  // Modulating Wave Crests
-  var crest = sin(r * 8.5 - warpedTheta * 7.0 + fold * 4.5);
-  crest = smoothstep(-0.25, 0.75, crest);
+  // Soft caustics crest
+  var crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0);
+  crest = smoothstep(-0.35, 0.65, crest);
 
-  // Radial Windowing & Angular Mask
-  let radialFalloff = smoothstep(0.08, 0.42, r) * smoothstep(1.65, 0.55, r);
-  let angularMask = smoothstep(0.05, 0.45, theta) * smoothstep(1.35, 0.85, theta);
-  let intensity = rays * crest * radialFalloff * angularMask;
-  let ambient = crest * radialFalloff * angularMask * 0.22;
+  // Radial and angular envelopes
+  let radialFalloff = smoothstep(0.04, 0.38, r) * smoothstep(1.7, 0.52, r);
+  let angularMask = smoothstep(0.02, 0.42, theta) * smoothstep(1.38, 0.88, theta);
 
-  // Triadic Military Color Palette (60% TNI AD Green, 30% Tactical Bronze, 10% Neon Accent Flares)
-  let c_base    = vec3f(0.06, 0.11, 0.05); // Deep ambient olive (#12210F)
-  let c_green   = vec3f(0.20, 0.33, 0.16); // TNI AD Army Green (60% - #335229)
-  let c_bronze  = vec3f(0.44, 0.28, 0.10); // Tactical Bronze (30% - #70471A)
-  let c_neon    = vec3f(0.60, 0.30, 1.00); // Electric Violet Accent (10% - #8C40FF)
+  let rayIntensity = rays * crest * radialFalloff * angularMask;
+  let ambientSheen = crest * radialFalloff * angularMask * 0.26;
 
-  // Smooth triadic blending based on ray dynamics
-  var col = mix(c_base, c_green, clamp(ambient * 2.5, 0.0, 1.0));
-  col = mix(col, c_bronze, clamp(intensity * 1.4, 0.0, 1.0));
+  // --- Light Mode Triadic Color Composition ---
+  let c_canvas     = vec3f(0.948, 0.970, 0.942); // Clean military white-sage (#F2F7F0)
+  let c_sage_soft  = vec3f(0.720, 0.825, 0.680); // TNI AD Sage Green (60%)
+  let c_sage_deep  = vec3f(0.480, 0.620, 0.420); // Tactical Midtone
+  let c_sand_gold  = vec3f(0.820, 0.740, 0.600); // Warm Sand / Bronze (30%)
+  let c_mint_flare = vec3f(0.920, 0.990, 0.950); // Luminous Mint Glow (10%)
+  let c_lavender   = vec3f(0.850, 0.810, 0.930); // Triadic Iridescent Accent
 
-  // Accent highlight only at the highest specular peaks
-  let specularPeak = pow(clamp(intensity * crest, 0.0, 1.0), 3.5);
-  col = mix(col, c_neon, specularPeak * 0.85);
+  // 1. Blend ambient sage over the bright canvas base
+  var color = mix(c_canvas, c_sage_soft, clamp(ambientSheen * 1.8, 0.0, 0.85));
 
-  return vec4f(col, 1.0);
+  // 2. Add tactical sand/bronze warmth into the flowing folds
+  color = mix(color, c_sand_gold, clamp(rayIntensity * 1.2, 0.0, 0.75));
+
+  // 3. Modulate deeper sage ripples for depth
+  let rippleShadow = pow(clamp(rayIntensity * (1.0 - crest * 0.5), 0.0, 1.0), 2.2);
+  color = mix(color, c_sage_deep, rippleShadow * 0.35);
+
+  // 4. Highlight crests with luminous mint and iridescent violet
+  let specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
+  let highlight = mix(c_mint_flare, c_lavender, sin(u.time * 0.5 + r * 4.0) * 0.5 + 0.5);
+  color = mix(color, highlight, specularPeak * 0.65);
+
+  return vec4f(color, 1.0);
 }
 `;
 
@@ -103,41 +116,50 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   uv.y = 1.0 - uv.y;
   vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
-  vec2 p = (uv - vec2(-0.05, -0.05)) * aspect;
+  
+  vec2 origin = vec2(-0.06, -0.06);
+  vec2 p = (uv - origin) * aspect;
   float r = length(p);
   float theta = atan(p.y, p.x);
 
-  float fold = sin(r * 10.0 - theta * 3.5 + u_time * 0.25) * 0.08 
-             + cos(r * 20.0 + theta * 5.0) * 0.035;
+  float fold = sin(r * 9.0 - theta * 3.2 + u_time * 0.22) * 0.075 
+             + cos(r * 18.0 + theta * 4.8) * 0.032;
   float warpedTheta = theta + fold;
 
   float rays = 0.0;
-  rays += (sin(warpedTheta * 16.0) * 0.5 + 0.5) * 0.45;
-  rays += (sin(warpedTheta * 34.0 + 1.2) * 0.5 + 0.5) * 0.28;
-  rays += (sin(warpedTheta * 68.0 + 2.5) * 0.5 + 0.5) * 0.17;
-  rays += (sin(warpedTheta * 128.0 + 4.1) * 0.5 + 0.5) * 0.10;
-  rays = pow(rays, 2.4) * 2.2;
+  rays += (sin(warpedTheta * 14.0) * 0.5 + 0.5) * 0.44;
+  rays += (sin(warpedTheta * 30.0 + 1.2) * 0.5 + 0.5) * 0.28;
+  rays += (sin(warpedTheta * 62.0 + 2.5) * 0.5 + 0.5) * 0.18;
+  rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
+  rays = pow(rays, 1.8) * 1.6;
 
-  float crest = sin(r * 8.5 - warpedTheta * 7.0 + fold * 4.5);
-  crest = smoothstep(-0.25, 0.75, crest);
+  float crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0);
+  crest = smoothstep(-0.35, 0.65, crest);
 
-  float radialFalloff = smoothstep(0.08, 0.42, r) * smoothstep(1.65, 0.55, r);
-  float angularMask = smoothstep(0.05, 0.45, theta) * smoothstep(1.35, 0.85, theta);
-  float intensity = rays * crest * radialFalloff * angularMask;
-  float ambient = crest * radialFalloff * angularMask * 0.22;
+  float radialFalloff = smoothstep(0.04, 0.38, r) * smoothstep(1.7, 0.52, r);
+  float angularMask = smoothstep(0.02, 0.42, theta) * smoothstep(1.38, 0.88, theta);
 
-  vec3 c_base   = vec3(0.06, 0.11, 0.05);
-  vec3 c_green  = vec3(0.20, 0.33, 0.16);
-  vec3 c_bronze = vec3(0.44, 0.28, 0.10);
-  vec3 c_neon   = vec3(0.60, 0.30, 1.00);
+  float rayIntensity = rays * crest * radialFalloff * angularMask;
+  float ambientSheen = crest * radialFalloff * angularMask * 0.26;
 
-  vec3 col = mix(c_base, c_green, clamp(ambient * 2.5, 0.0, 1.0));
-  col = mix(col, c_bronze, clamp(intensity * 1.4, 0.0, 1.0));
+  vec3 c_canvas     = vec3(0.948, 0.970, 0.942);
+  vec3 c_sage_soft  = vec3(0.720, 0.825, 0.680);
+  vec3 c_sage_deep  = vec3(0.480, 0.620, 0.420);
+  vec3 c_sand_gold  = vec3(0.820, 0.740, 0.600);
+  vec3 c_mint_flare = vec3(0.920, 0.990, 0.950);
+  vec3 c_lavender   = vec3(0.850, 0.810, 0.930);
 
-  float specularPeak = pow(clamp(intensity * crest, 0.0, 1.0), 3.5);
-  col = mix(col, c_neon, specularPeak * 0.85);
+  vec3 color = mix(c_canvas, c_sage_soft, clamp(ambientSheen * 1.8, 0.0, 0.85));
+  color = mix(color, c_sand_gold, clamp(rayIntensity * 1.2, 0.0, 0.75));
 
-  gl_FragColor = vec4(col, 1.0);
+  float rippleShadow = pow(clamp(rayIntensity * (1.0 - crest * 0.5), 0.0, 1.0), 2.2);
+  color = mix(color, c_sage_deep, rippleShadow * 0.35);
+
+  float specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
+  vec3 highlight = mix(c_mint_flare, c_lavender, sin(u_time * 0.5 + r * 4.0) * 0.5 + 0.5);
+  color = mix(color, highlight, specularPeak * 0.65);
+
+  gl_FragColor = vec4(color, 1.0);
 }
 `;
 
@@ -343,7 +365,7 @@ export const WebGPUShaderBackground: React.FC = () => {
             colorAttachments: [
               {
                 view: textureView,
-                clearValue: { r: 0.06, g: 0.11, b: 0.05, a: 1.0 },
+                clearValue: { r: 0.948, g: 0.970, b: 0.942, a: 1.0 },
                 loadOp: 'clear',
                 storeOp: 'store',
               },
@@ -391,3 +413,4 @@ export const WebGPUShaderBackground: React.FC = () => {
     />
   );
 };
+

@@ -17,7 +17,7 @@
   --zassk-blue-primary: #2563EB;
   --zassk-blue-sky: #38BDF8;
   --zassk-blue-ice: #BAE6FD;
-  --zassk-card-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.12);
+  --zassk-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -111,13 +111,13 @@
 
 /* Navigation Dock */
 .zassk-dock {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.2px solid rgba(255, 255, 255, 0.95);
   border-radius: 9999px;
   padding: 6px;
-  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(40, 70, 35, 0.06);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -249,7 +249,7 @@
 .zassk-hello-name {
   font-size: 32px;
   font-weight: 700;
-  color: var(--zassk-navy);
+  color: #0F172A;
   line-height: 1.1;
   letter-spacing: -0.6px;
   margin-top: 2px;
@@ -257,7 +257,7 @@
 .zassk-welcome-sub {
   font-size: 14px;
   color: #64748B;
-  font-weight: 500;
+  font-weight: 400;
   margin-top: 6px;
 }
 
@@ -268,10 +268,10 @@
   justify-content: space-between;
   margin-bottom: 8px;
 }
-.zassk-stat-label { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+.zassk-stat-label { font-size: 13.5px; font-weight: 600; color: #334155; }
 .zassk-stat-value-group { display: flex; align-items: baseline; gap: 6px; }
-.zassk-stat-count { font-size: 26px; font-weight: 800; color: var(--zassk-navy); letter-spacing: -0.5px; }
-.zassk-trend-badge { font-size: 13px; font-weight: 700; color: #475569; }
+.zassk-stat-count { font-size: 26px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px; }
+.zassk-trend-badge { font-size: 13px; font-weight: 600; color: #475569; }
 
 /* 3-Segment Statistics Bar */
 .zassk-progress-capsule {
@@ -304,7 +304,7 @@
 /* ── S-Curved File-Folder Tab Notched Card Silhouette ── */
 .zassk-card-tabbed-notch {
   position: relative;
-  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.28)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
   height: 220px;
   display: flex;
   flex-direction: column;
@@ -385,7 +385,7 @@
 
 .zassk-interlock-card {
   position: relative;
-  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.25)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.10));
+  filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
 }
 
 .zassk-tp-card,

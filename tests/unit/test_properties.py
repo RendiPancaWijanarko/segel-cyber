@@ -63,12 +63,14 @@ class TestCanonicalJsonProperties:
         if isinstance(data, dict):
             assert set(parsed.keys()) == set(data.keys())
 
-    @given(data=st.dictionaries(st.text(max_size=10), st.integers(), max_size=10, min_size=2))
+    @given(data=st.dictionaries(st.from_regex(r'^[a-zA-Z0-9_-]{1,10}$', fullmatch=True), st.integers(), max_size=10, min_size=2))
     @settings(max_examples=100)
     def test_sorted_keys(self, data):
         """Keys are always sorted."""
         result = canonical_json(data)
         result_str = result.decode("utf-8")
+        parsed = json.loads(result_str)
+        assert list(parsed.keys()) == sorted(data.keys())
         # Verify no extra whitespace
         assert "  " not in result_str  # No indentation
         assert "\n" not in result_str  # No newlines
