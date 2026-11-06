@@ -99,6 +99,8 @@ export interface TransactionItem {
 export interface ZasskDashboardProps {
   userName?: string;
   userGreeting?: string;
+  brandingText?: string;
+  logoUrl?: string;
   onNavigate?: (tabId: string) => void;
   onSearch?: (query: string) => void;
   className?: string;

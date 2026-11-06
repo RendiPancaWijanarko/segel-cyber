@@ -24,6 +24,7 @@ from typing import Any
 
 from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from approver.approver import (
@@ -105,6 +106,11 @@ TEMPLATE_DIR = Path(__file__).parent / "templates"
 TEMPLATE_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
+
+# Static assets directory (images, CSS, JS)
+STATIC_DIR = Path(__file__).parent / "static"
+STATIC_DIR.mkdir(exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 # ── Synthetic Demo State (MVP) ───────────────────────────────────────

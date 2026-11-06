@@ -37,3 +37,4 @@ export function MetricSelect({ value, onValueChange }: MetricSelectProps) {
     </Select>
   )
 }
+

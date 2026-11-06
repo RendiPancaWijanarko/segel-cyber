@@ -176,3 +176,4 @@ export function formatShortDate(index: number) {
 export function clampChartValue(value: number, min: number, max: number) {
   return clamp(value, min, max)
 }
+

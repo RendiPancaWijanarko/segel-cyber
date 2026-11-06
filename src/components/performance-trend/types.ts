@@ -26,3 +26,4 @@ export type MetricConfig = {
   suffix: string
   selectedValue: number
 }
+

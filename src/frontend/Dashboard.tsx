@@ -148,6 +148,8 @@ export const LucideIcon: React.FC<IconProps> = ({
 export const Dashboard: React.FC<ZasskDashboardProps> = ({
   userName = 'Keren nix',
   userGreeting = 'Hello,',
+  brandingText = 'PUSSIBERAD',
+  logoUrl = '/static/images/pussiberad-logo.png',
   onNavigate,
   onSearch,
   className = '',
@@ -342,7 +344,11 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
         {/* ── 1. TOP NAVIGATION HEADER ── */}
         <header className="zassk-header">
           {/* Brand Pill */}
-          <div className="zassk-brand-pill">Zassk</div>
+          <a href="/" className="zassk-brand-pill" title="PUSSIBERAD">
+            <img src={logoUrl} alt="PUSSIBERAD Logo" className="zassk-brand-logo" />
+            <span className="zassk-brand-text">{brandingText}</span>
+            <span className="zassk-brand-tag">Zassk</span>
+          </a>
 
           {/* Center Segmented Floating Dock */}
           <nav className="zassk-dock">
