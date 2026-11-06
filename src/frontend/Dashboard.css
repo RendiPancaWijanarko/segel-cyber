@@ -513,8 +513,8 @@
 .zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
 .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
-/* ── Performance Trend Card (Redesigned with AlignUI Cellular Chart) ── */
-.zassk-performance-trend-card {
+/* ── Security Health Card (Cryptographic Verification Telemetry) ── */
+.zassk-security-health-card {
   flex: 1;
   padding: 14px 18px;
   border-radius: 24px;
@@ -523,123 +523,106 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
   overflow: hidden;
 }
 
-.zassk-pt-header {
+.zassk-sh-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.zassk-pt-title-group {
+.zassk-sh-title-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.zassk-pt-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: #10B981;
-  background: #E8FBF0;
+.zassk-sh-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #059669;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
   padding: 1px 7px;
   border-radius: 9999px;
+  letter-spacing: 0.3px;
 }
 
-.zassk-pt-metric-row {
+.zassk-sh-metric-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin: 2px 0 4px 0;
+  margin: 1px 0 3px 0;
 }
 
-.zassk-pt-val {
+.zassk-sh-metric-val {
   font-size: 24px;
   font-weight: 800;
   color: var(--zassk-navy);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
+  line-height: 1;
 }
 
-.zassk-pt-sub {
+.zassk-sh-metric-sub {
   font-size: 11px;
   color: #64748B;
   font-weight: 500;
-}
-
-/* Mini 60-Column Cellular Heatmap Grid */
-.zassk-pt-grid-wrapper {
-  position: relative;
-  width: 100%;
-  height: 38px;
-  cursor: crosshair;
-}
-
-.zassk-pt-grid {
-  display: grid;
-  grid-template-columns: repeat(60, minmax(0, 1fr));
-  gap: 1.5px;
-  height: 100%;
-  align-items: end;
-}
-
-.zassk-pt-col {
   display: flex;
-  flex-direction: column;
-  gap: 1.2px;
-  height: 100%;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
 }
 
-.zassk-pt-cell {
-  height: 2px;
-  border-radius: 1px;
-}
-.zassk-pt-cell.active {
-  background-color: #2563EB;
-}
-.zassk-pt-cell.secondary {
-  background-color: #93C5FD;
-}
-.zassk-pt-cell.empty {
-  background-color: #F1F5F9;
+.zassk-sh-dot {
+  color: #CBD5E1;
+  font-size: 10px;
 }
 
-/* Active Column Guide & Floating Popover */
-.zassk-pt-crosshair {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-left: 1.5px dashed rgba(37, 99, 235, 0.7);
-  pointer-events: none;
-  transition: left 0.08s ease;
-}
-
-.zassk-pt-tooltip {
-  position: absolute;
-  top: -30px;
-  transform: translateX(-50%);
-  background: #0F172A;
-  color: #FFFFFF;
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  pointer-events: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  z-index: 20;
-}
-
-.zassk-pt-months {
+/* 24 Micro Telemetry Verification Frequency Ticks */
+.zassk-sh-ticks-track {
   display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 18px;
+  padding: 1px 0;
+}
+
+.zassk-sh-tick-bar {
+  flex: 1;
+  border-radius: 2px;
+  min-height: 4px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+}
+.zassk-sh-tick-bar:hover {
+  transform: scaleY(1.2);
+  opacity: 0.85;
+}
+
+/* 4-Stage Micro Pipeline Indicators */
+.zassk-sh-pipeline-row {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 600;
-  color: #94A3B8;
-  margin-top: 2px;
-  padding: 0 2px;
+  color: #64748B;
+  padding-top: 2px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.zassk-sh-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+.zassk-sh-stage-pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10B981;
 }
 
 /* ── 3. Middle Row: Spectral Waterfall Needle Chart & User Sources ── */

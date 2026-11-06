@@ -160,9 +160,6 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   const [activeRevIndex, setActiveRevIndex] = useState<number>(3);
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
 
-  // Performance Trend crosshair hover index (defaults to index 20)
-  const [activePtCol, setActivePtCol] = useState<number>(20);
-
   const chartSvgRef = useRef<SVGSVGElement | null>(null);
 
   const dockItems = [
@@ -315,29 +312,33 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const profitBars = [40, 60, 52, 85, 96, 75, 100, 64, 42];
 
-  // 60-Column Cellular Heatmap Data for Performance Trend
-  const ptColumns = useMemo(() => {
-    const peaks = [4, 11, 17, 24, 30, 36, 41, 47, 53, 58];
-    return Array.from({ length: 60 }, (_, i) => {
-      const baseline = 2.2 + Math.sin(i * 0.58) * 0.68 + Math.sin(i * 1.24) * 0.44;
-      const peakHeight = peaks.reduce((tot, p, pIdx) => {
-        const width = 1.05 + (pIdx % 3) * 0.22;
-        const amp = 3.2 + ((pIdx * 3) % 4);
-        return tot + amp * Math.exp(-((i - p) ** 2) / (2 * width ** 2));
-      }, 0);
-      const h = Math.min(Math.max(Math.round(baseline + peakHeight), 2), 10);
-      const secH = Math.min(h + 2 + Math.round((Math.sin(i * 0.37) + 1) * 1.5), 14);
-      const val = Math.round(95 + h * 24 + Math.sin(i * 0.41) * 9);
-      return { height: h, secondaryHeight: secH, value: i === 20 ? 320 : val };
-    });
-  }, []);
-
-  const handlePtMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    const colIdx = Math.floor(frac * 60);
-    setActivePtCol(colIdx);
-  };
+  // 24-Bar Verification Telemetry Data for Security Health
+  const securityTelemetryTicks = useMemo(() => [
+    { height: 75, color: '#10B981', label: 'Origin: OK (4ms)' },
+    { height: 85, color: '#10B981', label: 'Inspect: OK (6ms)' },
+    { height: 60, color: '#34D399', label: 'Quorum: 3/3 (8ms)' },
+    { height: 90, color: '#10B981', label: 'Ledger: Synced (5ms)' },
+    { height: 100, color: '#059669', label: 'Envelope: DSSE (3ms)' },
+    { height: 70, color: '#10B981', label: 'Attestation: Valid (7ms)' },
+    { height: 80, color: '#38BDF8', label: 'Canary: 100% (12ms)' },
+    { height: 95, color: '#3B82F6', label: 'Rekor: Verified (9ms)' },
+    { height: 65, color: '#38BDF8', label: 'Witness: Active (6ms)' },
+    { height: 85, color: '#2563EB', label: 'Epoch: Current (4ms)' },
+    { height: 100, color: '#2563EB', label: 'Key: Ed25519 (2ms)' },
+    { height: 75, color: '#3B82F6', label: 'Quorum: Consensual (5ms)' },
+    { height: 90, color: '#10B981', label: 'Policy: Zero Reject (3ms)' },
+    { height: 80, color: '#10B981', label: 'Audit: Clean (4ms)' },
+    { height: 60, color: '#34D399', label: 'Sync: Air-Gapped (6ms)' },
+    { height: 95, color: '#10B981', label: 'Origin: Verified (5ms)' },
+    { height: 85, color: '#3B82F6', label: 'Ledger: Recorded (7ms)' },
+    { height: 70, color: '#38BDF8', label: 'Signature: Strict (3ms)' },
+    { height: 90, color: '#2563EB', label: 'Integrity: 100% (4ms)' },
+    { height: 100, color: '#10B981', label: 'Verification: Complete (2ms)' },
+    { height: 80, color: '#10B981', label: 'Node 1: Online (5ms)' },
+    { height: 85, color: '#34D399', label: 'Node 2: Online (4ms)' },
+    { height: 75, color: '#38BDF8', label: 'Node 3: Online (6ms)' },
+    { height: 95, color: '#2563EB', label: 'Gateway: Secure (3ms)' },
+  ], []);
 
   return (
     <div className="zassk-viewport-wrapper">
@@ -528,69 +529,60 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* Card 2: Performance Trend (Redesigned with AlignUI Cellular Chart) */}
-            <div className="zassk-performance-trend-card">
-              <div>
-                <div className="zassk-pt-header">
-                  <div className="zassk-pt-title-group">
-                    <span className="zassk-card-title">Performance Trend</span>
-                    <LucideIcon name="Info" size={13} strokeWidth={2} color="#94A3B8" />
-                  </div>
-                  <span className="zassk-pt-badge">+5%</span>
+            {/* Card 2: Security Health (Cryptographic Verification Telemetry) */}
+            <div className="zassk-card zassk-security-health-card">
+              <div className="zassk-sh-header">
+                <div className="zassk-sh-title-group">
+                  <span className="zassk-card-title">Security Health</span>
+                  <span className="zassk-sh-badge">● Optimal</span>
                 </div>
-                <div className="zassk-pt-metric-row">
-                  <span className="zassk-pt-val">320</span>
-                  <span className="zassk-pt-sub">Prod. executions</span>
+                <button className="zassk-action-pill-btn" aria-label="Security Details">
+                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                </button>
+              </div>
+
+              <div className="zassk-sh-metric-row">
+                <div className="zassk-sh-metric-val">99.9%</div>
+                <div className="zassk-sh-metric-sub">
+                  <span>Zero anomalies</span>
+                  <span className="zassk-sh-dot">·</span>
+                  <span style={{ color: '#059669', fontWeight: 600 }}>Air-gapped</span>
                 </div>
               </div>
 
-              {/* 60-Column Cellular Heatmap Grid */}
-              <div
-                className="zassk-pt-grid-wrapper"
-                onMouseMove={handlePtMouseMove}
-                onMouseLeave={() => setActivePtCol(20)}
-              >
-                <div className="zassk-pt-grid">
-                  {ptColumns.map((col, idx) => (
-                    <div key={idx} className="zassk-pt-col">
-                      {Array.from({ length: 14 }).map((_, rIdx) => {
-                        const isActive = rIdx >= 14 - col.height;
-                        const isSec = rIdx >= 14 - col.secondaryHeight;
-                        return (
-                          <div
-                            key={rIdx}
-                            className={`zassk-pt-cell ${
-                              isActive ? 'active' : isSec ? 'secondary' : 'empty'
-                            }`}
-                          />
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Hover Scrubber Line */}
-                <div
-                  className="zassk-pt-crosshair"
-                  style={{ left: `${(activePtCol / 59) * 100}%` }}
-                />
-
-                {/* Floating Tooltip */}
-                <div
-                  className="zassk-pt-tooltip"
-                  style={{ left: `${Math.max(12, Math.min(88, (activePtCol / 59) * 100))}%` }}
-                >
-                  {ptColumns[activePtCol]?.value} executions
-                </div>
+              {/* 24 Micro Telemetry Verification Frequency Ticks */}
+              <div className="zassk-sh-ticks-track">
+                {securityTelemetryTicks.map((tick, i) => (
+                  <div
+                    key={i}
+                    className="zassk-sh-tick-bar"
+                    style={{
+                      height: `${tick.height}%`,
+                      backgroundColor: tick.color,
+                    }}
+                    title={tick.label}
+                  />
+                ))}
               </div>
 
-              <div className="zassk-pt-months">
-                <span>Jan</span>
-                <span>Mar</span>
-                <span>May</span>
-                <span>Jul</span>
-                <span>Sep</span>
-                <span>Nov</span>
+              {/* 4-Stage Micro Pipeline Indicators */}
+              <div className="zassk-sh-pipeline-row">
+                <span className="zassk-sh-stage" title="Ed25519 Source Provenance">
+                  <span className="zassk-sh-stage-pip" />
+                  Origin
+                </span>
+                <span className="zassk-sh-stage" title="Static Policy Rules Validation">
+                  <span className="zassk-sh-stage-pip" />
+                  Inspect
+                </span>
+                <span className="zassk-sh-stage" title="Multi-Signer Quorum Consensus">
+                  <span className="zassk-sh-stage-pip" />
+                  Quorum
+                </span>
+                <span className="zassk-sh-stage" title="Merkle Consistency Proof">
+                  <span className="zassk-sh-stage-pip" />
+                  Ledger
+                </span>
               </div>
             </div>
           </div>

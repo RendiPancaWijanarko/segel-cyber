@@ -513,8 +513,8 @@
         .zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
         .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
-        /* ── Performance Trend Card (AlignUI Cellular Heatmap) ── */
-        .zassk-performance-trend-card {
+        /* ── Security Health Card (Cryptographic Verification Telemetry) ── */
+        .zassk-security-health-card {
           flex: 1;
           padding: 14px 18px;
           border-radius: 24px;
@@ -523,123 +523,106 @@
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          position: relative;
           overflow: hidden;
         }
 
-        .zassk-pt-header {
+        .zassk-sh-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .zassk-pt-title-group {
+        .zassk-sh-title-group {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
         }
 
-        .zassk-pt-badge {
-          font-size: 11px;
-          font-weight: 600;
-          color: #10B981;
-          background: #E8FBF0;
+        .zassk-sh-badge {
+          font-size: 10.5px;
+          font-weight: 700;
+          color: #059669;
+          background: #ECFDF5;
+          border: 1px solid #A7F3D0;
           padding: 1px 7px;
           border-radius: 9999px;
+          letter-spacing: 0.3px;
         }
 
-        .zassk-pt-metric-row {
+        .zassk-sh-metric-row {
           display: flex;
           align-items: baseline;
           justify-content: space-between;
-          margin: 2px 0 4px 0;
+          margin: 1px 0 3px 0;
         }
 
-        .zassk-pt-val {
+        .zassk-sh-metric-val {
           font-size: 24px;
           font-weight: 800;
           color: var(--zassk-navy);
-          letter-spacing: -0.5px;
+          letter-spacing: -0.6px;
+          line-height: 1;
         }
 
-        .zassk-pt-sub {
+        .zassk-sh-metric-sub {
           font-size: 11px;
           color: #64748B;
           font-weight: 500;
-        }
-
-        /* Mini 60-Column Cellular Heatmap Grid */
-        .zassk-pt-grid-wrapper {
-          position: relative;
-          width: 100%;
-          height: 38px;
-          cursor: crosshair;
-        }
-
-        .zassk-pt-grid {
-          display: grid;
-          grid-template-columns: repeat(60, minmax(0, 1fr));
-          gap: 1.5px;
-          height: 100%;
-          align-items: end;
-        }
-
-        .zassk-pt-col {
           display: flex;
-          flex-direction: column;
-          gap: 1.2px;
-          height: 100%;
-          justify-content: flex-end;
+          align-items: center;
+          gap: 4px;
         }
 
-        .zassk-pt-cell {
-          height: 2px;
-          border-radius: 1px;
-        }
-        .zassk-pt-cell.active {
-          background-color: #2563EB;
-        }
-        .zassk-pt-cell.secondary {
-          background-color: #93C5FD;
-        }
-        .zassk-pt-cell.empty {
-          background-color: #F1F5F9;
+        .zassk-sh-dot {
+          color: #CBD5E1;
+          font-size: 10px;
         }
 
-        /* Active Column Guide & Floating Popover */
-        .zassk-pt-crosshair {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          border-left: 1.5px dashed rgba(37, 99, 235, 0.7);
-          pointer-events: none;
-          transition: left 0.08s ease;
-        }
-
-        .zassk-pt-tooltip {
-          position: absolute;
-          top: -30px;
-          transform: translateX(-50%);
-          background: #0F172A;
-          color: #FFFFFF;
-          border-radius: 6px;
-          padding: 2px 8px;
-          font-size: 10.5px;
-          font-weight: 600;
-          white-space: nowrap;
-          pointer-events: none;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-          z-index: 20;
-        }
-
-        .zassk-pt-months {
+        /* 24 Micro Telemetry Verification Frequency Ticks */
+        .zassk-sh-ticks-track {
           display: flex;
+          align-items: flex-end;
+          gap: 2.5px;
+          height: 18px;
+          padding: 1px 0;
+        }
+
+        .zassk-sh-tick-bar {
+          flex: 1;
+          border-radius: 2px;
+          min-height: 4px;
+          transition: transform 0.15s ease, opacity 0.15s ease;
+          cursor: pointer;
+        }
+        .zassk-sh-tick-bar:hover {
+          transform: scaleY(1.2);
+          opacity: 0.85;
+        }
+
+        /* 4-Stage Micro Pipeline Indicators */
+        .zassk-sh-pipeline-row {
+          display: flex;
+          align-items: center;
           justify-content: space-between;
-          font-size: 9.5px;
+          font-size: 10px;
           font-weight: 600;
-          color: #94A3B8;
-          margin-top: 2px;
-          padding: 0 2px;
+          color: #64748B;
+          padding-top: 2px;
+          border-top: 1px solid #F1F5F9;
+        }
+
+        .zassk-sh-stage {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          cursor: default;
+        }
+
+        .zassk-sh-stage-pip {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #10B981;
         }
 
         /* ── Middle Row: Waterfall Needle Chart & User Sources ── */
@@ -1435,34 +1418,35 @@
                     <div class="zassk-dense-ticks-32" id="conversionTicks"></div>
                 </div>
 
-                <!-- Performance Trend Card (Redesigned with AlignUI Cellular Chart) -->
-                <div class="zassk-performance-trend-card">
-                    <div class="zassk-pt-header">
-                        <div class="zassk-pt-title-group">
-                            <span class="zassk-card-title">Performance Trend</span>
-                            <span class="zassk-pt-badge">● Live</span>
+                <!-- Card 2: Security Health (Cryptographic Verification Telemetry) -->
+                <div class="zassk-card zassk-security-health-card">
+                    <div class="zassk-sh-header">
+                        <div class="zassk-sh-title-group">
+                            <span class="zassk-card-title">Security Health</span>
+                            <span class="zassk-sh-badge">● Optimal</span>
                         </div>
-                        <button class="zassk-action-pill-btn" title="Performance Info">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                        <button class="zassk-action-pill-btn" title="Security Details">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
                             </svg>
                         </button>
                     </div>
-                    <div class="zassk-pt-metric-row">
-                        <span class="zassk-pt-val" id="ptMainMetric">15,820</span>
-                        <span class="zassk-pt-sub">+12.4% vs last mo</span>
+                    <div class="zassk-sh-metric-row">
+                        <div class="zassk-sh-metric-val">99.9%</div>
+                        <div class="zassk-sh-metric-sub">
+                            <span>Zero anomalies</span>
+                            <span class="zassk-sh-dot">·</span>
+                            <span style="color: #059669; font-weight: 600;">Air-gapped</span>
+                        </div>
                     </div>
-                    <div class="zassk-pt-grid-wrapper" id="ptGridWrapper">
-                        <div class="zassk-pt-grid" id="ptGrid"></div>
-                        <div class="zassk-pt-crosshair" id="ptCrosshair" style="display: none;"></div>
-                        <div class="zassk-pt-tooltip" id="ptTooltip" style="display: none;"></div>
-                    </div>
-                    <div class="zassk-pt-months">
-                        <span>Jan</span>
-                        <span>Feb</span>
-                        <span>Mar</span>
-                        <span>Apr</span>
-                        <span>May</span>
+                    <!-- 24 Micro Telemetry Verification Frequency Ticks -->
+                    <div class="zassk-sh-ticks-track" id="securityTicksTrack"></div>
+                    <!-- 4-Stage Micro Pipeline Indicators -->
+                    <div class="zassk-sh-pipeline-row">
+                        <span class="zassk-sh-stage" title="Ed25519 Source Provenance"><span class="zassk-sh-stage-pip"></span>Origin</span>
+                        <span class="zassk-sh-stage" title="Static Policy Rules Validation"><span class="zassk-sh-stage-pip"></span>Inspect</span>
+                        <span class="zassk-sh-stage" title="Multi-Signer Quorum Consensus"><span class="zassk-sh-stage-pip"></span>Quorum</span>
+                        <span class="zassk-sh-stage" title="Merkle Consistency Proof"><span class="zassk-sh-stage-pip"></span>Ledger</span>
                     </div>
                 </div>
             </div>
@@ -1984,78 +1968,43 @@
             }
         })();
 
-        // 3. Performance Trend: 60-Column Cellular Heatmap Grid (AlignUI Precision)
-        (function setupPerformanceTrendGrid() {
-            const grid = document.getElementById('ptGrid');
-            const wrapper = document.getElementById('ptGridWrapper');
-            const crosshair = document.getElementById('ptCrosshair');
-            const tooltip = document.getElementById('ptTooltip');
-            const metricEl = document.getElementById('ptMainMetric');
-            if (!grid || !wrapper) return;
-
-            const colsCount = 60;
-            const maxRows = 14;
-            const data = [];
-
-            // Pre-calculate realistic trend distribution (matching AlignUI demo)
-            for (let i = 0; i < colsCount; i++) {
-                const g1 = Math.exp(-Math.pow((i - 22) / 10, 2));
-                const g2 = Math.exp(-Math.pow((i - 48) / 8, 2));
-                const hFrac = 0.2 + 0.55 * g1 + 0.35 * g2 + (Math.sin(i * 0.4) * 0.08);
-                const activeCells = Math.max(2, Math.min(maxRows, Math.round(hFrac * maxRows)));
-                const secondaryCells = Math.min(3, Math.floor(activeCells / 3));
-                const count = Math.round(activeCells * 1250 + (i * 45) + (Math.random() * 200));
-
-                data.push({ activeCells, secondaryCells, count });
-            }
-
-            // Render columns
-            data.forEach((colData, colIdx) => {
-                const col = document.createElement('div');
-                col.className = 'zassk-pt-col';
-                col.dataset.index = colIdx;
-
-                for (let r = 0; r < maxRows; r++) {
-                    const cell = document.createElement('div');
-                    const cellIdxFromBottom = r;
-                    if (cellIdxFromBottom < colData.activeCells - colData.secondaryCells) {
-                        cell.className = 'zassk-pt-cell active';
-                    } else if (cellIdxFromBottom < colData.activeCells) {
-                        cell.className = 'zassk-pt-cell secondary';
-                    } else {
-                        cell.className = 'zassk-pt-cell empty';
-                    }
-                    col.insertBefore(cell, col.firstChild);
-                }
-                grid.appendChild(col);
-            });
-
-            // Hover scrubbing interaction
-            wrapper.addEventListener('mousemove', (e) => {
-                const rect = wrapper.getBoundingClientRect();
-                const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-                const frac = x / rect.width;
-                const colIdx = Math.min(colsCount - 1, Math.floor(frac * colsCount));
-                const current = data[colIdx];
-
-                crosshair.style.display = 'block';
-                crosshair.style.left = `${x}px`;
-
-                tooltip.style.display = 'block';
-                tooltip.style.left = `${x}px`;
-                tooltip.textContent = `${current.count.toLocaleString()} events`;
-
-                if (metricEl) {
-                    metricEl.textContent = current.count.toLocaleString();
-                }
-            });
-
-            wrapper.addEventListener('mouseleave', () => {
-                crosshair.style.display = 'none';
-                tooltip.style.display = 'none';
-                if (metricEl) {
-                    metricEl.textContent = '15,820';
-                }
+        // 3. Security Health: 24 Micro Telemetry Verification Frequency Ticks
+        (function setupSecurityTicks() {
+            const track = document.getElementById('securityTicksTrack');
+            if (!track) return;
+            const ticksData = [
+                { height: 75, color: '#10B981', label: 'Origin: OK (4ms)' },
+                { height: 85, color: '#10B981', label: 'Inspect: OK (6ms)' },
+                { height: 60, color: '#34D399', label: 'Quorum: 3/3 (8ms)' },
+                { height: 90, color: '#10B981', label: 'Ledger: Synced (5ms)' },
+                { height: 100, color: '#059669', label: 'Envelope: DSSE (3ms)' },
+                { height: 70, color: '#10B981', label: 'Attestation: Valid (7ms)' },
+                { height: 80, color: '#38BDF8', label: 'Canary: 100% (12ms)' },
+                { height: 95, color: '#3B82F6', label: 'Rekor: Verified (9ms)' },
+                { height: 65, color: '#38BDF8', label: 'Witness: Active (6ms)' },
+                { height: 85, color: '#2563EB', label: 'Epoch: Current (4ms)' },
+                { height: 100, color: '#2563EB', label: 'Key: Ed25519 (2ms)' },
+                { height: 75, color: '#3B82F6', label: 'Quorum: Consensual (5ms)' },
+                { height: 90, color: '#10B981', label: 'Policy: Zero Reject (3ms)' },
+                { height: 80, color: '#10B981', label: 'Audit: Clean (4ms)' },
+                { height: 60, color: '#34D399', label: 'Sync: Air-Gapped (6ms)' },
+                { height: 95, color: '#10B981', label: 'Origin: Verified (5ms)' },
+                { height: 85, color: '#3B82F6', label: 'Ledger: Recorded (7ms)' },
+                { height: 70, color: '#38BDF8', label: 'Signature: Strict (3ms)' },
+                { height: 90, color: '#2563EB', label: 'Integrity: 100% (4ms)' },
+                { height: 100, color: '#10B981', label: 'Verification: Complete (2ms)' },
+                { height: 80, color: '#10B981', label: 'Node 1: Online (5ms)' },
+                { height: 85, color: '#34D399', label: 'Node 2: Online (4ms)' },
+                { height: 75, color: '#38BDF8', label: 'Node 3: Online (6ms)' },
+                { height: 95, color: '#2563EB', label: 'Gateway: Secure (3ms)' }
+            ];
+            ticksData.forEach(tick => {
+                const bar = document.createElement('div');
+                bar.className = 'zassk-sh-tick-bar';
+                bar.style.height = `${tick.height}%`;
+                bar.style.backgroundColor = tick.color;
+                bar.title = tick.label;
+                track.appendChild(bar);
             });
         })();
 
