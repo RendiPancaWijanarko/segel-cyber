@@ -21,6 +21,9 @@ import { ZasskDashboardProps } from './types';
 import { PerformanceTrend } from '../components/performance-trend/performance-trend';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { WebGPUShaderBackground } from './WebGPUShaderBackground';
+import { TopMetricsRow } from './TopMetricsRow';
+
+export { TopMetricsRow } from './TopMetricsRow';
 
 // ── Tailored Minimalist Icon Component ──
 interface IconProps {
@@ -199,45 +202,6 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const isAllSelected = selectedUserIds.size === mockJoiningUsers.length && mockJoiningUsers.length > 0;
 
-  // 14 Thick Radial Pill Ticks Arc Gauge (Left-to-Right Clockwise Fill)
-  const radialTicks = useMemo(() => {
-    const total = 14;
-    const ticks = [];
-    const cx = 120;
-    const cy = 118;
-    const rOuter = 92;
-    const rInner = 68;
-
-    // Ticks 1-5: Royal Blue, 6-8: Bright Sky Blue, 9-11: Pale Ice Blue, 12-14: Cool Gray
-    const colorProgression = [
-      '#1D4ED8', '#2563EB', '#2563EB', '#2563EB', '#2563EB',
-      '#3B82F6', '#3B82F6', '#60A5FA',
-      '#93C5FD', '#BFDBFE', '#DBEAFE',
-      '#E2E8F0', '#E2E8F0', '#E2E8F0',
-    ];
-
-    for (let i = 0; i < total; i++) {
-      const angleDeg = 180 - (i / (total - 1)) * 180;
-      const rad = (angleDeg * Math.PI) / 180;
-
-      // x = cx + R * cos(rad) ensures i=0 is on the LEFT (-1) and i=13 is on the RIGHT (+1)
-      const x1 = cx + rOuter * Math.cos(rad);
-      const y1 = cy - rOuter * Math.sin(rad);
-      const x2 = cx + rInner * Math.cos(rad);
-      const y2 = cy - rInner * Math.sin(rad);
-
-      ticks.push({
-        id: i,
-        x1,
-        y1,
-        x2,
-        y2,
-        stroke: colorProgression[i],
-      });
-    }
-    return ticks;
-  }, []);
-
   // Full-Width Bezier Spline & Needle Waterfall Lines
   const { splinePoints, needleLines, activePointCoord, splinePathD } = useMemo(() => {
     const width = 530;
@@ -314,25 +278,6 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     const nearestIdx = Math.round(fraction * 6);
     setActiveRevIndex(nearestIdx);
   };
-
-  // Mini Vertical Histogram Heights in px for Total Profit (10 bars on lower shelf)
-  const profitBars = [8, 14, 12, 18, 26, 22, 14, 10, 16, 10];
-
-  // 4-Row x 12-Column Ended Task Dot Matrix (Matching Reference Streak)
-  const endedTaskMatrix = useMemo(() => {
-    const activeIndices: Record<number, number[]> = {
-      0: [9, 10, 11],       // Row 0 (top): Active at 9, 10, 11
-      1: [8, 9, 10],        // Row 1: Active at 8, 9, 10
-      2: [6, 7],            // Row 2: Active at 6, 7
-      3: [4, 5],            // Row 3 (bottom): Active at 4, 5
-    };
-
-    return Array.from({ length: 4 }, (_, r) =>
-      Array.from({ length: 12 }, (_, c) => ({
-        active: activeIndices[r]?.includes(c) ?? false,
-      }))
-    );
-  }, []);
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden">
@@ -429,171 +374,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 2: Total Responses Card with Folder Tab Notch Silhouette & Left-to-Right Radial Arc */}
-          <div className="zassk-card-tabbed-notch">
-            <svg className="zassk-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
-              <path
-                d="M 0,22 C 0,9.8 9.8,0 22,0 L 190,0 C 200,0 208,4 214,8 C 220,12 225,14 234,14 L 278,14 C 290.2,14 300,23.8 300,36 L 300,198 C 300,210.2 290.2,220 278,220 L 22,220 C 9.8,220 0,210.2 0,198 Z"
-                fill="#FFFFFF"
-              />
-            </svg>
-
-            <div className="zassk-tabbed-header">
-              <span className="zassk-card-title">Total Responses</span>
-            </div>
-
-            <div className="zassk-gauge-wrapper-centered">
-              <svg className="zassk-radial-gauge-svg" viewBox="0 0 240 135">
-                {radialTicks.map((tick) => (
-                  <line
-                    key={tick.id}
-                    x1={tick.x1.toFixed(1)}
-                    y1={tick.y1.toFixed(1)}
-                    x2={tick.x2.toFixed(1)}
-                    y2={tick.y2.toFixed(1)}
-                    stroke={tick.stroke}
-                    strokeWidth={7.5}
-                    strokeLinecap="round"
-                  />
-                ))}
-              </svg>
-              {/* Bottom edge aligns flush with bottom edge of arc vector graphic */}
-              <div className="zassk-gauge-center-content">
-                <div className="zassk-gauge-center-val">98%</div>
-                <div className="zassk-gauge-center-label">Responses rate</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Col 3: Interlocking "Total Profit" & "Active Users" Cards */}
-          <div className="zassk-interlock-col">
-            {/* Top Card: Total Profit */}
-            <div className="zassk-interlock-card zassk-tp-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
-                <path
-                  d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,96 C 300,103.7 293.7,110 286,110 L 250,110 C 240,110 234,105 228,100 C 222,96 216,96 208,96 L 14,96 C 6.3,96 0,89.7 0,82 Z"
-                  fill="#FFFFFF"
-                />
-              </svg>
-              <div className="zassk-tp-inner">
-                <div className="zassk-tp-header">
-                  <span className="zassk-card-title">Total Profit</span>
-                  <button className="zassk-tp-arrow-btn" aria-label="View Profit">
-                    <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
-                  </button>
-                </div>
-                <div className="zassk-tp-body">
-                  <div className="zassk-metric-big">$63k</div>
-                  {/* 10 vertical rounded mini histogram bars on lower shelf */}
-                  <div className="zassk-mini-barchart">
-                    {profitBars.map((heightPx, i) => (
-                      <div
-                        key={i}
-                        className="zassk-mini-bar"
-                        style={{
-                          height: `${heightPx}px`,
-                          backgroundColor: i >= 3 && i <= 5 ? '#2563EB' : '#93C5FD',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Card: Active Users */}
-            <div className="zassk-interlock-card zassk-au-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
-                <path
-                  d="M 0,14 C 0,6.3 6.3,0 14,0 L 208,0 C 216,0 222,0 228,4 C 234,9 240,14 250,14 L 286,14 C 293.7,14 300,20.3 300,28 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
-                  fill="#FFFFFF"
-                />
-              </svg>
-              <div className="zassk-au-inner">
-                <div className="zassk-au-header">
-                  <span className="zassk-card-title">Active Users</span>
-                  <div className="zassk-au-split-labels">
-                    <span>75%</span>
-                    <span className="zassk-au-sep">|</span>
-                    <span>25%</span>
-                    <span className="zassk-au-sep">|</span>
-                    <span>10%</span>
-                  </div>
-                </div>
-                <div className="zassk-au-body">
-                  <div className="zassk-metric-big">150</div>
-                  <div className="zassk-split-bar">
-                    <div className="zassk-split-seg-1" title="Primary users (75%)" />
-                    <div className="zassk-split-seg-2" title="Secondary users (25%)" />
-                    <div className="zassk-split-seg-3" title="Guest users (10%)" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Col 4: Interlocking "Conversion Rate" & "Ended Task" Cards */}
-          <div className="zassk-interlock-col">
-            {/* Top Card: Conversion Rate */}
-            <div className="zassk-interlock-card zassk-cr-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
-                <path
-                  d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,82 C 300,89.7 293.7,96 286,96 L 92,96 C 84,96 78,96 72,100 C 66,105 60,110 50,110 L 14,110 C 6.3,110 0,103.7 0,96 Z"
-                  fill="#FFFFFF"
-                />
-              </svg>
-              <div className="zassk-cr-inner">
-                <div className="zassk-cr-header">
-                  <span className="zassk-card-title">Conversion Rate</span>
-                  <button className="zassk-tp-arrow-btn" aria-label="View Conversion">
-                    <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
-                  </button>
-                </div>
-                <div className="zassk-metric-big" style={{ margin: '2px 0 4px 0' }}>
-                  75%
-                </div>
-                {/* 32 micro vertical tick bars */}
-                <div className="zassk-dense-ticks-32">
-                  {Array.from({ length: 32 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Card: Ended Task (Restored Reference Design) */}
-            <div className="zassk-interlock-card zassk-et-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
-                <path
-                  d="M 0,28 C 0,20.3 6.3,14 14,14 L 50,14 C 60,14 66,9 72,4 C 78,0 84,0 92,0 L 286,0 C 293.7,0 300,6.3 300,14 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
-                  fill="#FFFFFF"
-                />
-              </svg>
-              <div className="zassk-et-inner">
-                <div className="zassk-et-title">Ended Task</div>
-                <div className="zassk-et-body">
-                  <div className="zassk-et-val">80</div>
-                  {/* 4-Row x 12-Column Dot Matrix Grid */}
-                  <div className="zassk-et-matrix" role="img" aria-label="Ended Task Matrix">
-                    {endedTaskMatrix.map((row, rIdx) => (
-                      <div key={rIdx} className="zassk-et-matrix-row">
-                        {row.map((dot, cIdx) => (
-                          <div key={cIdx} className="zassk-et-cell">
-                            <div
-                              className={`zassk-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Verified Top Metrics Row (256px Baseline: Total Responses, Interlocking Profit/Users, Conversion Rate & Ended Task) */}
+          <TopMetricsRow />
         </div>
 
         {/* ── 3. MIDDLE ROW: WATERFALL NEEDLE CHART & USER SOURCES ── */}
