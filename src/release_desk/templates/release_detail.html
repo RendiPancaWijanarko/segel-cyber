@@ -5,12 +5,18 @@
 
 {% block content %}
 <div class="page-header">
-    <div style="display:flex; align-items:center; gap:12px;">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
         <h1>{{ release.release_id }}</h1>
         {% if release.status == 'CANDIDATE_RECORDED' %}
-            <span class="badge badge-blue">{{ release.status }}</span>
+            <span class="badge badge-blue">
+                <i data-lucide="info" class="icon-16 text-info"></i>
+                {{ release.status }}
+            </span>
         {% elif release.status == 'PROMOTED' %}
-            <span class="badge badge-green">{{ release.status }}</span>
+            <span class="badge badge-green">
+                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                {{ release.status }}
+            </span>
         {% else %}
             <span class="badge badge-muted">{{ release.status }}</span>
         {% endif %}
@@ -20,7 +26,7 @@
 
 {% if success %}
 <div class="alert alert-success">
-    <span>✔</span>
+    <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
         <strong>Release pipeline completed successfully.</strong>
         All 5 stamps have been applied: Origin, Inspect, Approve, Record.
@@ -32,32 +38,44 @@
 <!-- 5-Stamp Pipeline Status -->
 <div class="card">
     <div class="card-header">
-        <h2>5-Stamp Verification Status</h2>
+        <h2>
+            <i data-lucide="shield-check" class="icon-20 text-accent"></i>
+            5-Stamp Verification Status
+        </h2>
     </div>
     <div class="stamp-pipeline" style="justify-content:center; padding: 12px 0;">
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">🏭</span> Origin
-            <span style="font-size:10px; margin-left:4px;">✓</span>
+            <i data-lucide="factory" class="icon-16 text-success"></i>
+            <span>Origin</span>
+            <i data-lucide="check-circle-2" class="icon-16 text-success" style="margin-left:2px;"></i>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-{% if release.verdict == 'PASS' %}valid{% elif release.verdict == 'WARN' %}warn{% else %}invalid{% endif %}">
-            <span class="stamp-icon">🔍</span> Inspect
-            <span style="font-size:10px; margin-left:4px;">{{ release.verdict }}</span>
+            <i data-lucide="search-check" class="icon-16 {% if release.verdict == 'PASS' %}text-success{% elif release.verdict == 'WARN' %}text-warning{% else %}text-danger{% endif %}"></i>
+            <span>Inspect</span>
+            <span style="font-size:11px; margin-left:4px; font-weight:700;">{{ release.verdict }}</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">✅</span> Approve
-            <span style="font-size:10px; margin-left:4px;">{{ release.approvals }}/2</span>
+            <i data-lucide="user-check" class="icon-16 text-success"></i>
+            <span>Approve</span>
+            <span style="font-size:11px; margin-left:4px; font-weight:700;">{{ release.approvals }}/2</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">📜</span> Record
-            <span style="font-size:10px; margin-left:4px;">#{{ release.ledger_index }}</span>
+            <i data-lucide="database" class="icon-16 text-success"></i>
+            <span>Record</span>
+            <span style="font-size:11px; margin-left:4px; font-weight:700;">#{{ release.ledger_index }}</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-{% if release.canary_receipts %}valid{% else %}pending{% endif %}">
-            <span class="stamp-icon">🧪</span> Test
-            <span style="font-size:10px; margin-left:4px;">{% if release.canary_receipts %}✓{% else %}pending{% endif %}</span>
+            <i data-lucide="flask-conical" class="icon-16 {% if release.canary_receipts %}text-success{% else %}text-muted{% endif %}"></i>
+            <span>Test</span>
+            {% if release.canary_receipts %}
+                <i data-lucide="check-circle-2" class="icon-16 text-success" style="margin-left:2px;"></i>
+            {% else %}
+                <span style="font-size:11px; margin-left:4px; color:var(--text-muted);">pending</span>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -66,7 +84,10 @@
 <div class="detail-grid">
     <div class="card">
         <div class="card-header">
-            <h2>Release Identity</h2>
+            <h2>
+                <i data-lucide="shield" class="icon-20 text-neutral"></i>
+                Release Identity
+            </h2>
         </div>
         <div class="detail-item">
             <div class="detail-label">Release ID</div>
@@ -82,21 +103,24 @@
         </div>
         <div class="detail-item" style="margin-top:12px;">
             <div class="detail-label">Timestamp</div>
-            <div class="detail-value" style="font-size:12px;">{{ release.timestamp }}</div>
+            <div class="detail-value" style="font-size:13px;">{{ release.timestamp }}</div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h2>Cryptographic Binding</h2>
+            <h2>
+                <i data-lucide="key-round" class="icon-20 text-neutral"></i>
+                Cryptographic Binding
+            </h2>
         </div>
         <div class="detail-item">
             <div class="detail-label">Manifest SHA-256</div>
-            <div class="detail-value" style="word-break:break-all;">{{ release.manifest_digest }}</div>
+            <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ release.manifest_digest }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
             <div class="detail-label">Package SHA-256</div>
-            <div class="detail-value" style="word-break:break-all;">{{ release.package_digest }}</div>
+            <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ release.package_digest }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
             <div class="detail-label">Ledger Index</div>
@@ -108,45 +132,73 @@
 <!-- Inspection Results -->
 <div class="card">
     <div class="card-header">
-        <h2>🔍 Inspection Results</h2>
+        <h2>
+            <i data-lucide="search-check" class="icon-20 text-neutral"></i>
+            Inspection Results
+        </h2>
         {% if release.verdict == 'PASS' %}
-            <span class="badge badge-green">{{ release.verdict }}</span>
+            <span class="badge badge-green">
+                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                {{ release.verdict }}
+            </span>
         {% elif release.verdict == 'WARN' %}
-            <span class="badge badge-yellow">{{ release.verdict }}</span>
+            <span class="badge badge-yellow">
+                <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+                {{ release.verdict }}
+            </span>
         {% else %}
-            <span class="badge badge-red">{{ release.verdict }}</span>
+            <span class="badge badge-red">
+                <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                {{ release.verdict }}
+            </span>
         {% endif %}
     </div>
 
     <div class="detail-grid">
         <div>
-            <h3 style="font-size:14px; margin-bottom:8px; color:var(--text-muted);">Detected Capabilities ({{ release.capabilities }})</h3>
+            <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                <i data-lucide="cpu" class="icon-16 text-purple"></i>
+                Detected Capabilities ({{ release.capabilities }})
+            </h3>
             {% if release.inspection %}
                 {% for cap in release.inspection.capabilities %}
-                <div style="padding:4px 0; font-size:13px;">
+                <div style="padding:6px 0; font-size:13px; display:flex; align-items:center; gap:8px;">
                     <span class="badge badge-purple">{{ cap.capability }}</span>
-                    <span class="hash" style="margin-left:8px;">{{ cap.file }}:{{ cap.line }}</span>
+                    <span class="hash">{{ cap.file }}:{{ cap.line }}</span>
                 </div>
                 {% endfor %}
             {% endif %}
         </div>
         <div>
-            <h3 style="font-size:14px; margin-bottom:8px; color:var(--text-muted);">Findings ({{ release.findings }})</h3>
+            <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                <i data-lucide="file-text" class="icon-16 text-neutral"></i>
+                Findings ({{ release.findings }})
+            </h3>
             {% if release.inspection %}
                 {% for finding in release.inspection.deterministic_findings %}
-                <div style="padding:4px 0; font-size:13px;">
+                <div style="padding:6px 0; font-size:13px; display:flex; align-items:flex-start; gap:8px;">
                     {% if finding.severity == 'REJECT' %}
-                        <span class="badge badge-red">{{ finding.severity }}</span>
+                        <span class="badge badge-red">
+                            <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                            {{ finding.severity }}
+                        </span>
                     {% elif finding.severity == 'WARN' %}
-                        <span class="badge badge-yellow">{{ finding.severity }}</span>
+                        <span class="badge badge-yellow">
+                            <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+                            {{ finding.severity }}
+                        </span>
                     {% else %}
-                        <span class="badge badge-green">{{ finding.severity }}</span>
+                        <span class="badge badge-green">
+                            <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                            {{ finding.severity }}
+                        </span>
                     {% endif %}
-                    <span style="margin-left:8px;">{{ finding.rule_id }}: {{ finding.message }}</span>
+                    <span style="color:var(--text-secondary); margin-top:2px;">{{ finding.rule_id }}: {{ finding.message }}</span>
                 </div>
                 {% endfor %}
                 {% if not release.inspection.deterministic_findings %}
-                <div style="padding:4px 0; font-size:13px; color:var(--text-muted);">
+                <div style="padding:6px 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                    <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
                     No findings — all policy checks passed.
                 </div>
                 {% endif %}
@@ -154,7 +206,7 @@
         </div>
     </div>
 
-    <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+    <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
         <div class="detail-grid">
             <div class="detail-item">
                 <div class="detail-label">AI Advisory</div>
@@ -173,11 +225,17 @@
 <!-- Approval Details -->
 <div class="card">
     <div class="card-header">
-        <h2>✅ Approval Status</h2>
-        <span class="badge badge-green">{{ release.approvals }}/2 threshold met</span>
+        <h2>
+            <i data-lucide="user-check" class="icon-20 text-neutral"></i>
+            Approval Status
+        </h2>
+        <span class="badge badge-green">
+            <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+            {{ release.approvals }}/2 threshold met
+        </span>
     </div>
     <div class="alert alert-info" style="margin-bottom:0;">
-        <span>ℹ️</span>
+        <i data-lucide="info" class="icon-16 text-info"></i>
         <div>
             <strong>2-of-3 approval threshold</strong> with per-group minimums (group-0: 1, group-1: 1).
             Author key is excluded from the approval count (conflict-of-interest rule, AT-008).
@@ -188,7 +246,7 @@
 <!-- Canary Deployment -->
 {% if canary_success %}
 <div class="alert alert-success">
-    <span>✔</span>
+    <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
         <strong>Canary deployment successful!</strong>
         Both canary units deployed and reported healthy.
@@ -199,39 +257,53 @@
 {% if release.canary_receipts %}
 <div class="card">
     <div class="card-header">
-        <h2>🧪 Canary Deployment Results</h2>
-        <span class="badge badge-green">{{ release.canary_receipts|length }} units</span>
+        <h2>
+            <i data-lucide="flask-conical" class="icon-20 text-neutral"></i>
+            Canary Deployment Results
+        </h2>
+        <span class="badge badge-green">
+            <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+            {{ release.canary_receipts|length }} units
+        </span>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Unit ID</th>
-                <th>Result</th>
-                <th>Health Probes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cr in release.canary_receipts %}
-            <tr>
-                <td><strong>{{ cr.unit_id }}</strong></td>
-                <td>
-                    {% if cr.overall_result == 'healthy' %}
-                        <span class="badge badge-green">{{ cr.overall_result }}</span>
-                    {% else %}
-                        <span class="badge badge-red">{{ cr.overall_result }}</span>
-                    {% endif %}
-                </td>
-                <td>{{ cr.health_results|length }} probes</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Unit ID</th>
+                    <th>Result</th>
+                    <th>Health Probes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cr in release.canary_receipts %}
+                <tr>
+                    <td><strong>{{ cr.unit_id }}</strong></td>
+                    <td>
+                        {% if cr.overall_result == 'healthy' %}
+                            <span class="badge badge-green">
+                                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                                {{ cr.overall_result }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-red">
+                                <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                                {{ cr.overall_result }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td><span class="mono">{{ cr.health_results|length }} probes</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endif %}
 
 {% if promotion_success %}
 <div class="alert alert-success">
-    <span>✔</span>
+    <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
         <strong>Release promoted to general!</strong>
         All promotion criteria met. General Release Passport assembled.
@@ -241,7 +313,7 @@
 
 {% if promotion_failed %}
 <div class="alert alert-error">
-    <span>✕</span>
+    <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
     <div>
         <strong>Promotion failed:</strong> {{ release.promotion_reason }}
     </div>
@@ -251,11 +323,20 @@
 {% if release.promotion_result %}
 <div class="card">
     <div class="card-header">
-        <h2>📊 Promotion Result</h2>
+        <h2>
+            <i data-lucide="bar-chart-3" class="icon-20 text-neutral"></i>
+            Promotion Result
+        </h2>
         {% if release.promotion_result.promoted %}
-            <span class="badge badge-green">PROMOTED</span>
+            <span class="badge badge-green">
+                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                PROMOTED
+            </span>
         {% else %}
-            <span class="badge badge-red">BLOCKED</span>
+            <span class="badge badge-red">
+                <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                BLOCKED
+            </span>
         {% endif %}
     </div>
     <div class="detail-grid">
@@ -274,15 +355,22 @@
 <!-- Actions -->
 <div class="card">
     <div class="card-header">
-        <h2>Actions</h2>
+        <h2>
+            <i data-lucide="activity" class="icon-20 text-neutral"></i>
+            Actions
+        </h2>
     </div>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+        <a href="/" class="btn btn-secondary">
+            <i data-lucide="arrow-left" class="icon-16"></i>
+            Back to Dashboard
+        </a>
 
         {% if release.status == 'CANDIDATE_RECORDED' %}
         <form action="/release/{{ idx }}/deploy-canary" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
-                🧪 Deploy to Canaries
+                <i data-lucide="flask-conical" class="icon-16"></i>
+                Deploy to Canaries
             </button>
         </form>
         {% endif %}
@@ -290,13 +378,16 @@
         {% if release.status == 'CANARY_DEPLOYED' %}
         <form action="/release/{{ idx }}/promote" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
-                ⬆ Promote to General
+                <i data-lucide="arrow-up-right" class="icon-16"></i>
+                Promote to General
             </button>
         </form>
         {% endif %}
 
-        <a href="/release/new" class="btn btn-secondary">+ New Release</a>
+        <a href="/release/new" class="btn btn-secondary">
+            <i data-lucide="plus" class="icon-16"></i>
+            New Release
+        </a>
     </div>
 </div>
 {% endblock %}
-

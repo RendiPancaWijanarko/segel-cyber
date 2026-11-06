@@ -10,7 +10,7 @@
 </div>
 
 <div class="alert alert-info">
-    <span>ℹ️</span>
+    <i data-lucide="info" class="icon-16 text-info"></i>
     <div>
         <strong>MVP Demo:</strong> This form creates a synthetic release with demo configuration files
         and runs the full pipeline automatically: Build → Sign → Inspect → Approve → Record.
@@ -20,7 +20,10 @@
 
 <div class="card">
     <div class="card-header">
-        <h2>Release Details</h2>
+        <h2>
+            <i data-lucide="plus-circle" class="icon-20 text-neutral"></i>
+            Release Details
+        </h2>
     </div>
 
     <form action="/release/create" method="post">
@@ -68,32 +71,40 @@
             </div>
         </div>
 
-        <div style="border-top:1px solid var(--border); padding-top:16px; margin-top:8px;">
-            <h3 style="font-size:14px; margin-bottom:12px; color:var(--text-muted);">Pipeline Preview</h3>
-            <div class="stamp-pipeline" style="margin-bottom:16px;">
+        <div style="border-top:1px solid var(--border); padding-top:18px; margin-top:10px;">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                <i data-lucide="activity" class="icon-16 text-accent"></i>
+                Pipeline Preview
+            </h3>
+            <div class="stamp-pipeline" style="margin-bottom:18px;">
                 <div class="stamp stamp-pending">
-                    <span class="stamp-icon">📦</span> Create Bundle
+                    <i data-lucide="package" class="icon-16"></i>
+                    <span>Create Bundle</span>
                 </div>
-                <span class="stamp-arrow">→</span>
+                <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
-                    <span class="stamp-icon">🏭</span> Build + Origin
+                    <i data-lucide="factory" class="icon-16"></i>
+                    <span>Build + Origin</span>
                 </div>
-                <span class="stamp-arrow">→</span>
+                <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
-                    <span class="stamp-icon">🔍</span> Inspect
+                    <i data-lucide="search-check" class="icon-16"></i>
+                    <span>Inspect</span>
                 </div>
-                <span class="stamp-arrow">→</span>
+                <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
-                    <span class="stamp-icon">✅</span> Approve (2-of-3)
+                    <i data-lucide="user-check" class="icon-16"></i>
+                    <span>Approve (2-of-3)</span>
                 </div>
-                <span class="stamp-arrow">→</span>
+                <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
-                    <span class="stamp-icon">📜</span> Record in Ledger
+                    <i data-lucide="database" class="icon-16"></i>
+                    <span>Record in Ledger</span>
                 </div>
             </div>
 
-            <div class="alert alert-warning" style="margin-bottom:16px;">
-                <span>⚠️</span>
+            <div class="alert alert-warning" style="margin-bottom:18px;">
+                <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
                 <div>
                     <strong>Security note:</strong> In the MVP demo, signing keys are synthetic and
                     all operations happen in-process. In production, the Author Signer, Inspector Signer,
@@ -101,11 +112,11 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
-                🚀 Create Release &amp; Run Pipeline
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
+                <i data-lucide="play" class="icon-16"></i>
+                Create Release &amp; Run Pipeline
             </button>
         </div>
     </form>
 </div>
 {% endblock %}
-

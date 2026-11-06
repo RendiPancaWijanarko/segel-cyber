@@ -12,95 +12,143 @@
 <!-- 5-Stamp Pipeline Overview -->
 <div class="card">
     <div class="card-header">
-        <h2>5-Stamp Verification Pipeline</h2>
-        <span class="badge badge-blue">{{ releases|length }} release{{ 's' if releases|length != 1 else '' }}</span>
+        <h2>
+            <i data-lucide="shield-check" class="icon-20 text-accent"></i>
+            5-Stamp Verification Pipeline
+        </h2>
+        <span class="badge badge-blue">
+            <i data-lucide="package" class="icon-16"></i>
+            {{ releases|length }} release{{ 's' if releases|length != 1 else '' }}
+        </span>
     </div>
-    <div class="stamp-pipeline" style="justify-content:center; padding: 8px 0;">
+    <div class="stamp-pipeline" style="justify-content:center; padding: 12px 0;">
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">🏭</span> Origin
+            <i data-lucide="factory" class="icon-16 text-success"></i>
+            <span>Origin</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">🔍</span> Inspect
+            <i data-lucide="search-check" class="icon-16 text-success"></i>
+            <span>Inspect</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">✅</span> Approve
+            <i data-lucide="user-check" class="icon-16 text-success"></i>
+            <span>Approve</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">📜</span> Record
+            <i data-lucide="database" class="icon-16 text-success"></i>
+            <span>Record</span>
         </div>
-        <span class="stamp-arrow">→</span>
+        <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
-            <span class="stamp-icon">🧪</span> Test
+            <i data-lucide="flask-conical" class="icon-16 text-success"></i>
+            <span>Test</span>
         </div>
     </div>
-    <p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:8px;">
-        Every release must carry all five independently verifiable security stamps.
+    <p style="text-align:center; color:var(--text-muted); font-size:12.5px; margin-top:10px;">
+        Every release must carry all five independently verifiable cryptographic security stamps before deployment.
     </p>
 </div>
 
 <!-- Releases Table -->
 <div class="card">
     <div class="card-header">
-        <h2>Releases</h2>
-        <a href="/release/new" class="btn btn-primary">+ New Release</a>
+        <h2>
+            <i data-lucide="package" class="icon-20 text-neutral"></i>
+            Releases
+        </h2>
+        <a href="/release/new" class="btn btn-primary">
+            <i data-lucide="plus" class="icon-16"></i>
+            New Release
+        </a>
     </div>
 
     {% if releases %}
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Release ID</th>
-                <th>Seq</th>
-                <th>Status</th>
-                <th>Verdict</th>
-                <th>Caps</th>
-                <th>Approvals</th>
-                <th>Manifest</th>
-                <th>Created</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for rel in releases %}
-            <tr>
-                <td><a href="/release/{{ loop.index0 }}">{{ loop.index0 }}</a></td>
-                <td><a href="/release/{{ loop.index0 }}"><strong>{{ rel.release_id }}</strong></a></td>
-                <td>{{ rel.sequence }}</td>
-                <td>
-                    {% if rel.status == 'CANDIDATE_RECORDED' %}
-                        <span class="badge badge-blue">{{ rel.status }}</span>
-                    {% elif rel.status == 'PROMOTED' %}
-                        <span class="badge badge-green">{{ rel.status }}</span>
-                    {% elif rel.status == 'REJECTED' %}
-                        <span class="badge badge-red">{{ rel.status }}</span>
-                    {% else %}
-                        <span class="badge badge-muted">{{ rel.status }}</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if rel.verdict == 'PASS' %}
-                        <span class="badge badge-green">PASS</span>
-                    {% elif rel.verdict == 'WARN' %}
-                        <span class="badge badge-yellow">WARN</span>
-                    {% else %}
-                        <span class="badge badge-red">{{ rel.verdict }}</span>
-                    {% endif %}
-                </td>
-                <td>{{ rel.capabilities }}</td>
-                <td>{{ rel.approvals }}/2</td>
-                <td><code class="hash">{{ rel.manifest_digest }}</code></td>
-                <td style="font-size:12px; color:var(--text-muted);">{{ rel.timestamp[:19] if rel.timestamp else '—' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Release ID</th>
+                    <th>Seq</th>
+                    <th>Status</th>
+                    <th>Verdict</th>
+                    <th>Caps</th>
+                    <th>Approvals</th>
+                    <th>Manifest</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rel in releases %}
+                <tr>
+                    <td><a href="/release/{{ loop.index0 }}">{{ loop.index0 }}</a></td>
+                    <td>
+                        <a href="/release/{{ loop.index0 }}" style="display:inline-flex; align-items:center; gap:6px;">
+                            <strong>{{ rel.release_id }}</strong>
+                        </a>
+                    </td>
+                    <td><span class="mono">{{ rel.sequence }}</span></td>
+                    <td>
+                        {% if rel.status == 'CANDIDATE_RECORDED' %}
+                            <span class="badge badge-blue">
+                                <i data-lucide="info" class="icon-16 text-info"></i>
+                                {{ rel.status }}
+                            </span>
+                        {% elif rel.status == 'PROMOTED' %}
+                            <span class="badge badge-green">
+                                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                                {{ rel.status }}
+                            </span>
+                        {% elif rel.status == 'REJECTED' %}
+                            <span class="badge badge-red">
+                                <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                                {{ rel.status }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-muted">{{ rel.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if rel.verdict == 'PASS' %}
+                            <span class="badge badge-green">
+                                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                                PASS
+                            </span>
+                        {% elif rel.verdict == 'WARN' %}
+                            <span class="badge badge-yellow">
+                                <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+                                WARN
+                            </span>
+                        {% else %}
+                            <span class="badge badge-red">
+                                <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
+                                {{ rel.verdict }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge badge-purple">{{ rel.capabilities }}</span></td>
+                    <td>
+                        <span class="badge badge-muted">
+                            <i data-lucide="user-check" class="icon-16 text-neutral"></i>
+                            {{ rel.approvals }}/2
+                        </span>
+                    </td>
+                    <td><code class="hash">{{ rel.manifest_digest }}</code></td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ rel.timestamp[:19] if rel.timestamp else '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <div style="text-align:center; padding:40px 0; color:var(--text-muted);">
-        <p style="font-size:32px; margin-bottom:8px;">📦</p>
-        <p>No releases yet. <a href="/release/new">Create your first release</a> to start the pipeline.</p>
+    <div style="text-align:center; padding:48px 0; color:var(--text-muted);">
+        <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:12px; background:var(--surface-subtle); margin-bottom:12px; border:1px solid var(--border);">
+            <i data-lucide="package-search" class="icon-20 text-muted" style="width:28px!important; height:28px!important;"></i>
+        </div>
+        <p style="font-size:14px; font-weight:500;">No releases yet. <a href="/release/new">Create your first release</a> to start the pipeline.</p>
     </div>
     {% endif %}
 </div>
@@ -108,8 +156,14 @@
 <!-- Ledger Summary -->
 <div class="card">
     <div class="card-header">
-        <h2>Transparency Ledger</h2>
-        <a href="/ledger" class="btn btn-secondary">View Ledger →</a>
+        <h2>
+            <i data-lucide="database" class="icon-20 text-neutral"></i>
+            Transparency Ledger
+        </h2>
+        <a href="/ledger" class="btn btn-secondary">
+            View Ledger
+            <i data-lucide="arrow-right" class="icon-16"></i>
+        </a>
     </div>
     <div class="detail-grid">
         <div class="detail-item">
@@ -122,6 +176,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
-

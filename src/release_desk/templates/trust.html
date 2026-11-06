@@ -10,7 +10,7 @@
 </div>
 
 <div class="alert alert-warning">
-    <span>⚠️</span>
+    <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
     <div>
         <strong>MVP Demo Keys:</strong> These are synthetic Ed25519 keys generated at startup.
         In production, keys are distributed out-of-band through secure provisioning.
@@ -22,8 +22,14 @@
 <div class="detail-grid">
     <div class="card">
         <div class="card-header">
-            <h2>Trust Root</h2>
-            <span class="badge badge-green">v{{ root_version }}</span>
+            <h2>
+                <i data-lucide="shield" class="icon-20 text-neutral"></i>
+                Trust Root
+            </h2>
+            <span class="badge badge-green">
+                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                v{{ root_version }}
+            </span>
         </div>
         <div class="detail-item">
             <div class="detail-label">Root Version</div>
@@ -37,8 +43,14 @@
 
     <div class="card">
         <div class="card-header">
-            <h2>Verification Policy</h2>
-            <span class="badge badge-blue">v{{ policy_version }}</span>
+            <h2>
+                <i data-lucide="file-text" class="icon-20 text-neutral"></i>
+                Verification Policy
+            </h2>
+            <span class="badge badge-blue">
+                <i data-lucide="info" class="icon-16 text-info"></i>
+                v{{ policy_version }}
+            </span>
         </div>
         <div class="detail-item">
             <div class="detail-label">Policy Version</div>
@@ -54,115 +66,140 @@
 <!-- Key Registry -->
 <div class="card">
     <div class="card-header">
-        <h2>Key Registry</h2>
-        <span class="badge badge-muted">{{ keys|length }} keys</span>
+        <h2>
+            <i data-lucide="key-round" class="icon-20 text-neutral"></i>
+            Key Registry
+        </h2>
+        <span class="badge badge-muted">
+            <i data-lucide="key-round" class="icon-16"></i>
+            {{ keys|length }} keys
+        </span>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Key ID (truncated)</th>
-                <th>Role</th>
-                <th>Group</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for key in keys %}
-            <tr>
-                <td><code class="hash">{{ key.key_id }}</code></td>
-                <td>
-                    {% if key.role == 'author' %}
-                        <span class="badge badge-blue">{{ key.role }}</span>
-                    {% elif key.role == 'builder' %}
-                        <span class="badge badge-purple">{{ key.role }}</span>
-                    {% elif key.role == 'inspector_signer' %}
-                        <span class="badge badge-yellow">{{ key.role }}</span>
-                    {% elif key.role == 'approver' %}
-                        <span class="badge badge-green">{{ key.role }}</span>
-                    {% elif key.role == 'ledger' %}
-                        <span class="badge badge-muted">{{ key.role }}</span>
-                    {% elif key.role == 'witness' %}
-                        <span class="badge badge-purple">{{ key.role }}</span>
-                    {% elif key.role == 'receiver' %}
-                        <span class="badge badge-blue">{{ key.role }}</span>
-                    {% else %}
-                        <span class="badge badge-muted">{{ key.role }}</span>
-                    {% endif %}
-                </td>
-                <td><code style="font-size:12px;">{{ key.group }}</code></td>
-                <td>
-                    {% if key.status == 'active' %}
-                        <span style="color:var(--green);">● active</span>
-                    {% elif key.status == 'revoked' %}
-                        <span style="color:var(--red);">● revoked</span>
-                    {% else %}
-                        <span style="color:var(--text-muted);">● {{ key.status }}</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Key ID (truncated)</th>
+                    <th>Role</th>
+                    <th>Group</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key in keys %}
+                <tr>
+                    <td><code class="hash">{{ key.key_id }}</code></td>
+                    <td>
+                        {% if key.role == 'author' %}
+                            <span class="badge badge-blue">{{ key.role }}</span>
+                        {% elif key.role == 'builder' %}
+                            <span class="badge badge-purple">{{ key.role }}</span>
+                        {% elif key.role == 'inspector_signer' %}
+                            <span class="badge badge-yellow">{{ key.role }}</span>
+                        {% elif key.role == 'approver' %}
+                            <span class="badge badge-green">{{ key.role }}</span>
+                        {% elif key.role == 'ledger' %}
+                            <span class="badge badge-muted">{{ key.role }}</span>
+                        {% elif key.role == 'witness' %}
+                            <span class="badge badge-purple">{{ key.role }}</span>
+                        {% elif key.role == 'receiver' %}
+                            <span class="badge badge-blue">{{ key.role }}</span>
+                        {% else %}
+                            <span class="badge badge-muted">{{ key.role }}</span>
+                        {% endif %}
+                    </td>
+                    <td><code style="font-size:12px;">{{ key.group }}</code></td>
+                    <td>
+                        {% if key.status == 'active' %}
+                            <span style="color:var(--green); display:inline-flex; align-items:center; gap:6px; font-weight:600;">
+                                <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+                                active
+                            </span>
+                        {% elif key.status == 'revoked' %}
+                            <span style="color:var(--red); display:inline-flex; align-items:center; gap:6px; font-weight:600;">
+                                <i data-lucide="ban" class="icon-16 text-danger"></i>
+                                revoked
+                            </span>
+                        {% else %}
+                            <span style="color:var(--text-muted); display:inline-flex; align-items:center; gap:6px;">
+                                <i data-lucide="circle" class="icon-16 text-muted"></i>
+                                {{ key.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Role Thresholds -->
 <div class="card">
     <div class="card-header">
-        <h2>Role Thresholds</h2>
+        <h2>
+            <i data-lucide="user-check" class="icon-20 text-neutral"></i>
+            Role Thresholds
+        </h2>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Role</th>
-                <th>Threshold</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><span class="badge badge-blue">author</span></td>
-                <td>1</td>
-                <td>Single author signs the manifest</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-purple">builder</span></td>
-                <td>1</td>
-                <td>Single builder produces Origin provenance</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-yellow">inspector_signer</span></td>
-                <td>1</td>
-                <td>Single inspector signer issues Inspect attestation</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-green">approver</span></td>
-                <td>2</td>
-                <td>2-of-3 with per-group minimums (group-0: 1, group-1: 1). Author excluded.</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-muted">ledger</span></td>
-                <td>1</td>
-                <td>Single ledger signer signs checkpoints</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-purple">witness</span></td>
-                <td>1</td>
-                <td>Single witness cosigns checkpoints</td>
-            </tr>
-            <tr>
-                <td><span class="badge badge-blue">receiver</span></td>
-                <td>1</td>
-                <td>Each receiver has its own identity for deployment receipts</td>
-            </tr>
-        </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Threshold</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-blue">author</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Single author signs the manifest</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-purple">builder</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Single builder produces Origin provenance</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-yellow">inspector_signer</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Single inspector signer issues Inspect attestation</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-green">approver</span></td>
+                    <td><span class="mono">2</span></td>
+                    <td>2-of-3 with per-group minimums (group-0: 1, group-1: 1). Author excluded.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-muted">ledger</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Single ledger signer signs checkpoints</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-purple">witness</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Single witness cosigns checkpoints</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-blue">receiver</span></td>
+                    <td><span class="mono">1</span></td>
+                    <td>Each receiver has its own identity for deployment receipts</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Cryptographic Standards -->
 <div class="card">
     <div class="card-header">
-        <h2>Cryptographic Standards</h2>
+        <h2>
+            <i data-lucide="shield-check" class="icon-20 text-neutral"></i>
+            Cryptographic Standards
+        </h2>
     </div>
     <div class="detail-grid">
         <div class="detail-item">
@@ -192,4 +229,3 @@
     </div>
 </div>
 {% endblock %}
-
