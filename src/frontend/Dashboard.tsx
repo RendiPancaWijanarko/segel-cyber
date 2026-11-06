@@ -202,17 +202,17 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   const radialTicks = useMemo(() => {
     const total = 14;
     const ticks = [];
-    const cx = 130;
-    const cy = 126; // Arc baseline at y=126
-    const rOuter = 97;
-    const rInner = 75;
+    const cx = 120;
+    const cy = 118;
+    const rOuter = 92;
+    const rInner = 68;
 
-    // Ticks 1-5: Royal Blue, 6-9: Bright Sky Blue, 10-12: Pale Ice Blue, 13-14: Cool Gray
+    // Ticks 1-5: Royal Blue, 6-8: Bright Sky Blue, 9-11: Pale Ice Blue, 12-14: Cool Gray
     const colorProgression = [
       '#1D4ED8', '#2563EB', '#2563EB', '#2563EB', '#2563EB',
-      '#3B82F6', '#3B82F6', '#60A5FA', '#60A5FA',
+      '#3B82F6', '#3B82F6', '#60A5FA',
       '#93C5FD', '#BFDBFE', '#DBEAFE',
-      '#E2E8F0', '#E2E8F0',
+      '#E2E8F0', '#E2E8F0', '#E2E8F0',
     ];
 
     for (let i = 0; i < total; i++) {
@@ -243,12 +243,12 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     const height = 145;
 
     const pointsData = [
-      { day: '01', xPerc: 0,   yHeight: 35, rev: 45 },
-      { day: '04', xPerc: 15,  yHeight: 48, rev: 72 },
-      { day: '07', xPerc: 28,  yHeight: 88, rev: 110 },
-      { day: '11', xPerc: 42,  yHeight: 54, rev: 120 },
-      { day: '14', xPerc: 55,  yHeight: 38, rev: 68 },
-      { day: '20', xPerc: 70,  yHeight: 45, rev: 86 },
+      { day: '01', xPerc: 0, yHeight: 35, rev: 45 },
+      { day: '04', xPerc: 15, yHeight: 48, rev: 72 },
+      { day: '07', xPerc: 28, yHeight: 88, rev: 110 },
+      { day: '11', xPerc: 42, yHeight: 54, rev: 120 },
+      { day: '14', xPerc: 55, yHeight: 38, rev: 68 },
+      { day: '20', xPerc: 70, yHeight: 45, rev: 86 },
       { day: '30', xPerc: 100, yHeight: 65, rev: 125 },
     ];
 
@@ -314,16 +314,16 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     setActiveRevIndex(nearestIdx);
   };
 
-  // Mini Vertical Histogram Heights in px for Total Profit
-  const profitBars = [8, 14, 12, 18, 26, 10, 12, 16, 10];
+  // Mini Vertical Histogram Heights in px for Total Profit (10 bars on lower shelf)
+  const profitBars = [8, 14, 12, 18, 26, 22, 14, 10, 16, 10];
 
   // 4-Row x 12-Column Ended Task Dot Matrix (Matching Reference Streak)
   const endedTaskMatrix = useMemo(() => {
     const activeIndices: Record<number, number[]> = {
-      0: [7, 9],            // Row 0 (top): Active at 7 and 9
-      1: [6, 7, 8, 9, 10],   // Row 1: Active at 6, 7, 8, 9, 10
-      2: [4, 5],            // Row 2: Active at 4, 5
-      3: [2, 3],            // Row 3 (bottom): Active at 2, 3
+      0: [9, 10, 11],       // Row 0 (top): Active at 9, 10, 11
+      1: [8, 9, 10],        // Row 1: Active at 8, 9, 10
+      2: [6, 7],            // Row 2: Active at 6, 7
+      3: [4, 5],            // Row 3 (bottom): Active at 4, 5
     };
 
     return Array.from({ length: 4 }, (_, r) =>
@@ -427,9 +427,9 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
           {/* Col 2: Total Responses Card with Folder Tab Notch Silhouette & Left-to-Right Radial Arc */}
           <div className="zassk-card-tabbed-notch">
-            <svg className="zassk-card-svg-bg" viewBox="0 0 324 220" preserveAspectRatio="none">
+            <svg className="zassk-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
               <path
-                d="M0,24 C0,10.7 10.7,0 24,0 L145,0 C157,0 164,4 170,9 C176,14 180,14 188,14 L300,14 C313.3,14 324,24.7 324,38 L324,196 C324,209.3 313.3,220 300,220 L24,220 C10.7,220 0,209.3 0,196 Z"
+                d="M 0,22 C 0,9.8 9.8,0 22,0 L 190,0 C 200,0 208,4 214,8 C 220,12 225,14 234,14 L 278,14 C 290.2,14 300,23.8 300,36 L 300,198 C 300,210.2 290.2,220 278,220 L 22,220 C 9.8,220 0,210.2 0,198 Z"
                 fill="#FFFFFF"
               />
             </svg>
@@ -439,14 +439,14 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
 
             <div className="zassk-gauge-wrapper-centered">
-              <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 145">
+              <svg className="zassk-radial-gauge-svg" viewBox="0 0 240 135">
                 {radialTicks.map((tick) => (
                   <line
                     key={tick.id}
-                    x1={tick.x1}
-                    y1={tick.y1}
-                    x2={tick.x2}
-                    y2={tick.y2}
+                    x1={tick.x1.toFixed(1)}
+                    y1={tick.y1.toFixed(1)}
+                    x2={tick.x2.toFixed(1)}
+                    y2={tick.y2.toFixed(1)}
                     stroke={tick.stroke}
                     strokeWidth={7.5}
                     strokeLinecap="round"
@@ -461,111 +461,131 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 3: Unified Interlocking "Total Profit" & "Active Users" Card Unit */}
-          <div className="zassk-card zassk-interlocked-profit-users">
-            {/* Top Half: Total Profit */}
-            <div className="zassk-tp-section">
-              <div className="zassk-tp-header">
-                <span className="zassk-card-title">Total Profit</span>
-                <button className="zassk-tp-arrow-btn" aria-label="View Profit">
-                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
-                </button>
+          {/* Col 3: Interlocking "Total Profit" & "Active Users" Cards */}
+          <div className="zassk-interlock-col">
+            {/* Top Card: Total Profit */}
+            <div className="zassk-interlock-card zassk-tp-card">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+                <path
+                  d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,96 C 300,103.7 293.7,110 286,110 L 250,110 C 240,110 234,105 228,100 C 222,96 216,96 208,96 L 14,96 C 6.3,96 0,89.7 0,82 Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
+              <div className="zassk-tp-inner">
+                <div className="zassk-tp-header">
+                  <span className="zassk-card-title">Total Profit</span>
+                  <button className="zassk-tp-arrow-btn" aria-label="View Profit">
+                    <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
+                  </button>
+                </div>
+                <div className="zassk-tp-body">
+                  <div className="zassk-metric-big">$63k</div>
+                  {/* 10 vertical rounded mini histogram bars on lower shelf */}
+                  <div className="zassk-mini-barchart">
+                    {profitBars.map((heightPx, i) => (
+                      <div
+                        key={i}
+                        className="zassk-mini-bar"
+                        style={{
+                          height: `${heightPx}px`,
+                          backgroundColor: i >= 3 && i <= 5 ? '#2563EB' : '#93C5FD',
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="zassk-tp-content">
-                <div className="zassk-metric-big">$63k</div>
-                {/* 9 vertical rounded mini histogram bars */}
-                <div className="zassk-mini-barchart">
-                  {profitBars.map((heightPx, i) => (
+            </div>
+
+            {/* Bottom Card: Active Users */}
+            <div className="zassk-interlock-card zassk-au-card">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
+                <path
+                  d="M 0,14 C 0,6.3 6.3,0 14,0 L 208,0 C 216,0 222,0 228,4 C 234,9 240,14 250,14 L 286,14 C 293.7,14 300,20.3 300,28 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
+              <div className="zassk-au-inner">
+                <div className="zassk-au-header">
+                  <span className="zassk-card-title">Active Users</span>
+                  <div className="zassk-au-split-labels">
+                    <span>75%</span>
+                    <span className="zassk-au-sep">|</span>
+                    <span>25%</span>
+                    <span className="zassk-au-sep">|</span>
+                    <span>10%</span>
+                  </div>
+                </div>
+                <div className="zassk-au-body">
+                  <div className="zassk-metric-big">150</div>
+                  <div className="zassk-split-bar">
+                    <div className="zassk-split-seg-1" title="Primary users (75%)" />
+                    <div className="zassk-split-seg-2" title="Secondary users (25%)" />
+                    <div className="zassk-split-seg-3" title="Guest users (10%)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Col 4: Interlocking "Conversion Rate" & "Ended Task" Cards */}
+          <div className="zassk-interlock-col">
+            {/* Top Card: Conversion Rate */}
+            <div className="zassk-interlock-card zassk-cr-card">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+                <path
+                  d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,82 C 300,89.7 293.7,96 286,96 L 92,96 C 84,96 78,96 72,100 C 66,105 60,110 50,110 L 14,110 C 6.3,110 0,103.7 0,96 Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
+              <div className="zassk-cr-inner">
+                <div className="zassk-cr-header">
+                  <span className="zassk-card-title">Conversion Rate</span>
+                  <button className="zassk-tp-arrow-btn" aria-label="View Conversion">
+                    <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
+                  </button>
+                </div>
+                <div className="zassk-metric-big" style={{ margin: '2px 0 4px 0' }}>
+                  75%
+                </div>
+                {/* 32 micro vertical tick bars */}
+                <div className="zassk-dense-ticks-32">
+                  {Array.from({ length: 32 }).map((_, i) => (
                     <div
                       key={i}
-                      className="zassk-mini-bar"
-                      style={{
-                        height: `${heightPx}px`,
-                        backgroundColor: i < 5 ? '#2563EB' : '#93C5FD',
-                      }}
+                      className={`zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
                     />
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Stepped Interlocking Boundary Seam */}
-            <div className="zassk-interlock-divider">
-              <svg className="zassk-seam-svg" viewBox="0 0 280 18" preserveAspectRatio="none">
+            {/* Bottom Card: Ended Task (Restored Reference Design) */}
+            <div className="zassk-interlock-card zassk-et-card">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
                 <path
-                  d="M 0,2 L 130,2 C 144,2 150,16 166,16 L 280,16"
-                  fill="none"
-                  stroke="#E2E8F0"
-                  strokeWidth={1.2}
-                  strokeLinecap="round"
+                  d="M 0,28 C 0,20.3 6.3,14 14,14 L 50,14 C 60,14 66,9 72,4 C 78,0 84,0 92,0 L 286,0 C 293.7,0 300,6.3 300,14 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
+                  fill="#FFFFFF"
                 />
               </svg>
-            </div>
-
-            {/* Bottom Half: Active Users */}
-            <div className="zassk-au-section">
-              <div className="zassk-au-header">
-                <span className="zassk-card-title">Active Users</span>
-                <div className="zassk-au-split-labels">
-                  <span>75%</span>
-                  <span className="zassk-au-sep">|</span>
-                  <span>25%</span>
-                  <span className="zassk-au-sep">|</span>
-                  <span>10%</span>
-                </div>
-              </div>
-              <div className="zassk-metric-big" style={{ margin: '2px 0 6px 0' }}>
-                150
-              </div>
-              <div className="zassk-split-bar">
-                <div className="zassk-split-seg-1" title="Primary users (75%)" />
-                <div className="zassk-split-seg-2" title="Secondary users (25%)" />
-                <div className="zassk-split-seg-3" title="Guest users (10%)" />
-              </div>
-            </div>
-          </div>
-
-          {/* Col 4: Conversion Rate & Ended Task */}
-          <div className="zassk-col4-column">
-            {/* Card 1: Conversion Rate */}
-            <div className="zassk-card zassk-col4-card">
-              <div className="zassk-interlock-header">
-                <span className="zassk-card-title">Conversion Rate</span>
-                <button className="zassk-tp-arrow-btn" aria-label="View Conversion">
-                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
-                </button>
-              </div>
-              <div className="zassk-metric-big" style={{ margin: '4px 0 6px 0' }}>
-                75%
-              </div>
-              <div className="zassk-dense-ticks-32">
-                {Array.from({ length: 32 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Card 2: Ended Task (Restored Reference Design) */}
-            <div className="zassk-card zassk-ended-task-card">
-              <div className="zassk-et-title">Ended Task</div>
-              <div className="zassk-et-body">
-                <div className="zassk-et-val">80</div>
-                {/* 4-Row x 12-Column Dot Matrix Grid */}
-                <div className="zassk-et-matrix" role="img" aria-label="Ended Task Matrix">
-                  {endedTaskMatrix.map((row, rIdx) => (
-                    <div key={rIdx} className="zassk-et-matrix-row">
-                      {row.map((dot, cIdx) => (
-                        <div key={cIdx} className="zassk-et-cell">
-                          <div
-                            className={`zassk-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ))}
+              <div className="zassk-et-inner">
+                <div className="zassk-et-title">Ended Task</div>
+                <div className="zassk-et-body">
+                  <div className="zassk-et-val">80</div>
+                  {/* 4-Row x 12-Column Dot Matrix Grid */}
+                  <div className="zassk-et-matrix" role="img" aria-label="Ended Task Matrix">
+                    {endedTaskMatrix.map((row, rIdx) => (
+                      <div key={rIdx} className="zassk-et-matrix-row">
+                        {row.map((dot, cIdx) => (
+                          <div key={cIdx} className="zassk-et-cell">
+                            <div
+                              className={`zassk-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -697,10 +717,10 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 <div className="zassk-source-row">
                   <div className="zassk-brand-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
-                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
-                      <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
-                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
+                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z" />
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z" />
+                      <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z" />
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z" />
                     </svg>
                   </div>
                   <div className="zassk-brand-track">
@@ -725,7 +745,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 <div className="zassk-source-row">
                   <div className="zassk-brand-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   </div>
                   <div className="zassk-brand-track">
@@ -750,9 +770,9 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 <div className="zassk-source-row">
                   <div className="zassk-brand-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                     </svg>
                   </div>
                   <div className="zassk-brand-track">
@@ -828,9 +848,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       <td style={{ color: '#64748B' }}>{user.location}</td>
                       <td>
                         <span
-                          className={`zassk-status-pill ${
-                            user.status === 'Active' ? 'zassk-status-active' : 'zassk-status-pending'
-                          }`}
+                          className={`zassk-status-pill ${user.status === 'Active' ? 'zassk-status-active' : 'zassk-status-pending'
+                            }`}
                         >
                           <span style={{ fontSize: '8px' }}>●</span>
                           {user.status}

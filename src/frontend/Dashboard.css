@@ -318,11 +318,11 @@
 .zassk-tabbed-header {
   position: relative;
   z-index: 2;
-  padding: 18px 24px 0 24px;
+  padding: 16px 20px 0 20px;
 }
 
 .zassk-card-title {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--zassk-navy);
   letter-spacing: -0.2px;
@@ -333,11 +333,11 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  height: 162px;
+  height: 160px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .zassk-radial-gauge-svg {
@@ -348,7 +348,7 @@
 
 .zassk-gauge-center-content {
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -367,37 +367,67 @@
   font-weight: 500;
   color: #64748B;
   line-height: 1;
+  white-space: nowrap;
 }
 
-/* ── Column 3: Unified Interlocking "Total Profit" & "Active Users" Card Unit ── */
-.zassk-interlocked-profit-users {
+/* ── Interlocking Card Columns (Columns 3 & 4) ── */
+.zassk-interlock-col {
+  display: flex;
+  flex-direction: column;
   height: 220px;
-  background: #FFFFFF;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(125, 165, 230, 0.2);
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   position: relative;
-  overflow: hidden;
 }
 
-.zassk-tp-section {
+.zassk-interlock-card {
+  position: relative;
+  filter: drop-shadow(0 10px 24px rgba(125, 165, 230, 0.18));
+}
+
+.zassk-tp-card,
+.zassk-cr-card {
+  height: 110px;
+}
+
+.zassk-au-card,
+.zassk-et-card {
+  height: 118px;
+  margin-top: -8px;
+}
+
+.zassk-tp-inner,
+.zassk-cr-inner {
+  position: relative;
+  z-index: 2;
+  padding: 14px 18px 16px 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.zassk-tp-header {
+.zassk-au-inner,
+.zassk-et-inner {
+  position: relative;
+  z-index: 2;
+  padding: 16px 18px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.zassk-tp-header,
+.zassk-cr-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .zassk-tp-arrow-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: #F1F5F9;
   color: #475569;
@@ -413,11 +443,11 @@
   transform: translate(1px, -1px);
 }
 
-.zassk-tp-content {
+.zassk-tp-body {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .zassk-metric-big {
@@ -428,12 +458,12 @@
   line-height: 1;
 }
 
-/* Mini Bar Histogram */
+/* Mini Bar Histogram (10 bars on lower shelf) */
 .zassk-mini-barchart {
   display: flex;
   align-items: flex-end;
   gap: 3.5px;
-  height: 28px;
+  height: 30px;
 }
 
 .zassk-mini-bar {
@@ -445,28 +475,7 @@
   transform: scaleY(1.15);
 }
 
-/* Stepped Interlocking Boundary Seam */
-.zassk-interlock-divider {
-  width: 100%;
-  height: 18px;
-  margin: -4px 0;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-}
-
-.zassk-seam-svg {
-  width: 100%;
-  height: 18px;
-  overflow: visible;
-}
-
 /* Active Users Lower Section */
-.zassk-au-section {
-  display: flex;
-  flex-direction: column;
-}
-
 .zassk-au-header {
   display: flex;
   align-items: center;
@@ -487,18 +496,30 @@
   font-size: 11px;
 }
 
+.zassk-au-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 2px;
+}
+
 /* 3-Segment Progress Meter */
 .zassk-split-bar {
+  flex: 1;
   display: flex;
-  height: 22px;
-  border-radius: 7px;
+  height: 20px;
+  border-radius: 9999px;
   overflow: hidden;
-  gap: 3px;
-  margin-top: 4px;
+  gap: 2.5px;
+  background: #F1F5F9;
+  padding: 2px;
 }
 
 .zassk-split-seg-1 {
-  width: 75%;
+  width: 70%;
+  height: 100%;
+  border-radius: 9999px 0 0 9999px;
   background: repeating-linear-gradient(
     90deg,
     #3B82F6,
@@ -506,11 +527,11 @@
     transparent 1.5px,
     transparent 3.5px
   );
-  border-radius: 5px 2px 2px 5px;
 }
 
 .zassk-split-seg-2 {
-  width: 25%;
+  width: 22%;
+  height: 100%;
   background: repeating-linear-gradient(
     45deg,
     #3B82F6,
@@ -518,32 +539,13 @@
     transparent 1.5px,
     transparent 5px
   );
-  border-radius: 2px;
 }
 
 .zassk-split-seg-3 {
-  width: 10%;
+  width: 8%;
+  height: 100%;
   background-color: #E2E8F0;
-  border-radius: 2px 5px 5px 2px;
-}
-
-/* ── Column 4: Conversion Rate & Ended Task ── */
-.zassk-col4-column {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  height: 220px;
-}
-
-.zassk-col4-card {
-  flex: 1;
-  padding: 16px 20px;
-  border-radius: 24px;
-  background: var(--zassk-card-solid);
-  box-shadow: 0 10px 30px rgba(125, 165, 230, 0.2);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  border-radius: 0 9999px 9999px 0;
 }
 
 /* 32 micro vertical tick bars */
@@ -564,18 +566,6 @@
 .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
 /* ── Ended Task Card (Restored Reference Design) ── */
-.zassk-ended-task-card {
-  flex: 1;
-  padding: 16px 20px;
-  border-radius: 24px;
-  background: var(--zassk-card-solid);
-  box-shadow: 0 10px 30px rgba(125, 165, 230, 0.2);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-}
-
 .zassk-et-title {
   font-size: 14px;
   font-weight: 600;
@@ -586,7 +576,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .zassk-et-val {
@@ -606,12 +596,12 @@
 .zassk-et-matrix-row {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .zassk-et-cell {
-  width: 8px;
-  height: 8px;
+  width: 7.5px;
+  height: 7.5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -623,8 +613,8 @@
 }
 
 .zassk-et-dot-pip.active {
-  width: 7px;
-  height: 7px;
+  width: 6.5px;
+  height: 6.5px;
   background-color: #2563EB;
 }
 
@@ -632,7 +622,6 @@
   width: 4px;
   height: 4px;
   background-color: #E2E8F0;
-  opacity: 0.7;
 }
 
 .zassk-et-dot-pip:hover {
