@@ -50,3 +50,8 @@ lab/corpus/generated/
 *.log
 .worktree_temp/
 
+# Node / Frontend
+node_modules/
+.npm/
+package-lock.json
+

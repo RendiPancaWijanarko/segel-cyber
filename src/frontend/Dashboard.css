@@ -1,8 +1,8 @@
 /* SPDX-License-Identifier: MIT */
 /**
- * Zassk Precision Pixel-Exact Analytics Dashboard Stylesheet
- * Reconstructed geometry, tablet viewport bezel, SVG notched folder tabs,
- * spectral waterfall needle chart, multi-layered user tracks, and authentic textures.
+ * Zassk Precision Analytics Dashboard Stylesheet
+ * Frameless canvas, separated metric cards, balanced tab notches,
+ * and high-fidelity performance trend cellular visualization.
  */
 
 :root {
@@ -22,47 +22,22 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── Tablet Bezel Viewport Frame ── */
+/* ── Direct Canvas Presentation (No Black Surrounding Frame) ── */
 .zassk-viewport-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
   width: 100%;
-  padding: 24px;
-  background: #E2E8F0;
-  box-sizing: border-box;
-}
-
-.zassk-tablet-bezel {
-  position: relative;
-  max-width: 1440px;
-  width: 100%;
-  border: 14px solid #0F172A;
-  border-radius: 36px;
-  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
   background: var(--zassk-canvas-bg);
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 32px 40px 32px;
   box-sizing: border-box;
-}
-
-/* Tablet Camera / Sensor Dot on Left Bezel */
-.zassk-bezel-sensor {
-  position: absolute;
-  left: -11px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 16px;
-  background: #1E293B;
-  border-radius: 9999px;
-  z-index: 100;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+  overflow-x: hidden;
 }
 
 .zassk-canvas {
+  max-width: 1440px;
   width: 100%;
-  padding: 24px 28px 28px 28px;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   color: var(--zassk-navy);
   display: flex;
@@ -323,59 +298,82 @@
   pointer-events: none;
 }
 
+/* Balanced, Harmonious Tab Header Spacing */
 .zassk-tabbed-header {
   position: relative;
   z-index: 2;
-  padding: 12px 22px;
+  padding: 18px 24px 0 24px;
 }
 
+.zassk-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--zassk-navy);
+  letter-spacing: -0.2px;
+}
+
+/* Radial Gauge with text aligned flush with bottom edge of arc */
 .zassk-gauge-wrapper-centered {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: 155px;
+  height: 162px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: 8px;
 }
 
-.zassk-radial-gauge-svg { width: 100%; height: 100%; overflow: visible; }
+.zassk-radial-gauge-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
 .zassk-gauge-center-content {
   position: absolute;
-  top: 56%;
+  bottom: 12px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
+  line-height: 1.1;
 }
-.zassk-gauge-center-val { font-size: 28px; font-weight: 700; color: #0F172A; line-height: 1; }
-.zassk-gauge-center-label { font-size: 13px; font-weight: 500; color: #64748B; margin-top: 4px; }
+.zassk-gauge-center-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.zassk-gauge-center-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748B;
+  line-height: 1;
+}
 
-/* ── Interlocking "Total Profit" & "Active Users" ── */
-.zassk-interlocking-card {
-  background: var(--zassk-card-solid);
-  border-radius: 24px;
-  box-shadow: var(--zassk-card-shadow);
+/* ── Split Cards in Column 3: "Total Profit" & "Active Users" ── */
+.zassk-col-split-cards {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
+  gap: 14px;
+  height: 220px;
 }
 
-.zassk-interlock-top-tier {
-  padding: 18px 20px 10px 20px;
-  position: relative;
+.zassk-mini-stat-card {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 24px;
 }
 
 .zassk-interlock-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.zassk-card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--zassk-navy);
 }
 
 .zassk-profit-row {
@@ -391,12 +389,12 @@
   letter-spacing: -0.6px;
 }
 
-/* Mini Bar Histogram (9 vertical bars of varying heights) */
+/* Mini Bar Histogram */
 .zassk-mini-barchart {
   display: flex;
   align-items: flex-end;
   gap: 4px;
-  height: 36px;
+  height: 34px;
 }
 .zassk-mini-bar {
   width: 5px;
@@ -405,34 +403,21 @@
 }
 .zassk-mini-bar:hover { transform: scaleY(1.1); }
 
-/* Inverted stepped contour shelf between Profit and Active Users */
-.zassk-stepped-shelf-divider {
-  width: 100%;
-  height: 12px;
-  position: relative;
-}
-
-.zassk-interlock-bottom-tier {
-  padding: 2px 20px 18px 20px;
-  background: #FFFFFF;
-}
-
 .zassk-split-labels {
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
+  gap: 14px;
   font-size: 12px;
   font-weight: 600;
   color: #64748B;
-  margin-bottom: 4px;
 }
 .zassk-split-bar {
   display: flex;
-  height: 26px;
+  height: 24px;
   border-radius: 8px;
   overflow: hidden;
   gap: 3px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .zassk-split-seg-1 {
   width: 65%;
@@ -462,27 +447,32 @@
   border-radius: 2px 6px 6px 2px;
 }
 
-/* ── Column 4: Conversion & Ended Task ── */
+/* ── Column 4: Conversion & Performance Trend ── */
 .zassk-col4-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  height: 220px;
 }
 
 .zassk-col4-card {
-  padding: 18px 20px;
+  flex: 1;
+  padding: 16px 20px;
   border-radius: 24px;
   background: var(--zassk-card-solid);
   box-shadow: var(--zassk-card-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* 32 micro vertical tick bars (width: 3px, height: 16px, border-radius: 2px, gap: 2.5px) */
+/* 32 micro vertical tick bars */
 .zassk-dense-ticks-32 {
   display: flex;
   align-items: center;
   gap: 2.5px;
   height: 16px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .zassk-tick-bar-32 {
   width: 3px;
@@ -493,32 +483,133 @@
 .zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
 .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
-/* Ended Task: 4 rows × 12 columns of circular dots */
-.zassk-dot-matrix-4x12 {
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  gap: 6.5px;
-  padding: 6px 0;
-}
-.zassk-dot-row-12 {
+/* ── Performance Trend Card (Redesigned with AlignUI Cellular Chart) ── */
+.zassk-performance-trend-card {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 24px;
+  background: var(--zassk-card-solid);
+  box-shadow: var(--zassk-card-shadow);
   display: flex;
-  gap: 7px;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.zassk-pt-header {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 }
-.zassk-dot-bold-blue {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--zassk-blue-primary);
-  flex-shrink: 0;
+
+.zassk-pt-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.zassk-dot-faint-pip {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #CBD5E1;
-  opacity: 0.5;
-  flex-shrink: 0;
+
+.zassk-pt-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10B981;
+  background: #E8FBF0;
+  padding: 1px 7px;
+  border-radius: 9999px;
+}
+
+.zassk-pt-metric-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 2px 0 4px 0;
+}
+
+.zassk-pt-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--zassk-navy);
+  letter-spacing: -0.5px;
+}
+
+.zassk-pt-sub {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* Mini 60-Column Cellular Heatmap Grid */
+.zassk-pt-grid-wrapper {
+  position: relative;
+  width: 100%;
+  height: 38px;
+  cursor: crosshair;
+}
+
+.zassk-pt-grid {
+  display: grid;
+  grid-template-columns: repeat(60, minmax(0, 1fr));
+  gap: 1.5px;
+  height: 100%;
+  align-items: end;
+}
+
+.zassk-pt-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.zassk-pt-cell {
+  height: 2px;
+  border-radius: 1px;
+}
+.zassk-pt-cell.active {
+  background-color: #2563EB;
+}
+.zassk-pt-cell.secondary {
+  background-color: #93C5FD;
+}
+.zassk-pt-cell.empty {
+  background-color: #F1F5F9;
+}
+
+/* Active Column Guide & Floating Popover */
+.zassk-pt-crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1.5px dashed rgba(37, 99, 235, 0.7);
+  pointer-events: none;
+  transition: left 0.08s ease;
+}
+
+.zassk-pt-tooltip {
+  position: absolute;
+  top: -30px;
+  transform: translateX(-50%);
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+}
+
+.zassk-pt-months {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #94A3B8;
+  margin-top: 2px;
+  padding: 0 2px;
 }
 
 /* ── 3. Middle Row: Spectral Waterfall Needle Chart & User Sources ── */
@@ -780,7 +871,7 @@
 .zassk-status-active { background: #DCFCE7; color: #15803D; }
 .zassk-status-pending { background: #FEF3C7; color: #B45309; }
 
-/* ── Notched Transactions Card Base ── */
+/* ── Notched Transactions Card Silhouette ── */
 .zassk-trans-tabbed-notch {
   position: relative;
   filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
