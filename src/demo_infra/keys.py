@@ -50,3 +50,4 @@ def generate_demo_bundle() -> DemoKeyBundle:
         canary_keys=[generate_keypair() for _ in range(2)],
         general_receiver_key=generate_keypair(),
     )
+

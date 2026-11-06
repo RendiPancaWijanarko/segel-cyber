@@ -10,8 +10,6 @@ ApprovalResponses.
 
 from __future__ import annotations
 
-from typing import Any
-
 from approver.approver import (
     ApprovalRequest,
     ApprovalResponse,
@@ -35,7 +33,7 @@ class StandaloneApproverSigner:
     def get_public_key_records(self) -> list[KeyRecord]:
         """Export public key records for the trust root."""
         records = []
-        for kp, group in zip(self._keys, self._groups):
+        for kp, group in zip(self._keys, self._groups, strict=False):
             records.append(
                 KeyRecord(
                     key_id=kp.key_id,
@@ -65,3 +63,4 @@ class StandaloneApproverSigner:
             resp = approver_sign(request, self._keys[i])
             responses.append(resp)
         return responses
+

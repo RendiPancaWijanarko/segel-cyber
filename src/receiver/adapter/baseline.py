@@ -41,6 +41,7 @@ from segel_core.schemas.manifest import Manifest
 
 ADAPTER_ID = "segel-baseline-adapter/v1"
 ADAPTER_DIGEST = "0" * 64
+VALID_HEALTH_PROBES = {"file_exists", "config_valid"}
 
 
 def _safe_rmtree(path: Path | str) -> None:
@@ -271,6 +272,14 @@ class BaselineAdapter:
         Returns:
             List of health check results.
         """
+        if probes is not None:
+            for p in probes:
+                p_name = p.get("probe", "")
+                if p_name not in VALID_HEALTH_PROBES:
+                    raise AdapterNotAllowedError(
+                        f"Health probe '{p_name}' outside fixed vocabulary {VALID_HEALTH_PROBES}"
+                    )
+
         results = []
 
         for subject in manifest.subjects:
@@ -389,7 +398,7 @@ class BaselineAdapter:
             "step": step,
             "backup_exists": self._backup_root.exists(),
         }
-        with open(journal_path, "w", encoding="utf-8") as f:
+        with Path(journal_path).open("w", encoding="utf-8") as f:
             json.dump(journal_data, f)
 
     def _compute_directory_digest(self, directory: Path) -> str:

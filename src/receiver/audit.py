@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +47,7 @@ class AuditLogger:
         self._last_seq += 1
         entry: dict[str, Any] = {
             "seq": self._last_seq,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "event_type": event_type,
             "data": data,
             "prev_hash": self._last_hash,
@@ -58,7 +58,8 @@ class AuditLogger:
         entry["entry_hash"] = entry_hash
         self._last_hash = entry_hash
 
-        with open(self.log_file, "a", encoding="utf-8") as f:
+        with Path(self.log_file).open("a", encoding="utf-8") as f:
             f.write(json.dumps(entry, sort_keys=True) + "\n")
 
         return entry
+

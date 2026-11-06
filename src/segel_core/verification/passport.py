@@ -29,11 +29,11 @@ from segel_core.crypto.dsse import (
     verify_envelope,
     verify_threshold,
 )
+from segel_core.crypto.ed25519 import verify as ed25519_verify
 from segel_core.crypto.hashing import (
     sha256_hex,
     verify_inclusion_from_hash,
 )
-from segel_core.crypto.ed25519 import verify as ed25519_verify
 from segel_core.errors import (
     EpochStaleError,
     ErrorCode,
@@ -495,7 +495,7 @@ def _verify_record_proof(
         if base64.b64encode(sig_raw).decode("ascii") != proof.checkpoint_signature:
             raise SignatureError("Non-canonical base64 in checkpoint signature")
     except Exception as e:
-        raise SignatureError(f"Invalid base64 in checkpoint signature: {e}")
+        raise SignatureError(f"Invalid base64 in checkpoint signature: {e}") from e
 
     checkpoint = Checkpoint(
         origin="segel-ledger-v1",
@@ -506,12 +506,10 @@ def _verify_record_proof(
 
     ledger_keys = trust_ctx.get_keys_for_role("ledger", at_index=proof.entry_index)
     ledger_sig_valid = False
-    valid_key_id = None
 
     for key_info in ledger_keys:
         try:
             ed25519_verify(key_info.public_key, sig_raw, note_bytes)
-            valid_key_id = key_info.key_id
             ledger_sig_valid = True
             break
         except SignatureError:
@@ -524,7 +522,7 @@ def _verify_record_proof(
                 trust_ctx.is_key_revoked_at_index(key_rec.key_id, proof.entry_index)
                 or trust_ctx.is_key_revoked(key_rec.key_id)
             ):
-                pk = trust_ctx._public_keys_cache.get(key_rec.key_id)
+                pk = trust_ctx.get_public_key(key_rec.key_id)
                 if pk is not None:
                     try:
                         ed25519_verify(pk.public_key, sig_raw, note_bytes)

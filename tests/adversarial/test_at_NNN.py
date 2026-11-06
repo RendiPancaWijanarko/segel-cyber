@@ -468,16 +468,10 @@ def test_at_004_approval_replayed_on_another_sequence() -> None:
 def test_at_005_signature_from_unauthorised_approver_key() -> None:
     """AT-005: Signature from a key not authorised as approver -> Not counted. Threshold fails."""
     lab = SyntheticLab()
-    files, build_result, _, _ = _build_valid_candidate(lab, release_id="AT-005", sequence=1)
+    files, build_result, valid_passport, _ = _build_valid_candidate(lab, release_id="AT-005", sequence=1)
 
-    rogue_key = generate_keypair()
-    origin_env = sign_origin(build_result, lab.builder_key)
-    inspect_stmt = create_inspect_attestation(
-        inspect_release(files, build_result.manifest, build_result.manifest_digest),
-        build_result.manifest,
-        build_result.manifest_digest,
-    )
-    inspect_env = sign_inspect(inspect_stmt, lab.inspector_key)
+    origin_env = DSSEEnvelope.from_dict(valid_passport.origin_envelope)
+    inspect_env = DSSEEnvelope.from_dict(valid_passport.inspect_envelope)
 
     approve_stmt, approve_req = create_approval_payload(
         build_result.manifest,
@@ -487,40 +481,46 @@ def test_at_005_signature_from_unauthorised_approver_key() -> None:
         "PASS",
     )
     # One legitimate, one rogue key
+    rogue_key = generate_keypair()
     responses = [
         approver_sign(approve_req, lab.approver_keys[0]),
         approver_sign(approve_req, rogue_key),
     ]
     rogue_approve_env = collect_approvals(approve_stmt, approve_req, responses)
 
-    author_keys = lab.trust_ctx.get_keys_for_role("author")
-    approver_keys = lab.trust_ctx.get_keys_for_role("approver")
-    verify_res = verify_envelope(
-        rogue_approve_env, approver_keys, "application/vnd.segel.approve+json"
-    )
+    p = copy.deepcopy(valid_passport)
+    p.approve_envelope = rogue_approve_env.to_dict()
 
-    # Rogue key is not counted, threshold of 2 fails
-    with pytest.raises(ThresholdNotMetError):
-        verify_threshold(
-            verify_res,
-            threshold=2,
-            excluded_key_ids={k.key_id for k in author_keys},
+    with tempfile.TemporaryDirectory() as td:
+        deploy_dir = Path(td) / "deploy"
+        deploy_dir.mkdir()
+        receiver = Receiver(
+            state=ReceiverState(unit_id="canary-1", unit_role="canary"),
+            trust_ctx=lab.trust_ctx,
+            receiver_key=lab.canary_keys[0],
+            deploy_root=deploy_dir,
         )
+        initial_state_snap = copy.deepcopy(receiver.state.to_dict())
+
+        verification, receipt = receiver.verify_and_deploy(p, files)
+        assert verification.eligibility == EligibilityClass.INELIGIBLE
+        assert verification.approve.status == StampStatus.INVALID
+        assert (
+            verification.approve.error_code == ErrorCode.THRESHOLD_NOT_MET.value
+            or "threshold" in str(verification.eligibility_reasons).lower()
+        )
+        assert receipt is None
+        _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
 
 @pytest.mark.adversarial
 def test_at_006_duplicate_signatures_from_one_key() -> None:
     """AT-006: Duplicate signatures from one key -> Counted once."""
     lab = SyntheticLab()
-    files, build_result, _, _ = _build_valid_candidate(lab, release_id="AT-006", sequence=1)
+    files, build_result, valid_passport, _ = _build_valid_candidate(lab, release_id="AT-006", sequence=1)
 
-    origin_env = sign_origin(build_result, lab.builder_key)
-    inspect_stmt = create_inspect_attestation(
-        inspect_release(files, build_result.manifest, build_result.manifest_digest),
-        build_result.manifest,
-        build_result.manifest_digest,
-    )
-    inspect_env = sign_inspect(inspect_stmt, lab.inspector_key)
+    origin_env = DSSEEnvelope.from_dict(valid_passport.origin_envelope)
+    inspect_env = DSSEEnvelope.from_dict(valid_passport.inspect_envelope)
     approve_stmt, approve_req = create_approval_payload(
         build_result.manifest,
         build_result.manifest_digest,
@@ -536,13 +536,29 @@ def test_at_006_duplicate_signatures_from_one_key() -> None:
     ]
     dup_approve_env = collect_approvals(approve_stmt, approve_req, responses)
 
-    approver_keys = lab.trust_ctx.get_keys_for_role("approver")
-    verify_res = verify_envelope(
-        dup_approve_env, approver_keys, "application/vnd.segel.approve+json"
-    )
+    p = copy.deepcopy(valid_passport)
+    p.approve_envelope = dup_approve_env.to_dict()
 
-    with pytest.raises(ThresholdNotMetError):
-        verify_threshold(verify_res, threshold=2)
+    with tempfile.TemporaryDirectory() as td:
+        deploy_dir = Path(td) / "deploy"
+        deploy_dir.mkdir()
+        receiver = Receiver(
+            state=ReceiverState(unit_id="canary-1", unit_role="canary"),
+            trust_ctx=lab.trust_ctx,
+            receiver_key=lab.canary_keys[0],
+            deploy_root=deploy_dir,
+        )
+        initial_state_snap = copy.deepcopy(receiver.state.to_dict())
+
+        verification, receipt = receiver.verify_and_deploy(p, files)
+        assert verification.eligibility == EligibilityClass.INELIGIBLE
+        assert verification.approve.status == StampStatus.INVALID
+        assert (
+            verification.approve.error_code == ErrorCode.THRESHOLD_NOT_MET.value
+            or "threshold" in str(verification.eligibility_reasons).lower()
+        )
+        assert receipt is None
+        _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
 
 @pytest.mark.adversarial
@@ -612,15 +628,10 @@ def test_at_007_threshold_or_group_minimum_not_met() -> None:
 def test_at_008_author_key_used_as_an_approver() -> None:
     """AT-008: Author key used as an approver -> Excluded from count."""
     lab = SyntheticLab()
-    files, build_result, _, _ = _build_valid_candidate(lab, release_id="AT-008", sequence=1)
+    files, build_result, valid_passport, _ = _build_valid_candidate(lab, release_id="AT-008", sequence=1)
 
-    origin_env = sign_origin(build_result, lab.builder_key)
-    inspect_stmt = create_inspect_attestation(
-        inspect_release(files, build_result.manifest, build_result.manifest_digest),
-        build_result.manifest,
-        build_result.manifest_digest,
-    )
-    inspect_env = sign_inspect(inspect_stmt, lab.inspector_key)
+    origin_env = DSSEEnvelope.from_dict(valid_passport.origin_envelope)
+    inspect_env = DSSEEnvelope.from_dict(valid_passport.inspect_envelope)
     approve_stmt, approve_req = create_approval_payload(
         build_result.manifest,
         build_result.manifest_digest,
@@ -636,18 +647,29 @@ def test_at_008_author_key_used_as_an_approver() -> None:
     ]
     author_approve_env = collect_approvals(approve_stmt, approve_req, responses)
 
-    author_keys = lab.trust_ctx.get_keys_for_role("author")
-    approver_keys = lab.trust_ctx.get_keys_for_role("approver")
-    verify_res = verify_envelope(
-        author_approve_env, approver_keys + author_keys, "application/vnd.segel.approve+json"
-    )
+    p = copy.deepcopy(valid_passport)
+    p.approve_envelope = author_approve_env.to_dict()
 
-    with pytest.raises(ThresholdNotMetError):
-        verify_threshold(
-            verify_res,
-            threshold=2,
-            excluded_key_ids={k.key_id for k in author_keys},
+    with tempfile.TemporaryDirectory() as td:
+        deploy_dir = Path(td) / "deploy"
+        deploy_dir.mkdir()
+        receiver = Receiver(
+            state=ReceiverState(unit_id="canary-1", unit_role="canary"),
+            trust_ctx=lab.trust_ctx,
+            receiver_key=lab.canary_keys[0],
+            deploy_root=deploy_dir,
         )
+        initial_state_snap = copy.deepcopy(receiver.state.to_dict())
+
+        verification, receipt = receiver.verify_and_deploy(p, files)
+        assert verification.eligibility == EligibilityClass.INELIGIBLE
+        assert verification.approve.status == StampStatus.INVALID
+        assert (
+            verification.approve.error_code == ErrorCode.THRESHOLD_NOT_MET.value
+            or "threshold" in str(verification.eligibility_reasons).lower()
+        )
+        assert receipt is None
+        _assert_state_unchanged(initial_state_snap, receiver, deploy_dir)
 
 
 @pytest.mark.adversarial
@@ -1239,14 +1261,18 @@ def test_at_030_power_loss_mid_deployment_journal_recovery() -> None:
         adapter.snapshot()
         adapter.backup()
 
-        # Simulate power failure after staging/applying
+        # Simulate staging debris and power failure after partial apply
+        staging_dir = deploy_dir / ".staging"
+        staging_dir.mkdir(exist_ok=True)
+        (staging_dir / "junk.txt").write_text("debris", encoding="utf-8")
         (deploy_dir / "existing.yaml").write_text("corrupted_state", encoding="utf-8")
 
         # Simulate process crash / power loss: in-memory state is lost
         # A new process/adapter starts up and attempts journal crash recovery
         adapter_recovered = BaselineAdapter(deploy_dir)
-        adapter_recovered.rollback()
+        adapter_recovered.recover_crash()
         assert initial_file.read_text(encoding="utf-8") == "initial: true", "Crash recovery via persistent journal must restore pre-state!"
+        assert not staging_dir.exists(), "Staging debris must be purged on crash recovery!"
 
 
 @pytest.mark.adversarial
@@ -1532,21 +1558,58 @@ def test_at_041_release_scope_excludes_this_unit() -> None:
 @pytest.mark.adversarial
 def test_at_042_tampered_trust_update_package_rejected() -> None:
     """AT-042: Tampered Trust Update Package -> Rejected. Nothing is replaced."""
-    # Tampered update package must fail verification before state update
-    tampered_package = b'{"new_root": "invalid"}'
-    with pytest.raises(Exception):
-        TrustRoot.model_validate_json(tampered_package)
+    lab = SyntheticLab()
+    initial_epoch = lab.trust_ctx.snapshot.epoch if lab.trust_ctx.snapshot else 1
+
+    # Build valid TUP targeting epoch 2
+    new_snapshot = TrustSnapshot(epoch=2)
+    payload = {
+        "type": "trust_update_package",
+        "target_epoch": 2,
+        "root": lab.root.model_dump(),
+        "policy": lab.policy.model_dump(),
+        "snapshot": new_snapshot.model_dump(),
+    }
+    payload_bytes = canonical_json(payload)
+    envelope = create_envelope(
+        payload_type="https://segel.dev/trust-update/v1",
+        payload=payload_bytes,
+        signers=[(lab.author_key.key_id, lab.author_key.private_key)],
+    )
+    tup = {
+        "envelope": envelope.to_dict(),
+        "payload": payload,
+    }
+
+    # Tamper one byte in the envelope signature
+    sig_str = tup["envelope"]["signatures"][0]["sig"]
+    tampered_sig = ("A" if sig_str[0] != "A" else "B") + sig_str[1:]
+    tup["envelope"]["signatures"][0]["sig"] = tampered_sig
+
+    with pytest.raises(SignatureError):
+        lab.trust_ctx.apply_trust_update(tup)
+
+    # Verify state unchanged
+    current_epoch = lab.trust_ctx.snapshot.epoch if lab.trust_ctx.snapshot else 1
+    assert current_epoch == initial_epoch, "Trust context epoch must not change on rejected TUP!"
 
 
 @pytest.mark.adversarial
 def test_at_044_health_probe_outside_fixed_vocabulary_refused() -> None:
     """AT-044: Health probe outside the fixed vocabulary -> Refused."""
-    valid_vocabulary = {"file_exists", "config_valid"}
-    probe_name = "arbitrary_custom_script_exec"
-
-    assert (
-        probe_name not in valid_vocabulary
-    ), "Arbitrary probe should not be in valid vocabulary!"
+    with tempfile.TemporaryDirectory() as td:
+        deploy_dir = Path(td) / "deploy"
+        deploy_dir.mkdir()
+        adapter = BaselineAdapter(deploy_dir)
+        manifest = Manifest(
+            release_id="AT-044",
+            sequence=1,
+            purpose="test",
+            subjects=[SubjectDigest(path="app.yaml", sha256="0" * 64, size=10)],
+        )
+        with pytest.raises(AdapterNotAllowedError) as exc_info:
+            adapter.health_check(manifest, probes=[{"probe": "arbitrary_custom_script_exec"}])
+        assert exc_info.value.code == ErrorCode.ADAPTER_NOT_ALLOWED
 
 
 @pytest.mark.adversarial

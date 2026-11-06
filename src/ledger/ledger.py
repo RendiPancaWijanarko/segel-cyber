@@ -528,7 +528,9 @@ def _verify_candidate_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
     excluded = set(m_res.valid_key_ids)
     counting_keys = verify_threshold(a_res, threshold, excluded_key_ids=excluded)
     if len(counting_keys) < threshold:
-        raise ThresholdNotMetError(f"Approval threshold {threshold} not met (got {len(counting_keys)})")
+        raise ThresholdNotMetError(
+            f"Approval threshold {threshold} not met (got {len(counting_keys)})"
+        )
     approve_data = json.loads(approve_env.get_payload_bytes())
     approve_binding = approve_data.get("predicate", {}).get("binding", {})
     if (
@@ -546,7 +548,8 @@ def _verify_promotion_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
     required_count = getattr(getattr(trust_ctx, "policy", None), "canary_required_count", 2)
     if len(receipts) < required_count:
         raise ThresholdNotMetError(
-            f"Promotion requires at least {required_count} healthy canary receipts, got {len(receipts)}"
+            f"Promotion requires at least {required_count} healthy canary receipts, "
+            f"got {len(receipts)}"
         )
     healthy_count = 0
     receiver_keys = trust_ctx.get_keys_for_role("receiver")

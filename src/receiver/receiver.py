@@ -182,7 +182,8 @@ class Receiver:
         if not adapter_allowed:
             verification.eligibility = EligibilityClass.INELIGIBLE
             verification.eligibility_reasons.append(
-                f"Deployment adapter '{adapter_id}' ({adapter_digest}) is not in policy allowed_adapters"
+                f"Deployment adapter '{adapter_id}' ({adapter_digest}) "
+                f"is not in policy allowed_adapters"
             )
             if self._audit_logger:
                 self._audit_logger.log(
@@ -204,11 +205,13 @@ class Receiver:
         if manifest is None:
             return verification, None
 
-        # Step 3: Deploy using the adapter lifecycle with concurrency mutual exclusion (FR-086, AT-029)
+        # Step 3: Deploy using adapter lifecycle with mutual exclusion (FR-086, AT-029)
         lock = _get_deploy_lock(self._deploy_root)
         if not lock.acquire(blocking=False):
             verification.eligibility = EligibilityClass.INELIGIBLE
-            verification.eligibility_reasons.append("Concurrent deployment in progress on deploy root")
+            verification.eligibility_reasons.append(
+                "Concurrent deployment in progress on deploy root"
+            )
             return verification, None
 
         lock_path = self._deploy_root / ".deploy.lock"
@@ -219,7 +222,9 @@ class Receiver:
                 fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_RDWR)
             except (FileExistsError, OSError):
                 verification.eligibility = EligibilityClass.INELIGIBLE
-                verification.eligibility_reasons.append("Concurrent deployment in progress on deploy root")
+                verification.eligibility_reasons.append(
+                    "Concurrent deployment in progress on deploy root"
+                )
                 return verification, None
 
             deploy_state = DeploymentState()
@@ -295,10 +300,8 @@ class Receiver:
 
         finally:
             if fd is not None:
-                try:
+                with contextlib.suppress(OSError):
                     os.close(fd)
-                except OSError:
-                    pass
                 with contextlib.suppress(OSError):
                     lock_path.unlink()
             lock.release()

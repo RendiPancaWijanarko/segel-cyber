@@ -162,6 +162,10 @@ class TrustContext:
         """Get the KeyRecord for a given key_id if known."""
         return self._keys_by_id.get(key_id)
 
+    def get_public_key(self, key_id: str) -> PublicKeyInfo | None:
+        """Get the PublicKeyInfo for a given key_id if loaded."""
+        return self._public_keys_cache.get(key_id)
+
     def check_key_authorised(self, key_id: str, role: str) -> PublicKeyInfo:
         """Verify a key is authorised for a role and not revoked.
 
