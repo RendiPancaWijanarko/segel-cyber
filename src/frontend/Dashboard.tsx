@@ -1,34 +1,28 @@
 // SPDX-License-Identifier: MIT
 /**
  * Zassk Precision Pixel-Exact Analytics Dashboard
- * Production-ready React TypeScript component.
- * Features:
- * - Clean Home icon navigation dock with Dashboard active and inactive circular buttons (Help is inactive).
- * - Single physical interlocking geometry for Total Profit and Active Users.
- * - Top-tab notches on Total Responses and Recent Transactions.
- * - Full-width audio-spectrum / needle waterfall line chart across days 01 to 30.
- * - 14-thick-tick radial arc gauge with royal blue -> sky blue -> pale ice blue -> muted gray.
- * - Boundary-seam pill badges on User Source progress tracks.
- * - 28-tick conversion bar and 2-row prominent/pip dot grid.
+ * Reverse-engineered production-grade React TypeScript component.
+ * Exact geometry, tablet bezel frame, SVG folder-tab contours,
+ * spectral waterfall needle chart, and multi-layered progress tracks.
  */
 
 import React, { useState, useMemo, useRef, MouseEvent } from 'react';
 import './Dashboard.css';
 import {
   mockTaskStatistics,
-  mockTotalProfit,
   mockActiveUsers,
   mockJoiningUsers,
   mockTransactions,
 } from './mockData';
 import { ZasskDashboardProps } from './types';
 
-// ── Tailored Icon Component ──
+// ── Tailored Minimalist Icon Component ──
 interface IconProps {
   name: string;
   size?: number;
   strokeWidth?: number;
   className?: string;
+  color?: string;
 }
 
 export const LucideIcon: React.FC<IconProps> = ({
@@ -36,20 +30,24 @@ export const LucideIcon: React.FC<IconProps> = ({
   size = 18,
   strokeWidth = 2,
   className = '',
+  color = 'currentColor',
 }) => {
   const iconPaths: Record<string, React.ReactNode> = {
-    // Minimalist house/home icon (outline with a floor dash)
+    // Exact minimalist pentagonal house/home icon with inner floor line
     Home: (
       <>
-        <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z" />
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <path d="M9 17h6" />
       </>
     ),
+    // Profile / User: circular head + curved shoulder arch
     User: (
       <>
         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </>
     ),
+    // Document / File icon
     FileText: (
       <>
         <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
@@ -59,6 +57,7 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M16 17H8" />
       </>
     ),
+    // Calendar icon
     Calendar: (
       <>
         <path d="M8 2v4" />
@@ -67,6 +66,7 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M3 10h18" />
       </>
     ),
+    // Analytics / Bar chart icon
     BarChart3: (
       <>
         <path d="M3 3v18h18" />
@@ -75,12 +75,14 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M8 17v-3" />
       </>
     ),
+    // Settings / Gear icon
     Settings: (
       <>
         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
         <circle cx="12" cy="12" r="3" />
       </>
     ),
+    // Help / Question circle
     HelpCircle: (
       <>
         <circle cx="12" cy="12" r="10" />
@@ -88,24 +90,33 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M12 17h.01" />
       </>
     ),
+    // Search icon
     Search: (
       <>
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
       </>
     ),
+    // Diagonal top-right arrow
     ArrowUpRight: (
       <>
         <path d="M7 7h10v10" />
         <path d="M7 17 17 7" />
       </>
     ),
-    // Funnel filter icon
+    // Funnel filter icon: M4 6h16 M7 12h10 M10 18h4
     FunnelFilter: (
       <>
-        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="4" y1="6" x2="20" y2="6" />
         <line x1="7" y1="12" x2="17" y2="12" />
-        <line x1="10" y1="17" x2="14" y2="17" />
+        <line x1="10" y1="18" x2="14" y2="18" />
+      </>
+    ),
+    // Briefcase / Portfolio icon for transactions
+    Briefcase: (
+      <>
+        <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
       </>
     ),
     MoreHorizontal: (
@@ -113,11 +124,6 @@ export const LucideIcon: React.FC<IconProps> = ({
         <circle cx="12" cy="12" r="1.5" />
         <circle cx="19" cy="12" r="1.5" />
         <circle cx="5" cy="12" r="1.5" />
-      </>
-    ),
-    Folder: (
-      <>
-        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
       </>
     ),
     Check: (
@@ -131,7 +137,7 @@ export const LucideIcon: React.FC<IconProps> = ({
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={color}
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -150,20 +156,18 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   onSearch,
   className = '',
 }) => {
-  // Navigation dock state: defaults to 'dashboard'
+  // Navigation dock state: starts on 'dashboard'
   const [activeTab, setActiveTab] = useState<string>('dashboard');
 
-  // Total Revenue interactive scrubber (Defaults to Day 11 @ $120)
-  const [activeRevIndex, setActiveRevIndex] = useState<number>(4);
+  // Total Revenue interactive scrubber (defaults to Day 11 @ $120)
+  const [activeRevIndex, setActiveRevIndex] = useState<number>(3); // index 3 corresponds to Day 11
 
-  // Table row checkbox selections
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(
-    new Set(['usr-1']) // Preselect Brooklyn Simmons
-  );
+  // Table row checkbox selections (starts empty or with user-1)
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
 
   const chartSvgRef = useRef<SVGSVGElement | null>(null);
 
-  // Navigation dock items strictly ordered
+  // Strict Navigation dock items (Help is strictly inactive, no black pill)
   const dockItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'Home' },
     { id: 'profile', label: 'Profile', icon: 'User' },
@@ -201,23 +205,28 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     }
   };
 
-  const isAllSelected = selectedUserIds.size === mockJoiningUsers.length;
+  const isAllSelected = selectedUserIds.size === mockJoiningUsers.length && mockJoiningUsers.length > 0;
 
-  // ── 14 Thick Rounded-Cap Pill Bars Arc Gauge ──
+  // ── 14 Thick Radial Pill Ticks Arc Gauge ──
+  // Dimensions: width: 7.5px, height: 22px, radius R=88px
   const radialTicks = useMemo(() => {
     const total = 14;
     const ticks = [];
     const cx = 130;
-    const cy = 118;
+    const cy = 114;
     const rOuter = 88;
-    const rInner = 65; // 23px tick length
+    const rInner = 66; // 22px tick length
 
-    // Color progression: Royal blue (#2563EB) -> sky blue (#38BDF8) -> pale ice blue (#BAE6FD) -> muted gray (#E2E8F0)
+    // Color progression from directive:
+    // Ticks 1–4 (Left): #2563EB (Royal Blue)
+    // Ticks 5–8 (Top): #38BDF8 (Sky Blue)
+    // Ticks 9–10 (Top-Right): #BAE6FD (Pale Ice Blue)
+    // Ticks 11–14 (Right): #E2E8F0 (Muted Cool Gray)
     const colorProgression = [
-      '#2563EB', '#2563EB', '#2563EB', '#2563EB', // Royal blue
-      '#38BDF8', '#38BDF8', '#38BDF8',            // Sky blue
-      '#BAE6FD', '#BAE6FD', '#BAE6FD', '#BAE6FD', // Pale ice blue
-      '#E2E8F0', '#E2E8F0', '#E2E8F0',            // Muted gray
+      '#2563EB', '#2563EB', '#2563EB', '#2563EB', // Ticks 1–4
+      '#38BDF8', '#38BDF8', '#38BDF8', '#38BDF8', // Ticks 5–8
+      '#BAE6FD', '#BAE6FD',                         // Ticks 9–10
+      '#E2E8F0', '#E2E8F0', '#E2E8F0', '#E2E8F0', // Ticks 11–14
     ];
 
     for (let i = 0; i < total; i++) {
@@ -241,33 +250,37 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     return ticks;
   }, []);
 
-  // ── Full-Width Audio-Spectrum / Needle Waterfall Spline Chart ──
+  // ── Spectral Waterfall Needle Chart & Curved Bezier Spline ──
+  // Normalized points from Directive:
+  // Day 01: (0%, 35% height) -> y = 65%
+  // Day 04: (15%, 48% height) -> y = 52%
+  // Days 07-09: (30%, 88% height) -> y = 12% (Broad crest)
+  // Day 11 (active): (42%, 54% height) -> y = 46%
+  // Day 14: (55%, 38% height) -> y = 62%
+  // Day 20: (70%, 45% height) -> y = 55%
+  // Day 30: (100%, 65% height) -> y = 35%
   const { splinePoints, needleLines, activePointCoord, splinePathD } = useMemo(() => {
     const width = 530;
     const height = 145;
 
-    // Days: 01, 04, 07, 9, 11, 13, 15, 25, 30
-    // Starts at ~35% height (y=94), rises smoothly, crests at ~85% height (y=22) across days 07-10,
-    // dips around day 14 (~45% height, y=80), recovers toward day 30 (~60% height, y=58).
     const pointsData = [
-      { day: '01', rev: 45, curveY: 65 },  // 35% height from bottom -> y=65%
-      { day: '04', rev: 72, curveY: 42 },
-      { day: '07', rev: 110, curveY: 15 }, // Broad crest (~85% height)
-      { day: '9',  rev: 115, curveY: 16 },
-      { day: '11', rev: 120, curveY: 44 }, // Active scrubber point
-      { day: '13', rev: 68, curveY: 55 },  // Gentle dip ~45% height
-      { day: '15', rev: 86, curveY: 52 },
-      { day: '25', rev: 104, curveY: 45 },
-      { day: '30', rev: 125, curveY: 38 }, // Recovers toward day 30
+      { day: '01', xPerc: 0,   yHeight: 35, rev: 45 },
+      { day: '04', xPerc: 15,  yHeight: 48, rev: 72 },
+      { day: '07', xPerc: 28,  yHeight: 88, rev: 110 },
+      { day: '11', xPerc: 42,  yHeight: 54, rev: 120 }, // Active scrubber point
+      { day: '14', xPerc: 55,  yHeight: 38, rev: 68 },
+      { day: '20', xPerc: 70,  yHeight: 45, rev: 86 },
+      { day: '30', xPerc: 100, yHeight: 65, rev: 125 },
     ];
 
-    const coords = pointsData.map((p, idx) => {
-      const x = (idx / (pointsData.length - 1)) * (width - 32) + 16;
-      const y = (p.curveY / 100) * (height - 24) + 12;
+    const coords = pointsData.map((p) => {
+      const x = (p.xPerc / 100) * (width - 32) + 16;
+      // Invert height: 0% height is at bottom (y=140), 100% height is at top (y=12)
+      const y = (1 - p.yHeight / 100) * (height - 24) + 12;
       return { ...p, x, y };
     });
 
-    // Smooth cubic bezier spline
+    // Smooth monotonic cubic spline
     let pathD = `M ${coords[0].x} ${coords[0].y}`;
     for (let i = 0; i < coords.length - 1; i++) {
       const p0 = coords[i];
@@ -279,9 +292,9 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
       pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
     }
 
-    // High-density vertical needle lines spaced every 2.5px across the entire width
+    // Dense vertical needle waterfall: vertical lines every 2px (~220 lines)
     const lines = [];
-    const lineSpacing = 2.5;
+    const lineSpacing = 2.2;
     const totalLines = Math.floor((width - 32) / lineSpacing);
 
     for (let i = 0; i <= totalLines; i++) {
@@ -293,21 +306,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
       const p0 = coords[segIndex];
       const p1 = coords[segIndex + 1];
 
-      // Cubic hermite spline interpolation
+      // Cubic hermite spline interpolation for exact y value
       const y =
         (1 - t) ** 3 * p0.y +
         3 * (1 - t) ** 2 * t * p0.y +
         3 * (1 - t) * t ** 2 * p1.y +
         t ** 3 * p1.y;
 
-      // Vibrant near crest & scrubber (x between 120 and 300)
-      const isNearScrubberOrCrest = Math.abs(x - 240) < 90;
-      const opacity = isNearScrubberOrCrest ? 0.38 : 0.22;
+      // Opacity: 0.22 base, increasing to 0.45 near peak (Days 07–09) and scrubber (Day 11)
+      const isPeakOrScrubber = Math.abs(x - 210) < 80;
+      const opacity = isPeakOrScrubber ? 0.45 : 0.22;
 
       lines.push({ id: i, x, yTop: y, yBottom: height, opacity });
     }
 
-    const activeCoord = coords[activeRevIndex] || coords[4];
+    const activeCoord = coords[activeRevIndex] || coords[3];
 
     return {
       splinePoints: coords,
@@ -324,99 +337,122 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     const mouseX = e.clientX - rect.left;
     const width = rect.width;
     const fraction = Math.max(0, Math.min(1, mouseX / width));
-    const nearestIdx = Math.round(fraction * 8);
+    const nearestIdx = Math.round(fraction * 6);
     setActiveRevIndex(nearestIdx);
   };
 
+  // 9 vertical mini-bars for Total Profit (Requirement 3.B)
+  const profitBars = [40, 60, 52, 85, 96, 75, 100, 64, 42];
+
+  // Ended Task dot matrix: 4 rows × 12 columns (Requirement 6)
+  // Upper-right quadrant features 8–10 bold, solid royal blue dots (#2563EB, 7px).
+  // All other dots are tiny, faint gray circular pips (#CBD5E1, 4px).
+  const dotMatrixRows = [
+    // Row 1 (Top): dots at cols 8, 9, 10, 11 are bold blue
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+    // Row 2: dots at cols 7, 8, 9, 10 are bold blue
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+    // Row 3: dots at cols 5, 6, 7 are bold blue
+    [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+    // Row 4 (Bottom): dot at col 3 is bold blue
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+
   return (
-    <div className={`zassk-canvas ${className}`}>
-      <div className="zassk-frame">
-        {/* ── 1. TOP NAVIGATION HEADER ── */}
-        <header className="zassk-header">
-          {/* Brand Pill */}
-          <div className="zassk-brand-pill">Zassk</div>
+    <div className="zassk-viewport-wrapper">
+      {/* Tablet / Desktop Viewport Bezel Frame */}
+      <div className="zassk-tablet-bezel">
+        {/* Bezel Camera / Sensor Dot on Left */}
+        <div className="zassk-bezel-sensor" />
 
-          {/* Center Segmented Floating Dock */}
-          <nav className="zassk-dock">
-            {dockItems.map((item) => {
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleDockClick(item.id)}
-                  className={`zassk-dock-btn ${isActive ? 'active' : 'inactive'}`}
-                  aria-label={item.label}
-                  title={item.label}
-                >
-                  <LucideIcon
-                    name={item.icon}
-                    size={item.id === 'dashboard' ? 15 : 17}
-                    strokeWidth={2}
-                  />
-                  {isActive && <span>{item.label}</span>}
-                </button>
-              );
-            })}
-          </nav>
+        <div className={`zassk-canvas ${className}`}>
+          {/* ── 1. TOP NAVIGATION HEADER ── */}
+          <header className="zassk-header">
+            {/* Brand Pill */}
+            <div className="zassk-brand-pill">Zassk</div>
 
-          {/* Right Utilities */}
-          <div className="zassk-header-utilities">
-            <button
-              className="zassk-circle-btn"
-              onClick={() => onSearch && onSearch('')}
-              aria-label="Search"
-              title="Search"
-            >
-              <LucideIcon name="Search" size={17} strokeWidth={2} />
-            </button>
-            <button className="zassk-avatar-btn" aria-label="Profile Avatar" title="Keren nix">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150"
-                alt="User Profile"
-              />
-            </button>
-          </div>
-        </header>
+            {/* Center Segmented Floating Dock */}
+            <nav className="zassk-dock">
+              {dockItems.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleDockClick(item.id)}
+                    className={`zassk-dock-btn ${isActive ? 'active' : 'inactive'}`}
+                    aria-label={item.label}
+                    title={item.label}
+                  >
+                    <LucideIcon
+                      name={item.icon}
+                      size={item.id === 'dashboard' ? 15 : 17}
+                      strokeWidth={2}
+                      color={isActive ? '#FFFFFF' : '#4B5565'}
+                    />
+                    {isActive && <span>{item.label}</span>}
+                  </button>
+                );
+              })}
+            </nav>
 
-        {/* ── 2. TOP ROW METRICS ── */}
-        <div className="zassk-top-row">
-          {/* Col 1: Greeting & Task Statistics */}
-          <div className="zassk-greeting-box">
-            <div>
-              <div className="zassk-hello-lead">{userGreeting}</div>
-              <h1 className="zassk-hello-name">{userName}</h1>
-              <div className="zassk-welcome-sub">Welcome Back</div>
+            {/* Right Utilities */}
+            <div className="zassk-header-utilities">
+              <button
+                className="zassk-circle-btn"
+                onClick={() => onSearch && onSearch('')}
+                aria-label="Search"
+                title="Search"
+              >
+                <LucideIcon name="Search" size={17} strokeWidth={2} color="#4B5565" />
+              </button>
+              <button className="zassk-avatar-btn" aria-label="Profile Avatar" title="Keren nix">
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150"
+                  alt="User Profile"
+                />
+              </button>
             </div>
+          </header>
 
-            <div className="zassk-task-stat-widget">
-              <div className="zassk-stat-header">
-                <span className="zassk-stat-label">Task Statistics</span>
-                <div className="zassk-stat-value-group">
-                  <span className="zassk-stat-count">{mockTaskStatistics.count}</span>
-                  <span className="zassk-trend-badge">↗ {mockTaskStatistics.trendPercentage}%</span>
+          {/* ── 2. TOP ROW METRICS ── */}
+          <div className="zassk-top-row">
+            {/* Col 1: Greeting & Task Statistics */}
+            <div className="zassk-greeting-box">
+              <div>
+                <div className="zassk-hello-lead">{userGreeting}</div>
+                <h1 className="zassk-hello-name">{userName}</h1>
+                <div className="zassk-welcome-sub">Welcome Back</div>
+              </div>
+
+              <div className="zassk-task-stat-widget">
+                <div className="zassk-stat-header">
+                  <span className="zassk-stat-label">Task Statistics</span>
+                  <div className="zassk-stat-value-group">
+                    <span className="zassk-stat-count">{mockTaskStatistics.count}</span>
+                    <span className="zassk-trend-badge">↗ {mockTaskStatistics.trendPercentage}%</span>
+                  </div>
+                </div>
+                <div className="zassk-progress-capsule">
+                  <div className="zassk-seg-1" title="Completed Tasks" />
+                  <div className="zassk-seg-2" title="In Progress" />
+                  <div className="zassk-seg-3" title="Planned Tasks" />
                 </div>
               </div>
-              <div className="zassk-progress-capsule">
-                <div className="zassk-seg-1" title="Completed Tasks" />
-                <div className="zassk-seg-2" title="In Progress" />
-                <div className="zassk-seg-3" title="Planned Tasks" />
+            </div>
+
+            {/* Col 2: Total Responses Card with S-Curved File-Folder Tab Notch Silhouette */}
+            <div className="zassk-card-tabbed-notch">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 324 220" preserveAspectRatio="none">
+                <path
+                  d="M0,24 C0,10.7 10.7,0 24,0 L130,0 C140,0 148,6 152,14 L156,22 C160,30 168,36 178,36 L300,36 C313.3,36 324,46.7 324,60 L324,196 C324,209.3 313.3,220 300,220 L24,220 C10.7,220 0,209.3 0,196 Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
+
+              <div className="zassk-tabbed-header">
+                <span className="zassk-card-title">Total Responses</span>
               </div>
-            </div>
-          </div>
 
-          {/* Col 2: Total Responses Card with True File-Folder Tab Notch */}
-          <div className="zassk-card-notched-container">
-            {/* Elevated Tab */}
-            <div className="zassk-notched-tab">
-              <span className="zassk-notched-tab-title">Total Responses</span>
-            </div>
-            {/* Concave transition scoop */}
-            <svg className="zassk-notched-scoop" viewBox="0 0 20 20" fill="none">
-              <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF" />
-            </svg>
-
-            {/* Main Body */}
-            <div className="zassk-notched-body">
               <div className="zassk-gauge-wrapper-centered">
                 <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 145">
                   {radialTicks.map((tick) => (
@@ -427,7 +463,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       x2={tick.x2}
                       y2={tick.y2}
                       stroke={tick.stroke}
-                      strokeWidth={8}
+                      strokeWidth={7.5}
                       strokeLinecap="round"
                     />
                   ))}
@@ -438,427 +474,426 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Col 3: Physical Interlocking "Total Profit" & "Active Users" */}
-          <div className="zassk-interlocking-card">
-            {/* Upper Tier: Total Profit with Stepped Contour */}
-            <div className="zassk-interlock-top-tier">
-              <div className="zassk-interlock-header">
-                <span className="zassk-card-title">Total Profit</span>
-                <button className="zassk-action-pill-btn" aria-label="View Profit">
-                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} />
-                </button>
+            {/* Col 3: Physical Interlocking "Total Profit" & "Active Users" */}
+            <div className="zassk-interlocking-card">
+              {/* Upper Zone: Total Profit */}
+              <div className="zassk-interlock-top-tier">
+                <div className="zassk-interlock-header">
+                  <span className="zassk-card-title">Total Profit</span>
+                  <button className="zassk-action-pill-btn" aria-label="View Profit">
+                    <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                  </button>
+                </div>
+                <div className="zassk-profit-row">
+                  <div className="zassk-metric-big">$63k</div>
+                  {/* 9 vertical bars of varying heights */}
+                  <div className="zassk-mini-barchart">
+                    {profitBars.map((height, i) => (
+                      <div
+                        key={i}
+                        className="zassk-mini-bar"
+                        style={{
+                          height: `${height}%`,
+                          backgroundColor: i === 6 ? '#2563EB' : '#60A5FA',
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="zassk-profit-row">
-                <div className="zassk-metric-big">{mockTotalProfit.value}</div>
-                <div className="zassk-mini-barchart">
-                  {mockTotalProfit.bars.map((height, i) => (
+
+              {/* Stepped contour shelf divider */}
+              <div className="zassk-stepped-shelf-divider">
+                <svg width="100%" height="12" viewBox="0 0 280 12" fill="none">
+                  <path d="M 110 3 C 122 3, 126 9, 138 9 L 265 9" stroke="#F1F5F9" strokeWidth="1.2" />
+                </svg>
+              </div>
+
+              {/* Lower Zone: Active Users */}
+              <div className="zassk-interlock-bottom-tier">
+                <div className="zassk-interlock-header">
+                  <span className="zassk-card-title">Active Users</span>
+                  <div className="zassk-split-labels">
+                    <span>{mockActiveUsers.splits.segmentA}%</span>
+                    <span>{mockActiveUsers.splits.segmentB}%</span>
+                    <span>{mockActiveUsers.splits.segmentC}%</span>
+                  </div>
+                </div>
+                <div className="zassk-metric-big" style={{ margin: '2px 0 6px 0' }}>
+                  {mockActiveUsers.count}
+                </div>
+                <div className="zassk-split-bar">
+                  <div className="zassk-split-seg-1" title="Primary users (75%)" />
+                  <div className="zassk-split-seg-2" title="Secondary users (25%)" />
+                  <div className="zassk-split-seg-3" title="Guest users (10%)" />
+                </div>
+              </div>
+            </div>
+
+            {/* Col 4: Conversion Rate (32 micro ticks) & Ended Task (4x12 dot matrix) */}
+            <div className="zassk-col4-column">
+              {/* Conversion Rate */}
+              <div className="zassk-col4-card">
+                <div className="zassk-interlock-header">
+                  <span className="zassk-card-title">Conversion Rate</span>
+                  <button className="zassk-action-pill-btn" aria-label="View Conversion">
+                    <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                  </button>
+                </div>
+                <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
+                  75%
+                </div>
+                {/* 32 micro vertical tick bars */}
+                <div className="zassk-dense-ticks-32">
+                  {Array.from({ length: 32 }).map((_, i) => (
                     <div
                       key={i}
-                      className="zassk-mini-bar"
-                      style={{
-                        height: `${height}%`,
-                        backgroundColor: i === 6 ? '#2563EB' : '#93C5FD',
-                      }}
+                      className={`zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
                     />
                   ))}
                 </div>
               </div>
-            </div>
 
-            {/* Stepped contour shelf divider */}
-            <div className="zassk-stepped-shelf-divider" />
-
-            {/* Lower Tier: Active Users nestled flush */}
-            <div className="zassk-interlock-bottom-tier">
-              <div className="zassk-interlock-header">
-                <span className="zassk-card-title">Active Users</span>
-                <div className="zassk-split-labels">
-                  <span>{mockActiveUsers.splits.segmentA}%</span>
-                  <span>{mockActiveUsers.splits.segmentB}%</span>
-                  <span>{mockActiveUsers.splits.segmentC}%</span>
+              {/* Ended Task: 4 rows × 12 columns dot matrix */}
+              <div className="zassk-col4-card">
+                <div className="zassk-interlock-header">
+                  <span className="zassk-card-title">Ended Task</span>
                 </div>
-              </div>
-              <div className="zassk-metric-big" style={{ margin: '2px 0 6px 0' }}>
-                {mockActiveUsers.count}
-              </div>
-              <div className="zassk-split-bar">
-                <div className="zassk-split-seg-1" title="Primary users (75%)" />
-                <div className="zassk-split-seg-2" title="Secondary users (25%)" />
-                <div className="zassk-split-seg-3" title="Guest users (10%)" />
+                <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
+                  80
+                </div>
+                <div className="zassk-dot-matrix-4x12">
+                  {dotMatrixRows.map((row, rIdx) => (
+                    <div key={rIdx} className="zassk-dot-row-12">
+                      {row.map((val, cIdx) => (
+                        <div
+                          key={cIdx}
+                          className={val === 1 ? 'zassk-dot-bold-blue' : 'zassk-dot-faint-pip'}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Col 4: Conversion Rate (28 thin ticks) & Ended Task (alternating dot grid) */}
-          <div className="zassk-col4-column">
-            {/* Conversion Rate */}
-            <div className="zassk-col4-card">
-              <div className="zassk-interlock-header">
-                <span className="zassk-card-title">Conversion Rate</span>
-                <button className="zassk-action-pill-btn" aria-label="View Conversion">
-                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} />
+          {/* ── 3. MIDDLE ROW: SPECTRAL WATERFALL NEEDLE CHART & USER SOURCES ── */}
+          <div className="zassk-mid-row">
+            {/* Full-Width Total Revenue Card */}
+            <div className="zassk-card zassk-revenue-card">
+              <div className="zassk-revenue-top-bar">
+                <span className="zassk-card-title">Total Revenue</span>
+                {/* Funnel Filter Icon */}
+                <button className="zassk-action-pill-btn" aria-label="Filter Revenue">
+                  <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
                 </button>
               </div>
-              <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
-                75%
-              </div>
-              {/* 28 thin vertical tick bars (width: 3px, height: 18px, gap: 3px) */}
-              <div className="zassk-dense-ticks-28">
-                {Array.from({ length: 28 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`zassk-tick-bar-28 ${i < 21 ? 'filled' : 'unfilled'}`}
-                  />
-                ))}
-              </div>
-            </div>
 
-            {/* Ended Task with 4-Row Ascending Wave Dot Grid */}
-            <div className="zassk-col4-card">
-              <div className="zassk-interlock-header">
-                <span className="zassk-card-title">Ended Task</span>
-              </div>
-              <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
-                80
-              </div>
-              <div className="zassk-dot-matrix">
-                {/* Row 1: Top row with blue dots at right */}
-                <div className="zassk-dot-matrix-row">
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
+              <div className="zassk-revenue-layout">
+                {/* Left Metric Column */}
+                <div className="zassk-revenue-side-metric">
+                  <div>
+                    <div className="zassk-revenue-amount">$1240</div>
+                    <div className="zassk-revenue-sub">Last 15 days Orders</div>
+                  </div>
+                  <div className="zassk-y-markers">
+                    <span>100%</span>
+                    <span>80%</span>
+                    <span>60%</span>
+                    <span>40%</span>
+                    <span>20%</span>
+                  </div>
                 </div>
-                {/* Row 2: Mid-high row */}
-                <div className="zassk-dot-matrix-row">
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                </div>
-                {/* Row 3: Mid-low row */}
-                <div className="zassk-dot-matrix-row">
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                </div>
-                {/* Row 4: Bottom row starting from left */}
-                <div className="zassk-dot-matrix-row">
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-prominent" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                  <div className="zassk-dot-muted-pip" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* ── 3. MIDDLE ROW: WATERFALL LINE-NEEDLE CHART & USER SOURCES ── */}
-        <div className="zassk-mid-row">
-          {/* Full-Width Total Revenue Card with Vertical Needle Texture */}
-          <div className="zassk-card zassk-revenue-card">
-            <div className="zassk-revenue-top-bar">
-              <span className="zassk-card-title">Total Revenue</span>
-              <button className="zassk-action-pill-btn" aria-label="Filter Revenue">
-                <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
-              </button>
-            </div>
+                {/* Spectral Waterfall Needle Chart Container */}
+                <div className="zassk-waveform-container">
+                  <svg
+                    ref={chartSvgRef}
+                    className="zassk-waveform-svg"
+                    viewBox="0 0 530 145"
+                    onMouseMove={handleChartMouseMove}
+                  >
+                    {/* Dense Vertical Needle Waterfall (every 2px interval) */}
+                    {needleLines.map((line) => (
+                      <line
+                        key={line.id}
+                        x1={line.x}
+                        y1={line.yTop}
+                        x2={line.x}
+                        y2={line.yBottom}
+                        stroke="#3B82F6"
+                        strokeWidth={1}
+                        strokeOpacity={line.opacity}
+                      />
+                    ))}
 
-            <div className="zassk-revenue-layout">
-              {/* Left Metric Column */}
-              <div className="zassk-revenue-side-metric">
-                <div>
-                  <div className="zassk-revenue-amount">$1240</div>
-                  <div className="zassk-revenue-sub">Last 15 days</div>
-                  <div className="zassk-revenue-sub" style={{ marginTop: '0px' }}>Ordars</div>
-                </div>
-                <div className="zassk-y-markers">
-                  <span>100%</span>
-                  <span>80%</span>
-                  <span>60%</span>
-                  <span>40%</span>
-                  <span>20%</span>
-                </div>
-              </div>
-
-              {/* Full-Width Waterfall Needle Container */}
-              <div className="zassk-waveform-container">
-                <svg
-                  ref={chartSvgRef}
-                  className="zassk-waveform-svg"
-                  viewBox="0 0 530 145"
-                  onMouseMove={handleChartMouseMove}
-                >
-                  {/* Vertical Needle Waterfall Texture lines */}
-                  {needleLines.map((line) => (
-                    <line
-                      key={line.id}
-                      x1={line.x}
-                      y1={line.yTop}
-                      x2={line.x}
-                      y2={line.yBottom}
+                    {/* Smooth Monotonic Cubic Bezier Spline */}
+                    <path
+                      d={splinePathD}
+                      fill="none"
                       stroke="#3B82F6"
-                      strokeWidth={1}
-                      strokeOpacity={line.opacity}
+                      strokeWidth={2.5}
+                      strokeLinecap="round"
                     />
-                  ))}
 
-                  {/* Full-Width Bezier Spline Line */}
-                  <path
-                    d={splinePathD}
-                    fill="none"
-                    stroke="#2563EB"
-                    strokeWidth={2.8}
-                    strokeLinecap="round"
-                  />
-
-                  {/* Active Scrubber Point Ring */}
-                  {activePointCoord && (
-                    <g style={{ cursor: 'pointer' }}>
+                    {/* Active Scrubber Target Ring at Day 11 */}
+                    {activePointCoord && (
                       <circle
                         cx={activePointCoord.x}
                         cy={activePointCoord.y}
                         r={5}
                         fill="#FFFFFF"
                         stroke="#2563EB"
-                        strokeWidth={2.5}
+                        strokeWidth={3}
+                        style={{ cursor: 'pointer' }}
                       />
-                    </g>
-                  )}
-                </svg>
+                    )}
+                  </svg>
 
-                {/* Floating Tooltip Pill */}
-                {activePointCoord && (
-                  <div
-                    className="zassk-floating-tooltip"
+                  {/* Floating Tooltip Pill */}
+                  {activePointCoord && (
+                    <div
+                      className="zassk-floating-tooltip"
+                      style={{
+                        left: `${(activePointCoord.x / 530) * 100}%`,
+                        top: `${(activePointCoord.y / 145) * 100}%`,
+                      }}
+                    >
+                      Revenue ${activePointCoord.rev}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Range Scrubber Bar */}
+              <div className="zassk-timeline-slider-track">
+                <div
+                  className="zassk-timeline-slider-thumb"
+                  style={{ left: '26%', width: '28%' }}
+                />
+              </div>
+
+              {/* Full-Width X-Axis Days */}
+              <div className="zassk-x-axis-full">
+                {['01', '04', '07', '9', '11', '13', '15', '25', '30'].map((d, idx) => (
+                  <span
+                    key={idx}
                     style={{
-                      left: `${(activePointCoord.x / 530) * 100}%`,
-                      top: `${(activePointCoord.y / 145) * 100}%`,
+                      color: d === '11' ? '#0F172A' : '#94A3B8',
+                      fontWeight: d === '11' ? 800 : 600,
                     }}
                   >
-                    Revenue ${activePointCoord.revenue}
-                  </div>
-                )}
+                    {d}
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* Timeline Range Scrubber Bar */}
-            <div className="zassk-timeline-slider-track">
-              <div
-                className="zassk-timeline-slider-thumb"
-                style={{ left: '26%', width: '28%' }}
-              />
-            </div>
+            {/* User Source Card with Multi-Layered Progress Tracks */}
+            <div className="zassk-card zassk-source-card">
+              <div>
+                <div className="zassk-revenue-top-bar">
+                  <div>
+                    <span className="zassk-card-title">User Source</span>
+                    <div style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginTop: '2px' }}>
+                      Total 12k+
+                    </div>
+                  </div>
+                  {/* Funnel Filter Icon */}
+                  <button className="zassk-action-pill-btn" aria-label="Filter Sources">
+                    <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
+                  </button>
+                </div>
 
-            {/* Full-Width X-Axis Days */}
-            <div className="zassk-x-axis-full">
-              {splinePoints.map((p, idx) => (
-                <span
-                  key={idx}
-                  style={{
-                    color: idx === activeRevIndex ? '#0F172A' : '#94A3B8',
-                    fontWeight: idx === activeRevIndex ? 800 : 600,
-                  }}
-                >
-                  {p.day}
-                </span>
-              ))}
+                <div className="zassk-source-list">
+                  {/* 1. Google (Blue #3B82F6 -> #60A5FA, 68%) */}
+                  <div className="zassk-source-row">
+                    <div className="zassk-brand-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
+                      </svg>
+                    </div>
+                    <div className="zassk-brand-track">
+                      {/* Left frosted pod with 5 subtle dots */}
+                      <div className="zassk-frosted-pod">
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                      </div>
+                      <div
+                        className="zassk-brand-capsule"
+                        style={{ width: '68%', background: 'linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)' }}
+                      >
+                        <span>Google.com</span>
+                        {/* Floating Pill Badge straddling the seam */}
+                        <div className="zassk-count-pill-seam">4653</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. X (Purple #8B5CF6 -> #A78BFA, 78%) */}
+                  <div className="zassk-source-row">
+                    <div className="zassk-brand-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                    </div>
+                    <div className="zassk-brand-track">
+                      {/* Left frosted pod with 5 subtle dots */}
+                      <div className="zassk-frosted-pod">
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                      </div>
+                      <div
+                        className="zassk-brand-capsule"
+                        style={{ width: '78%', background: 'linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%)' }}
+                      >
+                        <span>X.com</span>
+                        {/* Floating Pill Badge straddling the seam */}
+                        <div className="zassk-count-pill-seam">379</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. Instagram (Coral/Salmon #FB7185 -> #F43F5E, 88%) */}
+                  <div className="zassk-source-row">
+                    <div className="zassk-brand-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                      </svg>
+                    </div>
+                    <div className="zassk-brand-track">
+                      {/* Left frosted pod with 5 subtle dots */}
+                      <div className="zassk-frosted-pod">
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                        <span className="zassk-pod-dot" />
+                      </div>
+                      <div
+                        className="zassk-brand-capsule"
+                        style={{ width: '88%', background: 'linear-gradient(90deg, #FB7185 0%, #F43F5E 100%)' }}
+                      >
+                        <span>Instagram.com</span>
+                        {/* Floating Pill Badge straddling the seam */}
+                        <div className="zassk-count-pill-seam">653</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* User Source Card with Seam-Aligned Pill Badges */}
-          <div className="zassk-card zassk-source-card">
-            <div>
-              <div className="zassk-revenue-top-bar">
-                <div>
-                  <span className="zassk-card-title">User Source</span>
-                  <div style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginTop: '2px' }}>
-                    Total 12k+
-                  </div>
-                </div>
-                <button className="zassk-action-pill-btn" aria-label="Filter Sources">
-                  <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
+          {/* ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── */}
+          <div className="zassk-bottom-row">
+            {/* Left: Recent Joining User Table */}
+            <div className="zassk-card zassk-table-card">
+              <div className="zassk-revenue-top-bar" style={{ marginBottom: '14px' }}>
+                <span className="zassk-card-title">Recent Joining User</span>
+                <button className="zassk-action-pill-btn" aria-label="Filter Users">
+                  <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
                 </button>
               </div>
 
-              <div className="zassk-source-list">
-                {/* 1. Google (Blue #3B82F6) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
-                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
-                      <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
-                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
-                    </svg>
-                  </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-brand-capsule" style={{ width: '62%', backgroundColor: '#3B82F6' }}>
-                      <span>Google.com</span>
-                      <div className="zassk-count-pill-seam">4653</div>
-                    </div>
-                  </div>
-                </div>
+              <table className="zassk-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '42px' }}>
+                      <div
+                        className={`zassk-checkbox ${isAllSelected ? 'checked' : ''}`}
+                        onClick={toggleSelectAll}
+                        role="checkbox"
+                        aria-checked={isAllSelected}
+                      >
+                        {isAllSelected && <LucideIcon name="Check" size={13} strokeWidth={3} color="#FFFFFF" />}
+                      </div>
+                    </th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Posted Date</th>
+                    <th style={{ width: '40px' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockJoiningUsers.map((user) => {
+                    const isChecked = selectedUserIds.has(user.id);
+                    return (
+                      <tr key={user.id}>
+                        <td>
+                          <div
+                            className={`zassk-checkbox ${isChecked ? 'checked' : ''}`}
+                            onClick={() => toggleUserSelection(user.id)}
+                            role="checkbox"
+                            aria-checked={isChecked}
+                          >
+                            {isChecked && <LucideIcon name="Check" size={13} strokeWidth={3} color="#FFFFFF" />}
+                          </div>
+                        </td>
+                        <td style={{ fontWeight: 700 }}>{user.name}</td>
+                        <td style={{ color: '#64748B' }}>{user.type}</td>
+                        <td style={{ color: '#64748B' }}>{user.location}</td>
+                        <td>
+                          <span
+                            className={`zassk-status-pill ${
+                              user.status === 'Active' ? 'zassk-status-active' : 'zassk-status-pending'
+                            }`}
+                          >
+                            <span style={{ fontSize: '8px' }}>●</span>
+                            {user.status}
+                          </span>
+                        </td>
+                        <td style={{ color: '#64748B' }}>{user.postedDate}</td>
+                        <td>
+                          <button
+                            className="zassk-action-pill-btn"
+                            style={{ width: '28px', height: '28px', border: 'none', background: 'transparent' }}
+                            aria-label="Actions"
+                          >
+                            <LucideIcon name="MoreHorizontal" size={16} strokeWidth={2} color="#64748B" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-                {/* 2. X (Purple #8B5CF6) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                  </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-brand-capsule" style={{ width: '78%', backgroundColor: '#8B5CF6' }}>
-                      <span>X.com</span>
-                      <div className="zassk-count-pill-seam">379</div>
-                    </div>
-                  </div>
-                </div>
+            {/* Right: Recent Transactions Card with S-Curved File-Folder Tab Notch Silhouette */}
+            <div className="zassk-trans-tabbed-notch">
+              <svg className="zassk-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
+                <path
+                  d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,256 C324,269.3 313.3,280 300,280 L24,280 C10.7,280 0,269.3 0,256 Z"
+                  fill="#FFFFFF"
+                />
+              </svg>
 
-                {/* 3. Instagram (Coral/Salmon #FB7185) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                    </svg>
-                  </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-brand-capsule" style={{ width: '92%', backgroundColor: '#FB7185' }}>
-                      <span>Instagram.com</span>
-                      <div className="zassk-count-pill-seam">653</div>
-                    </div>
-                  </div>
-                </div>
+              <div className="zassk-tabbed-header">
+                <span className="zassk-card-title">Recent Transactions</span>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── */}
-        <div className="zassk-bottom-row">
-          {/* Left: Recent Joining User Table */}
-          <div className="zassk-card zassk-table-card">
-            <div className="zassk-revenue-top-bar" style={{ marginBottom: '14px' }}>
-              <span className="zassk-card-title">Recent Joining User</span>
-              <button className="zassk-action-pill-btn" aria-label="Filter Users">
-                <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
-              </button>
-            </div>
-
-            <table className="zassk-table">
-              <thead>
-                <tr>
-                  <th style={{ width: '42px' }}>
-                    <div
-                      className={`zassk-checkbox ${isAllSelected ? 'checked' : ''}`}
-                      onClick={toggleSelectAll}
-                      role="checkbox"
-                      aria-checked={isAllSelected}
-                    >
-                      {isAllSelected && <LucideIcon name="Check" size={13} strokeWidth={3} />}
-                    </div>
-                  </th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Posted Date</th>
-                  <th style={{ width: '40px' }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockJoiningUsers.map((user) => {
-                  const isChecked = selectedUserIds.has(user.id);
-                  return (
-                    <tr key={user.id}>
-                      <td>
-                        <div
-                          className={`zassk-checkbox ${isChecked ? 'checked' : ''}`}
-                          onClick={() => toggleUserSelection(user.id)}
-                          role="checkbox"
-                          aria-checked={isChecked}
-                        >
-                          {isChecked && <LucideIcon name="Check" size={13} strokeWidth={3} />}
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: 700 }}>{user.name}</td>
-                      <td style={{ color: '#64748B' }}>{user.type}</td>
-                      <td style={{ color: '#64748B' }}>{user.location}</td>
-                      <td>
-                        <span
-                          className={`zassk-status-pill ${
-                            user.status === 'Active' ? 'zassk-status-active' : 'zassk-status-pending'
-                          }`}
-                        >
-                          <span style={{ fontSize: '8px' }}>●</span>
-                          {user.status}
-                        </span>
-                      </td>
-                      <td style={{ color: '#64748B' }}>{user.postedDate}</td>
-                      <td>
-                        <button
-                          className="zassk-action-pill-btn"
-                          style={{ width: '28px', height: '28px', border: 'none', background: 'transparent' }}
-                          aria-label="Actions"
-                        >
-                          <LucideIcon name="MoreHorizontal" size={16} strokeWidth={2} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Right: Recent Transactions Card with True File-Folder Tab Notch */}
-          <div className="zassk-trans-notched-container">
-            {/* Elevated Tab */}
-            <div className="zassk-trans-tab">
-              <span className="zassk-card-title">Recent Transactions</span>
-            </div>
-            {/* Concave transition scoop */}
-            <svg className="zassk-trans-scoop" viewBox="0 0 20 20" fill="none">
-              <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF" />
-            </svg>
-
-            <div className="zassk-trans-body">
-              <div className="zassk-trans-list-pad" style={{ padding: '24px 0 0 0' }}>
+              <div className="zassk-trans-list-pad">
                 {mockTransactions.map((tx) => (
                   <div key={tx.id} className="zassk-trans-item">
                     <div className="zassk-trans-left">
                       <div className="zassk-trans-icon">
-                        <LucideIcon name="Folder" size={18} strokeWidth={2} />
+                        <LucideIcon name="Briefcase" size={18} strokeWidth={2} color="#3B82F6" />
                       </div>
                       <div>
                         <div className="zassk-trans-symbol">{tx.symbol}</div>

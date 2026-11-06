@@ -1,14 +1,14 @@
 /* SPDX-License-Identifier: MIT */
 /**
  * Zassk Precision Pixel-Exact Analytics Dashboard Stylesheet
- * Exact geometry, physical interlocking cards, notched folder tabs,
- * high-density needle waterfall chart, and authentic textures.
+ * Reconstructed geometry, tablet viewport bezel, SVG notched folder tabs,
+ * spectral waterfall needle chart, multi-layered user tracks, and authentic textures.
  */
 
 :root {
-  --zassk-canvas-bg: linear-gradient(135deg, #A7C8FD 0%, #D4E4FD 40%, #EFF5FF 80%, #F8FAFD 100%);
+  --zassk-canvas-bg: linear-gradient(135deg, #A3C5FD 0%, #CDE0FD 35%, #EDF4FE 75%, #F8FAFD 100%);
   --zassk-glass-dock: rgba(255, 255, 255, 0.72);
-  --zassk-glass-border: rgba(255, 255, 255, 0.9);
+  --zassk-glass-border: rgba(255, 255, 255, 0.95);
   --zassk-card-solid: #FFFFFF;
   --zassk-navy: #0F172A;
   --zassk-charcoal: #181F2A;
@@ -17,36 +17,61 @@
   --zassk-blue-primary: #2563EB;
   --zassk-blue-sky: #38BDF8;
   --zassk-blue-ice: #BAE6FD;
-  --zassk-border-subtle: rgba(226, 232, 240, 0.7);
-  --zassk-card-shadow: 0 14px 34px -8px rgba(125, 165, 230, 0.22);
+  --zassk-card-shadow: 0 12px 32px -4px rgba(115, 155, 220, 0.2), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── Canvas Container ── */
-.zassk-canvas {
-  min-height: 100vh;
-  width: 100%;
-  background: var(--zassk-canvas-bg);
-  padding: 24px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-  color: var(--zassk-navy);
+/* ── Tablet Bezel Viewport Frame ── */
+.zassk-viewport-wrapper {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  overflow-x: hidden;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 24px;
+  background: #E2E8F0;
   box-sizing: border-box;
 }
 
-.zassk-frame {
+.zassk-tablet-bezel {
+  position: relative;
   max-width: 1440px;
   width: 100%;
+  border: 14px solid #0F172A;
+  border-radius: 36px;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: var(--zassk-canvas-bg);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Tablet Camera / Sensor Dot on Left Bezel */
+.zassk-bezel-sensor {
+  position: absolute;
+  left: -11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 16px;
+  background: #1E293B;
+  border-radius: 9999px;
+  z-index: 100;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.zassk-canvas {
+  width: 100%;
+  padding: 24px 28px 28px 28px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  color: var(--zassk-navy);
   display: flex;
   flex-direction: column;
   gap: 18px;
+  box-sizing: border-box;
 }
 
-/* ── Top Header & Glass Dock ── */
+/* ── 1. Top Header & Glass Dock ── */
 .zassk-header {
   display: flex;
   align-items: center;
@@ -77,15 +102,15 @@
 /* Navigation Dock */
 .zassk-dock {
   background: var(--zassk-glass-dock);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--zassk-glass-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1.2px solid var(--zassk-glass-border);
   border-radius: 9999px;
-  padding: 5px;
+  padding: 6px;
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.08);
   display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 8px 24px rgba(100, 140, 200, 0.1);
+  gap: 8px;
 }
 
 .zassk-dock-btn {
@@ -174,7 +199,6 @@
 .zassk-card {
   background: var(--zassk-card-solid);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: var(--zassk-card-shadow);
   position: relative;
   overflow: hidden;
@@ -199,7 +223,7 @@
   transform: scale(1.05);
 }
 
-/* ── Top Row Grid ── */
+/* ── 2. Top Row Grid ── */
 .zassk-top-row {
   display: grid;
   grid-template-columns: 1.15fr 1fr 0.95fr 0.9fr;
@@ -281,99 +305,38 @@
   border-radius: 6px 9999px 9999px 6px;
 }
 
-/* ── File-Folder Tab Notched Card Base ── */
-.zassk-card-notched-container {
+/* ── S-Curved File-Folder Tab Notched Card Silhouette ── */
+.zassk-card-tabbed-notch {
   position: relative;
-  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
+  filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+  height: 220px;
   display: flex;
   flex-direction: column;
 }
 
-/* Elevated Tab on Top Left */
-.zassk-notched-tab {
+.zassk-card-svg-bg {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 58%;
-  height: 48px;
-  background: #FFFFFF;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 16px;
-  display: flex;
-  align-items: center;
-  padding: 0 22px;
-  z-index: 2;
-}
-
-.zassk-notched-tab-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-  letter-spacing: -0.2px;
-}
-
-/* Concave transition scoop joining tab to lower card top */
-.zassk-notched-scoop {
-  position: absolute;
-  top: 18px;
-  left: 58%;
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Main Card Body sitting below the 18px notch */
-.zassk-notched-body {
-  margin-top: 18px;
-  background: #FFFFFF;
-  border-radius: 0 24px 24px 24px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-/* Old compatibility aliases */
-.zassk-card-notched-responses {
-  composes: zassk-card-notched-container;
-}
-
-.zassk-notched-header-responses {
-  position: relative;
-  height: 52px;
+  inset: 0;
   width: 100%;
-  display: flex;
-  align-items: flex-start;
-}
-
-.zassk-responses-tab-title {
-  padding: 16px 22px 8px 22px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-  letter-spacing: -0.2px;
-  z-index: 2;
-}
-
-.zassk-responses-step-notch-svg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 42px;
+  height: 100%;
+  z-index: 1;
   pointer-events: none;
+}
+
+.zassk-tabbed-header {
+  position: relative;
+  z-index: 2;
+  padding: 12px 22px;
 }
 
 .zassk-gauge-wrapper-centered {
   position: relative;
+  z-index: 2;
   width: 100%;
-  height: 165px;
+  height: 155px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
 }
 
 .zassk-radial-gauge-svg { width: 100%; height: 100%; overflow: visible; }
@@ -392,7 +355,6 @@
 .zassk-interlocking-card {
   background: var(--zassk-card-solid);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: var(--zassk-card-shadow);
   display: flex;
   flex-direction: column;
@@ -400,9 +362,8 @@
   position: relative;
 }
 
-/* Stepped profile top tier */
 .zassk-interlock-top-tier {
-  padding: 18px 20px 12px 20px;
+  padding: 18px 20px 10px 20px;
   position: relative;
 }
 
@@ -430,31 +391,29 @@
   letter-spacing: -0.6px;
 }
 
-/* Mini Bar Histogram */
+/* Mini Bar Histogram (9 vertical bars of varying heights) */
 .zassk-mini-barchart {
   display: flex;
   align-items: flex-end;
-  gap: 3.5px;
+  gap: 4px;
   height: 36px;
 }
 .zassk-mini-bar {
   width: 5px;
-  background: #93C5FD;
   border-radius: 2px;
   transition: all 0.2s ease;
 }
-.zassk-mini-bar:hover { background: var(--zassk-blue-primary); transform: scaleY(1.1); }
+.zassk-mini-bar:hover { transform: scaleY(1.1); }
 
-/* Inverted stepped shelf separating Profit and Active Users */
+/* Inverted stepped contour shelf between Profit and Active Users */
 .zassk-stepped-shelf-divider {
   width: 100%;
-  height: 14px;
+  height: 12px;
   position: relative;
-  background: #FFFFFF;
 }
 
 .zassk-interlock-bottom-tier {
-  padding: 4px 20px 18px 20px;
+  padding: 2px 20px 18px 20px;
   background: #FFFFFF;
 }
 
@@ -462,8 +421,8 @@
   display: flex;
   justify-content: flex-end;
   gap: 16px;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: #64748B;
   margin-bottom: 4px;
 }
@@ -479,25 +438,23 @@
   width: 65%;
   background: repeating-linear-gradient(
     90deg,
-    rgba(37, 99, 235, 0.8),
-    rgba(37, 99, 235, 0.8) 1.5px,
-    transparent 1.5px,
-    transparent 4px
+    #2563EB,
+    #2563EB 1.5px,
+    #EFF6FF 1.5px,
+    #EFF6FF 4px
   );
   border-radius: 6px 2px 2px 6px;
-  background-color: #EFF6FF;
 }
 .zassk-split-seg-2 {
   width: 25%;
   background: repeating-linear-gradient(
     45deg,
-    rgba(96, 165, 250, 0.85),
-    rgba(96, 165, 250, 0.85) 1.5px,
-    transparent 1.5px,
-    transparent 4px
+    #60A5FA,
+    #60A5FA 1.5px,
+    #F8FAFC 1.5px,
+    #F8FAFC 4px
   );
   border-radius: 2px;
-  background-color: #F8FAFC;
 }
 .zassk-split-seg-3 {
   width: 10%;
@@ -516,56 +473,55 @@
   padding: 18px 20px;
   border-radius: 24px;
   background: var(--zassk-card-solid);
-  border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: var(--zassk-card-shadow);
 }
 
-/* 28 thin vertical tick bars (width: 3px, height: 18px, gap: 3px) */
-.zassk-dense-ticks-28 {
+/* 32 micro vertical tick bars (width: 3px, height: 16px, border-radius: 2px, gap: 2.5px) */
+.zassk-dense-ticks-32 {
   display: flex;
   align-items: center;
-  gap: 3px;
-  height: 18px;
+  gap: 2.5px;
+  height: 16px;
   margin-top: 6px;
 }
-.zassk-tick-bar-28 {
+.zassk-tick-bar-32 {
   width: 3px;
-  height: 18px;
+  height: 16px;
   border-radius: 2px;
   flex-shrink: 0;
 }
-.zassk-tick-bar-28.filled { background: var(--zassk-blue-primary); }
-.zassk-tick-bar-28.unfilled { background: #E2E8F0; }
+.zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
+.zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
-/* Ended Task dot grid: 2 rows of prominent blue & small gray pips */
-.zassk-dot-matrix {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* Ended Task: 4 rows × 12 columns of circular dots */
+.zassk-dot-matrix-4x12 {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 6.5px;
   padding: 6px 0;
 }
-.zassk-dot-matrix-row {
+.zassk-dot-row-12 {
   display: flex;
-  gap: 8.5px;
+  gap: 7px;
   align-items: center;
 }
-.zassk-dot-prominent {
-  width: 8px;
-  height: 8px;
+.zassk-dot-bold-blue {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--zassk-blue-primary);
   flex-shrink: 0;
 }
-.zassk-dot-muted-pip {
-  width: 5px;
-  height: 5px;
+.zassk-dot-faint-pip {
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: #CBD5E1;
-  opacity: 0.6;
+  opacity: 0.5;
   flex-shrink: 0;
 }
 
-/* ── Middle Row: Full-Width Waveform & User Sources ── */
+/* ── 3. Middle Row: Spectral Waterfall Needle Chart & User Sources ── */
 .zassk-mid-row {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -601,7 +557,7 @@
   justify-content: space-between;
 }
 .zassk-revenue-amount {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   color: var(--zassk-navy);
   letter-spacing: -0.6px;
@@ -634,7 +590,6 @@
 
 .zassk-waveform-svg { width: 100%; height: 100%; overflow: visible; }
 
-/* Floating Tooltip */
 .zassk-floating-tooltip {
   position: absolute;
   transform: translate(-50%, -100%);
@@ -642,7 +597,7 @@
   background: #FFFFFF;
   border-radius: 9999px;
   padding: 4px 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
   font-size: 12px;
   font-weight: 600;
   color: #0F172A;
@@ -671,7 +626,7 @@
 .zassk-x-axis-full {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0 0 130px;
+  padding: 6px 0 0 130px;
   font-size: 11px;
   font-weight: 600;
   color: #94A3B8;
@@ -707,6 +662,7 @@
   flex-shrink: 0;
 }
 
+/* Multi-Layered Progress Track */
 .zassk-brand-track {
   flex: 1;
   height: 38px;
@@ -716,10 +672,37 @@
     #E2E8F0,
     #E2E8F0 1.5px,
     transparent 1.5px,
-    transparent 6px
+    transparent 5.5px
   );
   position: relative;
   overflow: visible;
+  display: flex;
+  align-items: center;
+}
+
+/* Frosted Pod under brand icon with 5 subtle dots */
+.zassk-frosted-pod {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 24px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  z-index: 2;
+  pointer-events: none;
+}
+.zassk-pod-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #94A3B8;
+  opacity: 0.6;
 }
 
 .zassk-brand-capsule {
@@ -727,7 +710,7 @@
   border-radius: 9999px;
   display: flex;
   align-items: center;
-  padding: 0 18px;
+  padding: 0 18px 0 62px;
   color: #FFFFFF;
   font-size: 12.5px;
   font-weight: 600;
@@ -735,24 +718,23 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Count badge pill positioned directly over boundary seam */
+/* Floating Metric Pill Badge straddling the boundary seam */
 .zassk-count-pill-seam {
   position: absolute;
-  right: -18px;
+  right: -16px;
   top: 50%;
   transform: translateY(-50%);
   background: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 9999px;
-  padding: 2px 10px;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F172A;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   z-index: 10;
 }
 
-/* ── Bottom Row: Table & Notched Transactions ── */
+/* ── 4. Bottom Row: Table & Notched Transactions ── */
 .zassk-bottom-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -795,80 +777,22 @@
 }
 
 .zassk-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
-.zassk-status-active { background: #E8FBF0; color: #10B981; }
-.zassk-status-pending { background: #FEF6E7; color: #F59E0B; }
+.zassk-status-active { background: #DCFCE7; color: #15803D; }
+.zassk-status-pending { background: #FEF3C7; color: #B45309; }
 
 /* ── Notched Transactions Card Base ── */
-.zassk-trans-notched-container {
+.zassk-trans-tabbed-notch {
   position: relative;
-  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
+  filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+  height: 280px;
   display: flex;
   flex-direction: column;
-}
-
-.zassk-trans-notched-card {
-  position: relative;
-  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
-  display: flex;
-  flex-direction: column;
-}
-
-.zassk-trans-tab {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 62%;
-  height: 48px;
-  background: #FFFFFF;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 16px;
-  display: flex;
-  align-items: center;
-  padding: 0 22px;
-  z-index: 2;
-}
-
-.zassk-trans-scoop {
-  position: absolute;
-  top: 18px;
-  left: 62%;
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.zassk-trans-body {
-  margin-top: 18px;
-  background: #FFFFFF;
-  border-radius: 0 24px 24px 24px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 4px 22px 20px 22px;
-}
-
-.zassk-trans-header-notch {
-  padding: 20px 22px 10px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-}
-
-.zassk-trans-notch-svg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 90px;
-  height: 32px;
-  pointer-events: none;
 }
 
 .zassk-trans-list-pad {
-  padding: 4px 22px 20px 22px;
+  position: relative;
+  z-index: 2;
+  padding: 8px 22px 20px 22px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -888,15 +812,14 @@
   height: 36px;
   border-radius: 10px;
   background: #EFF6FF;
-  border: 1px solid #DBEAFE;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--zassk-blue-primary);
+  color: #3B82F6;
 }
 
 .zassk-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
 .zassk-trans-company { font-size: 11.5px; color: #64748B; margin-top: 1px; }
 .zassk-trans-right { text-align: right; }
-.zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+.zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
 .zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }

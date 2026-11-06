@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zassk — Precision Glassmorphic Analytics Dashboard</title>
+    <title>Zassk — Precision Reverse-Engineered Analytics Dashboard</title>
     <style>
         /* Precision Geometric Styles matching visual reference */
         :root {
-          --zassk-canvas-bg: linear-gradient(135deg, #A7C8FD 0%, #D4E4FD 40%, #EFF5FF 80%, #F8FAFD 100%);
+          --zassk-canvas-bg: linear-gradient(135deg, #A3C5FD 0%, #CDE0FD 35%, #EDF4FE 75%, #F8FAFD 100%);
           --zassk-glass-dock: rgba(255, 255, 255, 0.72);
-          --zassk-glass-border: rgba(255, 255, 255, 0.9);
+          --zassk-glass-border: rgba(255, 255, 255, 0.95);
           --zassk-card-solid: #FFFFFF;
           --zassk-navy: #0F172A;
           --zassk-charcoal: #181F2A;
@@ -18,7 +18,7 @@
           --zassk-blue-primary: #2563EB;
           --zassk-blue-sky: #38BDF8;
           --zassk-blue-ice: #BAE6FD;
-          --zassk-card-shadow: 0 14px 34px -8px rgba(125, 165, 230, 0.22);
+          --zassk-card-shadow: 0 12px 32px -4px rgba(115, 155, 220, 0.2), 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,19 +26,45 @@
         body {
           min-height: 100vh;
           width: 100%;
-          background: var(--zassk-canvas-bg);
+          background: #E2E8F0;
           padding: 24px;
           font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
           color: var(--zassk-navy);
           display: flex;
           justify-content: center;
-          align-items: flex-start;
+          align-items: center;
           overflow-x: hidden;
         }
 
-        .zassk-frame {
+        /* Tablet Viewport Frame Bezel */
+        .zassk-tablet-bezel {
+          position: relative;
           max-width: 1440px;
           width: 100%;
+          border: 14px solid #0F172A;
+          border-radius: 36px;
+          box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+          background: var(--zassk-canvas-bg);
+          overflow: hidden;
+        }
+
+        /* Camera / Sensor Dot on Left Bezel */
+        .zassk-bezel-sensor {
+          position: absolute;
+          left: -11px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 5px;
+          height: 16px;
+          background: #1E293B;
+          border-radius: 9999px;
+          z-index: 100;
+          box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .zassk-canvas {
+          width: 100%;
+          padding: 24px 28px 28px 28px;
           display: flex;
           flex-direction: column;
           gap: 18px;
@@ -74,15 +100,15 @@
 
         .zassk-dock {
           background: var(--zassk-glass-dock);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid var(--zassk-glass-border);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1.2px solid var(--zassk-glass-border);
           border-radius: 9999px;
-          padding: 5px;
+          padding: 6px;
+          box-shadow: 0 8px 28px rgba(37, 99, 235, 0.08);
           display: flex;
           align-items: center;
-          gap: 4px;
-          box-shadow: 0 8px 24px rgba(100, 140, 200, 0.1);
+          gap: 8px;
         }
 
         .zassk-dock-btn {
@@ -171,7 +197,6 @@
         .zassk-card {
           background: var(--zassk-card-solid);
           border-radius: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.9);
           box-shadow: var(--zassk-card-shadow);
           position: relative;
           overflow: hidden;
@@ -278,65 +303,38 @@
           border-radius: 6px 9999px 9999px 6px;
         }
 
-        /* ── File-Folder Tab Notched Card Architecture ── */
-        .zassk-card-notched-container {
+        /* ── S-Curved File-Folder Tab Notched Card Silhouette ── */
+        .zassk-card-tabbed-notch {
           position: relative;
-          filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
+          filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+          height: 220px;
           display: flex;
           flex-direction: column;
         }
 
-        .zassk-notched-tab {
+        .zassk-card-svg-bg {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 58%;
-          height: 48px;
-          background: #FFFFFF;
-          border-top-left-radius: 24px;
-          border-top-right-radius: 16px;
-          display: flex;
-          align-items: center;
-          padding: 0 22px;
-          z-index: 2;
-        }
-
-        .zassk-notched-tab-title {
-          font-size: 15px;
-          font-weight: 700;
-          color: var(--zassk-navy);
-          letter-spacing: -0.2px;
-        }
-
-        .zassk-notched-scoop {
-          position: absolute;
-          top: 18px;
-          left: 58%;
-          width: 20px;
-          height: 20px;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
           pointer-events: none;
-          z-index: 2;
         }
 
-        .zassk-notched-body {
-          margin-top: 18px;
-          background: #FFFFFF;
-          border-radius: 0 24px 24px 24px;
+        .zassk-tabbed-header {
           position: relative;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
+          z-index: 2;
+          padding: 12px 22px;
         }
 
         .zassk-gauge-wrapper-centered {
           position: relative;
+          z-index: 2;
           width: 100%;
-          height: 165px;
+          height: 155px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 10px;
         }
 
         .zassk-radial-gauge-svg { width: 100%; height: 100%; overflow: visible; }
@@ -355,7 +353,6 @@
         .zassk-interlocking-card {
           background: var(--zassk-card-solid);
           border-radius: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.9);
           box-shadow: var(--zassk-card-shadow);
           display: flex;
           flex-direction: column;
@@ -364,7 +361,7 @@
         }
 
         .zassk-interlock-top-tier {
-          padding: 18px 20px 12px 20px;
+          padding: 18px 20px 10px 20px;
           position: relative;
         }
 
@@ -392,30 +389,28 @@
           letter-spacing: -0.6px;
         }
 
-        /* Mini Bar Histogram */
+        /* Mini Bar Histogram (9 vertical bars of varying heights) */
         .zassk-mini-barchart {
           display: flex;
           align-items: flex-end;
-          gap: 3.5px;
+          gap: 4px;
           height: 36px;
         }
         .zassk-mini-bar {
           width: 5px;
-          background: #93C5FD;
           border-radius: 2px;
           transition: all 0.2s ease;
         }
-        .zassk-mini-bar:hover { background: var(--zassk-blue-primary); transform: scaleY(1.1); }
+        .zassk-mini-bar:hover { transform: scaleY(1.1); }
 
         .zassk-stepped-shelf-divider {
           width: 100%;
-          height: 14px;
+          height: 12px;
           position: relative;
-          background: #FFFFFF;
         }
 
         .zassk-interlock-bottom-tier {
-          padding: 4px 20px 18px 20px;
+          padding: 2px 20px 18px 20px;
           background: #FFFFFF;
         }
 
@@ -423,8 +418,8 @@
           display: flex;
           justify-content: flex-end;
           gap: 16px;
-          font-size: 11px;
-          font-weight: 700;
+          font-size: 12px;
+          font-weight: 600;
           color: #64748B;
           margin-bottom: 4px;
         }
@@ -440,25 +435,23 @@
           width: 65%;
           background: repeating-linear-gradient(
             90deg,
-            rgba(37, 99, 235, 0.8),
-            rgba(37, 99, 235, 0.8) 1.5px,
-            transparent 1.5px,
-            transparent 4px
+            #2563EB,
+            #2563EB 1.5px,
+            #EFF6FF 1.5px,
+            #EFF6FF 4px
           );
           border-radius: 6px 2px 2px 6px;
-          background-color: #EFF6FF;
         }
         .zassk-split-seg-2 {
           width: 25%;
           background: repeating-linear-gradient(
             45deg,
-            rgba(96, 165, 250, 0.85),
-            rgba(96, 165, 250, 0.85) 1.5px,
-            transparent 1.5px,
-            transparent 4px
+            #60A5FA,
+            #60A5FA 1.5px,
+            #F8FAFC 1.5px,
+            #F8FAFC 4px
           );
           border-radius: 2px;
-          background-color: #F8FAFC;
         }
         .zassk-split-seg-3 {
           width: 10%;
@@ -477,56 +470,55 @@
           padding: 18px 20px;
           border-radius: 24px;
           background: var(--zassk-card-solid);
-          border: 1px solid rgba(255, 255, 255, 0.9);
           box-shadow: var(--zassk-card-shadow);
         }
 
-        /* 28 thin vertical tick bars */
-        .zassk-dense-ticks-28 {
+        /* 32 micro vertical tick bars */
+        .zassk-dense-ticks-32 {
           display: flex;
           align-items: center;
-          gap: 3px;
-          height: 18px;
+          gap: 2.5px;
+          height: 16px;
           margin-top: 6px;
         }
-        .zassk-tick-bar-28 {
+        .zassk-tick-bar-32 {
           width: 3px;
-          height: 18px;
+          height: 16px;
           border-radius: 2px;
           flex-shrink: 0;
         }
-        .zassk-tick-bar-28.filled { background: var(--zassk-blue-primary); }
-        .zassk-tick-bar-28.unfilled { background: #E2E8F0; }
+        .zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
+        .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
 
-        /* Ended Task: 4-Row Ascending Wave Dot Matrix */
-        .zassk-dot-matrix {
-          display: flex;
-          flex-direction: column;
-          gap: 7px;
+        /* Ended Task: 4 rows × 12 columns dot matrix */
+        .zassk-dot-matrix-4x12 {
+          display: grid;
+          grid-template-rows: repeat(4, 1fr);
+          gap: 6.5px;
           padding: 6px 0;
         }
-        .zassk-dot-matrix-row {
+        .zassk-dot-row-12 {
           display: flex;
-          gap: 8.5px;
+          gap: 7px;
           align-items: center;
         }
-        .zassk-dot-prominent {
-          width: 8px;
-          height: 8px;
+        .zassk-dot-bold-blue {
+          width: 7px;
+          height: 7px;
           border-radius: 50%;
           background: var(--zassk-blue-primary);
           flex-shrink: 0;
         }
-        .zassk-dot-muted-pip {
-          width: 5px;
-          height: 5px;
+        .zassk-dot-faint-pip {
+          width: 4px;
+          height: 4px;
           border-radius: 50%;
           background: #CBD5E1;
-          opacity: 0.6;
+          opacity: 0.5;
           flex-shrink: 0;
         }
 
-        /* ── Middle Row: Full-Width Waveform & User Sources ── */
+        /* ── Middle Row: Waterfall Needle Chart & User Sources ── */
         .zassk-mid-row {
           display: grid;
           grid-template-columns: 1.15fr 0.85fr;
@@ -562,7 +554,7 @@
           justify-content: space-between;
         }
         .zassk-revenue-amount {
-          font-size: 28px;
+          font-size: 26px;
           font-weight: 800;
           color: var(--zassk-navy);
           letter-spacing: -0.6px;
@@ -602,7 +594,7 @@
           background: #FFFFFF;
           border-radius: 9999px;
           padding: 4px 12px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
           font-size: 12px;
           font-weight: 600;
           color: #0F172A;
@@ -676,10 +668,36 @@
             #E2E8F0,
             #E2E8F0 1.5px,
             transparent 1.5px,
-            transparent 6px
+            transparent 5.5px
           );
           position: relative;
           overflow: visible;
+          display: flex;
+          align-items: center;
+        }
+
+        .zassk-frosted-pod {
+          position: absolute;
+          left: 6px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 48px;
+          height: 24px;
+          border-radius: 9999px;
+          background: rgba(255, 255, 255, 0.45);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 3px;
+          z-index: 2;
+          pointer-events: none;
+        }
+        .zassk-pod-dot {
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: #94A3B8;
+          opacity: 0.6;
         }
 
         .zassk-brand-capsule {
@@ -687,7 +705,7 @@
           border-radius: 9999px;
           display: flex;
           align-items: center;
-          padding: 0 18px;
+          padding: 0 18px 0 62px;
           color: #FFFFFF;
           font-size: 12.5px;
           font-weight: 600;
@@ -697,17 +715,16 @@
 
         .zassk-count-pill-seam {
           position: absolute;
-          right: -18px;
+          right: -16px;
           top: 50%;
           transform: translateY(-50%);
           background: #FFFFFF;
-          border: 1px solid rgba(226, 232, 240, 0.95);
           border-radius: 9999px;
-          padding: 2px 10px;
-          font-size: 11.5px;
-          font-weight: 700;
-          color: var(--zassk-navy);
-          box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+          padding: 3px 10px;
+          font-size: 12px;
+          font-weight: 600;
+          color: #0F172A;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           z-index: 10;
         }
 
@@ -754,55 +771,22 @@
         }
 
         .zassk-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
-        .zassk-status-active { background: #E8FBF0; color: #10B981; }
-        .zassk-status-pending { background: #FEF6E7; color: #F59E0B; }
+        .zassk-status-active { background: #DCFCE7; color: #15803D; }
+        .zassk-status-pending { background: #FEF3C7; color: #B45309; }
 
-        /* ── Notched Transactions Card Base ── */
-        .zassk-trans-notched-container {
+        /* ── Notched Transactions Card Silhouette ── */
+        .zassk-trans-tabbed-notch {
           position: relative;
-          filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
+          filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+          height: 280px;
           display: flex;
           flex-direction: column;
-        }
-
-        .zassk-trans-tab {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 62%;
-          height: 48px;
-          background: #FFFFFF;
-          border-top-left-radius: 24px;
-          border-top-right-radius: 16px;
-          display: flex;
-          align-items: center;
-          padding: 0 22px;
-          z-index: 2;
-        }
-
-        .zassk-trans-scoop {
-          position: absolute;
-          top: 18px;
-          left: 62%;
-          width: 20px;
-          height: 20px;
-          pointer-events: none;
-          z-index: 2;
-        }
-
-        .zassk-trans-body {
-          margin-top: 18px;
-          background: #FFFFFF;
-          border-radius: 0 24px 24px 24px;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-          padding: 24px 22px 20px 22px;
         }
 
         .zassk-trans-list-pad {
+          position: relative;
+          z-index: 2;
+          padding: 8px 22px 20px 22px;
           display: flex;
           flex-direction: column;
           gap: 12px;
@@ -822,132 +806,139 @@
           height: 36px;
           border-radius: 10px;
           background: #EFF6FF;
-          border: 1px solid #DBEAFE;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--zassk-blue-primary);
+          color: #3B82F6;
         }
 
         .zassk-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
         .zassk-trans-company { font-size: 11.5px; color: #64748B; margin-top: 1px; }
         .zassk-trans-right { text-align: right; }
-        .zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+        .zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
         .zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }
     </style>
 </head>
 <body>
-    <div class="zassk-frame">
-        <!-- ── 1. TOP NAVIGATION HEADER ── -->
-        <header class="zassk-header">
-            <a href="/" class="zassk-brand-pill">Zassk</a>
+    <!-- Tablet Viewport Frame Bezel -->
+    <div class="zassk-tablet-bezel">
+        <!-- Tablet Camera / Sensor Dot on Left Bezel -->
+        <div class="zassk-bezel-sensor"></div>
 
-            <!-- Center Segmented Floating Dock -->
-            <nav class="zassk-dock" id="navDock">
-                <!-- 1. Dashboard: ACTIVE with minimalist home icon -->
-                <button class="zassk-dock-btn active" data-tab="dashboard" title="Dashboard">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z"/>
-                    </svg>
-                    <span>Dashboard</span>
-                </button>
+        <div class="zassk-canvas">
+            <!-- ── 1. TOP NAVIGATION HEADER ── -->
+            <header class="zassk-header">
+                <a href="/" class="zassk-brand-pill">Zassk</a>
 
-                <!-- 2. Profile: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="profile" title="Profile">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                    </svg>
-                </button>
+                <!-- Center Segmented Floating Dock -->
+                <nav class="zassk-dock" id="navDock">
+                    <!-- 1. Dashboard: ACTIVE with minimalist home icon -->
+                    <button class="zassk-dock-btn active" data-tab="dashboard" title="Dashboard">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+                            <path d="M9 17h6"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </button>
 
-                <!-- 3. Documents: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="docs" title="Documents">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
-                    </svg>
-                </button>
+                    <!-- 2. Profile: Inactive circle -->
+                    <button class="zassk-dock-btn inactive" data-tab="profile" title="Profile">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </button>
 
-                <!-- 4. Calendar: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="calendar" title="Calendar">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
-                    </svg>
-                </button>
+                    <!-- 3. Documents: Inactive circle -->
+                    <button class="zassk-dock-btn inactive" data-tab="docs" title="Documents">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+                        </svg>
+                    </button>
 
-                <!-- 5. Analytics: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="analytics" title="Analytics">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
-                    </svg>
-                </button>
+                    <!-- 4. Calendar: Inactive circle -->
+                    <button class="zassk-dock-btn inactive" data-tab="calendar" title="Calendar">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
+                        </svg>
+                    </button>
 
-                <!-- 6. Settings: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="settings" title="Settings">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
-                    </svg>
-                </button>
+                    <!-- 5. Analytics: Inactive circle -->
+                    <button class="zassk-dock-btn inactive" data-tab="analytics" title="Analytics">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+                        </svg>
+                    </button>
 
-                <!-- 7. Help: STRICTLY INACTIVE circle (No black pill!) -->
-                <button class="zassk-dock-btn inactive" data-tab="help" title="Help">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
-                    </svg>
-                </button>
-            </nav>
+                    <!-- 6. Settings: Inactive circle -->
+                    <button class="zassk-dock-btn inactive" data-tab="settings" title="Settings">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
 
-            <!-- Right Utilities -->
-            <div class="zassk-header-utilities">
-                <button class="zassk-circle-btn" title="Search">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                    </svg>
-                </button>
-                <button class="zassk-avatar-btn" title="Keren nix">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="Avatar">
-                </button>
-            </div>
-        </header>
+                    <!-- 7. Help: STRICTLY INACTIVE circle (No black pill!) -->
+                    <button class="zassk-dock-btn inactive" data-tab="help" title="Help">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+                        </svg>
+                    </button>
+                </nav>
 
-        <!-- ── 2. TOP ROW METRICS ── -->
-        <div class="zassk-top-row">
-            <!-- Col 1: Greeting & Task Statistics -->
-            <div class="zassk-greeting-box">
-                <div>
-                    <div class="zassk-hello-lead">Hello,</div>
-                    <h1 class="zassk-hello-name">Keren nix</h1>
-                    <div class="zassk-welcome-sub">Welcome Back</div>
+                <!-- Right Utilities -->
+                <div class="zassk-header-utilities">
+                    <button class="zassk-circle-btn" title="Search">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                        </svg>
+                    </button>
+                    <button class="zassk-avatar-btn" title="Keren nix">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="Avatar">
+                    </button>
                 </div>
+            </header>
 
-                <div class="zassk-task-stat-widget">
-                    <div class="zassk-stat-header">
-                        <span class="zassk-stat-label">Task Statistics</span>
-                        <div class="zassk-stat-value-group">
-                            <span class="zassk-stat-count">506</span>
-                            <span class="zassk-trend-badge">↗ 4.3%</span>
+            <!-- ── 2. TOP ROW METRICS ── -->
+            <div class="zassk-top-row">
+                <!-- Col 1: Greeting & Task Statistics -->
+                <div class="zassk-greeting-box">
+                    <div>
+                        <div class="zassk-hello-lead">Hello,</div>
+                        <h1 class="zassk-hello-name">Keren nix</h1>
+                        <div class="zassk-welcome-sub">Welcome Back</div>
+                    </div>
+
+                    <div class="zassk-task-stat-widget">
+                        <div class="zassk-stat-header">
+                            <span class="zassk-stat-label">Task Statistics</span>
+                            <div class="zassk-stat-value-group">
+                                <span class="zassk-stat-count">506</span>
+                                <span class="zassk-trend-badge">↗ 4.3%</span>
+                            </div>
+                        </div>
+                        <div class="zassk-progress-capsule">
+                            <div class="zassk-seg-1" title="Completed Tasks"></div>
+                            <div class="zassk-seg-2" title="In Progress"></div>
+                            <div class="zassk-seg-3" title="Planned Tasks"></div>
                         </div>
                     </div>
-                    <div class="zassk-progress-capsule">
-                        <div class="zassk-seg-1" title="Completed"></div>
-                        <div class="zassk-seg-2" title="In Progress"></div>
-                        <div class="zassk-seg-3" title="Planned"></div>
+                </div>
+
+                <!-- Col 2: Total Responses Card with S-Curved File-Folder Tab Notch Silhouette -->
+                <div class="zassk-card-tabbed-notch">
+                    <svg class="zassk-card-svg-bg" viewBox="0 0 324 220" preserveAspectRatio="none">
+                        <path
+                            d="M0,24 C0,10.7 10.7,0 24,0 L130,0 C140,0 148,6 152,14 L156,22 C160,30 168,36 178,36 L300,36 C313.3,36 324,46.7 324,60 L324,196 C324,209.3 313.3,220 300,220 L24,220 C10.7,220 0,209.3 0,196 Z"
+                            fill="#FFFFFF"
+                        />
+                    </svg>
+
+                    <div class="zassk-tabbed-header">
+                        <span class="zassk-card-title">Total Responses</span>
                     </div>
-                </div>
-            </div>
 
-            <!-- Col 2: Total Responses Card with True File-Folder Tab Notch -->
-            <div class="zassk-card-notched-container">
-                <div class="zassk-notched-tab">
-                    <span class="zassk-notched-tab-title">Total Responses</span>
-                </div>
-                <!-- Concave transition scoop -->
-                <svg class="zassk-notched-scoop" viewBox="0 0 20 20" fill="none">
-                    <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF"/>
-                </svg>
-
-                <div class="zassk-notched-body">
                     <div class="zassk-gauge-wrapper-centered">
                         <svg class="zassk-radial-gauge-svg" viewBox="0 0 260 145" id="radialGaugeSvg">
-                            <!-- 14 Thick Rounded-Cap Pill Bars rendered dynamically -->
+                            <!-- 14 Thick Radial Pill Ticks rendered dynamically -->
                         </svg>
                         <div class="zassk-gauge-center-content">
                             <div class="zassk-gauge-center-val">98%</div>
@@ -955,376 +946,344 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Col 3: Physical Interlocking "Total Profit" & "Active Users" -->
-            <div class="zassk-interlocking-card">
-                <div class="zassk-interlock-top-tier">
-                    <div class="zassk-interlock-header">
-                        <span class="zassk-card-title">Total Profit</span>
-                        <button class="zassk-action-pill-btn" title="View Profit">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="zassk-profit-row">
-                        <div class="zassk-metric-big">$63k</div>
-                        <div class="zassk-mini-barchart">
-                            <div class="zassk-mini-bar" style="height: 38%;"></div>
-                            <div class="zassk-mini-bar" style="height: 55%;"></div>
-                            <div class="zassk-mini-bar" style="height: 48%;"></div>
-                            <div class="zassk-mini-bar" style="height: 82%;"></div>
-                            <div class="zassk-mini-bar" style="height: 94%;"></div>
-                            <div class="zassk-mini-bar" style="height: 72%;"></div>
-                            <div class="zassk-mini-bar" style="height: 100%; background-color: #2563EB;"></div>
-                            <div class="zassk-mini-bar" style="height: 64%;"></div>
-                            <div class="zassk-mini-bar" style="height: 45%;"></div>
-                            <div class="zassk-mini-bar" style="height: 35%;"></div>
-                            <div class="zassk-mini-bar" style="height: 25%;"></div>
-                            <div class="zassk-mini-bar" style="height: 18%;"></div>
+                <!-- Col 3: Physical Interlocking "Total Profit" & "Active Users" -->
+                <div class="zassk-interlocking-card">
+                    <!-- Upper Zone: Total Profit -->
+                    <div class="zassk-interlock-top-tier">
+                        <div class="zassk-interlock-header">
+                            <span class="zassk-card-title">Total Profit</span>
+                            <button class="zassk-action-pill-btn" title="View Profit">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="zassk-profit-row">
+                            <div class="zassk-metric-big">$63k</div>
+                            <!-- 9 vertical mini bars of varying heights -->
+                            <div class="zassk-mini-barchart">
+                                <div class="zassk-mini-bar" style="height: 40%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 60%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 52%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 85%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 96%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 75%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 100%; background-color: #2563EB;"></div>
+                                <div class="zassk-mini-bar" style="height: 64%; background-color: #60A5FA;"></div>
+                                <div class="zassk-mini-bar" style="height: 42%; background-color: #60A5FA;"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Stepped shelf divider -->
-                <div class="zassk-stepped-shelf-divider"></div>
-
-                <div class="zassk-interlock-bottom-tier">
-                    <div class="zassk-interlock-header">
-                        <span class="zassk-card-title">Active Users</span>
-                        <div class="zassk-split-labels">
-                            <span>75%</span>
-                            <span>25%</span>
-                            <span>10%</span>
-                        </div>
-                    </div>
-                    <div class="zassk-metric-big" style="margin: 2px 0 6px 0;">150</div>
-                    <div class="zassk-split-bar">
-                        <div class="zassk-split-seg-1" title="Primary users (75%)"></div>
-                        <div class="zassk-split-seg-2" title="Secondary users (25%)"></div>
-                        <div class="zassk-split-seg-3" title="Guest users (10%)"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Col 4: Conversion Rate & Ended Task -->
-            <div class="zassk-col4-column">
-                <!-- Conversion Rate -->
-                <div class="zassk-col4-card">
-                    <div class="zassk-interlock-header">
-                        <span class="zassk-card-title">Conversion Rate</span>
-                        <button class="zassk-action-pill-btn" title="View Conversion">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="zassk-metric-big" style="margin: 4px 0 8px 0;">75%</div>
-                    <!-- 28 thin vertical tick bars -->
-                    <div class="zassk-dense-ticks-28" id="conversionTicks"></div>
-                </div>
-
-                <!-- Ended Task with 4-Row Ascending Wave Dot Grid -->
-                <div class="zassk-col4-card">
-                    <div class="zassk-interlock-header">
-                        <span class="zassk-card-title">Ended Task</span>
-                    </div>
-                    <div class="zassk-metric-big" style="margin: 4px 0 8px 0;">80</div>
-                    <div class="zassk-dot-matrix">
-                        <!-- Row 1: Top row with blue dots at right -->
-                        <div class="zassk-dot-matrix-row">
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                        </div>
-                        <!-- Row 2: Mid-high row -->
-                        <div class="zassk-dot-matrix-row">
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                        </div>
-                        <!-- Row 3: Mid-low row -->
-                        <div class="zassk-dot-matrix-row">
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                        </div>
-                        <!-- Row 4: Bottom row starting from left -->
-                        <div class="zassk-dot-matrix-row">
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-prominent"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                            <div class="zassk-dot-muted-pip"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── 3. MIDDLE ROW: WATERFALL NEEDLE CHART & USER SOURCES ── -->
-        <div class="zassk-mid-row">
-            <!-- Full-Width Total Revenue Card -->
-            <div class="zassk-card zassk-revenue-card">
-                <div class="zassk-revenue-top-bar">
-                    <span class="zassk-card-title">Total Revenue</span>
-                    <!-- Funnel Filter Icon -->
-                    <button class="zassk-action-pill-btn" title="Filter Revenue">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="17" x2="14" y2="17"/>
+                    <!-- Stepped contour shelf divider -->
+                    <div class="zassk-stepped-shelf-divider">
+                        <svg width="100%" height="12" viewBox="0 0 280 12" fill="none">
+                            <path d="M 110 3 C 122 3, 126 9, 138 9 L 265 9" stroke="#F1F5F9" stroke-width="1.2" />
                         </svg>
-                    </button>
-                </div>
-
-                <div class="zassk-revenue-layout">
-                    <!-- Left Metric Column -->
-                    <div class="zassk-revenue-side-metric">
-                        <div>
-                            <div class="zassk-revenue-amount">$1240</div>
-                            <div class="zassk-revenue-sub">Last 15 days</div>
-                            <div class="zassk-revenue-sub" style="margin-top: 0px;">Ordars</div>
-                        </div>
-                        <div class="zassk-y-markers">
-                            <span>100%</span>
-                            <span>80%</span>
-                            <span>60%</span>
-                            <span>40%</span>
-                            <span>20%</span>
-                        </div>
                     </div>
 
-                    <!-- Full-Width Waterfall Needle Container -->
-                    <div class="zassk-waveform-container" id="chartArea">
-                        <svg class="zassk-waveform-svg" viewBox="0 0 530 145" id="waveformSvg">
-                            <defs>
-                                <linearGradient id="needleFade" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stop-color="#2563EB" stop-opacity="0.45" />
-                                    <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.25" />
-                                    <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.08" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Needle curtain lines -->
-                            <g id="needleCurtainGroup"></g>
-                            <!-- Spline path -->
-                            <path id="splineCurvePath" fill="none" stroke="#2563EB" stroke-width="2.8" stroke-linecap="round"/>
-                            <!-- Active Scrubber Point Ring -->
-                            <circle id="pinpointRing" r="5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2.5" style="cursor: pointer;"/>
-                        </svg>
-
-                        <!-- Floating Tooltip Pill -->
-                        <div class="zassk-floating-tooltip" id="chartTooltip">Revenue $120</div>
+                    <!-- Lower Zone: Active Users -->
+                    <div class="zassk-interlock-bottom-tier">
+                        <div class="zassk-interlock-header">
+                            <span class="zassk-card-title">Active Users</span>
+                            <div class="zassk-split-labels">
+                                <span>75%</span>
+                                <span>25%</span>
+                                <span>10%</span>
+                            </div>
+                        </div>
+                        <div class="zassk-metric-big" style="margin: 2px 0 6px 0;">150</div>
+                        <div class="zassk-split-bar">
+                            <div class="zassk-split-seg-1" title="Primary users (75%)"></div>
+                            <div class="zassk-split-seg-2" title="Secondary users (25%)"></div>
+                            <div class="zassk-split-seg-3" title="Guest users (10%)"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Timeline Range Scrubber Bar -->
-                <div class="zassk-timeline-slider-track">
-                    <div class="zassk-timeline-slider-thumb" style="left: 26%; width: 28%;"></div>
-                </div>
+                <!-- Col 4: Conversion Rate & Ended Task -->
+                <div class="zassk-col4-column">
+                    <!-- Conversion Rate -->
+                    <div class="zassk-col4-card">
+                        <div class="zassk-interlock-header">
+                            <span class="zassk-card-title">Conversion Rate</span>
+                            <button class="zassk-action-pill-btn" title="View Conversion">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="zassk-metric-big" style="margin: 4px 0 8px 0;">75%</div>
+                        <!-- 32 micro vertical tick bars -->
+                        <div class="zassk-dense-ticks-32" id="conversionTicks"></div>
+                    </div>
 
-                <!-- Full-Width X-Axis Days -->
-                <div class="zassk-x-axis-full" id="xAxisLabels">
-                    <span>01</span>
-                    <span>04</span>
-                    <span>07</span>
-                    <span>9</span>
-                    <span>11</span>
-                    <span>13</span>
-                    <span>15</span>
-                    <span>25</span>
-                    <span>30</span>
+                    <!-- Ended Task with 4 rows × 12 columns dot matrix -->
+                    <div class="zassk-col4-card">
+                        <div class="zassk-interlock-header">
+                            <span class="zassk-card-title">Ended Task</span>
+                        </div>
+                        <div class="zassk-metric-big" style="margin: 4px 0 8px 0;">80</div>
+                        <div class="zassk-dot-matrix-4x12" id="endedTaskMatrix"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- User Source Card with Seam-Aligned Count Badges -->
-            <div class="zassk-card zassk-source-card">
-                <div>
+            <!-- ── 3. MIDDLE ROW: SPECTRAL WATERFALL NEEDLE CHART & USER SOURCES ── -->
+            <div class="zassk-mid-row">
+                <!-- Full-Width Total Revenue Card -->
+                <div class="zassk-card zassk-revenue-card">
                     <div class="zassk-revenue-top-bar">
-                        <div>
-                            <span class="zassk-card-title">User Source</span>
-                            <div style="font-size: 12px; color: #64748B; font-weight: 500; margin-top: 2px;">Total 12k+</div>
-                        </div>
-                        <!-- Funnel Filter Icon -->
-                        <button class="zassk-action-pill-btn" title="Filter Sources">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="17" x2="14" y2="17"/>
+                        <span class="zassk-card-title">Total Revenue</span>
+                        <!-- Funnel Filter Icon: M4 6h16 M7 12h10 M10 18h4 -->
+                        <button class="zassk-action-pill-btn" title="Filter Revenue">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="zassk-source-list">
-                        <!-- 1. Google -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24">
-                                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
-                                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
-                                    <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
-                                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
-                                </svg>
+                    <div class="zassk-revenue-layout">
+                        <!-- Left Metric Column -->
+                        <div class="zassk-revenue-side-metric">
+                            <div>
+                                <div class="zassk-revenue-amount">$1240</div>
+                                <div class="zassk-revenue-sub">Last 15 days Orders</div>
                             </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-brand-capsule" style="width: 62%; background-color: #3B82F6;">
-                                    <span>Google.com</span>
-                                    <div class="zassk-count-pill-seam">4653</div>
-                                </div>
+                            <div class="zassk-y-markers">
+                                <span>100%</span>
+                                <span>80%</span>
+                                <span>60%</span>
+                                <span>40%</span>
+                                <span>20%</span>
                             </div>
                         </div>
 
-                        <!-- 2. X -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
-                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        <!-- Full-Width Waterfall Needle Container -->
+                        <div class="zassk-waveform-container" id="chartArea">
+                            <svg class="zassk-waveform-svg" viewBox="0 0 530 145" id="waveformSvg">
+                                <!-- Needle curtain lines -->
+                                <g id="needleCurtainGroup"></g>
+                                <!-- Spline path -->
+                                <path id="splineCurvePath" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Active Scrubber Point Target Ring at Day 11 -->
+                                <circle id="pinpointRing" r="5" fill="#FFFFFF" stroke="#2563EB" stroke-width="3" style="cursor: pointer;"/>
+                            </svg>
+
+                            <!-- Floating Tooltip Pill -->
+                            <div class="zassk-floating-tooltip" id="chartTooltip">Revenue $120</div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Range Scrubber Bar -->
+                    <div class="zassk-timeline-slider-track">
+                        <div class="zassk-timeline-slider-thumb" style="left: 26%; width: 28%;"></div>
+                    </div>
+
+                    <!-- Full-Width X-Axis Days -->
+                    <div class="zassk-x-axis-full" id="xAxisLabels">
+                        <span>01</span>
+                        <span>04</span>
+                        <span>07</span>
+                        <span>9</span>
+                        <span>11</span>
+                        <span>13</span>
+                        <span>15</span>
+                        <span>25</span>
+                        <span>30</span>
+                    </div>
+                </div>
+
+                <!-- User Source Card with Multi-Layered Progress Tracks -->
+                <div class="zassk-card zassk-source-card">
+                    <div>
+                        <div class="zassk-revenue-top-bar">
+                            <div>
+                                <span class="zassk-card-title">User Source</span>
+                                <div style="font-size: 12px; color: #64748B; font-weight: 500; margin-top: 2px;">Total 12k+</div>
+                            </div>
+                            <!-- Funnel Filter Icon -->
+                            <button class="zassk-action-pill-btn" title="Filter Sources">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
                                 </svg>
-                            </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-brand-capsule" style="width: 78%; background-color: #8B5CF6;">
-                                    <span>X.com</span>
-                                    <div class="zassk-count-pill-seam">379</div>
-                                </div>
-                            </div>
+                            </button>
                         </div>
 
-                        <!-- 3. Instagram -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" stroke-width="2">
-                                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                                </svg>
+                        <div class="zassk-source-list">
+                            <!-- 1. Google (68%) -->
+                            <div class="zassk-source-row">
+                                <div class="zassk-brand-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
+                                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
+                                        <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
+                                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
+                                    </svg>
+                                </div>
+                                <div class="zassk-brand-track">
+                                    <!-- Frosted pod with 5 dots -->
+                                    <div class="zassk-frosted-pod">
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                    </div>
+                                    <div class="zassk-brand-capsule" style="width: 68%; background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);">
+                                        <span>Google.com</span>
+                                        <div class="zassk-count-pill-seam">4653</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-brand-capsule" style="width: 92%; background-color: #FB7185;">
-                                    <span>Instagram.com</span>
-                                    <div class="zassk-count-pill-seam">653</div>
+
+                            <!-- 2. X (78%) -->
+                            <div class="zassk-source-row">
+                                <div class="zassk-brand-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </div>
+                                <div class="zassk-brand-track">
+                                    <!-- Frosted pod with 5 dots -->
+                                    <div class="zassk-frosted-pod">
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                    </div>
+                                    <div class="zassk-brand-capsule" style="width: 78%; background: linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%);">
+                                        <span>X.com</span>
+                                        <div class="zassk-count-pill-seam">379</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Instagram (88%) -->
+                            <div class="zassk-source-row">
+                                <div class="zassk-brand-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" stroke-width="2">
+                                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                                    </svg>
+                                </div>
+                                <div class="zassk-brand-track">
+                                    <!-- Frosted pod with 5 dots -->
+                                    <div class="zassk-frosted-pod">
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                        <span class="zassk-pod-dot"></span>
+                                    </div>
+                                    <div class="zassk-brand-capsule" style="width: 88%; background: linear-gradient(90deg, #FB7185 0%, #F43F5E 100%);">
+                                        <span>Instagram.com</span>
+                                        <div class="zassk-count-pill-seam">653</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── -->
-        <div class="zassk-bottom-row">
-            <!-- Left: Recent Joining User Table -->
-            <div class="zassk-card zassk-table-card">
-                <div class="zassk-revenue-top-bar" style="margin-bottom: 14px;">
-                    <span class="zassk-card-title">Recent Joining User</span>
-                    <button class="zassk-action-pill-btn" title="Filter Users">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="17" x2="14" y2="17"/>
-                        </svg>
-                    </button>
+            <!-- ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── -->
+            <div class="zassk-bottom-row">
+                <!-- Left: Recent Joining User Table -->
+                <div class="zassk-card zassk-table-card">
+                    <div class="zassk-revenue-top-bar" style="margin-bottom: 14px;">
+                        <span class="zassk-card-title">Recent Joining User</span>
+                        <button class="zassk-action-pill-btn" title="Filter Users">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <table class="zassk-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 42px;">
+                                    <div class="zassk-checkbox" id="headerCheckbox">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" style="display: none;"><path d="M20 6 9 17l-5-5"/></svg>
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Posted Date</th>
+                                <th style="width: 40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="zassk-checkbox row-checkbox">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" style="display: none;"><path d="M20 6 9 17l-5-5"/></svg>
+                                    </div>
+                                </td>
+                                <td style="font-weight: 700;">Brooklyn Simmons</td>
+                                <td style="color: #64748B;">Full-time</td>
+                                <td style="color: #64748B;">Remote</td>
+                                <td>
+                                    <span class="zassk-status-pill zassk-status-active">
+                                        <span style="font-size: 8px;">●</span> Active
+                                    </span>
+                                </td>
+                                <td style="color: #64748B;">Oct 30, 2025</td>
+                                <td>
+                                    <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="zassk-checkbox row-checkbox">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" style="display: none;"><path d="M20 6 9 17l-5-5"/></svg>
+                                    </div>
+                                </td>
+                                <td style="font-weight: 700;">Jerome Bell</td>
+                                <td style="color: #64748B;">Full-time</td>
+                                <td style="color: #64748B;">New York</td>
+                                <td>
+                                    <span class="zassk-status-pill zassk-status-pending">
+                                        <span style="font-size: 8px;">●</span> Pending
+                                    </span>
+                                </td>
+                                <td style="color: #64748B;">Oct 28, 2025</td>
+                                <td>
+                                    <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <table class="zassk-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 42px;">
-                                <div class="zassk-checkbox checked" id="headerCheckbox">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
-                                </div>
-                            </th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Posted Date</th>
-                            <th style="width: 40px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="zassk-checkbox checked row-checkbox">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
-                                </div>
-                            </td>
-                            <td style="font-weight: 700;">Brooklyn Simmons</td>
-                            <td style="color: #64748B;">Full-time</td>
-                            <td style="color: #64748B;">Remote</td>
-                            <td>
-                                <span class="zassk-status-pill zassk-status-active">
-                                    <span style="font-size: 8px;">●</span> Active
-                                </span>
-                            </td>
-                            <td style="color: #64748B;">Oct 30, 2025</td>
-                            <td>
-                                <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="zassk-checkbox row-checkbox">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" style="display: none;"><path d="M20 6 9 17l-5-5"/></svg>
-                                </div>
-                            </td>
-                            <td style="font-weight: 700;">Jerome Bell</td>
-                            <td style="color: #64748B;">Full-time</td>
-                            <td style="color: #64748B;">New York</td>
-                            <td>
-                                <span class="zassk-status-pill zassk-status-pending">
-                                    <span style="font-size: 8px;">●</span> Pending
-                                </span>
-                            </td>
-                            <td style="color: #64748B;">Oct 28, 2025</td>
-                            <td>
-                                <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <!-- Right: Recent Transactions Card with S-Curved File-Folder Tab Notch Silhouette -->
+                <div class="zassk-trans-tabbed-notch">
+                    <svg class="zassk-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
+                        <path
+                            d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,256 C324,269.3 313.3,280 300,280 L24,280 C10.7,280 0,269.3 0,256 Z"
+                            fill="#FFFFFF"
+                        />
+                    </svg>
 
-            <!-- Right: Recent Transactions Card with True File-Folder Tab Notch -->
-            <div class="zassk-trans-notched-container">
-                <div class="zassk-trans-tab">
-                    <span class="zassk-card-title">Recent Transactions</span>
-                </div>
-                <!-- Concave transition scoop -->
-                <svg class="zassk-trans-scoop" viewBox="0 0 20 20" fill="none">
-                    <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF"/>
-                </svg>
+                    <div class="zassk-tabbed-header">
+                        <span class="zassk-card-title">Recent Transactions</span>
+                    </div>
 
-                <div class="zassk-trans-body">
                     <div class="zassk-trans-list-pad">
                         <div class="zassk-trans-item">
                             <div class="zassk-trans-left">
                                 <div class="zassk-trans-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                                 </div>
                                 <div>
                                     <div class="zassk-trans-symbol">NVDA</div>
@@ -1340,7 +1299,7 @@
                         <div class="zassk-trans-item">
                             <div class="zassk-trans-left">
                                 <div class="zassk-trans-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                                 </div>
                                 <div>
                                     <div class="zassk-trans-symbol">AAPL</div>
@@ -1356,7 +1315,7 @@
                         <div class="zassk-trans-item">
                             <div class="zassk-trans-left">
                                 <div class="zassk-trans-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                                 </div>
                                 <div>
                                     <div class="zassk-trans-symbol">TSLA</div>
@@ -1375,18 +1334,18 @@
     </div>
 
     <script>
-        // ── Interactive Logic ──
+        // ── Dynamic Renderers & Micro-Interactions ──
 
-        // 1. 14 Thick Rounded-Cap Pill Bars Arc Gauge
+        // 1. 14 Thick Radial Pill Ticks Arc Gauge (width 7.5px, height 22px, R=88px)
         (function setupRadialGauge() {
             const svg = document.getElementById('radialGaugeSvg');
             const total = 14;
-            const cx = 130, cy = 118, rOuter = 88, rInner = 65;
+            const cx = 130, cy = 114, rOuter = 88, rInner = 66;
             const colors = [
-                '#2563EB', '#2563EB', '#2563EB', '#2563EB', // Royal blue
-                '#38BDF8', '#38BDF8', '#38BDF8',            // Sky blue
-                '#BAE6FD', '#BAE6FD', '#BAE6FD', '#BAE6FD', // Pale ice blue
-                '#E2E8F0', '#E2E8F0', '#E2E8F0'             // Muted gray
+                '#2563EB', '#2563EB', '#2563EB', '#2563EB', // Ticks 1–4 (Royal Blue)
+                '#38BDF8', '#38BDF8', '#38BDF8', '#38BDF8', // Ticks 5–8 (Sky Blue)
+                '#BAE6FD', '#BAE6FD',                         // Ticks 9–10 (Pale Ice Blue)
+                '#E2E8F0', '#E2E8F0', '#E2E8F0', '#E2E8F0'  // Ticks 11–14 (Muted Cool Gray)
             ];
 
             for (let i = 0; i < total; i++) {
@@ -1403,23 +1362,44 @@
                 line.setAttribute('x2', x2);
                 line.setAttribute('y2', y2);
                 line.setAttribute('stroke', colors[i]);
-                line.setAttribute('stroke-width', '8');
+                line.setAttribute('stroke-width', '7.5');
                 line.setAttribute('stroke-linecap', 'round');
                 svg.appendChild(line);
             }
         })();
 
-        // 2. Conversion Rate 28 Vertical Ticks
+        // 2. Conversion Rate: 32 Micro Vertical Ticks
         (function setupConversionTicks() {
             const container = document.getElementById('conversionTicks');
-            for (let i = 0; i < 28; i++) {
+            for (let i = 0; i < 32; i++) {
                 const tick = document.createElement('div');
-                tick.className = `zassk-tick-bar-28 ${i < 21 ? 'filled' : 'unfilled'}`;
+                tick.className = `zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`;
                 container.appendChild(tick);
             }
         })();
 
-        // 3. Full-Width Audio-Spectrum / Needle Waterfall Spline Chart
+        // 3. Ended Task: 4 rows × 12 columns dot matrix
+        (function setupEndedTaskMatrix() {
+            const container = document.getElementById('endedTaskMatrix');
+            const rows = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            rows.forEach(r => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'zassk-dot-row-12';
+                r.forEach(val => {
+                    const dot = document.createElement('div');
+                    dot.className = val === 1 ? 'zassk-dot-bold-blue' : 'zassk-dot-faint-pip';
+                    rowDiv.appendChild(dot);
+                });
+                container.appendChild(rowDiv);
+            });
+        })();
+
+        // 4. Spectral Waterfall Needle Chart & Curved Bezier Spline
         (function setupRevenueChart() {
             const chartArea = document.getElementById('chartArea');
             const splinePath = document.getElementById('splineCurvePath');
@@ -1429,21 +1409,20 @@
             const xAxisLabels = document.getElementById('xAxisLabels');
 
             const w = 530, h = 145;
+            // Exact normalized points from directive
             const points = [
-                { day: '01', rev: 45, yPerc: 65 },
-                { day: '04', rev: 72, yPerc: 42 },
-                { day: '07', rev: 110, yPerc: 15 },
-                { day: '9',  rev: 115, yPerc: 16 },
-                { day: '11', rev: 120, yPerc: 44 }, // Scrubber active point
-                { day: '13', rev: 68, yPerc: 55 },
-                { day: '15', rev: 86, yPerc: 52 },
-                { day: '25', rev: 104, yPerc: 45 },
-                { day: '30', rev: 125, yPerc: 38 }
+                { day: '01', xPerc: 0,   yHeight: 35, rev: 45 },
+                { day: '04', xPerc: 15,  yHeight: 48, rev: 72 },
+                { day: '07', xPerc: 28,  yHeight: 88, rev: 110 },
+                { day: '11', xPerc: 42,  yHeight: 54, rev: 120 }, // Active point
+                { day: '14', xPerc: 55,  yHeight: 38, rev: 68 },
+                { day: '20', xPerc: 70,  yHeight: 45, rev: 86 },
+                { day: '30', xPerc: 100, yHeight: 65, rev: 125 }
             ];
 
-            const coords = points.map((p, idx) => {
-                const x = (idx / (points.length - 1)) * (w - 32) + 16;
-                const y = (p.yPerc / 100) * (h - 24) + 12;
+            const coords = points.map((p) => {
+                const x = (p.xPerc / 100) * (w - 32) + 16;
+                const y = (1 - p.yHeight / 100) * (h - 24) + 12;
                 return { ...p, x, y };
             });
 
@@ -1459,10 +1438,10 @@
             }
             splinePath.setAttribute('d', d);
 
-            // Needle curtain lines (110 fine vertical lines)
-            const lineCount = 110;
+            // Dense vertical needle waterfall: vertical lines every 2.2px (~220 lines)
+            const lineCount = 220;
             for (let i = 0; i <= lineCount; i++) {
-                const x = (i / lineCount) * (w - 32) + 16;
+                const x = 16 + (i / lineCount) * (w - 32);
                 const tGlobal = (i / lineCount) * (coords.length - 1);
                 const segIdx = Math.min(Math.floor(tGlobal), coords.length - 2);
                 const t = tGlobal - segIdx;
@@ -1474,8 +1453,10 @@
                 l.setAttribute('y1', y);
                 l.setAttribute('x2', x);
                 l.setAttribute('y2', h);
-                l.setAttribute('stroke', 'url(#needleFade)');
-                l.setAttribute('stroke-width', '1.2');
+                l.setAttribute('stroke', '#3B82F6');
+                l.setAttribute('stroke-width', '1');
+                const isNearPeak = Math.abs(x - 210) < 80;
+                l.setAttribute('stroke-opacity', isNearPeak ? '0.45' : '0.22');
                 curtainGroup.appendChild(l);
             }
 
@@ -1489,8 +1470,8 @@
                 tooltip.style.top = `${(pt.y / h) * 100}%`;
 
                 const spans = xAxisLabels.querySelectorAll('span');
-                spans.forEach((s, i) => {
-                    if (i === idx) {
+                spans.forEach((s) => {
+                    if (s.innerText === pt.day || (pt.day === '11' && s.innerText === '11')) {
                         s.style.color = '#0F172A';
                         s.style.fontWeight = '800';
                     } else {
@@ -1500,8 +1481,8 @@
                 });
             }
 
-            // Default Day 11 (index 4)
-            setPinpoint(4);
+            // Default Day 11 (index 3)
+            setPinpoint(3);
 
             chartArea.addEventListener('mousemove', function(e) {
                 const rect = chartArea.getBoundingClientRect();
@@ -1511,7 +1492,7 @@
             });
         })();
 
-        // 4. Dock Navigation Switching (Clean home icon on Dashboard)
+        // 5. Dock Navigation Switching (Help is strictly inactive circular icon button)
         (function setupDock() {
             const dock = document.getElementById('navDock');
             const btns = dock.querySelectorAll('.zassk-dock-btn');
@@ -1522,6 +1503,8 @@
                         b.classList.add('inactive');
                         const labelSpan = b.querySelector('span');
                         if (labelSpan) labelSpan.remove();
+                        const svg = b.querySelector('svg');
+                        if (svg) svg.setAttribute('stroke', '#4B5565');
                     });
                     this.classList.remove('inactive');
                     this.classList.add('active');
@@ -1529,11 +1512,13 @@
                     const span = document.createElement('span');
                     span.innerText = tabName;
                     this.appendChild(span);
+                    const svg = this.querySelector('svg');
+                    if (svg) svg.setAttribute('stroke', '#FFFFFF');
                 });
             });
         })();
 
-        // 5. Checkbox Selection Logic
+        // 6. Checkbox Selection Logic
         (function setupCheckboxes() {
             const headerCb = document.getElementById('headerCheckbox');
             const rowCbs = document.querySelectorAll('.row-checkbox');
