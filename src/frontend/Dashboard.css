@@ -532,28 +532,37 @@
   justify-content: space-between;
 }
 
-.zassk-sh-title-group {
+.zassk-sh-header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .zassk-sh-badge {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   color: #059669;
   background: #ECFDF5;
   border: 1px solid #A7F3D0;
-  padding: 1px 7px;
+  padding: 2px 7px;
   border-radius: 9999px;
   letter-spacing: 0.3px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
-.zassk-sh-metric-row {
+.zassk-sh-body {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  margin: 1px 0 3px 0;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.zassk-sh-metric-col {
+  display: flex;
+  flex-direction: column;
 }
 
 .zassk-sh-metric-val {
@@ -565,64 +574,45 @@
 }
 
 .zassk-sh-metric-sub {
-  font-size: 11px;
+  font-size: 10.5px;
   color: #64748B;
   font-weight: 500;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* 4-Row x 11-Column Telemetry Dot Matrix (Aligning with Zassk Reference) */
+.zassk-sh-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.zassk-sh-matrix-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 4.5px;
 }
 
-.zassk-sh-dot {
-  color: #CBD5E1;
-  font-size: 10px;
-}
-
-/* 24 Micro Telemetry Verification Frequency Ticks */
-.zassk-sh-ticks-track {
-  display: flex;
-  align-items: flex-end;
-  gap: 2.5px;
-  height: 18px;
-  padding: 1px 0;
-}
-
-.zassk-sh-tick-bar {
-  flex: 1;
-  border-radius: 2px;
-  min-height: 4px;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+.zassk-sh-dot-pip {
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 50%;
+  transition: transform 0.15s ease, background-color 0.15s ease;
   cursor: pointer;
 }
-.zassk-sh-tick-bar:hover {
-  transform: scaleY(1.2);
-  opacity: 0.85;
+
+.zassk-sh-dot-pip.active {
+  background-color: var(--zassk-blue-primary);
 }
 
-/* 4-Stage Micro Pipeline Indicators */
-.zassk-sh-pipeline-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-  font-weight: 600;
-  color: #64748B;
-  padding-top: 2px;
-  border-top: 1px solid #F1F5F9;
+.zassk-sh-dot-pip.inactive {
+  background-color: #E2E8F0;
 }
 
-.zassk-sh-stage {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: default;
-}
-
-.zassk-sh-stage-pip {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #10B981;
+.zassk-sh-dot-pip:hover {
+  transform: scale(1.4);
 }
 
 /* ── 3. Middle Row: Spectral Waterfall Needle Chart & User Sources ── */

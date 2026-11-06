@@ -312,32 +312,34 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const profitBars = [40, 60, 52, 85, 96, 75, 100, 64, 42];
 
-  // 24-Bar Verification Telemetry Data for Security Health
-  const securityTelemetryTicks = useMemo(() => [
-    { height: 75, color: '#10B981', label: 'Origin: OK (4ms)' },
-    { height: 85, color: '#10B981', label: 'Inspect: OK (6ms)' },
-    { height: 60, color: '#34D399', label: 'Quorum: 3/3 (8ms)' },
-    { height: 90, color: '#10B981', label: 'Ledger: Synced (5ms)' },
-    { height: 100, color: '#059669', label: 'Envelope: DSSE (3ms)' },
-    { height: 70, color: '#10B981', label: 'Attestation: Valid (7ms)' },
-    { height: 80, color: '#38BDF8', label: 'Canary: 100% (12ms)' },
-    { height: 95, color: '#3B82F6', label: 'Rekor: Verified (9ms)' },
-    { height: 65, color: '#38BDF8', label: 'Witness: Active (6ms)' },
-    { height: 85, color: '#2563EB', label: 'Epoch: Current (4ms)' },
-    { height: 100, color: '#2563EB', label: 'Key: Ed25519 (2ms)' },
-    { height: 75, color: '#3B82F6', label: 'Quorum: Consensual (5ms)' },
-    { height: 90, color: '#10B981', label: 'Policy: Zero Reject (3ms)' },
-    { height: 80, color: '#10B981', label: 'Audit: Clean (4ms)' },
-    { height: 60, color: '#34D399', label: 'Sync: Air-Gapped (6ms)' },
-    { height: 95, color: '#10B981', label: 'Origin: Verified (5ms)' },
-    { height: 85, color: '#3B82F6', label: 'Ledger: Recorded (7ms)' },
-    { height: 70, color: '#38BDF8', label: 'Signature: Strict (3ms)' },
-    { height: 90, color: '#2563EB', label: 'Integrity: 100% (4ms)' },
-    { height: 100, color: '#10B981', label: 'Verification: Complete (2ms)' },
-    { height: 80, color: '#10B981', label: 'Node 1: Online (5ms)' },
-    { height: 85, color: '#34D399', label: 'Node 2: Online (4ms)' },
-    { height: 75, color: '#38BDF8', label: 'Node 3: Online (6ms)' },
-    { height: 95, color: '#2563EB', label: 'Gateway: Secure (3ms)' },
+  // 4-Row x 11-Column Security Health Telemetry Dot Matrix
+  // Recreating the exact ascending telemetry scatter curve from the Zassk reference
+  const securityDotMatrix = useMemo(() => [
+    // Row 0 (Gate 4: Ledger Consensus)
+    [
+      { active: false }, { active: false }, { active: false }, { active: false },
+      { active: false }, { active: false }, { active: false }, { active: true, label: 'Ledger: Merkle Root Synced' },
+      { active: false }, { active: true, label: 'Ledger: Consistency Proven' }, { active: false }
+    ],
+    // Row 1 (Gate 3: Quorum Multi-Signer)
+    [
+      { active: false }, { active: false }, { active: false }, { active: false },
+      { active: false }, { active: true, label: 'Quorum: 3/3 Signatures' }, { active: true, label: 'Quorum: Threshold Met' },
+      { active: true, label: 'Quorum: Consensual Block' }, { active: true, label: 'Quorum: Epoch Finalized' },
+      { active: true, label: 'Quorum: Replay Immune' }, { active: false }
+    ],
+    // Row 2 (Gate 2: Static Policy Inspection)
+    [
+      { active: false }, { active: false }, { active: false }, { active: true, label: 'Inspect: Zero CVE Policy' },
+      { active: true, label: 'Inspect: Rules Validated' }, { active: false }, { active: false },
+      { active: false }, { active: false }, { active: false }, { active: false }
+    ],
+    // Row 3 (Gate 1: Origin Ed25519)
+    [
+      { active: false }, { active: true, label: 'Origin: Ed25519 Verified' }, { active: true, label: 'Origin: DSSE Envelope OK' },
+      { active: false }, { active: false }, { active: false }, { active: false },
+      { active: false }, { active: false }, { active: false }, { active: false }
+    ]
   ], []);
 
   return (
@@ -532,57 +534,35 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             {/* Card 2: Security Health (Cryptographic Verification Telemetry) */}
             <div className="zassk-card zassk-security-health-card">
               <div className="zassk-sh-header">
-                <div className="zassk-sh-title-group">
-                  <span className="zassk-card-title">Security Health</span>
+                <span className="zassk-card-title">Security Health</span>
+                <div className="zassk-sh-header-right">
                   <span className="zassk-sh-badge">● Optimal</span>
-                </div>
-                <button className="zassk-action-pill-btn" aria-label="Security Details">
-                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
-                </button>
-              </div>
-
-              <div className="zassk-sh-metric-row">
-                <div className="zassk-sh-metric-val">99.9%</div>
-                <div className="zassk-sh-metric-sub">
-                  <span>Zero anomalies</span>
-                  <span className="zassk-sh-dot">·</span>
-                  <span style={{ color: '#059669', fontWeight: 600 }}>Air-gapped</span>
+                  <button className="zassk-action-pill-btn" aria-label="Security Details">
+                    <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                  </button>
                 </div>
               </div>
 
-              {/* 24 Micro Telemetry Verification Frequency Ticks */}
-              <div className="zassk-sh-ticks-track">
-                {securityTelemetryTicks.map((tick, i) => (
-                  <div
-                    key={i}
-                    className="zassk-sh-tick-bar"
-                    style={{
-                      height: `${tick.height}%`,
-                      backgroundColor: tick.color,
-                    }}
-                    title={tick.label}
-                  />
-                ))}
-              </div>
+              <div className="zassk-sh-body">
+                <div className="zassk-sh-metric-col">
+                  <div className="zassk-sh-metric-val">99.9%</div>
+                  <div className="zassk-sh-metric-sub">Zero anomalies · Air-gapped</div>
+                </div>
 
-              {/* 4-Stage Micro Pipeline Indicators */}
-              <div className="zassk-sh-pipeline-row">
-                <span className="zassk-sh-stage" title="Ed25519 Source Provenance">
-                  <span className="zassk-sh-stage-pip" />
-                  Origin
-                </span>
-                <span className="zassk-sh-stage" title="Static Policy Rules Validation">
-                  <span className="zassk-sh-stage-pip" />
-                  Inspect
-                </span>
-                <span className="zassk-sh-stage" title="Multi-Signer Quorum Consensus">
-                  <span className="zassk-sh-stage-pip" />
-                  Quorum
-                </span>
-                <span className="zassk-sh-stage" title="Merkle Consistency Proof">
-                  <span className="zassk-sh-stage-pip" />
-                  Ledger
-                </span>
+                {/* 4-Row x 11-Col Telemetry Dot Matrix (Aligning with Zassk Reference) */}
+                <div className="zassk-sh-matrix" role="img" aria-label="Security verification matrix">
+                  {securityDotMatrix.map((row, rIdx) => (
+                    <div key={rIdx} className="zassk-sh-matrix-row">
+                      {row.map((dot, cIdx) => (
+                        <div
+                          key={cIdx}
+                          className={`zassk-sh-dot-pip ${dot.active ? 'active' : 'inactive'}`}
+                          title={dot.label || 'Node status: Idle'}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
