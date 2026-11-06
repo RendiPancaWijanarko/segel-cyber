@@ -944,3 +944,16 @@
 .zassk-trans-right { text-align: right; }
 .zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
 .zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }
+
+/* ── 5. Bottom Full Performance Trend Card (AlignUI v1.2 Integration) ── */
+.zassk-bottom-performance-card {
+  width: 100%;
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.zassk-bottom-performance-card > * {
+  width: 100%;
+  max-width: 100%;
+}

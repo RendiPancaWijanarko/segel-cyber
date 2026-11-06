@@ -941,6 +941,306 @@
         .zassk-trans-right { text-align: right; }
         .zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
         .zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }
+
+        /* ── 5. Full Bottom Performance Trend Card (AlignUI v1.2) ── */
+        .zassk-full-trend-card {
+          margin-top: 6px;
+          border-radius: 20px;
+          border: 1px solid rgba(226, 232, 240, 0.8);
+          background: #FFFFFF;
+          box-shadow: 0 12px 32px -4px rgba(115, 155, 220, 0.16), 0 4px 12px rgba(0, 0, 0, 0.02);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .zassk-full-trend-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 24px;
+          border-bottom: 1px solid #F1F5F9;
+        }
+
+        .zassk-full-trend-title-box {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .zassk-full-trend-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--zassk-navy);
+          letter-spacing: -0.2px;
+        }
+
+        .zassk-info-icon-btn {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: none;
+          background: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #94A3B8;
+          transition: all 0.15s ease;
+        }
+        .zassk-info-icon-btn:hover {
+          color: var(--zassk-navy);
+          background: #F1F5F9;
+        }
+
+        .zassk-metric-select {
+          appearance: none;
+          -webkit-appearance: none;
+          background: #FFFFFF url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+          border: 1px solid #E2E8F0;
+          border-radius: 8px;
+          padding: 6px 32px 6px 12px;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--zassk-navy);
+          cursor: pointer;
+          outline: none;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+          transition: all 0.15s ease;
+        }
+        .zassk-metric-select:hover {
+          border-color: #CBD5E1;
+        }
+
+        .zassk-full-trend-content {
+          padding: 24px 28px 24px 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .zassk-chart-body-grid {
+          display: grid;
+          grid-template-columns: 2.8rem 1fr;
+          gap: 14px;
+          align-items: stretch;
+        }
+
+        .zassk-chart-y-ticks {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          text-align: right;
+          font-family: 'SFMono-Regular', Consolas, monospace;
+          font-size: 11px;
+          font-weight: 600;
+          color: #94A3B8;
+          padding: 2px 0;
+          user-select: none;
+        }
+
+        .zassk-chart-canvas-area {
+          position: relative;
+          height: 200px;
+          cursor: crosshair;
+        }
+
+        .zassk-columns-grid {
+          display: grid;
+          grid-template-columns: repeat(60, minmax(0, 1fr));
+          gap: 3px;
+          height: 100%;
+          align-items: stretch;
+        }
+
+        .zassk-col-strip {
+          display: grid;
+          grid-template-rows: repeat(14, minmax(0, 1fr));
+          gap: 2.5px;
+          height: 100%;
+        }
+
+        .zassk-cell {
+          border-radius: 2px;
+          transition: background-color 0.15s ease;
+        }
+        .zassk-cell.active { background-color: #2563EB; }
+        .zassk-cell.secondary { background-color: #93C5FD; }
+        .zassk-cell.empty { background-color: #F1F5F9; }
+
+        .zassk-scrubber-crosshair {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          border-left: 1.5px dashed rgba(15, 23, 42, 0.7);
+          pointer-events: none;
+          transition: left 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 10;
+        }
+
+        .zassk-scrubber-pip {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: 2.5px solid #2563EB;
+          background: #FFFFFF;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+          pointer-events: none;
+          transition: all 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 12;
+        }
+
+        .zassk-scrubber-card-tooltip {
+          position: absolute;
+          width: 140px;
+          background: #FFFFFF;
+          border-radius: 10px;
+          padding: 8px 12px;
+          box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.15), 0 2px 6px rgba(15, 23, 42, 0.06);
+          border: 1px solid rgba(226, 232, 240, 0.8);
+          pointer-events: none;
+          transition: all 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 20;
+        }
+
+        .zassk-scrubber-card-date {
+          font-size: 11px;
+          color: #64748B;
+          font-weight: 500;
+        }
+
+        .zassk-scrubber-card-val {
+          font-family: 'SFMono-Regular', Consolas, monospace;
+          font-size: 16px;
+          font-weight: 700;
+          color: #0F172A;
+          margin-top: 2px;
+        }
+
+        .zassk-scrubber-date-badge {
+          position: absolute;
+          bottom: -32px;
+          transform: translateX(-50%);
+          background: #0F172A;
+          color: #FFFFFF;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 6px;
+          white-space: nowrap;
+          pointer-events: none;
+          transition: left 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 15;
+        }
+
+        .zassk-chart-months-row {
+          display: grid;
+          grid-template-columns: repeat(12, 1fr);
+          padding-left: 3.5rem;
+          padding-top: 18px;
+          text-align: center;
+          font-size: 11.5px;
+          font-weight: 600;
+          color: #94A3B8;
+        }
+
+        /* Metric Tabs Footer */
+        .zassk-metric-tabs-footer {
+          display: flex;
+          border-top: 1px solid #F1F5F9;
+          background: #FAFAFA;
+          overflow-x: auto;
+        }
+
+        .zassk-metric-tab {
+          flex: 1;
+          min-width: 200px;
+          padding: 16px 20px;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          position: relative;
+          transition: all 0.15s ease;
+          outline: none;
+        }
+        .zassk-metric-tab:hover {
+          background: #F8FAFC;
+        }
+        .zassk-metric-tab.active {
+          background: #FFFFFF;
+        }
+        .zassk-metric-tab.active::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: var(--zassk-navy);
+        }
+
+        .zassk-tab-top {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .zassk-tab-icon-box {
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          display: grid;
+          place-items: center;
+          background: #F1F5F9;
+          color: #64748B;
+          border: 1px solid #E2E8F0;
+        }
+        .zassk-metric-tab.active .zassk-tab-icon-box {
+          background: #0F172A;
+          color: #FFFFFF;
+          border-color: #0F172A;
+        }
+
+        .zassk-tab-label {
+          font-size: 12.5px;
+          font-weight: 600;
+          color: #64748B;
+        }
+        .zassk-metric-tab.active .zassk-tab-label {
+          color: var(--zassk-navy);
+        }
+
+        .zassk-tab-val-group {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .zassk-tab-big-val {
+          font-family: 'SFMono-Regular', Consolas, monospace;
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--zassk-navy);
+          letter-spacing: -0.4px;
+        }
+
+        .zassk-tab-sub {
+          font-size: 11.5px;
+          color: #64748B;
+          font-weight: 500;
+        }
+
+        .zassk-tab-separator {
+          width: 1px;
+          background: #F1F5F9;
+          align-self: stretch;
+        }
     </style>
 </head>
 <body>
@@ -1488,6 +1788,153 @@
                 </div>
             </div>
         </div>
+
+        <!-- ── 5. FULL BOTTOM PERFORMANCE TREND CARD (AlignUI v1.2 Integration) ── -->
+        <div class="zassk-card zassk-full-trend-card">
+            <!-- Header: Title + Info tooltip + Metric Select Dropdown -->
+            <div class="zassk-full-trend-header">
+                <div class="zassk-full-trend-title-box">
+                    <span class="zassk-full-trend-title">Performance trend</span>
+                    <div class="zassk-info-tooltip-wrap">
+                        <button class="zassk-info-icon-btn" title="Daily production activity across 2026" id="ptInfoBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="zassk-select-wrapper">
+                    <select id="metricSelect" class="zassk-metric-select" aria-label="Chart metric">
+                        <option value="prod-executions" selected>Executions</option>
+                        <option value="failed-executions">Failed executions</option>
+                        <option value="failure-rate">Failure rate</option>
+                        <option value="time-saved">Time saved</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Content: Y-axis ticks + 60-column chart + 12 month labels -->
+            <div class="zassk-full-trend-content">
+                <div class="zassk-chart-body-grid">
+                    <!-- Left Y-axis ticks -->
+                    <div class="zassk-chart-y-ticks" id="chartYTicks">
+                        <span>400</span>
+                        <span>300</span>
+                        <span>200</span>
+                        <span>100</span>
+                    </div>
+
+                    <!-- 60-Column Chart Area -->
+                    <div class="zassk-chart-canvas-area" id="chartCanvasArea">
+                        <div class="zassk-columns-grid" id="chartColumnsGrid"></div>
+
+                        <!-- Dashed Vertical Crosshair Scrubber Line -->
+                        <div class="zassk-scrubber-crosshair" id="scrubberCrosshair" style="display: none;"></div>
+
+                        <!-- Target Pip Ring -->
+                        <div class="zassk-scrubber-pip" id="scrubberPip" style="display: none;"></div>
+
+                        <!-- Floating Date & Value Tooltip Card -->
+                        <div class="zassk-scrubber-card-tooltip" id="scrubberCardTooltip" style="display: none;">
+                            <div class="zassk-scrubber-card-date" id="scrubberCardDate">Apr 30, 2026</div>
+                            <div class="zassk-scrubber-card-val" id="scrubberCardVal">320</div>
+                        </div>
+
+                        <!-- Short Date Bottom Tag -->
+                        <div class="zassk-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">Apr 30</div>
+                    </div>
+                </div>
+
+                <!-- 12-Month Labels Row -->
+                <div class="zassk-chart-months-row">
+                    <span>Jan</span>
+                    <span>Feb</span>
+                    <span>Mar</span>
+                    <span>Apr</span>
+                    <span>May</span>
+                    <span>Jun</span>
+                    <span>Jul</span>
+                    <span>Aug</span>
+                    <span>Sep</span>
+                    <span>Oct</span>
+                    <span>Nov</span>
+                    <span>Dec</span>
+                </div>
+            </div>
+
+            <!-- Footer: 4 Metric Tabs -->
+            <div class="zassk-metric-tabs-footer" id="metricTabsFooter">
+                <!-- Tab 1 -->
+                <button class="zassk-metric-tab active" data-key="prod-executions">
+                    <div class="zassk-tab-top">
+                        <span class="zassk-tab-icon-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 12 2 2 4-4"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                            </svg>
+                        </span>
+                        <span class="zassk-tab-label">Prod. executions</span>
+                    </div>
+                    <div class="zassk-tab-val-group">
+                        <span class="zassk-tab-big-val">320</span>
+                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs last month</span>
+                    </div>
+                </button>
+
+                <div class="zassk-tab-separator"></div>
+
+                <!-- Tab 2 -->
+                <button class="zassk-metric-tab" data-key="failed-executions">
+                    <div class="zassk-tab-top">
+                        <span class="zassk-tab-icon-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 9-6 6"/><path d="m9 9 6 6"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                            </svg>
+                        </span>
+                        <span class="zassk-tab-label">Failed executions</span>
+                    </div>
+                    <div class="zassk-tab-val-group">
+                        <span class="zassk-tab-big-val">28</span>
+                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs last month</span>
+                    </div>
+                </button>
+
+                <div class="zassk-tab-separator"></div>
+
+                <!-- Tab 3 -->
+                <button class="zassk-metric-tab" data-key="failure-rate">
+                    <div class="zassk-tab-top">
+                        <span class="zassk-tab-icon-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                            </svg>
+                        </span>
+                        <span class="zassk-tab-label">Failure rate</span>
+                    </div>
+                    <div class="zassk-tab-val-group">
+                        <span class="zassk-tab-big-val">2.4%</span>
+                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs last month</span>
+                    </div>
+                </button>
+
+                <div class="zassk-tab-separator"></div>
+
+                <!-- Tab 4 -->
+                <button class="zassk-metric-tab" data-key="time-saved">
+                    <div class="zassk-tab-top">
+                        <span class="zassk-tab-icon-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+                            </svg>
+                        </span>
+                        <span class="zassk-tab-label">Time saved</span>
+                    </div>
+                    <div class="zassk-tab-val-group">
+                        <span class="zassk-tab-big-val">18.4 hrs</span>
+                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">-1.1%</strong> vs last month</span>
+                    </div>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- ── Interactive Micro-Behaviors & Chart Generators ── -->
@@ -1763,6 +2210,239 @@
                     }
                 });
             });
+        })();
+
+        // 7. Full Bottom Performance Trend Card (AlignUI v1.2 Integration)
+        (function setupFullPerformanceTrend() {
+            const gridEl = document.getElementById('chartColumnsGrid');
+            const canvasArea = document.getElementById('chartCanvasArea');
+            const yTicksEl = document.getElementById('chartYTicks');
+            const crosshairEl = document.getElementById('scrubberCrosshair');
+            const pipEl = document.getElementById('scrubberPip');
+            const tooltipCard = document.getElementById('scrubberCardTooltip');
+            const tooltipDate = document.getElementById('scrubberCardDate');
+            const tooltipVal = document.getElementById('scrubberCardVal');
+            const dateBadge = document.getElementById('scrubberDateBadge');
+            const selectEl = document.getElementById('metricSelect');
+            const tabsFooter = document.getElementById('metricTabsFooter');
+            if (!gridEl || !canvasArea) return;
+
+            const COLUMN_COUNT = 60;
+            const ROW_COUNT = 14;
+            const DEFAULT_COLUMN = 20;
+
+            const METRICS = {
+                'prod-executions': {
+                    label: 'Prod. executions',
+                    selectLabel: 'Executions',
+                    summaryValue: '320',
+                    change: '+5%',
+                    seed: 0,
+                    scale: 1,
+                    ticks: [400, 300, 200, 100],
+                    precision: 0,
+                    suffix: '',
+                    selectedValue: 320
+                },
+                'failed-executions': {
+                    label: 'Failed executions',
+                    selectLabel: 'Failed executions',
+                    summaryValue: '28',
+                    change: '-4.8%',
+                    seed: 1.45,
+                    scale: 0.74,
+                    ticks: [100, 75, 50, 25],
+                    precision: 0,
+                    suffix: '',
+                    selectedValue: 28
+                },
+                'failure-rate': {
+                    label: 'Failure rate',
+                    selectLabel: 'Failure rate',
+                    summaryValue: '2.4%',
+                    change: '+0.3%',
+                    seed: 2.6,
+                    scale: 0.65,
+                    ticks: [20, 15, 10, 5],
+                    precision: 2,
+                    suffix: '%',
+                    selectedValue: 2.4
+                },
+                'time-saved': {
+                    label: 'Time saved',
+                    selectLabel: 'Time saved',
+                    summaryValue: '18.4 hrs',
+                    change: '-1.1%',
+                    seed: 3.85,
+                    scale: 0.88,
+                    ticks: [24, 18, 12, 6],
+                    precision: 1,
+                    suffix: ' hrs',
+                    selectedValue: 18.4
+                }
+            };
+
+            function clamp(val, min, max) {
+                return Math.min(Math.max(val, min), max);
+            }
+
+            function createColumns(metric) {
+                const peaks = [4, 11, 17, 24, 30, 36, 41, 47, 53, 58];
+                const cols = [];
+                for (let index = 0; index < COLUMN_COUNT; index++) {
+                    const baseline = 2.2 + Math.sin(index * 0.58 + metric.seed) * 0.68 + Math.sin(index * 1.24 + metric.seed * 0.75) * 0.44;
+                    let peakHeight = 0;
+                    peaks.forEach((peak, peakIndex) => {
+                        const width = 1.05 + ((peakIndex + Math.round(metric.seed)) % 3) * 0.22;
+                        const amplitude = 3.2 + ((peakIndex * 3 + Math.round(metric.seed * 3)) % 4);
+                        peakHeight += amplitude * Math.exp(-Math.pow(index - peak, 2) / (2 * Math.pow(width, 2)));
+                    });
+                    const height = clamp(Math.round((baseline + peakHeight) * metric.scale), 2, 10);
+                    const secondaryHeight = clamp(
+                        height + 2 + Math.round((Math.sin(index * 0.37 + metric.seed) + 1) * 1.5),
+                        height + 1,
+                        ROW_COUNT
+                    );
+                    const wave = Math.sin(index * 0.41 + metric.seed);
+                    let val;
+                    if (metric === METRICS['prod-executions']) val = 95 + height * 24 + wave * 9;
+                    else if (metric === METRICS['failed-executions']) val = 8 + height * 5.4 + wave * 2;
+                    else if (metric === METRICS['failure-rate']) val = 0.8 + height * 0.72 + wave * 0.35;
+                    else val = 2.5 + height * 1.55 + wave * 0.65;
+
+                    cols.push({
+                        height,
+                        secondaryHeight,
+                        value: index === DEFAULT_COLUMN ? metric.selectedValue : Number(val.toFixed(metric.precision))
+                    });
+                }
+                return cols;
+            }
+
+            let currentMetricKey = 'prod-executions';
+            let currentColumns = createColumns(METRICS[currentMetricKey]);
+
+            function formatDate(index) {
+                if (index === DEFAULT_COLUMN) return 'Apr 30, 2026';
+                const d = new Date(2026, 0, 1);
+                d.setDate(1 + Math.round((index / (COLUMN_COUNT - 1)) * 364));
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
+            function formatShortDate(index) {
+                if (index === DEFAULT_COLUMN) return 'Apr 30';
+                const d = new Date(2026, 0, 1);
+                d.setDate(1 + Math.round((index / (COLUMN_COUNT - 1)) * 364));
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+
+            function renderChart(key) {
+                currentMetricKey = key;
+                const m = METRICS[key];
+                currentColumns = createColumns(m);
+
+                // Y ticks
+                if (yTicksEl) {
+                    yTicksEl.innerHTML = m.ticks.map(t => `<span>${t}</span>`).join('');
+                }
+
+                // Grid columns
+                gridEl.innerHTML = '';
+                currentColumns.forEach((colData, colIndex) => {
+                    const strip = document.createElement('div');
+                    strip.className = 'zassk-col-strip';
+                    for (let r = 0; r < ROW_COUNT; r++) {
+                        const cell = document.createElement('div');
+                        const active = r >= ROW_COUNT - colData.height;
+                        const secondary = r >= ROW_COUNT - colData.secondaryHeight;
+                        cell.className = `zassk-cell ${active ? 'active' : secondary ? 'secondary' : 'empty'}`;
+                        strip.appendChild(cell);
+                    }
+                    gridEl.appendChild(strip);
+                });
+
+                setActiveColumn(DEFAULT_COLUMN);
+            }
+
+            function setActiveColumn(colIndex) {
+                const boundedIndex = clamp(colIndex, 0, COLUMN_COUNT - 1);
+                const colData = currentColumns[boundedIndex];
+                const m = METRICS[currentMetricKey];
+
+                const selectedX = ((boundedIndex + 0.5) / COLUMN_COUNT) * 100;
+                const selectedY = ((ROW_COUNT - colData.height + 0.5) / ROW_COUNT) * 100;
+                const tooltipY = clamp(selectedY - 10, 14, 51);
+
+                crosshairEl.style.display = 'block';
+                crosshairEl.style.left = `${selectedX}%`;
+
+                pipEl.style.display = 'block';
+                pipEl.style.left = `${selectedX}%`;
+                pipEl.style.top = `${selectedY}%`;
+
+                tooltipCard.style.display = 'block';
+                tooltipCard.style.top = `${tooltipY}%`;
+                if (boundedIndex > COLUMN_COUNT - 12) {
+                    tooltipCard.style.left = `calc(${selectedX}% - 148px)`;
+                } else {
+                    tooltipCard.style.left = `calc(${selectedX}% + 8px)`;
+                }
+
+                tooltipDate.textContent = formatDate(boundedIndex);
+                tooltipVal.textContent = `${colData.value.toFixed(m.precision)}${m.suffix}`;
+
+                dateBadge.style.display = 'block';
+                dateBadge.style.left = `${selectedX}%`;
+                dateBadge.textContent = formatShortDate(boundedIndex);
+            }
+
+            // Mouse interaction
+            canvasArea.addEventListener('mousemove', (e) => {
+                const rect = canvasArea.getBoundingClientRect();
+                const pointerX = clamp(e.clientX - rect.left, 0, rect.width - 1);
+                const colIndex = Math.floor((pointerX / rect.width) * COLUMN_COUNT);
+                setActiveColumn(colIndex);
+            });
+
+            canvasArea.addEventListener('mouseleave', () => {
+                setActiveColumn(DEFAULT_COLUMN);
+            });
+
+            // Sync with Metric Select
+            if (selectEl) {
+                selectEl.addEventListener('change', (e) => {
+                    const key = e.target.value;
+                    renderChart(key);
+                    updateTabs(key);
+                });
+            }
+
+            // Sync with Metric Tabs Footer
+            if (tabsFooter) {
+                const tabs = tabsFooter.querySelectorAll('.zassk-metric-tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const key = tab.getAttribute('data-key');
+                        if (selectEl) selectEl.value = key;
+                        renderChart(key);
+                        updateTabs(key);
+                    });
+                });
+            }
+
+            function updateTabs(key) {
+                const tabs = tabsFooter.querySelectorAll('.zassk-metric-tab');
+                tabs.forEach(tab => {
+                    if (tab.getAttribute('data-key') === key) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+            }
+
+            // Initial render
+            renderChart('prod-executions');
         })();
     </script>
 </body>

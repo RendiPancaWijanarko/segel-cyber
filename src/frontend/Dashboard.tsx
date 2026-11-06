@@ -18,6 +18,8 @@ import {
   mockTransactions,
 } from './mockData';
 import { ZasskDashboardProps } from './types';
+import { PerformanceTrend } from '../components/performance-trend/performance-trend';
+import { TooltipProvider } from '../components/ui/tooltip';
 
 // ── Tailored Minimalist Icon Component ──
 interface IconProps {
@@ -908,6 +910,13 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               ))}
             </div>
           </div>
+        </div>
+
+        {/* ── 5. BOTTOM PERFORMANCE TREND CARD (AlignUI v1.2 Integration) ── */}
+        <div className="zassk-bottom-performance-card">
+          <TooltipProvider>
+            <PerformanceTrend />
+          </TooltipProvider>
         </div>
       </div>
     </div>
