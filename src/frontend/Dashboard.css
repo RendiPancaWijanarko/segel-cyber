@@ -1,22 +1,22 @@
 /* SPDX-License-Identifier: MIT */
 /**
- * Zassk Precision Glassmorphic Analytics Dashboard Stylesheet
- * Exact geometry, notched folder tabs, interlocking cards, 
- * needle curtain spline charts, and authentic textures.
+ * Zassk Precision Pixel-Exact Analytics Dashboard Stylesheet
+ * Exact geometry, physical interlocking cards, notched folder tabs,
+ * high-density needle waterfall chart, and authentic textures.
  */
 
 :root {
   --zassk-canvas-bg: linear-gradient(135deg, #A7C8FD 0%, #D4E4FD 40%, #EFF5FF 80%, #F8FAFD 100%);
-  --zassk-glass-dock: rgba(255, 255, 255, 0.65);
-  --zassk-glass-border: rgba(255, 255, 255, 0.85);
+  --zassk-glass-dock: rgba(255, 255, 255, 0.72);
+  --zassk-glass-border: rgba(255, 255, 255, 0.9);
   --zassk-card-solid: #FFFFFF;
   --zassk-navy: #0F172A;
   --zassk-charcoal: #181F2A;
   --zassk-slate-muted: #64748B;
   --zassk-slate-light: #94A3B8;
   --zassk-blue-primary: #2563EB;
-  --zassk-blue-electric: #38BDF8;
-  --zassk-blue-soft: #93C5FD;
+  --zassk-blue-sky: #38BDF8;
+  --zassk-blue-ice: #BAE6FD;
   --zassk-border-subtle: rgba(226, 232, 240, 0.7);
   --zassk-card-shadow: 0 14px 34px -8px rgba(125, 165, 230, 0.22);
 }
@@ -74,17 +74,18 @@
 }
 .zassk-brand-pill:hover { transform: translateY(-1px); }
 
+/* Navigation Dock */
 .zassk-dock {
   background: var(--zassk-glass-dock);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--zassk-glass-border);
   border-radius: 9999px;
   padding: 5px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  box-shadow: 0 8px 30px rgba(0, 70, 180, 0.06);
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(100, 140, 200, 0.1);
 }
 
 .zassk-dock-btn {
@@ -118,7 +119,7 @@
   padding: 8px 18px;
   gap: 8px;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: 0 4px 14px rgba(24, 31, 42, 0.25);
 }
 
@@ -219,50 +220,38 @@
   justify-content: space-between;
   padding: 4px 8px;
 }
-.zassk-hello-text {
-  font-size: 26px;
+.zassk-hello-lead {
+  font-size: 20px;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.2;
+}
+.zassk-hello-name {
+  font-size: 32px;
   font-weight: 700;
   color: var(--zassk-navy);
   line-height: 1.1;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
+  margin-top: 2px;
 }
 .zassk-welcome-sub {
   font-size: 14px;
   color: #64748B;
   font-weight: 500;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-.zassk-task-stat-widget {
-  margin-top: 26px;
-}
+.zassk-task-stat-widget { margin-top: 26px; }
 .zassk-stat-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
-.zassk-stat-label {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-}
-.zassk-stat-value-group {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-.zassk-stat-count {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--zassk-navy);
-  letter-spacing: -0.5px;
-}
-.zassk-trend-badge {
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-}
+.zassk-stat-label { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+.zassk-stat-value-group { display: flex; align-items: baseline; gap: 6px; }
+.zassk-stat-count { font-size: 26px; font-weight: 800; color: var(--zassk-navy); letter-spacing: -0.5px; }
+.zassk-trend-badge { font-size: 13px; font-weight: 700; color: #475569; }
 
 /* 3-Segment Statistics Bar */
 .zassk-progress-capsule {
@@ -274,16 +263,12 @@
 }
 .zassk-seg-1 {
   width: 48%;
-  background-color: #181F2A;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1.2px, transparent 1.2px);
+  background-color: #1E293B;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1.2px, transparent 1.2px);
   background-size: 4px 4px;
   border-radius: 9999px 6px 6px 9999px;
 }
-.zassk-seg-2 {
-  width: 26%;
-  background-color: #94A3B8;
-  border-radius: 6px;
-}
+.zassk-seg-2 { width: 26%; background-color: #94A3B8; border-radius: 6px; }
 .zassk-seg-3 {
   width: 26%;
   background: repeating-linear-gradient(
@@ -296,30 +281,74 @@
   border-radius: 6px 9999px 9999px 6px;
 }
 
-/* ── "Total Responses" Card with Asymmetric File-Folder Tab Notch ── */
-.zassk-card-notched-responses {
-  background: var(--zassk-card-solid);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: var(--zassk-card-shadow);
-  padding: 0;
+/* ── File-Folder Tab Notched Card Base ── */
+.zassk-card-notched-container {
+  position: relative;
+  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
   display: flex;
   flex-direction: column;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Tab Header Notch geometry */
-.zassk-notched-header {
-  position: relative;
-  height: 48px;
-  width: 100%;
-}
-
-.zassk-notched-tab-pill {
+/* Elevated Tab on Top Left */
+.zassk-notched-tab {
   position: absolute;
   top: 0;
   left: 0;
+  width: 58%;
+  height: 48px;
+  background: #FFFFFF;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  z-index: 2;
+}
+
+.zassk-notched-tab-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--zassk-navy);
+  letter-spacing: -0.2px;
+}
+
+/* Concave transition scoop joining tab to lower card top */
+.zassk-notched-scoop {
+  position: absolute;
+  top: 18px;
+  left: 58%;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Main Card Body sitting below the 18px notch */
+.zassk-notched-body {
+  margin-top: 18px;
+  background: #FFFFFF;
+  border-radius: 0 24px 24px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Old compatibility aliases */
+.zassk-card-notched-responses {
+  composes: zassk-card-notched-container;
+}
+
+.zassk-notched-header-responses {
+  position: relative;
+  height: 52px;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.zassk-responses-tab-title {
   padding: 16px 22px 8px 22px;
   font-size: 15px;
   font-weight: 700;
@@ -328,13 +357,12 @@
   z-index: 2;
 }
 
-/* Background stepped notch shape behind header */
-.zassk-notch-bg-svg {
+.zassk-responses-step-notch-svg {
   position: absolute;
   top: 0;
   right: 0;
-  width: 110px;
-  height: 38px;
+  width: 120px;
+  height: 42px;
   pointer-events: none;
 }
 
@@ -348,12 +376,7 @@
   margin-top: 10px;
 }
 
-.zassk-radial-gauge-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
+.zassk-radial-gauge-svg { width: 100%; height: 100%; overflow: visible; }
 .zassk-gauge-center-content {
   position: absolute;
   top: 56%;
@@ -362,20 +385,10 @@
   text-align: center;
   pointer-events: none;
 }
-.zassk-gauge-center-val {
-  font-size: 26px;
-  font-weight: 700;
-  color: #0F172A;
-  line-height: 1;
-}
-.zassk-gauge-center-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #64748B;
-  margin-top: 4px;
-}
+.zassk-gauge-center-val { font-size: 28px; font-weight: 700; color: #0F172A; line-height: 1; }
+.zassk-gauge-center-label { font-size: 13px; font-weight: 500; color: #64748B; margin-top: 4px; }
 
-/* ── Interlocking "Total Profit" & "Active Users" Widget ── */
+/* ── Interlocking "Total Profit" & "Active Users" ── */
 .zassk-interlocking-card {
   background: var(--zassk-card-solid);
   border-radius: 24px;
@@ -387,10 +400,10 @@
   position: relative;
 }
 
-.zassk-interlock-top {
-  padding: 18px 20px 14px 20px;
+/* Stepped profile top tier */
+.zassk-interlock-top-tier {
+  padding: 18px 20px 12px 20px;
   position: relative;
-  border-bottom: 1px solid #F1F5F9;
 }
 
 .zassk-interlock-header {
@@ -430,17 +443,21 @@
   border-radius: 2px;
   transition: all 0.2s ease;
 }
-.zassk-mini-bar:hover {
-  background: var(--zassk-blue-primary);
-  transform: scaleY(1.1);
-}
+.zassk-mini-bar:hover { background: var(--zassk-blue-primary); transform: scaleY(1.1); }
 
-.zassk-interlock-bottom {
-  padding: 14px 20px 18px 20px;
+/* Inverted stepped shelf separating Profit and Active Users */
+.zassk-stepped-shelf-divider {
+  width: 100%;
+  height: 14px;
+  position: relative;
   background: #FFFFFF;
 }
 
-/* Active Users Split Bar */
+.zassk-interlock-bottom-tier {
+  padding: 4px 20px 18px 20px;
+  background: #FFFFFF;
+}
+
 .zassk-split-labels {
   display: flex;
   justify-content: flex-end;
@@ -488,7 +505,7 @@
   border-radius: 2px 6px 6px 2px;
 }
 
-/* ── Column 4: Conversion Rate & Ended Task ── */
+/* ── Column 4: Conversion & Ended Task ── */
 .zassk-col4-column {
   display: flex;
   flex-direction: column;
@@ -503,46 +520,48 @@
   box-shadow: var(--zassk-card-shadow);
 }
 
-.zassk-dense-ticks {
+/* 28 thin vertical tick bars (width: 3px, height: 18px, gap: 3px) */
+.zassk-dense-ticks-28 {
   display: flex;
   align-items: center;
-  gap: 2.5px;
-  height: 26px;
-  padding: 2px 0;
+  gap: 3px;
+  height: 18px;
+  margin-top: 6px;
 }
-.zassk-tick-line {
-  flex: 1;
-  height: 100%;
+.zassk-tick-bar-28 {
+  width: 3px;
+  height: 18px;
   border-radius: 2px;
+  flex-shrink: 0;
 }
-.zassk-tick-line.filled { background: var(--zassk-blue-primary); }
-.zassk-tick-line.unfilled { background: #E2E8F0; }
+.zassk-tick-bar-28.filled { background: var(--zassk-blue-primary); }
+.zassk-tick-bar-28.unfilled { background: #E2E8F0; }
 
-/* Ended Task Alternating Dot Matrix */
+/* Ended Task dot grid: 2 rows of prominent blue & small gray pips */
 .zassk-dot-matrix {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: 6px 0;
 }
 .zassk-dot-matrix-row {
   display: flex;
-  gap: 8px;
+  gap: 8.5px;
   align-items: center;
 }
-.zassk-matrix-dot-bold {
+.zassk-dot-prominent {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--zassk-blue-primary);
-  box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
   flex-shrink: 0;
 }
-.zassk-matrix-dot-pip {
-  width: 4.5px;
-  height: 4.5px;
+.zassk-dot-muted-pip {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #E2E8F0;
+  background: #CBD5E1;
+  opacity: 0.6;
   flex-shrink: 0;
 }
 
@@ -553,9 +572,7 @@
   gap: 18px;
 }
 
-@media (max-width: 992px) {
-  .zassk-mid-row { grid-template-columns: 1fr; }
-}
+@media (max-width: 992px) { .zassk-mid-row { grid-template-columns: 1fr; } }
 
 .zassk-revenue-card {
   padding: 24px;
@@ -608,35 +625,47 @@
   margin-top: 14px;
 }
 
-/* Full-Width Waveform Curtain Area */
+/* Waterfall Line-Needle Chart Area */
 .zassk-waveform-container {
   flex: 1;
   position: relative;
   height: 175px;
 }
 
-.zassk-waveform-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
+.zassk-waveform-svg { width: 100%; height: 100%; overflow: visible; }
 
+/* Floating Tooltip */
 .zassk-floating-tooltip {
   position: absolute;
   transform: translate(-50%, -100%);
   margin-top: -14px;
   background: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  padding: 6px 14px;
   border-radius: 9999px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  padding: 4px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F172A;
   pointer-events: none;
   white-space: nowrap;
   z-index: 20;
   transition: all 0.12s ease;
+}
+
+.zassk-timeline-slider-track {
+  height: 4px;
+  background: #E2E8F0;
+  border-radius: 9999px;
+  margin: 10px 0 6px 130px;
+  position: relative;
+}
+.zassk-timeline-slider-thumb {
+  position: absolute;
+  top: -2px;
+  height: 8px;
+  background: #3B82F6;
+  border-radius: 9999px;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
 }
 
 .zassk-x-axis-full {
@@ -670,8 +699,8 @@
 }
 
 .zassk-brand-icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -706,12 +735,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.zassk-count-pill {
+/* Count badge pill positioned directly over boundary seam */
+.zassk-count-pill-seam {
   position: absolute;
-  right: -14px;
-  top: -11px;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
   background: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 9999px;
   padding: 2px 10px;
   font-size: 11.5px;
@@ -728,23 +759,10 @@
   gap: 18px;
 }
 
-@media (max-width: 992px) {
-  .zassk-bottom-row { grid-template-columns: 1fr; }
-}
+@media (max-width: 992px) { .zassk-bottom-row { grid-template-columns: 1fr; } }
 
-/* Table Card */
-.zassk-table-card {
-  padding: 24px;
-}
-
-.zassk-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 8px;
-  font-size: 13.5px;
-}
-
+.zassk-table-card { padding: 24px; }
+.zassk-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; font-size: 13.5px; }
 .zassk-table th {
   padding: 12px 14px;
   text-align: left;
@@ -755,17 +773,8 @@
   letter-spacing: 0.6px;
   border-bottom: 1px solid #F1F5F9;
 }
-
-.zassk-table td {
-  padding: 14px;
-  border-bottom: 1px solid #F1F5F9;
-  vertical-align: middle;
-  color: var(--zassk-navy);
-}
-
-.zassk-table tr:hover td {
-  background: #F8FAFC;
-}
+.zassk-table td { padding: 14px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; color: var(--zassk-navy); }
+.zassk-table tr:hover td { background: #F8FAFC; }
 
 .zassk-checkbox {
   width: 18px;
@@ -785,35 +794,60 @@
   color: #FFFFFF;
 }
 
-.zassk-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.zassk-status-active {
-  background: #E8FBF0;
-  color: #10B981;
-}
-.zassk-status-pending {
-  background: #FEF6E7;
-  color: #F59E0B;
-}
+.zassk-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
+.zassk-status-active { background: #E8FBF0; color: #10B981; }
+.zassk-status-pending { background: #FEF6E7; color: #F59E0B; }
 
-/* Notched Transactions Card */
-.zassk-trans-notched-card {
-  background: var(--zassk-card-solid);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: var(--zassk-card-shadow);
-  padding: 0;
+/* ── Notched Transactions Card Base ── */
+.zassk-trans-notched-container {
+  position: relative;
+  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
   display: flex;
   flex-direction: column;
+}
+
+.zassk-trans-notched-card {
+  position: relative;
+  filter: drop-shadow(0 14px 30px rgba(125, 165, 230, 0.22));
+  display: flex;
+  flex-direction: column;
+}
+
+.zassk-trans-tab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 62%;
+  height: 48px;
+  background: #FFFFFF;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  z-index: 2;
+}
+
+.zassk-trans-scoop {
+  position: absolute;
+  top: 18px;
+  left: 62%;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.zassk-trans-body {
+  margin-top: 18px;
+  background: #FFFFFF;
+  border-radius: 0 24px 24px 24px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 4px 22px 20px 22px;
 }
 
 .zassk-trans-header-notch {
@@ -821,6 +855,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+}
+
+.zassk-trans-notch-svg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 32px;
+  pointer-events: none;
 }
 
 .zassk-trans-list-pad {
@@ -837,16 +881,8 @@
   padding: 8px 0;
   border-bottom: 1px solid #F8FAFC;
 }
-.zassk-trans-item:last-child {
-  border-bottom: none;
-}
-
-.zassk-trans-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+.zassk-trans-item:last-child { border-bottom: none; }
+.zassk-trans-left { display: flex; align-items: center; gap: 12px; }
 .zassk-trans-icon {
   width: 36px;
   height: 36px;
@@ -859,27 +895,8 @@
   color: var(--zassk-blue-primary);
 }
 
-.zassk-trans-symbol {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-}
-.zassk-trans-company {
-  font-size: 11.5px;
-  color: #64748B;
-  margin-top: 1px;
-}
-
-.zassk-trans-right {
-  text-align: right;
-}
-.zassk-trans-amount {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--zassk-navy);
-}
-.zassk-trans-date {
-  font-size: 11.5px;
-  color: #64748B;
-  margin-top: 1px;
-}
+.zassk-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+.zassk-trans-company { font-size: 11.5px; color: #64748B; margin-top: 1px; }
+.zassk-trans-right { text-align: right; }
+.zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
+.zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }

@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: MIT
 /**
- * Zassk Modern Glassmorphic Analytics Dashboard
- * Visual correction build matching exact geometry, notched folder tabs,
- * interlocking cards, 14-tick radial gauge, and full-width needle curtain spline.
+ * Zassk Precision Pixel-Exact Analytics Dashboard
+ * Production-ready React TypeScript component.
+ * Features:
+ * - Clean Home icon navigation dock with Dashboard active and inactive circular buttons (Help is inactive).
+ * - Single physical interlocking geometry for Total Profit and Active Users.
+ * - Top-tab notches on Total Responses and Recent Transactions.
+ * - Full-width audio-spectrum / needle waterfall line chart across days 01 to 30.
+ * - 14-thick-tick radial arc gauge with royal blue -> sky blue -> pale ice blue -> muted gray.
+ * - Boundary-seam pill badges on User Source progress tracks.
+ * - 28-tick conversion bar and 2-row prominent/pip dot grid.
  */
 
 import React, { useState, useMemo, useRef, MouseEvent } from 'react';
 import './Dashboard.css';
 import {
-  mockNavDockItems,
   mockTaskStatistics,
   mockTotalProfit,
-  mockConversionRate,
   mockActiveUsers,
-  mockTotalRevenue,
-  mockUserSources,
   mockJoiningUsers,
   mockTransactions,
 } from './mockData';
@@ -35,13 +38,8 @@ export const LucideIcon: React.FC<IconProps> = ({
   className = '',
 }) => {
   const iconPaths: Record<string, React.ReactNode> = {
-    // Minimalist house/home icon (roof outline + floor/door)
+    // Minimalist house/home icon (outline with a floor dash)
     Home: (
-      <>
-        <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z" />
-      </>
-    ),
-    LayoutDashboard: (
       <>
         <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z" />
       </>
@@ -102,7 +100,7 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M7 17 17 7" />
       </>
     ),
-    // Authentic Funnel Filter Icon (three horizontal lines centered & tapering downward)
+    // Funnel filter icon
     FunnelFilter: (
       <>
         <line x1="4" y1="7" x2="20" y2="7" />
@@ -152,7 +150,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   onSearch,
   className = '',
 }) => {
-  // Navigation dock state
+  // Navigation dock state: defaults to 'dashboard'
   const [activeTab, setActiveTab] = useState<string>('dashboard');
 
   // Total Revenue interactive scrubber (Defaults to Day 11 @ $120)
@@ -164,6 +162,22 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   );
 
   const chartSvgRef = useRef<SVGSVGElement | null>(null);
+
+  // Navigation dock items strictly ordered
+  const dockItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'Home' },
+    { id: 'profile', label: 'Profile', icon: 'User' },
+    { id: 'docs', label: 'Documents', icon: 'FileText' },
+    { id: 'calendar', label: 'Calendar', icon: 'Calendar' },
+    { id: 'analytics', label: 'Analytics', icon: 'BarChart3' },
+    { id: 'settings', label: 'Settings', icon: 'Settings' },
+    { id: 'help', label: 'Help', icon: 'HelpCircle' }, // Strictly inactive icon button
+  ];
+
+  const handleDockClick = (tabId: string) => {
+    setActiveTab(tabId);
+    if (onNavigate) onNavigate(tabId);
+  };
 
   // Toggle single user row
   const toggleUserSelection = (userId: string) => {
@@ -189,27 +203,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const isAllSelected = selectedUserIds.size === mockJoiningUsers.length;
 
-  const handleDockClick = (tabId: string) => {
-    setActiveTab(tabId);
-    if (onNavigate) onNavigate(tabId);
-  };
-
-  // ── Calculation for 14 Thick Pill-Shaped Radial Tick Bars ──
+  // ── 14 Thick Rounded-Cap Pill Bars Arc Gauge ──
   const radialTicks = useMemo(() => {
     const total = 14;
     const ticks = [];
     const cx = 130;
     const cy = 118;
     const rOuter = 88;
-    const rInner = 66; // 22px bar length
+    const rInner = 65; // 23px tick length
 
-    // Color progression from royal blue (#2563EB) to cyan (#38BDF8) to soft cool gray (#E2E8F0)
-    const colorStops = [
-      '#2563EB', '#2563EB', '#2563EB',
-      '#38BDF8', '#38BDF8', '#60A5FA',
-      '#93C5FD', '#93C5FD', '#BFDBFE',
-      '#CBD5E1', '#E2E8F0', '#E2E8F0',
-      '#E2E8F0', '#E2E8F0',
+    // Color progression: Royal blue (#2563EB) -> sky blue (#38BDF8) -> pale ice blue (#BAE6FD) -> muted gray (#E2E8F0)
+    const colorProgression = [
+      '#2563EB', '#2563EB', '#2563EB', '#2563EB', // Royal blue
+      '#38BDF8', '#38BDF8', '#38BDF8',            // Sky blue
+      '#BAE6FD', '#BAE6FD', '#BAE6FD', '#BAE6FD', // Pale ice blue
+      '#E2E8F0', '#E2E8F0', '#E2E8F0',            // Muted gray
     ];
 
     for (let i = 0; i < total; i++) {
@@ -227,29 +235,30 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
         y1,
         x2,
         y2,
-        stroke: colorStops[i] || '#E2E8F0',
+        stroke: colorProgression[i],
       });
     }
     return ticks;
   }, []);
 
-  // ── Full-Width Waveform Spline & Needle Curtain Calculation ──
-  const { splinePoints, curtainLines, activePointCoord, splinePathD } = useMemo(() => {
+  // ── Full-Width Audio-Spectrum / Needle Waterfall Spline Chart ──
+  const { splinePoints, needleLines, activePointCoord, splinePathD } = useMemo(() => {
     const width = 530;
     const height = 145;
 
     // Days: 01, 04, 07, 9, 11, 13, 15, 25, 30
-    // Exact curve geometry: starts ~40% height, crests to ~90% around 07-11, dips in mid, rises toward 30
+    // Starts at ~35% height (y=94), rises smoothly, crests at ~85% height (y=22) across days 07-10,
+    // dips around day 14 (~45% height, y=80), recovers toward day 30 (~60% height, y=58).
     const pointsData = [
-      { day: '01', rev: 45, curveY: 58 },
+      { day: '01', rev: 45, curveY: 65 },  // 35% height from bottom -> y=65%
       { day: '04', rev: 72, curveY: 42 },
-      { day: '07', rev: 110, curveY: 16 }, // Pronounced high crest
-      { day: '9',  rev: 95, curveY: 20 },
-      { day: '11', rev: 120, curveY: 46 }, // Featured scrubber point
-      { day: '13', rev: 68, curveY: 72 }, // Mid dip
-      { day: '15', rev: 86, curveY: 65 },
-      { day: '25', rev: 104, curveY: 42 },
-      { day: '30', rev: 125, curveY: 34 }, // Rises toward day 30
+      { day: '07', rev: 110, curveY: 15 }, // Broad crest (~85% height)
+      { day: '9',  rev: 115, curveY: 16 },
+      { day: '11', rev: 120, curveY: 44 }, // Active scrubber point
+      { day: '13', rev: 68, curveY: 55 },  // Gentle dip ~45% height
+      { day: '15', rev: 86, curveY: 52 },
+      { day: '25', rev: 104, curveY: 45 },
+      { day: '30', rev: 125, curveY: 38 }, // Recovers toward day 30
     ];
 
     const coords = pointsData.map((p, idx) => {
@@ -270,33 +279,39 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
       pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
     }
 
-    // High-density vertical needle curtain (spaced ~4px apart)
+    // High-density vertical needle lines spaced every 2.5px across the entire width
     const lines = [];
-    const lineCount = 110;
-    for (let i = 0; i <= lineCount; i++) {
-      const x = (i / lineCount) * (width - 32) + 16;
-      const tGlobal = (i / lineCount) * (coords.length - 1);
+    const lineSpacing = 2.5;
+    const totalLines = Math.floor((width - 32) / lineSpacing);
+
+    for (let i = 0; i <= totalLines; i++) {
+      const x = 16 + i * lineSpacing;
+      const tGlobal = (i / totalLines) * (coords.length - 1);
       const segIndex = Math.min(Math.floor(tGlobal), coords.length - 2);
       const t = tGlobal - segIndex;
 
       const p0 = coords[segIndex];
       const p1 = coords[segIndex + 1];
 
-      // Cubic hermite interpolation
+      // Cubic hermite spline interpolation
       const y =
         (1 - t) ** 3 * p0.y +
         3 * (1 - t) ** 2 * t * p0.y +
         3 * (1 - t) * t ** 2 * p1.y +
         t ** 3 * p1.y;
 
-      lines.push({ id: i, x, yTop: y, yBottom: height });
+      // Vibrant near crest & scrubber (x between 120 and 300)
+      const isNearScrubberOrCrest = Math.abs(x - 240) < 90;
+      const opacity = isNearScrubberOrCrest ? 0.38 : 0.22;
+
+      lines.push({ id: i, x, yTop: y, yBottom: height, opacity });
     }
 
     const activeCoord = coords[activeRevIndex] || coords[4];
 
     return {
       splinePoints: coords,
-      curtainLines: lines,
+      needleLines: lines,
       activePointCoord: activeCoord,
       splinePathD: pathD,
     };
@@ -316,14 +331,14 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   return (
     <div className={`zassk-canvas ${className}`}>
       <div className="zassk-frame">
-        {/* ── TOP NAVIGATION HEADER ── */}
+        {/* ── 1. TOP NAVIGATION HEADER ── */}
         <header className="zassk-header">
           {/* Brand Pill */}
           <div className="zassk-brand-pill">Zassk</div>
 
           {/* Center Segmented Floating Dock */}
           <nav className="zassk-dock">
-            {mockNavDockItems.map((item) => {
+            {dockItems.map((item) => {
               const isActive = activeTab === item.id;
               return (
                 <button
@@ -334,8 +349,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   title={item.label}
                 >
                   <LucideIcon
-                    name={item.id === 'dashboard' ? 'Home' : item.iconName}
-                    size={item.id === 'dashboard' ? 16 : 17}
+                    name={item.icon}
+                    size={item.id === 'dashboard' ? 15 : 17}
                     strokeWidth={2}
                   />
                   {isActive && <span>{item.label}</span>}
@@ -363,15 +378,13 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
         </header>
 
-        {/* ── TOP ROW METRICS ── */}
+        {/* ── 2. TOP ROW METRICS ── */}
         <div className="zassk-top-row">
           {/* Col 1: Greeting & Task Statistics */}
           <div className="zassk-greeting-box">
             <div>
-              <h1 className="zassk-hello-text">
-                {userGreeting}<br />
-                {userName}
-              </h1>
+              <div className="zassk-hello-lead">{userGreeting}</div>
+              <h1 className="zassk-hello-name">{userName}</h1>
               <div className="zassk-welcome-sub">Welcome Back</div>
             </div>
 
@@ -391,45 +404,46 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 2: Total Responses Card with File-Folder Tab Notch */}
-          <div className="zassk-card-notched-responses">
-            <div className="zassk-notched-header">
-              <div className="zassk-notched-tab-pill">Total Responses</div>
-              <svg className="zassk-notch-bg-svg" viewBox="0 0 110 38" fill="none">
-                <path
-                  d="M0 0 C20 0, 30 18, 50 18 L110 18"
-                  stroke="#E2E8F0"
-                  strokeWidth="1"
-                />
-              </svg>
+          {/* Col 2: Total Responses Card with True File-Folder Tab Notch */}
+          <div className="zassk-card-notched-container">
+            {/* Elevated Tab */}
+            <div className="zassk-notched-tab">
+              <span className="zassk-notched-tab-title">Total Responses</span>
             </div>
+            {/* Concave transition scoop */}
+            <svg className="zassk-notched-scoop" viewBox="0 0 20 20" fill="none">
+              <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF" />
+            </svg>
 
-            <div className="zassk-gauge-wrapper-centered">
-              <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 145">
-                {radialTicks.map((tick) => (
-                  <line
-                    key={tick.id}
-                    x1={tick.x1}
-                    y1={tick.y1}
-                    x2={tick.x2}
-                    y2={tick.y2}
-                    stroke={tick.stroke}
-                    strokeWidth={7.5}
-                    strokeLinecap="round"
-                  />
-                ))}
-              </svg>
-              <div className="zassk-gauge-center-content">
-                <div className="zassk-gauge-center-val">98%</div>
-                <div className="zassk-gauge-center-label">Responses rate</div>
+            {/* Main Body */}
+            <div className="zassk-notched-body">
+              <div className="zassk-gauge-wrapper-centered">
+                <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 145">
+                  {radialTicks.map((tick) => (
+                    <line
+                      key={tick.id}
+                      x1={tick.x1}
+                      y1={tick.y1}
+                      x2={tick.x2}
+                      y2={tick.y2}
+                      stroke={tick.stroke}
+                      strokeWidth={8}
+                      strokeLinecap="round"
+                    />
+                  ))}
+                </svg>
+                <div className="zassk-gauge-center-content">
+                  <div className="zassk-gauge-center-val">98%</div>
+                  <div className="zassk-gauge-center-label">Responses rate</div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Col 3: Interlocking "Total Profit" & "Active Users" */}
+          {/* Col 3: Physical Interlocking "Total Profit" & "Active Users" */}
           <div className="zassk-interlocking-card">
-            {/* Upper Tier: Total Profit */}
-            <div className="zassk-interlock-top">
+            {/* Upper Tier: Total Profit with Stepped Contour */}
+            <div className="zassk-interlock-top-tier">
               <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Total Profit</span>
                 <button className="zassk-action-pill-btn" aria-label="View Profit">
@@ -453,8 +467,11 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* Lower Tier: Active Users */}
-            <div className="zassk-interlock-bottom">
+            {/* Stepped contour shelf divider */}
+            <div className="zassk-stepped-shelf-divider" />
+
+            {/* Lower Tier: Active Users nestled flush */}
+            <div className="zassk-interlock-bottom-tier">
               <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Active Users</span>
                 <div className="zassk-split-labels">
@@ -474,7 +491,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 4: Conversion Rate & Ended Task */}
+          {/* Col 4: Conversion Rate (28 thin ticks) & Ended Task (alternating dot grid) */}
           <div className="zassk-col4-column">
             {/* Conversion Rate */}
             <div className="zassk-col4-card">
@@ -484,23 +501,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} />
                 </button>
               </div>
-              <div className="zassk-metric-big" style={{ margin: '4px 0 10px 0' }}>
-                {mockConversionRate.rate}%
+              <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
+                75%
               </div>
-              <div className="zassk-dense-ticks">
-                {Array.from({ length: mockConversionRate.totalTicks }).map((_, i) => {
-                  const isFilled = i < Math.round((mockConversionRate.rate / 100) * mockConversionRate.totalTicks);
-                  return (
-                    <div
-                      key={i}
-                      className={`zassk-tick-line ${isFilled ? 'filled' : 'unfilled'}`}
-                    />
-                  );
-                })}
+              {/* 28 thin vertical tick bars (width: 3px, height: 18px, gap: 3px) */}
+              <div className="zassk-dense-ticks-28">
+                {Array.from({ length: 28 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`zassk-tick-bar-28 ${i < 21 ? 'filled' : 'unfilled'}`}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* Ended Task with Alternating Dot Matrix */}
+            {/* Ended Task with 4-Row Ascending Wave Dot Grid */}
             <div className="zassk-col4-card">
               <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Ended Task</span>
@@ -509,42 +524,66 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 80
               </div>
               <div className="zassk-dot-matrix">
-                {/* Row 1 */}
+                {/* Row 1: Top row with blue dots at right */}
                 <div className="zassk-dot-matrix-row">
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-bold" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-bold" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
                 </div>
-                {/* Row 2 */}
+                {/* Row 2: Mid-high row */}
                 <div className="zassk-dot-matrix-row">
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-bold" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-bold" />
-                  <div className="zassk-matrix-dot-bold" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
-                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                </div>
+                {/* Row 3: Mid-low row */}
+                <div className="zassk-dot-matrix-row">
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                </div>
+                {/* Row 4: Bottom row starting from left */}
+                <div className="zassk-dot-matrix-row">
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-prominent" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
+                  <div className="zassk-dot-muted-pip" />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── MIDDLE ROW: REVENUE WAVEFORM & USER SOURCES ── */}
+        {/* ── 3. MIDDLE ROW: WATERFALL LINE-NEEDLE CHART & USER SOURCES ── */}
         <div className="zassk-mid-row">
-          {/* Full-Width Total Revenue Card */}
+          {/* Full-Width Total Revenue Card with Vertical Needle Texture */}
           <div className="zassk-card zassk-revenue-card">
             <div className="zassk-revenue-top-bar">
               <span className="zassk-card-title">Total Revenue</span>
@@ -557,17 +596,20 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               {/* Left Metric Column */}
               <div className="zassk-revenue-side-metric">
                 <div>
-                  <div className="zassk-revenue-amount">{mockTotalRevenue.headlineAmount}</div>
-                  <div className="zassk-revenue-sub">{mockTotalRevenue.subtitle}</div>
+                  <div className="zassk-revenue-amount">$1240</div>
+                  <div className="zassk-revenue-sub">Last 15 days</div>
+                  <div className="zassk-revenue-sub" style={{ marginTop: '0px' }}>Ordars</div>
                 </div>
                 <div className="zassk-y-markers">
-                  {mockTotalRevenue.yAxisMarkers.map((m) => (
-                    <span key={m}>{m}</span>
-                  ))}
+                  <span>100%</span>
+                  <span>80%</span>
+                  <span>60%</span>
+                  <span>40%</span>
+                  <span>20%</span>
                 </div>
               </div>
 
-              {/* Full-Width Waveform Curtain Area */}
+              {/* Full-Width Waterfall Needle Container */}
               <div className="zassk-waveform-container">
                 <svg
                   ref={chartSvgRef}
@@ -575,27 +617,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   viewBox="0 0 530 145"
                   onMouseMove={handleChartMouseMove}
                 >
-                  <defs>
-                    <linearGradient id="needleFadeGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#93C5FD" stopOpacity="0.85" />
-                      <stop offset="100%" stopColor="#EFF6FF" stopOpacity="0.05" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Vertical Needle Curtain (Fine lines fading to 0% opacity) */}
-                  {curtainLines.map((line) => (
+                  {/* Vertical Needle Waterfall Texture lines */}
+                  {needleLines.map((line) => (
                     <line
                       key={line.id}
                       x1={line.x}
                       y1={line.yTop}
                       x2={line.x}
                       y2={line.yBottom}
-                      stroke="url(#needleFadeGrad)"
-                      strokeWidth={1.2}
+                      stroke="#3B82F6"
+                      strokeWidth={1}
+                      strokeOpacity={line.opacity}
                     />
                   ))}
 
-                  {/* High-fidelity continuous spline path */}
+                  {/* Full-Width Bezier Spline Line */}
                   <path
                     d={splinePathD}
                     fill="none"
@@ -604,22 +640,16 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                     strokeLinecap="round"
                   />
 
-                  {/* Target Scrubber Ring Pinpoint */}
+                  {/* Active Scrubber Point Ring */}
                   {activePointCoord && (
                     <g style={{ cursor: 'pointer' }}>
                       <circle
                         cx={activePointCoord.x}
                         cy={activePointCoord.y}
-                        r={8}
+                        r={5}
                         fill="#FFFFFF"
                         stroke="#2563EB"
                         strokeWidth={2.5}
-                      />
-                      <circle
-                        cx={activePointCoord.x}
-                        cy={activePointCoord.y}
-                        r={3.5}
-                        fill="#2563EB"
                       />
                     </g>
                   )}
@@ -640,6 +670,14 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
+            {/* Timeline Range Scrubber Bar */}
+            <div className="zassk-timeline-slider-track">
+              <div
+                className="zassk-timeline-slider-thumb"
+                style={{ left: '26%', width: '28%' }}
+              />
+            </div>
+
             {/* Full-Width X-Axis Days */}
             <div className="zassk-x-axis-full">
               {splinePoints.map((p, idx) => (
@@ -656,7 +694,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* User Source Card with Floating Pill Counts */}
+          {/* User Source Card with Seam-Aligned Pill Badges */}
           <div className="zassk-card zassk-source-card">
             <div>
               <div className="zassk-revenue-top-bar">
@@ -672,71 +710,61 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
 
               <div className="zassk-source-list">
-                {mockUserSources.map((source) => (
-                  <div key={source.id} className="zassk-source-row">
-                    {/* Brand Icon */}
-                    <div className="zassk-brand-icon">
-                      {source.brand === 'google' && (
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                          <path
-                            fill="#4285F4"
-                            d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"
-                          />
-                          <path
-                            fill="#34A853"
-                            d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"
-                          />
-                          <path
-                            fill="#FBBC05"
-                            d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"
-                          />
-                          <path
-                            fill="#EA4335"
-                            d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"
-                          />
-                        </svg>
-                      )}
-                      {source.brand === 'x' && (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
-                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                        </svg>
-                      )}
-                      {source.brand === 'instagram' && (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
-                          <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                        </svg>
-                      )}
-                    </div>
-
-                    {/* Striped Track & Progress Capsule */}
-                    <div className="zassk-brand-track">
-                      <div
-                        className="zassk-brand-capsule"
-                        style={{
-                          width: `${source.percentageWidth}%`,
-                          backgroundColor:
-                            source.brand === 'google'
-                              ? '#3B82F6'
-                              : source.brand === 'x'
-                              ? '#8B5CF6'
-                              : '#FB7185',
-                        }}
-                      >
-                        <span>{source.domain}</span>
-                        {/* Floating Pill Count Badge on Right Tip */}
-                        <div className="zassk-count-pill">{source.count}</div>
-                      </div>
+                {/* 1. Google (Blue #3B82F6) */}
+                <div className="zassk-source-row">
+                  <div className="zassk-brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"/>
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z"/>
+                      <path fill="#FBBC05" d="M5.32 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.13z"/>
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z"/>
+                    </svg>
+                  </div>
+                  <div className="zassk-brand-track">
+                    <div className="zassk-brand-capsule" style={{ width: '62%', backgroundColor: '#3B82F6' }}>
+                      <span>Google.com</span>
+                      <div className="zassk-count-pill-seam">4653</div>
                     </div>
                   </div>
-                ))}
+                </div>
+
+                {/* 2. X (Purple #8B5CF6) */}
+                <div className="zassk-source-row">
+                  <div className="zassk-brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </div>
+                  <div className="zassk-brand-track">
+                    <div className="zassk-brand-capsule" style={{ width: '78%', backgroundColor: '#8B5CF6' }}>
+                      <span>X.com</span>
+                      <div className="zassk-count-pill-seam">379</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Instagram (Coral/Salmon #FB7185) */}
+                <div className="zassk-source-row">
+                  <div className="zassk-brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                    </svg>
+                  </div>
+                  <div className="zassk-brand-track">
+                    <div className="zassk-brand-capsule" style={{ width: '92%', backgroundColor: '#FB7185' }}>
+                      <span>Instagram.com</span>
+                      <div className="zassk-count-pill-seam">653</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── BOTTOM ROW: USERS TABLE & NOTCHED TRANSACTIONS ── */}
+        {/* ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── */}
         <div className="zassk-bottom-row">
           {/* Left: Recent Joining User Table */}
           <div className="zassk-card zassk-table-card">
@@ -813,30 +841,37 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </table>
           </div>
 
-          {/* Right: Recent Transactions Card with Stepped Top Tab */}
-          <div className="zassk-trans-notched-card">
-            <div className="zassk-trans-header-notch">
+          {/* Right: Recent Transactions Card with True File-Folder Tab Notch */}
+          <div className="zassk-trans-notched-container">
+            {/* Elevated Tab */}
+            <div className="zassk-trans-tab">
               <span className="zassk-card-title">Recent Transactions</span>
             </div>
+            {/* Concave transition scoop */}
+            <svg className="zassk-trans-scoop" viewBox="0 0 20 20" fill="none">
+              <path d="M 0 0 C 0 11, 9 20, 20 20 L 0 20 Z" fill="#FFFFFF" />
+            </svg>
 
-            <div className="zassk-trans-list-pad">
-              {mockTransactions.map((tx) => (
-                <div key={tx.id} className="zassk-trans-item">
-                  <div className="zassk-trans-left">
-                    <div className="zassk-trans-icon">
-                      <LucideIcon name="Folder" size={18} strokeWidth={2} />
+            <div className="zassk-trans-body">
+              <div className="zassk-trans-list-pad" style={{ padding: '24px 0 0 0' }}>
+                {mockTransactions.map((tx) => (
+                  <div key={tx.id} className="zassk-trans-item">
+                    <div className="zassk-trans-left">
+                      <div className="zassk-trans-icon">
+                        <LucideIcon name="Folder" size={18} strokeWidth={2} />
+                      </div>
+                      <div>
+                        <div className="zassk-trans-symbol">{tx.symbol}</div>
+                        <div className="zassk-trans-company">{tx.company}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="zassk-trans-symbol">{tx.symbol}</div>
-                      <div className="zassk-trans-company">{tx.company}</div>
+                    <div className="zassk-trans-right">
+                      <div className="zassk-trans-amount">{tx.amount}</div>
+                      <div className="zassk-trans-date">{tx.date}</div>
                     </div>
                   </div>
-                  <div className="zassk-trans-right">
-                    <div className="zassk-trans-amount">{tx.amount}</div>
-                    <div className="zassk-trans-date">{tx.date}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
