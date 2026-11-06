@@ -196,29 +196,31 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const isAllSelected = selectedUserIds.size === mockJoiningUsers.length && mockJoiningUsers.length > 0;
 
-  // 14 Thick Radial Pill Ticks Arc Gauge
+  // 14 Thick Radial Pill Ticks Arc Gauge (Left-to-Right Clockwise Fill)
   const radialTicks = useMemo(() => {
     const total = 14;
     const ticks = [];
     const cx = 130;
     const cy = 126; // Arc baseline at y=126
-    const rOuter = 88;
-    const rInner = 66;
+    const rOuter = 97;
+    const rInner = 75;
 
+    // Ticks 1-5: Royal Blue, 6-9: Bright Sky Blue, 10-12: Pale Ice Blue, 13-14: Cool Gray
     const colorProgression = [
-      '#2563EB', '#2563EB', '#2563EB', '#2563EB',
-      '#38BDF8', '#38BDF8', '#38BDF8', '#38BDF8',
-      '#BAE6FD', '#BAE6FD',
-      '#E2E8F0', '#E2E8F0', '#E2E8F0', '#E2E8F0',
+      '#1D4ED8', '#2563EB', '#2563EB', '#2563EB', '#2563EB',
+      '#3B82F6', '#3B82F6', '#60A5FA', '#60A5FA',
+      '#93C5FD', '#BFDBFE', '#DBEAFE',
+      '#E2E8F0', '#E2E8F0',
     ];
 
     for (let i = 0; i < total; i++) {
       const angleDeg = 180 - (i / (total - 1)) * 180;
       const rad = (angleDeg * Math.PI) / 180;
 
-      const x1 = cx - rOuter * Math.cos(rad);
+      // x = cx + R * cos(rad) ensures i=0 is on the LEFT (-1) and i=13 is on the RIGHT (+1)
+      const x1 = cx + rOuter * Math.cos(rad);
       const y1 = cy - rOuter * Math.sin(rad);
-      const x2 = cx - rInner * Math.cos(rad);
+      const x2 = cx + rInner * Math.cos(rad);
       const y2 = cy - rInner * Math.sin(rad);
 
       ticks.push({
@@ -310,37 +312,24 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     setActiveRevIndex(nearestIdx);
   };
 
-  const profitBars = [40, 60, 52, 85, 96, 75, 100, 64, 42];
+  // Mini Vertical Histogram Heights in px for Total Profit
+  const profitBars = [8, 14, 12, 18, 26, 10, 12, 16, 10];
 
-  // 4-Row x 11-Column Security Health Telemetry Dot Matrix
-  // Recreating the exact ascending telemetry scatter curve from the Zassk reference
-  const securityDotMatrix = useMemo(() => [
-    // Row 0 (Gate 4: Ledger Consensus)
-    [
-      { active: false }, { active: false }, { active: false }, { active: false },
-      { active: false }, { active: false }, { active: false }, { active: true, label: 'Ledger: Merkle Root Synced' },
-      { active: false }, { active: true, label: 'Ledger: Consistency Proven' }, { active: false }
-    ],
-    // Row 1 (Gate 3: Quorum Multi-Signer)
-    [
-      { active: false }, { active: false }, { active: false }, { active: false },
-      { active: false }, { active: true, label: 'Quorum: 3/3 Signatures' }, { active: true, label: 'Quorum: Threshold Met' },
-      { active: true, label: 'Quorum: Consensual Block' }, { active: true, label: 'Quorum: Epoch Finalized' },
-      { active: true, label: 'Quorum: Replay Immune' }, { active: false }
-    ],
-    // Row 2 (Gate 2: Static Policy Inspection)
-    [
-      { active: false }, { active: false }, { active: false }, { active: true, label: 'Inspect: Zero CVE Policy' },
-      { active: true, label: 'Inspect: Rules Validated' }, { active: false }, { active: false },
-      { active: false }, { active: false }, { active: false }, { active: false }
-    ],
-    // Row 3 (Gate 1: Origin Ed25519)
-    [
-      { active: false }, { active: true, label: 'Origin: Ed25519 Verified' }, { active: true, label: 'Origin: DSSE Envelope OK' },
-      { active: false }, { active: false }, { active: false }, { active: false },
-      { active: false }, { active: false }, { active: false }, { active: false }
-    ]
-  ], []);
+  // 4-Row x 12-Column Ended Task Dot Matrix (Matching Reference Streak)
+  const endedTaskMatrix = useMemo(() => {
+    const activeIndices: Record<number, number[]> = {
+      0: [7, 9],            // Row 0 (top): Active at 7 and 9
+      1: [6, 7, 8, 9, 10],   // Row 1: Active at 6, 7, 8, 9, 10
+      2: [4, 5],            // Row 2: Active at 4, 5
+      3: [2, 3],            // Row 3 (bottom): Active at 2, 3
+    };
+
+    return Array.from({ length: 4 }, (_, r) =>
+      Array.from({ length: 12 }, (_, c) => ({
+        active: activeIndices[r]?.includes(c) ?? false,
+      }))
+    );
+  }, []);
 
   return (
     <div className="zassk-viewport-wrapper">
@@ -424,11 +413,11 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 2: Total Responses Card with Balanced Padding & Bottom-Aligned Gauge Text */}
+          {/* Col 2: Total Responses Card with Folder Tab Notch Silhouette & Left-to-Right Radial Arc */}
           <div className="zassk-card-tabbed-notch">
             <svg className="zassk-card-svg-bg" viewBox="0 0 324 220" preserveAspectRatio="none">
               <path
-                d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,196 C324,209.3 313.3,220 300,220 L24,220 C10.7,220 0,209.3 0,196 Z"
+                d="M0,24 C0,10.7 10.7,0 24,0 L145,0 C157,0 164,4 170,9 C176,14 180,14 188,14 L300,14 C313.3,14 324,24.7 324,38 L324,196 C324,209.3 313.3,220 300,220 L24,220 C10.7,220 0,209.3 0,196 Z"
                 fill="#FFFFFF"
               />
             </svg>
@@ -460,26 +449,27 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 3: Two Separate Cards: Total Profit & Active Users */}
-          <div className="zassk-col-split-cards">
-            {/* Card 1: Total Profit */}
-            <div className="zassk-card zassk-mini-stat-card">
-              <div className="zassk-interlock-header">
+          {/* Col 3: Unified Interlocking "Total Profit" & "Active Users" Card Unit */}
+          <div className="zassk-card zassk-interlocked-profit-users">
+            {/* Top Half: Total Profit */}
+            <div className="zassk-tp-section">
+              <div className="zassk-tp-header">
                 <span className="zassk-card-title">Total Profit</span>
-                <button className="zassk-action-pill-btn" aria-label="View Profit">
-                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                <button className="zassk-tp-arrow-btn" aria-label="View Profit">
+                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
                 </button>
               </div>
-              <div className="zassk-profit-row">
+              <div className="zassk-tp-content">
                 <div className="zassk-metric-big">$63k</div>
+                {/* 9 vertical rounded mini histogram bars */}
                 <div className="zassk-mini-barchart">
-                  {profitBars.map((height, i) => (
+                  {profitBars.map((heightPx, i) => (
                     <div
                       key={i}
                       className="zassk-mini-bar"
                       style={{
-                        height: `${height}%`,
-                        backgroundColor: i === 6 ? '#2563EB' : '#60A5FA',
+                        height: `${heightPx}px`,
+                        backgroundColor: i < 5 ? '#2563EB' : '#93C5FD',
                       }}
                     />
                   ))}
@@ -487,13 +477,28 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* Card 2: Active Users */}
-            <div className="zassk-card zassk-mini-stat-card">
-              <div className="zassk-interlock-header">
+            {/* Stepped Interlocking Boundary Seam */}
+            <div className="zassk-interlock-divider">
+              <svg className="zassk-seam-svg" viewBox="0 0 280 18" preserveAspectRatio="none">
+                <path
+                  d="M 0,2 L 130,2 C 144,2 150,16 166,16 L 280,16"
+                  fill="none"
+                  stroke="#E2E8F0"
+                  strokeWidth={1.2}
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+
+            {/* Bottom Half: Active Users */}
+            <div className="zassk-au-section">
+              <div className="zassk-au-header">
                 <span className="zassk-card-title">Active Users</span>
-                <div className="zassk-split-labels">
+                <div className="zassk-au-split-labels">
                   <span>75%</span>
+                  <span className="zassk-au-sep">|</span>
                   <span>25%</span>
+                  <span className="zassk-au-sep">|</span>
                   <span>10%</span>
                 </div>
               </div>
@@ -508,14 +513,14 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Col 4: Conversion Rate & Performance Trend */}
+          {/* Col 4: Conversion Rate & Ended Task */}
           <div className="zassk-col4-column">
             {/* Card 1: Conversion Rate */}
-            <div className="zassk-card zassk-mini-stat-card">
+            <div className="zassk-card zassk-col4-card">
               <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Conversion Rate</span>
-                <button className="zassk-action-pill-btn" aria-label="View Conversion">
-                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
+                <button className="zassk-tp-arrow-btn" aria-label="View Conversion">
+                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
                 </button>
               </div>
               <div className="zassk-metric-big" style={{ margin: '4px 0 6px 0' }}>
@@ -531,34 +536,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* Card 2: Security Health (Cryptographic Verification Telemetry) */}
-            <div className="zassk-card zassk-security-health-card">
-              <div className="zassk-sh-header">
-                <span className="zassk-card-title">Security Health</span>
-                <div className="zassk-sh-header-right">
-                  <span className="zassk-sh-badge">● Optimal</span>
-                  <button className="zassk-action-pill-btn" aria-label="Security Details">
-                    <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} color="#4B5565" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="zassk-sh-body">
-                <div className="zassk-sh-metric-col">
-                  <div className="zassk-sh-metric-val">99.9%</div>
-                  <div className="zassk-sh-metric-sub">Zero anomalies · Air-gapped</div>
-                </div>
-
-                {/* 4-Row x 11-Col Telemetry Dot Matrix (Aligning with Zassk Reference) */}
-                <div className="zassk-sh-matrix" role="img" aria-label="Security verification matrix">
-                  {securityDotMatrix.map((row, rIdx) => (
-                    <div key={rIdx} className="zassk-sh-matrix-row">
+            {/* Card 2: Ended Task (Restored Reference Design) */}
+            <div className="zassk-card zassk-ended-task-card">
+              <div className="zassk-et-title">Ended Task</div>
+              <div className="zassk-et-body">
+                <div className="zassk-et-val">80</div>
+                {/* 4-Row x 12-Column Dot Matrix Grid */}
+                <div className="zassk-et-matrix" role="img" aria-label="Ended Task Matrix">
+                  {endedTaskMatrix.map((row, rIdx) => (
+                    <div key={rIdx} className="zassk-et-matrix-row">
                       {row.map((dot, cIdx) => (
-                        <div
-                          key={cIdx}
-                          className={`zassk-sh-dot-pip ${dot.active ? 'active' : 'inactive'}`}
-                          title={dot.label || 'Node status: Idle'}
-                        />
+                        <div key={cIdx} className="zassk-et-cell">
+                          <div
+                            className={`zassk-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
+                          />
+                        </div>
                       ))}
                     </div>
                   ))}
