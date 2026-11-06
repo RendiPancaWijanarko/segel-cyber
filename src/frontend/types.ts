@@ -103,3 +103,4 @@ export interface ZasskDashboardProps {
   onSearch?: (query: string) => void;
   className?: string;
 }
+

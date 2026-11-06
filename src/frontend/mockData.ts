@@ -186,3 +186,4 @@ export const mockTransactions: TransactionItem[] = [
     isPositive: true,
   },
 ];
+

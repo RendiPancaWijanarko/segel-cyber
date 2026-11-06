@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 /**
  * Zassk Modern Glassmorphic Analytics Dashboard
- * Production-ready React TypeScript component.
- * Recreates the visual reference with complete interactivity,
- * high-density curtain spline charts, radial gauges, and textured patterns.
+ * Visual correction build matching exact geometry, notched folder tabs,
+ * interlocking cards, 14-tick radial gauge, and full-width needle curtain spline.
  */
 
 import React, { useState, useMemo, useRef, MouseEvent } from 'react';
@@ -11,11 +10,9 @@ import './Dashboard.css';
 import {
   mockNavDockItems,
   mockTaskStatistics,
-  mockTotalResponses,
   mockTotalProfit,
   mockConversionRate,
   mockActiveUsers,
-  mockEndedTask,
   mockTotalRevenue,
   mockUserSources,
   mockJoiningUsers,
@@ -23,7 +20,7 @@ import {
 } from './mockData';
 import { ZasskDashboardProps } from './types';
 
-// ── Lucide Icon Inline Component (Clean, typed, zero-dependency) ──
+// ── Tailored Icon Component ──
 interface IconProps {
   name: string;
   size?: number;
@@ -38,12 +35,15 @@ export const LucideIcon: React.FC<IconProps> = ({
   className = '',
 }) => {
   const iconPaths: Record<string, React.ReactNode> = {
+    // Minimalist house/home icon (roof outline + floor/door)
+    Home: (
+      <>
+        <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z" />
+      </>
+    ),
     LayoutDashboard: (
       <>
-        <rect width="7" height="9" x="3" y="3" rx="1" />
-        <rect width="7" height="5" x="14" y="3" rx="1" />
-        <rect width="7" height="9" x="14" y="12" rx="1" />
-        <rect width="7" height="5" x="3" y="16" rx="1" />
+        <path d="M3 10.2L12 3l9 7.2V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.8z" />
       </>
     ),
     User: (
@@ -102,24 +102,19 @@ export const LucideIcon: React.FC<IconProps> = ({
         <path d="M7 17 17 7" />
       </>
     ),
-    SlidersHorizontal: (
+    // Authentic Funnel Filter Icon (three horizontal lines centered & tapering downward)
+    FunnelFilter: (
       <>
-        <line x1="21" x2="14" y1="4" y2="4" />
-        <line x1="10" x2="3" y1="4" y2="4" />
-        <line x1="21" x2="12" y1="12" y2="12" />
-        <line x1="8" x2="3" y1="12" y2="12" />
-        <line x1="21" x2="16" y1="20" y2="20" />
-        <line x1="12" x2="3" y1="20" y2="20" />
-        <line x1="14" x2="14" y1="2" y2="6" />
-        <line x1="8" x2="8" y1="10" y2="14" />
-        <line x1="16" x2="16" y1="18" y2="22" />
+        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="7" y1="12" x2="17" y2="12" />
+        <line x1="10" y1="17" x2="14" y2="17" />
       </>
     ),
     MoreHorizontal: (
       <>
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="19" cy="12" r="1" />
-        <circle cx="5" cy="12" r="1" />
+        <circle cx="12" cy="12" r="1.5" />
+        <circle cx="19" cy="12" r="1.5" />
+        <circle cx="5" cy="12" r="1.5" />
       </>
     ),
     Folder: (
@@ -160,8 +155,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   // Navigation dock state
   const [activeTab, setActiveTab] = useState<string>('dashboard');
 
-  // Total Revenue interactive scrubber
-  const [activeRevIndex, setActiveRevIndex] = useState<number>(4); // Defaults to Day "11" ($120)
+  // Total Revenue interactive scrubber (Defaults to Day 11 @ $120)
+  const [activeRevIndex, setActiveRevIndex] = useState<number>(4);
 
   // Table row checkbox selections
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(
@@ -194,78 +189,92 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
   const isAllSelected = selectedUserIds.size === mockJoiningUsers.length;
 
-  // Handle Dock Click
   const handleDockClick = (tabId: string) => {
     setActiveTab(tabId);
-    if (onNavigate) {
-      onNavigate(tabId);
-    }
+    if (onNavigate) onNavigate(tabId);
   };
 
-  // ── Calculation for 14-tick Radial Arch Gauge ──
+  // ── Calculation for 14 Thick Pill-Shaped Radial Tick Bars ──
   const radialTicks = useMemo(() => {
-    const total = mockTotalResponses.totalTicks; // 14 ticks
-    const filledCount = Math.round((mockTotalResponses.rate / 100) * total); // 14
+    const total = 14;
     const ticks = [];
     const cx = 130;
-    const cy = 115;
-    const radius = 80;
-    const tickLength = 18;
+    const cy = 118;
+    const rOuter = 88;
+    const rInner = 66; // 22px bar length
+
+    // Color progression from royal blue (#2563EB) to cyan (#38BDF8) to soft cool gray (#E2E8F0)
+    const colorStops = [
+      '#2563EB', '#2563EB', '#2563EB',
+      '#38BDF8', '#38BDF8', '#60A5FA',
+      '#93C5FD', '#93C5FD', '#BFDBFE',
+      '#CBD5E1', '#E2E8F0', '#E2E8F0',
+      '#E2E8F0', '#E2E8F0',
+    ];
 
     for (let i = 0; i < total; i++) {
-      // Semi-circle angle: 180 degrees (from 180° to 0°)
       const angleDeg = 180 - (i / (total - 1)) * 180;
-      const angleRad = (angleDeg * Math.PI) / 180;
+      const rad = (angleDeg * Math.PI) / 180;
 
-      const x1 = cx - radius * Math.cos(angleRad);
-      const y1 = cy - radius * Math.sin(angleRad);
-      const x2 = cx - (radius - tickLength) * Math.cos(angleRad);
-      const y2 = cy - (radius - tickLength) * Math.sin(angleRad);
+      const x1 = cx - rOuter * Math.cos(rad);
+      const y1 = cy - rOuter * Math.sin(rad);
+      const x2 = cx - rInner * Math.cos(rad);
+      const y2 = cy - rInner * Math.sin(rad);
 
-      // Color interpolation: deep blue -> light blue -> light gray
-      let stroke = '#E2E8F0';
-      if (i < 3) stroke = '#2563EB'; // Vibrant royal blue
-      else if (i < 7) stroke = '#3B82F6';
-      else if (i < 10) stroke = '#60A5FA';
-      else if (i < 12) stroke = '#93C5FD';
-      else stroke = '#CBD5E1';
-
-      ticks.push({ id: i, x1, y1, x2, y2, stroke });
+      ticks.push({
+        id: i,
+        x1,
+        y1,
+        x2,
+        y2,
+        stroke: colorStops[i] || '#E2E8F0',
+      });
     }
     return ticks;
   }, []);
 
-  // ── High-density curtain waterfall spline data ──
-  const { splinePoints, curtainLines, activePointCoord } = useMemo(() => {
-    const width = 460;
-    const height = 150;
-    const points = mockTotalRevenue.points;
+  // ── Full-Width Waveform Spline & Needle Curtain Calculation ──
+  const { splinePoints, curtainLines, activePointCoord, splinePathD } = useMemo(() => {
+    const width = 530;
+    const height = 145;
 
-    // Calculate (x, y) coordinates for spline points
-    const coords = points.map((p, idx) => {
-      const x = (idx / (points.length - 1)) * (width - 40) + 20;
-      const y = (p.curveY / 100) * (height - 30) + 15;
+    // Days: 01, 04, 07, 9, 11, 13, 15, 25, 30
+    // Exact curve geometry: starts ~40% height, crests to ~90% around 07-11, dips in mid, rises toward 30
+    const pointsData = [
+      { day: '01', rev: 45, curveY: 58 },
+      { day: '04', rev: 72, curveY: 42 },
+      { day: '07', rev: 110, curveY: 16 }, // Pronounced high crest
+      { day: '9',  rev: 95, curveY: 20 },
+      { day: '11', rev: 120, curveY: 46 }, // Featured scrubber point
+      { day: '13', rev: 68, curveY: 72 }, // Mid dip
+      { day: '15', rev: 86, curveY: 65 },
+      { day: '25', rev: 104, curveY: 42 },
+      { day: '30', rev: 125, curveY: 34 }, // Rises toward day 30
+    ];
+
+    const coords = pointsData.map((p, idx) => {
+      const x = (idx / (pointsData.length - 1)) * (width - 32) + 16;
+      const y = (p.curveY / 100) * (height - 24) + 12;
       return { ...p, x, y };
     });
 
-    // Generate smooth bezier curve path string
+    // Smooth cubic bezier spline
     let pathD = `M ${coords[0].x} ${coords[0].y}`;
     for (let i = 0; i < coords.length - 1; i++) {
-      const curr = coords[i];
-      const next = coords[i + 1];
-      const cpX1 = curr.x + (next.x - curr.x) / 2;
-      const cpY1 = curr.y;
-      const cpX2 = curr.x + (next.x - curr.x) / 2;
-      const cpY2 = next.y;
-      pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${next.x} ${next.y}`;
+      const p0 = coords[i];
+      const p1 = coords[i + 1];
+      const cpX1 = p0.x + (p1.x - p0.x) / 2;
+      const cpY1 = p0.y;
+      const cpX2 = p0.x + (p1.x - p0.x) / 2;
+      const cpY2 = p1.y;
+      pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
     }
 
-    // Generate 60 vertical curtain lines under the spline
+    // High-density vertical needle curtain (spaced ~4px apart)
     const lines = [];
-    const lineCount = 65;
+    const lineCount = 110;
     for (let i = 0; i <= lineCount; i++) {
-      const x = (i / lineCount) * (width - 40) + 20;
-      // Approximate spline y at x using piecewise cubic interpolation
+      const x = (i / lineCount) * (width - 32) + 16;
       const tGlobal = (i / lineCount) * (coords.length - 1);
       const segIndex = Math.min(Math.floor(tGlobal), coords.length - 2);
       const t = tGlobal - segIndex;
@@ -299,10 +308,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
     const rect = chartSvgRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const width = rect.width;
-
-    // Find nearest point index
     const fraction = Math.max(0, Math.min(1, mouseX / width));
-    const nearestIdx = Math.round(fraction * (mockTotalRevenue.points.length - 1));
+    const nearestIdx = Math.round(fraction * 8);
     setActiveRevIndex(nearestIdx);
   };
 
@@ -314,7 +321,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           {/* Brand Pill */}
           <div className="zassk-brand-pill">Zassk</div>
 
-          {/* Segmented Floating Dock */}
+          {/* Center Segmented Floating Dock */}
           <nav className="zassk-dock">
             {mockNavDockItems.map((item) => {
               const isActive = activeTab === item.id;
@@ -326,7 +333,11 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   aria-label={item.label}
                   title={item.label}
                 >
-                  <LucideIcon name={item.iconName} size={17} strokeWidth={2} />
+                  <LucideIcon
+                    name={item.id === 'dashboard' ? 'Home' : item.iconName}
+                    size={item.id === 'dashboard' ? 16 : 17}
+                    strokeWidth={2}
+                  />
                   {isActive && <span>{item.label}</span>}
                 </button>
               );
@@ -341,7 +352,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               aria-label="Search"
               title="Search"
             >
-              <LucideIcon name="Search" size={18} strokeWidth={2} />
+              <LucideIcon name="Search" size={17} strokeWidth={2} />
             </button>
             <button className="zassk-avatar-btn" aria-label="Profile Avatar" title="Keren nix">
               <img
@@ -357,15 +368,17 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           {/* Col 1: Greeting & Task Statistics */}
           <div className="zassk-greeting-box">
             <div>
-              <div className="zassk-hello-text">{userGreeting}</div>
-              <h1 className="zassk-name-text">{userName}</h1>
+              <h1 className="zassk-hello-text">
+                {userGreeting}<br />
+                {userName}
+              </h1>
               <div className="zassk-welcome-sub">Welcome Back</div>
             </div>
 
             <div className="zassk-task-stat-widget">
               <div className="zassk-stat-header">
                 <span className="zassk-stat-label">Task Statistics</span>
-                <div>
+                <div className="zassk-stat-value-group">
                   <span className="zassk-stat-count">{mockTaskStatistics.count}</span>
                   <span className="zassk-trend-badge">↗ {mockTaskStatistics.trendPercentage}%</span>
                 </div>
@@ -373,16 +386,26 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               <div className="zassk-progress-capsule">
                 <div className="zassk-seg-1" title="Completed Tasks" />
                 <div className="zassk-seg-2" title="In Progress" />
-                <div className="zassk-seg-3" title="Planned" />
+                <div className="zassk-seg-3" title="Planned Tasks" />
               </div>
             </div>
           </div>
 
-          {/* Col 2: Total Responses Card */}
-          <div className="zassk-card zassk-radial-card">
-            <div className="zassk-card-title">Total Responses</div>
-            <div className="zassk-gauge-wrapper">
-              <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 140">
+          {/* Col 2: Total Responses Card with File-Folder Tab Notch */}
+          <div className="zassk-card-notched-responses">
+            <div className="zassk-notched-header">
+              <div className="zassk-notched-tab-pill">Total Responses</div>
+              <svg className="zassk-notch-bg-svg" viewBox="0 0 110 38" fill="none">
+                <path
+                  d="M0 0 C20 0, 30 18, 50 18 L110 18"
+                  stroke="#E2E8F0"
+                  strokeWidth="1"
+                />
+              </svg>
+            </div>
+
+            <div className="zassk-gauge-wrapper-centered">
+              <svg className="zassk-radial-gauge-svg" viewBox="0 0 260 145">
                 {radialTicks.map((tick) => (
                   <line
                     key={tick.id}
@@ -391,55 +414,58 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                     x2={tick.x2}
                     y2={tick.y2}
                     stroke={tick.stroke}
-                    strokeWidth={5}
+                    strokeWidth={7.5}
                     strokeLinecap="round"
                   />
                 ))}
               </svg>
               <div className="zassk-gauge-center-content">
-                <div className="zassk-gauge-center-val">{mockTotalResponses.rate}%</div>
-                <div className="zassk-gauge-center-label">{mockTotalResponses.label}</div>
+                <div className="zassk-gauge-center-val">98%</div>
+                <div className="zassk-gauge-center-label">Responses rate</div>
               </div>
             </div>
           </div>
 
-          {/* Col 3: Total Profit & Active Users */}
-          <div className="zassk-mini-column">
-            {/* Total Profit Card */}
-            <div className="zassk-card zassk-mini-card">
-              <div className="zassk-card-header">
+          {/* Col 3: Interlocking "Total Profit" & "Active Users" */}
+          <div className="zassk-interlocking-card">
+            {/* Upper Tier: Total Profit */}
+            <div className="zassk-interlock-top">
+              <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Total Profit</span>
                 <button className="zassk-action-pill-btn" aria-label="View Profit">
-                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2} />
+                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} />
                 </button>
               </div>
-              <div className="zassk-metric-big">{mockTotalProfit.value}</div>
-              <div className="zassk-mini-barchart">
-                {mockTotalProfit.bars.map((height, i) => (
-                  <div
-                    key={i}
-                    className="zassk-mini-bar"
-                    style={{
-                      height: `${height}%`,
-                      backgroundColor: i === 6 ? '#2563EB' : '#93C5FD',
-                    }}
-                    title={`Bar ${i + 1}: ${height}%`}
-                  />
-                ))}
+              <div className="zassk-profit-row">
+                <div className="zassk-metric-big">{mockTotalProfit.value}</div>
+                <div className="zassk-mini-barchart">
+                  {mockTotalProfit.bars.map((height, i) => (
+                    <div
+                      key={i}
+                      className="zassk-mini-bar"
+                      style={{
+                        height: `${height}%`,
+                        backgroundColor: i === 6 ? '#2563EB' : '#93C5FD',
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Active Users Card */}
-            <div className="zassk-card zassk-mini-card">
-              <div className="zassk-card-header">
+            {/* Lower Tier: Active Users */}
+            <div className="zassk-interlock-bottom">
+              <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Active Users</span>
+                <div className="zassk-split-labels">
+                  <span>{mockActiveUsers.splits.segmentA}%</span>
+                  <span>{mockActiveUsers.splits.segmentB}%</span>
+                  <span>{mockActiveUsers.splits.segmentC}%</span>
+                </div>
               </div>
-              <div className="zassk-split-labels">
-                <span>{mockActiveUsers.splits.segmentA}%</span>
-                <span>{mockActiveUsers.splits.segmentB}%</span>
-                <span>{mockActiveUsers.splits.segmentC}%</span>
+              <div className="zassk-metric-big" style={{ margin: '2px 0 6px 0' }}>
+                {mockActiveUsers.count}
               </div>
-              <div className="zassk-metric-big">{mockActiveUsers.count}</div>
               <div className="zassk-split-bar">
                 <div className="zassk-split-seg-1" title="Primary users (75%)" />
                 <div className="zassk-split-seg-2" title="Secondary users (25%)" />
@@ -449,16 +475,18 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
 
           {/* Col 4: Conversion Rate & Ended Task */}
-          <div className="zassk-mini-column">
-            {/* Conversion Rate Card */}
-            <div className="zassk-card zassk-mini-card">
-              <div className="zassk-card-header">
+          <div className="zassk-col4-column">
+            {/* Conversion Rate */}
+            <div className="zassk-col4-card">
+              <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Conversion Rate</span>
                 <button className="zassk-action-pill-btn" aria-label="View Conversion">
-                  <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2} />
+                  <LucideIcon name="ArrowUpRight" size={14} strokeWidth={2} />
                 </button>
               </div>
-              <div className="zassk-metric-big">{mockConversionRate.rate}%</div>
+              <div className="zassk-metric-big" style={{ margin: '4px 0 10px 0' }}>
+                {mockConversionRate.rate}%
+              </div>
               <div className="zassk-dense-ticks">
                 {Array.from({ length: mockConversionRate.totalTicks }).map((_, i) => {
                   const isFilled = i < Math.round((mockConversionRate.rate / 100) * mockConversionRate.totalTicks);
@@ -472,48 +500,64 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* Ended Task Card */}
-            <div className="zassk-card zassk-mini-card">
-              <div className="zassk-card-header">
+            {/* Ended Task with Alternating Dot Matrix */}
+            <div className="zassk-col4-card">
+              <div className="zassk-interlock-header">
                 <span className="zassk-card-title">Ended Task</span>
               </div>
-              <div className="zassk-metric-big">{mockEndedTask.count}</div>
+              <div className="zassk-metric-big" style={{ margin: '4px 0 8px 0' }}>
+                80
+              </div>
               <div className="zassk-dot-matrix">
-                {Array.from({ length: mockEndedTask.matrixRows }).map((_, r) => (
-                  <div key={r} className="zassk-dot-matrix-row">
-                    {Array.from({ length: mockEndedTask.matrixCols }).map((_, c) => {
-                      const dotIndex = r * mockEndedTask.matrixCols + c;
-                      const isActive = dotIndex < mockEndedTask.completedCount;
-                      return (
-                        <div
-                          key={c}
-                          className={`zassk-matrix-dot ${isActive ? 'active' : 'inactive'}`}
-                        />
-                      );
-                    })}
-                  </div>
-                ))}
+                {/* Row 1 */}
+                <div className="zassk-dot-matrix-row">
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-bold" />
+                </div>
+                {/* Row 2 */}
+                <div className="zassk-dot-matrix-row">
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-matrix-dot-bold" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                  <div className="zassk-matrix-dot-pip" />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── MIDDLE ROW: REVENUE & USER SOURCES ── */}
+        {/* ── MIDDLE ROW: REVENUE WAVEFORM & USER SOURCES ── */}
         <div className="zassk-mid-row">
-          {/* Left: Total Revenue Line Curtain Chart */}
+          {/* Full-Width Total Revenue Card */}
           <div className="zassk-card zassk-revenue-card">
-            <div className="zassk-card-header">
+            <div className="zassk-revenue-top-bar">
               <span className="zassk-card-title">Total Revenue</span>
               <button className="zassk-action-pill-btn" aria-label="Filter Revenue">
-                <LucideIcon name="SlidersHorizontal" size={15} strokeWidth={2} />
+                <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
               </button>
             </div>
 
-            <div className="zassk-revenue-content">
-              {/* Left Column: Big Value + Y-markers */}
-              <div className="zassk-revenue-left-col">
+            <div className="zassk-revenue-layout">
+              {/* Left Metric Column */}
+              <div className="zassk-revenue-side-metric">
                 <div>
-                  <div className="zassk-revenue-big-val">{mockTotalRevenue.headlineAmount}</div>
+                  <div className="zassk-revenue-amount">{mockTotalRevenue.headlineAmount}</div>
                   <div className="zassk-revenue-sub">{mockTotalRevenue.subtitle}</div>
                 </div>
                 <div className="zassk-y-markers">
@@ -523,15 +567,22 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 </div>
               </div>
 
-              {/* Chart Curtain Area */}
-              <div className="zassk-chart-area">
+              {/* Full-Width Waveform Curtain Area */}
+              <div className="zassk-waveform-container">
                 <svg
                   ref={chartSvgRef}
-                  className="zassk-spline-svg"
-                  viewBox="0 0 460 150"
+                  className="zassk-waveform-svg"
+                  viewBox="0 0 530 145"
                   onMouseMove={handleChartMouseMove}
                 >
-                  {/* Curtain Lines (High-density vertical lines under the spline) */}
+                  <defs>
+                    <linearGradient id="needleFadeGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#93C5FD" stopOpacity="0.85" />
+                      <stop offset="100%" stopColor="#EFF6FF" stopOpacity="0.05" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Vertical Needle Curtain (Fine lines fading to 0% opacity) */}
                   {curtainLines.map((line) => (
                     <line
                       key={line.id}
@@ -539,29 +590,23 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       y1={line.yTop}
                       x2={line.x}
                       y2={line.yBottom}
-                      stroke="#DBEAFE"
+                      stroke="url(#needleFadeGrad)"
                       strokeWidth={1.2}
-                      strokeOpacity={0.7}
                     />
                   ))}
 
-                  {/* Smooth Curved Spline */}
+                  {/* High-fidelity continuous spline path */}
                   <path
-                    d={`M ${splinePoints.map((p, i) => {
-                      if (i === 0) return `${p.x} ${p.y}`;
-                      const prev = splinePoints[i - 1];
-                      const cpX1 = prev.x + (p.x - prev.x) / 2;
-                      const cpX2 = prev.x + (p.x - prev.x) / 2;
-                      return `C ${cpX1} ${prev.y}, ${cpX2} ${p.y}, ${p.x} ${p.y}`;
-                    }).join(' ')}`}
+                    d={splinePathD}
                     fill="none"
                     stroke="#2563EB"
-                    strokeWidth={2.5}
+                    strokeWidth={2.8}
+                    strokeLinecap="round"
                   />
 
-                  {/* Active Pinpoint Ring */}
+                  {/* Target Scrubber Ring Pinpoint */}
                   {activePointCoord && (
-                    <g className="zassk-pinpoint-ring">
+                    <g style={{ cursor: 'pointer' }}>
                       <circle
                         cx={activePointCoord.x}
                         cy={activePointCoord.y}
@@ -585,8 +630,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   <div
                     className="zassk-floating-tooltip"
                     style={{
-                      left: `${(activePointCoord.x / 460) * 100}%`,
-                      top: `${(activePointCoord.y / 150) * 100}%`,
+                      left: `${(activePointCoord.x / 530) * 100}%`,
+                      top: `${(activePointCoord.y / 145) * 100}%`,
                     }}
                   >
                     Revenue ${activePointCoord.revenue}
@@ -595,9 +640,9 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            {/* X-Axis Day Labels */}
-            <div className="zassk-x-axis">
-              {mockTotalRevenue.points.map((p, idx) => (
+            {/* Full-Width X-Axis Days */}
+            <div className="zassk-x-axis-full">
+              {splinePoints.map((p, idx) => (
                 <span
                   key={idx}
                   style={{
@@ -611,10 +656,10 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
           </div>
 
-          {/* Right: User Source Card */}
+          {/* User Source Card with Floating Pill Counts */}
           <div className="zassk-card zassk-source-card">
             <div>
-              <div className="zassk-card-header">
+              <div className="zassk-revenue-top-bar">
                 <div>
                   <span className="zassk-card-title">User Source</span>
                   <div style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginTop: '2px' }}>
@@ -622,7 +667,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                   </div>
                 </div>
                 <button className="zassk-action-pill-btn" aria-label="Filter Sources">
-                  <LucideIcon name="SlidersHorizontal" size={15} strokeWidth={2} />
+                  <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
                 </button>
               </div>
 
@@ -632,7 +677,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                     {/* Brand Icon */}
                     <div className="zassk-brand-icon">
                       {source.brand === 'google' && (
-                        <svg width="22" height="22" viewBox="0 0 24 24">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
                           <path
                             fill="#4285F4"
                             d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z"
@@ -652,12 +697,12 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                         </svg>
                       )}
                       {source.brand === 'x' && (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F172A">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
                           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                         </svg>
                       )}
                       {source.brand === 'instagram' && (
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
                           <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
                           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                           <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -665,16 +710,22 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       )}
                     </div>
 
-                    {/* Striped Track & Gradient Pill */}
+                    {/* Striped Track & Progress Capsule */}
                     <div className="zassk-brand-track">
                       <div
                         className="zassk-brand-capsule"
                         style={{
                           width: `${source.percentageWidth}%`,
-                          background: source.gradient,
+                          backgroundColor:
+                            source.brand === 'google'
+                              ? '#3B82F6'
+                              : source.brand === 'x'
+                              ? '#8B5CF6'
+                              : '#FB7185',
                         }}
                       >
                         <span>{source.domain}</span>
+                        {/* Floating Pill Count Badge on Right Tip */}
                         <div className="zassk-count-pill">{source.count}</div>
                       </div>
                     </div>
@@ -685,21 +736,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
         </div>
 
-        {/* ── BOTTOM ROW: USERS TABLE & TRANSACTIONS ── */}
+        {/* ── BOTTOM ROW: USERS TABLE & NOTCHED TRANSACTIONS ── */}
         <div className="zassk-bottom-row">
           {/* Left: Recent Joining User Table */}
           <div className="zassk-card zassk-table-card">
-            <div className="zassk-card-header">
+            <div className="zassk-revenue-top-bar" style={{ marginBottom: '14px' }}>
               <span className="zassk-card-title">Recent Joining User</span>
               <button className="zassk-action-pill-btn" aria-label="Filter Users">
-                <LucideIcon name="SlidersHorizontal" size={15} strokeWidth={2} />
+                <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} />
               </button>
             </div>
 
             <table className="zassk-table">
               <thead>
                 <tr>
-                  <th style={{ width: '40px' }}>
+                  <th style={{ width: '42px' }}>
                     <div
                       className={`zassk-checkbox ${isAllSelected ? 'checked' : ''}`}
                       onClick={toggleSelectAll}
@@ -762,13 +813,13 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </table>
           </div>
 
-          {/* Right: Recent Transactions */}
-          <div className="zassk-card zassk-trans-card">
-            <div className="zassk-card-header">
+          {/* Right: Recent Transactions Card with Stepped Top Tab */}
+          <div className="zassk-trans-notched-card">
+            <div className="zassk-trans-header-notch">
               <span className="zassk-card-title">Recent Transactions</span>
             </div>
 
-            <div className="zassk-trans-list">
+            <div className="zassk-trans-list-pad">
               {mockTransactions.map((tx) => (
                 <div key={tx.id} className="zassk-trans-item">
                   <div className="zassk-trans-left">
