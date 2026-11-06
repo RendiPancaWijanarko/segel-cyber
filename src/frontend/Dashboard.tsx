@@ -20,6 +20,7 @@ import {
 import { ZasskDashboardProps } from './types';
 import { PerformanceTrend } from '../components/performance-trend/performance-trend';
 import { TooltipProvider } from '../components/ui/tooltip';
+import { WebGPUShaderBackground } from './WebGPUShaderBackground';
 
 // ── Tailored Minimalist Icon Component ──
 interface IconProps {
@@ -334,9 +335,12 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   }, []);
 
   return (
-    <div className="zassk-viewport-wrapper">
-      {/* Direct Canvas without Surrounding Black Frame */}
-      <div className={`zassk-canvas ${className}`}>
+    <div className="relative min-h-screen w-full overflow-x-hidden">
+      {/* 1. WebGPU / TypeGPU Background Layer */}
+      <WebGPUShaderBackground />
+
+      {/* 2. Interactive Dashboard Layer */}
+      <main className={`relative z-10 mx-auto max-w-[1440px] p-6 zassk-canvas ${className}`}>
         {/* ── 1. TOP NAVIGATION HEADER ── */}
         <header className="zassk-header">
           {/* Brand Pill */}
@@ -913,7 +917,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             <PerformanceTrend />
           </TooltipProvider>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
