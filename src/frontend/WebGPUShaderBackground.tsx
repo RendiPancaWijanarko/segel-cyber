@@ -49,9 +49,9 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
   let r = length(p);
   let theta = atan2(p.y, p.x);
 
-  // Smooth, subtle fluid silk fold distortion
-  let fold = sin(r * 9.0 - theta * 3.2 + u.time * 0.22) * 0.075 
-           + cos(r * 18.0 + theta * 4.8) * 0.032;
+  // Smooth, subtle fluid silk fold distortion with increased, graceful movement
+  let fold = sin(r * 9.0 - theta * 3.2 + u.time * 0.52) * 0.075 
+           + cos(r * 18.0 + theta * 4.8 - u.time * 0.35) * 0.032;
   let warpedTheta = theta + fold;
 
   // Multi-frequency angular ray generation
@@ -62,8 +62,8 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
   rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
   rays = pow(rays, 1.8) * 1.6;
 
-  // Soft caustics crest
-  var crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0);
+  // Soft caustics crest with subtle outward propagation
+  var crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0 - u.time * 0.55);
   crest = smoothstep(-0.35, 0.65, crest);
 
   // Radial and angular envelopes
@@ -93,7 +93,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
 
   // 4. Highlight crests with luminous mint and iridescent violet
   let specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
-  let highlight = mix(c_mint_flare, c_lavender, sin(u.time * 0.5 + r * 4.0) * 0.5 + 0.5);
+  let highlight = mix(c_mint_flare, c_lavender, sin(u.time * 0.85 + r * 4.0) * 0.5 + 0.5);
   color = mix(color, highlight, specularPeak * 0.65);
 
   return vec4f(color, 1.0);
@@ -122,8 +122,8 @@ void main() {
   float r = length(p);
   float theta = atan(p.y, p.x);
 
-  float fold = sin(r * 9.0 - theta * 3.2 + u_time * 0.22) * 0.075 
-             + cos(r * 18.0 + theta * 4.8) * 0.032;
+  float fold = sin(r * 9.0 - theta * 3.2 + u_time * 0.52) * 0.075 
+             + cos(r * 18.0 + theta * 4.8 - u_time * 0.35) * 0.032;
   float warpedTheta = theta + fold;
 
   float rays = 0.0;
@@ -133,7 +133,7 @@ void main() {
   rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
   rays = pow(rays, 1.8) * 1.6;
 
-  float crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0);
+  float crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0 - u_time * 0.55);
   crest = smoothstep(-0.35, 0.65, crest);
 
   float radialFalloff = smoothstep(0.04, 0.38, r) * smoothstep(1.7, 0.52, r);
@@ -156,7 +156,7 @@ void main() {
   color = mix(color, c_sage_deep, rippleShadow * 0.35);
 
   float specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
-  vec3 highlight = mix(c_mint_flare, c_lavender, sin(u_time * 0.5 + r * 4.0) * 0.5 + 0.5);
+  vec3 highlight = mix(c_mint_flare, c_lavender, sin(u_time * 0.85 + r * 4.0) * 0.5 + 0.5);
   color = mix(color, highlight, specularPeak * 0.65);
 
   gl_FragColor = vec4(color, 1.0);
