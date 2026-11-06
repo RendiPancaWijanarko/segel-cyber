@@ -121,3 +121,12 @@ def test_healthz_endpoint(client):
     assert data["status"] == "healthy"
     assert data["service"] == "segel-release-desk"
 
+
+def test_zassk_endpoint(client):
+    res = client.get("/zassk")
+    assert res.status_code == 200
+    assert "Zassk" in res.text
+    assert "Keren nix" in res.text
+    assert "Task Statistics" in res.text
+    assert "Total Revenue" in res.text
+

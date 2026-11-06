@@ -402,6 +402,16 @@ async def trust_view(request: Request) -> HTMLResponse:
     )
 
 
+@app.get("/zassk", response_class=HTMLResponse)
+async def zassk_analytics_view(request: Request) -> HTMLResponse:
+    """Zassk Modern Glassmorphic Analytics Dashboard preview."""
+    return templates.TemplateResponse(
+        request=request,
+        name="zassk.html",
+        context={"request": request},
+    )
+
+
 @app.post("/release/{idx}/deploy-canary", response_class=HTMLResponse)
 async def deploy_canary(request: Request, idx: int) -> HTMLResponse:
     """Deploy a candidate release to canary units and collect health receipts."""
