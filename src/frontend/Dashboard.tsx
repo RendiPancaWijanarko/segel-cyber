@@ -152,6 +152,8 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
   userGreeting = 'Hello,',
   brandingText = 'PUSSIBERAD',
   logoUrl = '/static/images/pussiberad-logo.png',
+  tniLogoUrl = '/static/images/logo-tni.svg',
+  tniAdLogoUrl = '/static/images/logo-tni-ad.svg',
   onNavigate,
   onSearch,
   className = '',
@@ -368,22 +370,32 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             })}
           </nav>
 
-          {/* Right Utilities */}
+          {/* Right Header Insignias: TNI & TNI AD Logos (Static Visual Elements) */}
           <div className="zassk-header-utilities">
-            <button
-              className="zassk-circle-btn"
-              onClick={() => onSearch && onSearch('')}
-              aria-label="Search"
-              title="Search"
+            <div
+              className="zassk-header-logo-badge"
+              title="Tentara Nasional Indonesia (TNI)"
+              role="img"
+              aria-label="Logo TNI"
             >
-              <LucideIcon name="Search" size={17} strokeWidth={2} color="#4B5565" />
-            </button>
-            <button className="zassk-avatar-btn" aria-label="Profile Avatar" title="Keren nix">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150"
-                alt="User Profile"
+                src={tniLogoUrl}
+                alt="Logo TNI"
+                className="zassk-header-insignia"
               />
-            </button>
+            </div>
+            <div
+              className="zassk-header-logo-badge"
+              title="TNI Angkatan Darat (TNI AD)"
+              role="img"
+              aria-label="Logo TNI AD"
+            >
+              <img
+                src={tniAdLogoUrl}
+                alt="Logo TNI AD"
+                className="zassk-header-insignia"
+              />
+            </div>
           </div>
         </header>
 

@@ -101,6 +101,8 @@ export interface ZasskDashboardProps {
   userGreeting?: string;
   brandingText?: string;
   logoUrl?: string;
+  tniLogoUrl?: string;
+  tniAdLogoUrl?: string;
   onNavigate?: (tabId: string) => void;
   onSearch?: (query: string) => void;
   className?: string;
