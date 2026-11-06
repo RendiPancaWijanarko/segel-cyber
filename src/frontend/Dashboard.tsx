@@ -347,7 +347,6 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           <a href="/" className="zassk-brand-pill" title="PUSSIBERAD">
             <img src={logoUrl} alt="PUSSIBERAD Logo" className="zassk-brand-logo" />
             <span className="zassk-brand-text">{brandingText}</span>
-            <span className="zassk-brand-tag">Zassk</span>
           </a>
 
           {/* Center Segmented Floating Dock */}
