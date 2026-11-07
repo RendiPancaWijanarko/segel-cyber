@@ -1054,3 +1054,302 @@
   width: 100%;
   max-width: 100%;
 }
+
+.segel-full-trend-card {
+  margin-top: 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #FFFFFF;
+  box-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.segel-full-trend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.segel-full-trend-title-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.segel-full-trend-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--segel-navy);
+  letter-spacing: -0.2px;
+}
+
+.segel-info-icon-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #94A3B8;
+  transition: all 0.15s ease;
+}
+.segel-info-icon-btn:hover {
+  color: var(--segel-navy);
+  background: #F1F5F9;
+}
+
+.segel-metric-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #FFFFFF url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 6px 32px 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--segel-navy);
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.15s ease;
+}
+.segel-metric-select:hover {
+  border-color: #CBD5E1;
+}
+
+.segel-full-trend-content {
+  padding: 24px 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.segel-chart-body-grid {
+  display: grid;
+  grid-template-columns: 2.8rem 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.segel-chart-y-ticks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: right;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94A3B8;
+  padding: 2px 0;
+  user-select: none;
+}
+
+.segel-chart-canvas-area {
+  position: relative;
+  height: 200px;
+  cursor: crosshair;
+}
+
+.segel-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(60, minmax(0, 1fr));
+  gap: 3px;
+  height: 100%;
+  align-items: stretch;
+}
+
+.segel-col-strip {
+  display: grid;
+  grid-template-rows: repeat(14, minmax(0, 1fr));
+  gap: 2.5px;
+  height: 100%;
+}
+
+.segel-cell {
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+.segel-cell.active { background-color: var(--segel-primary); }
+.segel-cell.secondary { background-color: var(--segel-sage-soft); }
+.segel-cell.empty { background-color: #F1F5F9; }
+
+.segel-scrubber-crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1.5px dashed rgba(15, 23, 42, 0.7);
+  pointer-events: none;
+  transition: left 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+.segel-scrubber-pip {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2.5px solid var(--segel-primary);
+  background: #FFFFFF;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 6px rgba(59, 122, 50, 0.3);
+  pointer-events: none;
+  transition: all 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 12;
+}
+
+.segel-scrubber-card-tooltip {
+  position: absolute;
+  width: 140px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.15), 0 2px 6px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  pointer-events: none;
+  transition: all 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 20;
+}
+
+.segel-scrubber-card-date {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.segel-scrubber-card-val {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-top: 2px;
+}
+
+.segel-scrubber-date-badge {
+  position: absolute;
+  bottom: -32px;
+  transform: translateX(-50%);
+  background: #0F172A;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: left 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 15;
+}
+
+.segel-chart-months-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding-left: 3.5rem;
+  padding-top: 18px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+/* Metric Tabs Footer */
+.segel-metric-tabs-footer {
+  display: flex;
+  border-top: 1px solid #F1F5F9;
+  background: #FAFAFA;
+  overflow-x: auto;
+}
+
+.segel-metric-tab {
+  flex: 1;
+  min-width: 200px;
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  transition: all 0.15s ease;
+  outline: none;
+}
+.segel-metric-tab:hover {
+  background: #F8FAFC;
+}
+.segel-metric-tab.active {
+  background: #FFFFFF;
+}
+.segel-metric-tab.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--segel-navy);
+}
+
+.segel-tab-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.segel-tab-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+}
+.segel-metric-tab.active .segel-tab-icon-box {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+}
+
+.segel-tab-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748B;
+}
+.segel-metric-tab.active .segel-tab-label {
+  color: var(--segel-navy);
+}
+
+.segel-tab-val-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segel-tab-big-val {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--segel-navy);
+  letter-spacing: -0.4px;
+}
+
+.segel-tab-sub {
+  font-size: 11.5px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.segel-tab-separator {
+  width: 1px;
+  background: #F1F5F9;
+  align-self: stretch;
+}

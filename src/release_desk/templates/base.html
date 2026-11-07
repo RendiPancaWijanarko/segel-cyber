@@ -98,9 +98,13 @@
             width: 100%;
             max-width: 1440px;
             margin: 0 auto;
-            padding: 16px 24px 48px;
+            padding: 24px 32px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
             position: relative;
             z-index: 10;
+            box-sizing: border-box;
             flex: 1 0 auto;
         }
 
@@ -561,8 +565,8 @@
         </span>
     </div>
 
-    <!-- Main Navigation Header with Segmented Floating Dock -->
-    <div class="segel-canvas" style="padding-bottom: 0;">
+    <!-- Main Application Viewport (Unified Canvas) -->
+    <div class="segel-canvas">
         <header class="segel-header">
             <!-- Brand Pill: PUSSIBERAD -->
             <a href="/" class="segel-brand-pill" title="PUSSIBERAD — Pusat Siber dan Sandi TNI AD">
@@ -618,12 +622,10 @@
                 </span>
             </div>
         </header>
-    </div>
 
-    <!-- Main Content Container -->
-    <main class="segel-canvas">
+        <!-- Main Content -->
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
     <!-- Footer -->
     <footer class="segel-footer">

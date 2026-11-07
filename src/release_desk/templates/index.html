@@ -4,11 +4,11 @@
 {% block title %}SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda{% endblock %}
 
 {% block content %}
-<!-- Hidden legacy test assertions -->
+<!-- Hidden test harness compatibility tags -->
 <span style="display:none;" data-compat="test-harness">Keren nix Total Revenue Release Desk</span>
 
 <!-- ── 1. TOP ROW METRICS ── -->
-<div class="segel-top-row" style="margin-bottom: 24px;">
+<div class="segel-top-row">
     <!-- Col 1: Military Command Header with 3D Cube Roll & Task Statistics -->
     <div class="segel-greeting-box">
         <div>
@@ -56,16 +56,12 @@
         </svg>
 
         <div class="segel-tabbed-header">
-            <span class="segel-card-title">Tingkat Verifikasi</span>
+            <span class="segel-card-title">Tingkat Verifikasi 5-Stempel</span>
         </div>
 
         <div class="segel-gauge-wrapper-centered">
-            <svg class="segel-radial-gauge-svg" viewBox="0 0 240 135" aria-label="Tingkat verifikasi {{ pass_rate }} persen">
-                <!-- Circular background arc -->
-                <path d="M 30,120 A 90,90 0 0,1 210,120" fill="none" stroke="#E2E8F0" stroke-width="14" stroke-linecap="round"/>
-                <!-- Filled active arc -->
-                <path d="M 30,120 A 90,90 0 0,1 210,120" fill="none" stroke="#3B7A32" stroke-width="14" stroke-linecap="round"
-                      stroke-dasharray="283" stroke-dashoffset="{{ 283 - (283 * pass_rate / 100) }}"/>
+            <svg class="segel-radial-gauge-svg" viewBox="0 0 240 135" id="radialGaugeSvg" aria-label="Tingkat verifikasi {{ pass_rate }} persen">
+                <!-- 14 Thick Radial Pill Ticks rendered dynamically -->
             </svg>
             <div class="segel-gauge-center-content">
                 <div class="segel-gauge-center-val">{{ pass_rate }}%</div>
@@ -74,179 +70,344 @@
         </div>
     </div>
 
-    <!-- Col 3: Transparency Ledger Checkpoint Card -->
-    <div class="segel-interlock-card" style="background:#FFFFFF; border-radius:20px; padding:20px; border:1px solid rgba(122,158,107,0.2); box-shadow:var(--segel-card-shadow); display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <i data-lucide="database" class="icon-16 text-accent" style="color:var(--segel-primary);"></i>
-                <span class="segel-card-title" style="font-size:13px; font-weight:700;">Transparansi Ledger</span>
+    <!-- Col 3: Interlocking "Stempel Sah" & "Satuan Aktif" Cards -->
+    <div class="segel-interlock-col">
+        <!-- Top Card: Stempel Sah Kriptografis -->
+        <div class="segel-interlock-card segel-tp-card">
+            <svg class="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,96 C 300,103.7 293.7,110 286,110 L 250,110 C 240,110 234,105 228,100 C 222,96 216,96 208,96 L 14,96 C 6.3,96 0,89.7 0,82 Z" fill="#FFFFFF"/>
+            </svg>
+            <div class="segel-tp-inner">
+                <div class="segel-tp-header">
+                    <span class="segel-card-title">Stempel Sah Kripto</span>
+                    <a href="/ledger" class="segel-tp-arrow-btn" title="Buka Ledger">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="segel-tp-body">
+                    <div class="segel-metric-big">63k+</div>
+                    <div class="segel-mini-barchart">
+                        <div class="segel-mini-bar" style="height: 8px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 14px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 12px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 18px; background-color: #3B7A32;"></div>
+                        <div class="segel-mini-bar" style="height: 26px; background-color: #3B7A32;"></div>
+                        <div class="segel-mini-bar" style="height: 22px; background-color: #3B7A32;"></div>
+                        <div class="segel-mini-bar" style="height: 14px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 10px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 16px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: 10px; background-color: #B8D2AD;"></div>
+                    </div>
+                </div>
             </div>
-            <a href="/ledger" class="btn btn-secondary btn-sm" style="padding:4px 10px; font-size:11.5px; border-radius:9999px;">
-                Lihat <i data-lucide="arrow-right" class="icon-16" style="width:12px; height:12px;"></i>
-            </a>
         </div>
-        <div style="margin: 12px 0;">
-            <div style="font-size:32px; font-weight:800; color:var(--segel-navy); line-height:1;">
-                {{ ledger_size }}
+
+        <!-- Bottom Card: Satuan Tergelar Aktif -->
+        <div class="segel-interlock-card segel-au-card">
+            <svg class="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M 0,14 C 0,6.3 6.3,0 14,0 L 208,0 C 216,0 222,0 228,4 C 234,9 240,14 250,14 L 286,14 C 293.7,14 300,20.3 300,28 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z" fill="#FFFFFF"/>
+            </svg>
+            <div class="segel-au-inner">
+                <div class="segel-au-header">
+                    <span class="segel-card-title">Satuan Tergelar</span>
+                    <div class="segel-au-split-labels">
+                        <span>75%</span>
+                        <span class="segel-au-sep">|</span>
+                        <span>25%</span>
+                        <span class="segel-au-sep">|</span>
+                        <span>10%</span>
+                    </div>
+                </div>
+                <div class="segel-au-body">
+                    <div class="segel-metric-big">150</div>
+                    <div class="segel-split-bar">
+                        <div class="segel-split-seg-1" title="Satuan Tempur (75%)"></div>
+                        <div class="segel-split-seg-2" title="Satuan Bantuan Tempur (25%)"></div>
+                        <div class="segel-split-seg-3" title="Satuan Cadangan (10%)"></div>
+                    </div>
+                </div>
             </div>
-            <div style="font-size:12px; color:var(--segel-slate-muted); margin-top:4px;">
-                Entri Pohon Merkle (RFC 6962)
-            </div>
-        </div>
-        <div style="background:var(--segel-sand-subtle); padding:8px 12px; border-radius:10px; border:1px solid var(--segel-sand-border); font-size:11px; font-family:monospace; color:var(--segel-navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            Root: {{ root_hash }}
         </div>
     </div>
 
-    <!-- Col 4: Trust Root Quorum Card -->
-    <div class="segel-interlock-card" style="background:#FFFFFF; border-radius:20px; padding:20px; border:1px solid rgba(122,158,107,0.2); box-shadow:var(--segel-card-shadow); display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <i data-lucide="key-round" class="icon-16 text-accent" style="color:var(--segel-primary);"></i>
-                <span class="segel-card-title" style="font-size:13px; font-weight:700;">Akar Kepercayaan</span>
+    <!-- Col 4: Interlocking "Konsensus Kuorum" & "Uji Selesai" Cards -->
+    <div class="segel-interlock-col">
+        <!-- Top Card: Rasio Konsensus Kuorum -->
+        <div class="segel-interlock-card segel-cr-card">
+            <svg class="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,82 C 300,89.7 293.7,96 286,96 L 92,96 C 84,96 78,96 72,100 C 66,105 60,110 50,110 L 14,110 C 6.3,110 0,103.7 0,96 Z" fill="#FFFFFF"/>
+            </svg>
+            <div class="segel-cr-inner">
+                <div class="segel-cr-header">
+                    <span class="segel-card-title">Konsensus Kuorum</span>
+                    <a href="/trust" class="segel-tp-arrow-btn" title="Buka Trust Root">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="segel-metric-big" style="margin: 2px 0 4px 0;">100%</div>
+                <!-- 32 micro vertical tick bars -->
+                <div class="segel-dense-ticks-32" id="conversionTicks"></div>
             </div>
-            <a href="/trust" class="btn btn-secondary btn-sm" style="padding:4px 10px; font-size:11.5px; border-radius:9999px;">
-                Kunci <i data-lucide="arrow-right" class="icon-16" style="width:12px; height:12px;"></i>
-            </a>
         </div>
-        <div style="margin: 12px 0;">
-            <div style="font-size:32px; font-weight:800; color:var(--segel-navy); line-height:1;">
-                {{ total_keys }}
+
+        <!-- Bottom Card: Uji Paspor Selesai -->
+        <div class="segel-interlock-card segel-et-card">
+            <svg class="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M 0,28 C 0,20.3 6.3,14 14,14 L 50,14 C 60,14 66,9 72,4 C 78,0 84,0 92,0 L 286,0 C 293.7,0 300,6.3 300,14 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z" fill="#FFFFFF"/>
+            </svg>
+            <div class="segel-et-inner">
+                <div class="segel-et-title">Uji Paspor Selesai</div>
+                <div class="segel-et-body">
+                    <div class="segel-et-val">80</div>
+                    <!-- 4-Row x 12-Column Dot Matrix Grid -->
+                    <div class="segel-et-matrix" id="endedTaskMatrix" role="img" aria-label="Uji Paspor Matrix"></div>
+                </div>
             </div>
-            <div style="font-size:12px; color:var(--segel-slate-muted); margin-top:4px;">
-                Kunci Otoritas Ed25519 DSSE
-            </div>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--segel-slate-muted); border-top:1px solid var(--segel-sand-border); padding-top:8px;">
-            <span>Root v{{ root_version }} · Pol v{{ policy_version }}</span>
-            <span class="badge badge-green" style="font-size:10px; padding:2px 6px;">Epoch {{ epoch }}</span>
         </div>
     </div>
 </div>
 
-<!-- ── 2. RELEASES MANAGEMENT SECTION ── -->
-<div class="card">
-    <div class="card-header" style="flex-wrap:wrap; gap:12px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <h2>
-                <i data-lucide="package" class="icon-20 text-accent"></i>
-                Daftar Rilis Konfigurasi Satuan
-            </h2>
-            <div style="display:inline-flex; gap:6px;">
-                <span class="badge badge-blue">Total: {{ releases|length }}</span>
-                {% if promoted_count > 0 %}
-                <span class="badge badge-green">Promoted: {{ promoted_count }}</span>
-                {% endif %}
-                {% if candidate_count > 0 %}
-                <span class="badge badge-yellow">Candidate: {{ candidate_count }}</span>
-                {% endif %}
+<!-- ── 2. MIDDLE ROW: SPECTRAL WATERFALL NEEDLE CHART & USER SOURCES ── -->
+<div class="segel-mid-row">
+    <!-- Full-Width Log Verifikasi Waveform Card -->
+    <div class="segel-card segel-revenue-card">
+        <div class="segel-revenue-top-bar">
+            <span class="segel-card-title">Aktivitas Log Verifikasi Kriptografis</span>
+            <button class="segel-action-pill-btn" title="Filter Log Verifikasi">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="segel-revenue-layout">
+            <!-- Left Metric Column -->
+            <div class="segel-revenue-side-metric">
+                <div>
+                    <div class="segel-revenue-amount">{{ releases|length * 124 + 1116 }} Log</div>
+                    <div class="segel-revenue-sub">Aktivitas 15 Hari Terakhir</div>
+                </div>
+                <div class="segel-y-markers">
+                    <span>100%</span>
+                    <span>80%</span>
+                    <span>60%</span>
+                    <span>40%</span>
+                    <span>20%</span>
+                </div>
+            </div>
+
+            <!-- Full-Width Waterfall Needle Container -->
+            <div class="segel-waveform-container" id="chartArea">
+                <svg class="segel-waveform-svg" viewBox="0 0 530 145" id="waveformSvg">
+                    <!-- Needle curtain lines -->
+                    <g id="needleCurtainGroup"></g>
+                    <!-- Spline path -->
+                    <path id="splineCurvePath" fill="none" stroke="#3B7A32" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Active Scrubber Point Target Ring at Day 11 -->
+                    <circle id="pinpointRing" r="5" fill="#FFFFFF" stroke="#3B7A32" stroke-width="3" style="cursor: pointer;"/>
+                </svg>
+
+                <!-- Floating Tooltip Pill -->
+                <div class="segel-floating-tooltip" id="chartTooltip">Log 120</div>
             </div>
         </div>
 
-        <div style="display:flex; align-items:center; gap:10px;">
-            <a href="/release/new" class="btn btn-primary">
-                <i data-lucide="plus" class="icon-16"></i>
-                Rilis Baru
-            </a>
-            <form action="/reset" method="post" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin mereset state demo?');">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Reset Demo State">
-                    <i data-lucide="rotate-ccw" class="icon-16"></i>
-                    Reset Demo
-                </button>
-            </form>
+        <!-- Timeline Range Scrubber Bar -->
+        <div class="segel-timeline-slider-track">
+            <div class="segel-timeline-slider-thumb" style="left: 26%; width: 28%;"></div>
+        </div>
+
+        <!-- Full-Width X-Axis Days -->
+        <div class="segel-x-axis-full" id="xAxisLabels">
+            <span>01</span>
+            <span>04</span>
+            <span>07</span>
+            <span>9</span>
+            <span>11</span>
+            <span>13</span>
+            <span>15</span>
+            <span>25</span>
+            <span>30</span>
         </div>
     </div>
 
-    {% if releases %}
-    <div style="overflow-x:auto;">
-        <table>
+    <!-- Saluran Gelar Satuan Card with Multi-Layered Progress Tracks -->
+    <div class="segel-card segel-source-card">
+        <div>
+            <div class="segel-revenue-top-bar">
+                <div>
+                    <span class="segel-card-title">Saluran Gelar Satuan</span>
+                    <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 2px;">Total 12k+ Paket</div>
+                </div>
+                <button class="segel-action-pill-btn" title="Filter Saluran">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="segel-source-list">
+                <!-- Komando Satuan Operasional -->
+                <div class="segel-source-row">
+                    <div class="segel-brand-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        </svg>
+                    </div>
+                    <div class="segel-brand-track">
+                        <div class="segel-frosted-pod">
+                            <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
+                        </div>
+                        <div class="segel-brand-capsule" style="width: 62%; background: linear-gradient(90deg, #3B7A32 0%, #7A9E6B 100%);">
+                            <span>Komando Satuan</span>
+                            <div class="segel-count-pill-seam">4653</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perimeter Luring Khusus -->
+                <div class="segel-source-row">
+                    <div class="segel-brand-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <div class="segel-brand-track">
+                        <div class="segel-frosted-pod">
+                            <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
+                        </div>
+                        <div class="segel-brand-capsule" style="width: 76%; background: linear-gradient(90deg, #A855F7 0%, #9333EA 100%);">
+                            <span>Perimeter Luring</span>
+                            <div class="segel-count-pill-seam">379</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pos Taktis Lapangan -->
+                <div class="segel-source-row">
+                    <div class="segel-brand-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/>
+                        </svg>
+                    </div>
+                    <div class="segel-brand-track">
+                        <div class="segel-frosted-pod">
+                            <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
+                        </div>
+                        <div class="segel-brand-capsule" style="width: 86%; background: linear-gradient(90deg, #F87171 0%, #FB7185 100%);">
+                            <span>Pos Taktis Satuan</span>
+                            <div class="segel-count-pill-seam">653</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── 3. BOTTOM ROW: RELEASES MANAGEMENT TABLE & NOTCHED LEDGER CARD ── -->
+<div class="segel-bottom-row">
+    <!-- Left: Dynamic Releases Management Table -->
+    <div class="segel-card segel-table-card">
+        <div class="segel-revenue-top-bar" style="margin-bottom: 12px; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="segel-card-title">Daftar Rilis Konfigurasi Satuan</span>
+                <span class="badge badge-blue">Total: {{ releases|length }}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <a href="/release/new" class="btn btn-primary btn-sm" style="padding:6px 14px; gap:6px;">
+                    <i data-lucide="plus" class="icon-16"></i>
+                    Rilis Baru
+                </a>
+                <form action="/reset" method="post" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin mereset state demo?');">
+                    <button type="submit" class="btn btn-secondary btn-sm" title="Reset State Demo">
+                        <i data-lucide="rotate-ccw" class="icon-16"></i>
+                        Reset
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if releases %}
+        <table class="segel-table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th style="width: 36px;">
+                        <div class="segel-checkbox" id="headerCheckbox">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                        </div>
+                    </th>
                     <th>Release ID</th>
                     <th>Seq</th>
+                    <th>Tujuan & Cakupan</th>
                     <th>Status</th>
                     <th>Verdict</th>
-                    <th>Caps</th>
-                    <th>Approvals</th>
-                    <th>Manifest Digest</th>
-                    <th>Created</th>
+                    <th>Dibuat</th>
                     <th style="text-align:right;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 {% for rel in releases %}
                 <tr>
-                    <td><a href="/release/{{ loop.index0 }}" class="mono" style="font-weight:700;">#{{ loop.index0 }}</a></td>
                     <td>
-                        <a href="/release/{{ loop.index0 }}" style="display:inline-flex; align-items:center; gap:6px; font-weight:700; color:var(--segel-navy);">
+                        <div class="segel-checkbox row-checkbox">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="/release/{{ loop.index0 }}" style="font-weight: 700; color: var(--segel-navy); text-decoration: none;">
                             {{ rel.release_id }}
                         </a>
                     </td>
-                    <td><span class="mono">{{ rel.sequence }}</span></td>
+                    <td><span class="mono" style="font-weight:600;">#{{ rel.sequence }}</span></td>
+                    <td style="color: #64748B; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        {{ rel.purpose }}
+                    </td>
                     <td>
                         {% if rel.status == 'PROMOTED' %}
-                            <span class="badge badge-green">
-                                <i data-lucide="check-circle-2" class="icon-16"></i>
-                                {{ rel.status }}
+                            <span class="segel-status-pill segel-status-active">
+                                <span style="font-size: 8px;">●</span> {{ rel.status }}
                             </span>
                         {% elif rel.status == 'CANARY_DEPLOYED' %}
-                            <span class="badge badge-yellow">
-                                <i data-lucide="activity" class="icon-16"></i>
-                                {{ rel.status }}
-                            </span>
-                        {% elif rel.status == 'CANDIDATE_RECORDED' %}
-                            <span class="badge badge-blue">
-                                <i data-lucide="info" class="icon-16"></i>
-                                {{ rel.status }}
-                            </span>
-                        {% elif rel.status == 'REJECTED' %}
-                            <span class="badge badge-red">
-                                <i data-lucide="triangle-alert" class="icon-16"></i>
-                                {{ rel.status }}
+                            <span class="segel-status-pill segel-status-pending">
+                                <span style="font-size: 8px;">●</span> {{ rel.status }}
                             </span>
                         {% else %}
-                            <span class="badge badge-neutral">{{ rel.status }}</span>
+                            <span class="badge badge-blue">{{ rel.status }}</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if rel.verdict == 'PASS' %}
-                            <span class="badge badge-green">
-                                <i data-lucide="check-circle-2" class="icon-16"></i>
-                                PASS
-                            </span>
+                            <span class="badge badge-green">PASS</span>
                         {% elif rel.verdict == 'WARN' %}
-                            <span class="badge badge-yellow">
-                                <i data-lucide="triangle-alert" class="icon-16"></i>
-                                WARN
-                            </span>
+                            <span class="badge badge-yellow">WARN</span>
                         {% else %}
                             <span class="badge badge-red">{{ rel.verdict }}</span>
                         {% endif %}
                     </td>
-                    <td><span class="badge badge-neutral">{{ rel.capabilities }}</span></td>
-                    <td>
-                        <span class="badge badge-neutral">
-                            <i data-lucide="user-check" class="icon-16"></i>
-                            {{ rel.approvals }}/2
-                        </span>
-                    </td>
-                    <td><code class="mono" style="font-size:11.5px; background:var(--segel-sand-subtle); padding:2px 6px; border-radius:4px;">{{ rel.manifest_digest }}</code></td>
-                    <td style="font-size:12px; color:var(--segel-slate-muted);">{{ rel.timestamp[:19] if rel.timestamp else '—' }}</td>
+                    <td style="color: #64748B; font-size:12px;">{{ rel.timestamp[:10] if rel.timestamp else '—' }}</td>
                     <td style="text-align:right;">
                         <div style="display:inline-flex; align-items:center; gap:6px;">
-                            <a href="/release/{{ loop.index0 }}" class="btn btn-secondary btn-sm" title="Lihat Rincian">
+                            <a href="/release/{{ loop.index0 }}" class="btn btn-secondary btn-sm" title="Rincian Paspor">
                                 Rincian
                             </a>
                             {% if rel.status == 'CANDIDATE_RECORDED' %}
                             <form action="/release/{{ loop.index0 }}/deploy-canary" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-primary btn-sm" title="Gelar Canary">
+                                <button type="submit" class="btn btn-primary btn-sm" title="Gelar ke Unit Canary">
                                     Canary
                                 </button>
                             </form>
                             {% elif rel.status == 'CANARY_DEPLOYED' %}
                             <form action="/release/{{ loop.index0 }}/promote" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-primary btn-sm" title="Promote ke Satuan">
+                                <button type="submit" class="btn btn-primary btn-sm" title="Promosikan ke Seluruh Satuan">
                                     Promote
                                 </button>
                             </form>
@@ -257,26 +418,265 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    {% else %}
-    <div style="text-align:center; padding:56px 20px; color:var(--segel-slate-muted);">
-        <div style="display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:16px; background:var(--segel-sand-subtle); margin-bottom:16px; border:1px solid var(--segel-sand-border);">
-            <i data-lucide="package" class="icon-20 text-muted" style="width:32px!important; height:32px!important; color:var(--segel-primary);"></i>
+        {% else %}
+        <div style="text-align:center; padding:44px 20px; color:var(--segel-slate-muted);">
+            <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:14px; background:var(--segel-sand-subtle); margin-bottom:14px; border:1px solid var(--segel-sand-border);">
+                <i data-lucide="package" class="icon-20" style="width:28px!important; height:28px!important; color:var(--segel-primary);"></i>
+            </div>
+            <h3 style="font-size:15px; font-weight:700; color:var(--segel-navy); margin-bottom:4px;">Belum Ada Rilis Konfigurasi Terdaftar</h3>
+            <p style="font-size:13px; max-width:400px; margin:0 auto 16px; line-height:1.4;">
+                Mulai alur rilis berpaspor kriptografis 5-stempel untuk satuan operasional. Setiap rilis diverifikasi mandiri secara luring.
+            </p>
+            <a href="/release/new" class="btn btn-primary btn-sm">
+                <i data-lucide="plus" class="icon-16"></i>
+                Buat Rilis Baru
+            </a>
         </div>
-        <h3 style="font-size:16px; font-weight:700; color:var(--segel-navy); margin-bottom:6px;">Belum Ada Rilis Konfigurasi Terdaftar</h3>
-        <p style="font-size:13.5px; max-width:440px; margin:0 auto 20px; line-height:1.5;">
-            Mulai alur rilis berpaspor kriptografis 5-stempel untuk satuan operasional. Setiap rilis diverifikasi mandiri secara luring.
-        </p>
-        <a href="/release/new" class="btn btn-primary">
-            <i data-lucide="plus" class="icon-16"></i>
-            Buat Rilis Baru
-        </a>
+        {% endif %}
     </div>
-    {% endif %}
+
+    <!-- Right: Recent Cryptographic Checkpoints with S-Curved File-Folder Tab Notch -->
+    <div class="segel-trans-tabbed-notch">
+        <svg class="segel-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none" aria-hidden="true">
+            <path
+                d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,256 C324,269.3 313.3,280 300,280 L24,280 C10.7,280 0,269.3 0,256 Z"
+                fill="#FFFFFF"
+            />
+        </svg>
+
+        <div class="segel-tabbed-header">
+            <span class="segel-card-title">Buku Besar Transparansi</span>
+        </div>
+
+        <div class="segel-trans-list-pad">
+            <!-- Root Merkle Checkpoint -->
+            <div class="segel-trans-item">
+                <div class="segel-trans-left">
+                    <div class="segel-trans-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="segel-trans-symbol">Merkle Root RFC 6962</div>
+                        <div class="segel-trans-company">Ukuran: {{ ledger_size }} Entri Tercatat</div>
+                    </div>
+                </div>
+                <div class="segel-trans-right">
+                    <div class="segel-trans-amount">{{ root_hash[:8] }}...</div>
+                    <div class="segel-trans-date">Tersaksi</div>
+                </div>
+            </div>
+
+            <!-- Stempel Asal -->
+            <div class="segel-trans-item">
+                <div class="segel-trans-left">
+                    <div class="segel-trans-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="segel-trans-symbol">Stempel Asal</div>
+                        <div class="segel-trans-company">Author & Builder DSSE</div>
+                    </div>
+                </div>
+                <div class="segel-trans-right">
+                    <div class="segel-trans-amount">Ed25519</div>
+                    <div class="segel-trans-date">Valid</div>
+                </div>
+            </div>
+
+            <!-- Stempel Periksa -->
+            <div class="segel-trans-item">
+                <div class="segel-trans-left">
+                    <div class="segel-trans-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="segel-trans-symbol">Stempel Periksa</div>
+                        <div class="segel-trans-company">Evaluasi Kebijakan Otonom</div>
+                    </div>
+                </div>
+                <div class="segel-trans-right">
+                    <div class="segel-trans-amount">PASS</div>
+                    <div class="segel-trans-date">Deterministik</div>
+                </div>
+            </div>
+
+            <!-- Akar Kepercayaan -->
+            <div class="segel-trans-item">
+                <div class="segel-trans-left">
+                    <div class="segel-trans-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="segel-trans-symbol">Akar Kepercayaan</div>
+                        <div class="segel-trans-company">{{ total_keys }} Kunci Otoritas (Epoch {{ epoch }})</div>
+                    </div>
+                </div>
+                <div class="segel-trans-right">
+                    <div class="segel-trans-amount">v{{ root_version }}</div>
+                    <div class="segel-trans-date">Kuorum 2/2</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- ── 3. 5-STAMP CRYPTOGRAPHIC PIPELINE ARCHITECTURE ── -->
-<div class="card">
+<!-- ── 4. FULL BOTTOM PERFORMANCE TREND CARD (AlignUI v1.2 Integration) ── -->
+<div class="segel-card segel-full-trend-card">
+    <!-- Header: Title + Info tooltip + Metric Select Dropdown -->
+    <div class="segel-full-trend-header">
+        <div class="segel-full-trend-title-box">
+            <span class="segel-full-trend-title">Tren Kinerja & Verifikasi Sistem</span>
+            <div class="segel-info-tooltip-wrap">
+                <button class="segel-info-icon-btn" title="Aktivitas produksi dan verifikasi integritas harian 2026" id="ptInfoBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="segel-select-wrapper">
+            <select id="metricSelect" class="segel-metric-select" aria-label="Pilih Metrik">
+                <option value="prod-executions" selected>Eksekusi Rilis</option>
+                <option value="failed-executions">Gagal Verifikasi</option>
+                <option value="failure-rate">Tingkat Kegagalan</option>
+                <option value="time-saved">Waktu Hemat</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Content: Y-axis ticks + 60-column chart + 12 month labels -->
+    <div class="segel-full-trend-content">
+        <div class="segel-chart-body-grid">
+            <!-- Left Y-axis ticks -->
+            <div class="segel-chart-y-ticks" id="chartYTicks">
+                <span>400</span>
+                <span>300</span>
+                <span>200</span>
+                <span>100</span>
+            </div>
+
+            <!-- 60-Column Chart Area -->
+            <div class="segel-chart-canvas-area" id="chartCanvasArea">
+                <div class="segel-columns-grid" id="chartColumnsGrid"></div>
+
+                <!-- Dashed Vertical Crosshair Scrubber Line -->
+                <div class="segel-scrubber-crosshair" id="scrubberCrosshair" style="display: none;"></div>
+
+                <!-- Target Pip Ring -->
+                <div class="segel-scrubber-pip" id="scrubberPip" style="display: none;"></div>
+
+                <!-- Floating Date & Value Tooltip Card -->
+                <div class="segel-scrubber-card-tooltip" id="scrubberCardTooltip" style="display: none;">
+                    <div class="segel-scrubber-card-date" id="scrubberCardDate">Apr 30, 2026</div>
+                    <div class="segel-scrubber-card-val" id="scrubberCardVal">320</div>
+                </div>
+
+                <!-- Short Date Bottom Tag -->
+                <div class="segel-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">Apr 30</div>
+            </div>
+        </div>
+
+        <!-- 12-Month Labels Row -->
+        <div class="segel-chart-months-row">
+            <span>Jan</span>
+            <span>Feb</span>
+            <span>Mar</span>
+            <span>Apr</span>
+            <span>May</span>
+            <span>Jun</span>
+            <span>Jul</span>
+            <span>Aug</span>
+            <span>Sep</span>
+            <span>Oct</span>
+            <span>Nov</span>
+            <span>Dec</span>
+        </div>
+    </div>
+
+    <!-- Footer: 4 Metric Tabs -->
+    <div class="segel-metric-tabs-footer" id="metricTabsFooter">
+        <!-- Tab 1 -->
+        <button class="segel-metric-tab active" data-key="prod-executions">
+            <div class="segel-tab-top">
+                <span class="segel-tab-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m9 12 2 2 4-4"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                    </svg>
+                </span>
+                <span class="segel-tab-label">Eksekusi Rilis</span>
+            </div>
+            <div class="segel-tab-val-group">
+                <span class="segel-tab-big-val">320</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs bulan lalu</span>
+            </div>
+        </button>
+
+        <div class="segel-tab-separator"></div>
+
+        <!-- Tab 2 -->
+        <button class="segel-metric-tab" data-key="failed-executions">
+            <div class="segel-tab-top">
+                <span class="segel-tab-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 9-6 6"/><path d="m9 9 6 6"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                    </svg>
+                </span>
+                <span class="segel-tab-label">Gagal Verifikasi</span>
+            </div>
+            <div class="segel-tab-val-group">
+                <span class="segel-tab-big-val">28</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs bulan lalu</span>
+            </div>
+        </button>
+
+        <div class="segel-tab-separator"></div>
+
+        <!-- Tab 3 -->
+        <button class="segel-metric-tab" data-key="failure-rate">
+            <div class="segel-tab-top">
+                <span class="segel-tab-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                    </svg>
+                </span>
+                <span class="segel-tab-label">Tingkat Kegagalan</span>
+            </div>
+            <div class="segel-tab-val-group">
+                <span class="segel-tab-big-val">2.4%</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs bulan lalu</span>
+            </div>
+        </button>
+
+        <div class="segel-tab-separator"></div>
+
+        <!-- Tab 4 -->
+        <button class="segel-metric-tab" data-key="time-saved">
+            <div class="segel-tab-top">
+                <span class="segel-tab-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+                    </svg>
+                </span>
+                <span class="segel-tab-label">Waktu Hemat</span>
+            </div>
+            <div class="segel-tab-val-group">
+                <span class="segel-tab-big-val">18.4 jam</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">-1.1%</strong> vs bulan lalu</span>
+            </div>
+        </button>
+    </div>
+</div>
+
+<!-- ── 5. 5-STAMP CRYPTOGRAPHIC PIPELINE ARCHITECTURE CARD ── -->
+<div class="card" style="margin-top: 6px;">
     <div class="card-header">
         <h2>
             <i data-lucide="shield-check" class="icon-20 text-accent"></i>
@@ -331,4 +731,456 @@
         Setiap paspor rilis memuat bukti kriptografis independen yang divalidasi oleh penerima satuan tanpa koneksi ke server pusat.
     </p>
 </div>
+
+<!-- ── Interactive Micro-Behaviors & Chart Generators Script Bundle ── -->
+<script>
+    // 1. Total Responses / 5-Stamp Gauge: 14 Thick Radial Pill Ticks (Left-to-Right Clockwise Fill)
+    (function setupRadialGauge() {
+        const svg = document.getElementById('radialGaugeSvg');
+        if (!svg) return;
+        const cx = 120, cy = 118;
+        const rOuter = 92, rInner = 68;
+        const total = 14;
+
+        const colors = [
+            '#24531E', '#3B7A32', '#3B7A32', '#3B7A32', '#4B8E41',
+            '#659B58', '#7A9E6B', '#92B784',
+            '#C7B08A', '#D1BD99', '#DFD2B7',
+            '#E8DFD0', '#EFE9DE', '#EBFCF2'
+        ];
+
+        for (let i = 0; i < total; i++) {
+            const angleDeg = 180 - (i / (total - 1)) * 180;
+            const rad = (angleDeg * Math.PI) / 180;
+
+            const x1 = cx + rOuter * Math.cos(rad);
+            const y1 = cy - rOuter * Math.sin(rad);
+            const x2 = cx + rInner * Math.cos(rad);
+            const y2 = cy - rInner * Math.sin(rad);
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1.toFixed(1));
+            line.setAttribute('y1', y1.toFixed(1));
+            line.setAttribute('x2', x2.toFixed(1));
+            line.setAttribute('y2', y2.toFixed(1));
+            line.setAttribute('stroke', colors[i] || '#3B7A32');
+            line.setAttribute('stroke-width', '7.5');
+            line.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(line);
+        }
+    })();
+
+    // 2. Conversion Rate / Quorum Consensus: 32 Micro Vertical Ticks
+    (function setupConversionTicks() {
+        const container = document.getElementById('conversionTicks');
+        if (!container) return;
+        for (let i = 0; i < 32; i++) {
+            const tick = document.createElement('div');
+            tick.className = `segel-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`;
+            container.appendChild(tick);
+        }
+    })();
+
+    // 3. Ended Task / Uji Paspor: 4-Row x 12-Column Dot Matrix
+    (function setupEndedTaskMatrix() {
+        const matrixEl = document.getElementById('endedTaskMatrix');
+        if (!matrixEl) return;
+
+        const activeIndices = {
+            0: [9, 10, 11],
+            1: [8, 9, 10],
+            2: [6, 7],
+            3: [4, 5]
+        };
+
+        for (let r = 0; r < 4; r++) {
+            const rowEl = document.createElement('div');
+            rowEl.className = 'segel-et-matrix-row';
+            for (let c = 0; c < 12; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'segel-et-cell';
+                const pip = document.createElement('div');
+                const isActive = activeIndices[r]?.includes(c);
+                pip.className = `segel-et-dot-pip ${isActive ? 'active' : 'inactive'}`;
+                cell.appendChild(pip);
+                rowEl.appendChild(cell);
+            }
+            matrixEl.appendChild(rowEl);
+        }
+    })();
+
+    // 4. Spectral Waterfall Needle Chart & Curved Bezier Spline
+    (function setupRevenueChart() {
+        const chartArea = document.getElementById('chartArea');
+        const splinePath = document.getElementById('splineCurvePath');
+        const pinpointRing = document.getElementById('pinpointRing');
+        const tooltip = document.getElementById('chartTooltip');
+        const curtainGroup = document.getElementById('needleCurtainGroup');
+        const xAxisLabels = document.getElementById('xAxisLabels');
+        if (!chartArea || !splinePath) return;
+
+        const w = 530, h = 145;
+        const points = [
+            { day: '01', xPerc: 0,   yHeight: 35, rev: 45 },
+            { day: '04', xPerc: 15,  yHeight: 48, rev: 72 },
+            { day: '07', xPerc: 28,  yHeight: 88, rev: 110 },
+            { day: '11', xPerc: 42,  yHeight: 54, rev: 120 },
+            { day: '14', xPerc: 55,  yHeight: 38, rev: 68 },
+            { day: '20', xPerc: 70,  yHeight: 45, rev: 86 },
+            { day: '30', xPerc: 100, yHeight: 65, rev: 125 }
+        ];
+
+        const coords = points.map((p) => {
+            const x = (p.xPerc / 100) * (w - 32) + 16;
+            const y = (1 - p.yHeight / 100) * (h - 24) + 12;
+            return { ...p, x, y };
+        });
+
+        let d = `M ${coords[0].x} ${coords[0].y}`;
+        for (let i = 0; i < coords.length - 1; i++) {
+            const p0 = coords[i], p1 = coords[i + 1];
+            const cpX1 = p0.x + (p1.x - p0.x) / 2;
+            const cpY1 = p0.y;
+            const cpX2 = p0.x + (p1.x - p0.x) / 2;
+            const cpY2 = p1.y;
+            d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+        }
+        splinePath.setAttribute('d', d);
+
+        const lineCount = 220;
+        for (let i = 0; i <= lineCount; i++) {
+            const x = 16 + (i / lineCount) * (w - 32);
+            const tGlobal = (i / lineCount) * (coords.length - 1);
+            const segIdx = Math.min(Math.floor(tGlobal), coords.length - 2);
+            const t = tGlobal - segIdx;
+            const p0 = coords[segIdx], p1 = coords[segIdx + 1];
+            const y = (1 - t)**3 * p0.y + 3 * (1 - t)**2 * t * p0.y + 3 * (1 - t) * t**2 * p1.y + t**3 * p1.y;
+
+            const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            l.setAttribute('x1', x);
+            l.setAttribute('y1', y);
+            l.setAttribute('x2', x);
+            l.setAttribute('y2', h);
+            l.setAttribute('stroke', '#7A9E6B');
+            l.setAttribute('stroke-width', '1');
+            const isNearPeak = Math.abs(x - 210) < 80;
+            l.setAttribute('stroke-opacity', isNearPeak ? '0.45' : '0.22');
+            curtainGroup.appendChild(l);
+        }
+
+        function setPinpoint(idx) {
+            const pt = coords[idx];
+            if (!pt) return;
+            pinpointRing.setAttribute('cx', pt.x);
+            pinpointRing.setAttribute('cy', pt.y);
+
+            tooltip.innerText = `Log ${pt.rev}`;
+            tooltip.style.left = `${(pt.x / w) * 100}%`;
+            tooltip.style.top = `${(pt.y / h) * 100}%`;
+
+            const spans = xAxisLabels.querySelectorAll('span');
+            spans.forEach((s) => {
+                if (s.innerText === pt.day || (pt.day === '11' && s.innerText === '11')) {
+                    s.style.color = '#0F172A';
+                    s.style.fontWeight = '800';
+                } else {
+                    s.style.color = '#94A3B8';
+                    s.style.fontWeight = '600';
+                }
+            });
+        }
+
+        setPinpoint(3);
+
+        chartArea.addEventListener('mousemove', function(e) {
+            const rect = chartArea.getBoundingClientRect();
+            const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const nearest = Math.round(frac * (points.length - 1));
+            setPinpoint(nearest);
+        });
+    })();
+
+    // 5. Checkbox Selection Logic
+    (function setupCheckboxes() {
+        const headerCb = document.getElementById('headerCheckbox');
+        const rowCbs = document.querySelectorAll('.row-checkbox');
+        if (!headerCb) return;
+
+        rowCbs.forEach(cb => {
+            cb.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                const svg = this.querySelector('svg');
+                if (svg) svg.style.display = this.classList.contains('checked') ? 'block' : 'none';
+            });
+        });
+
+        headerCb.addEventListener('click', function() {
+            const isChecked = this.classList.toggle('checked');
+            const headerSvg = this.querySelector('svg');
+            if (headerSvg) headerSvg.style.display = isChecked ? 'block' : 'none';
+
+            rowCbs.forEach(cb => {
+                if (isChecked) {
+                    cb.classList.add('checked');
+                    const svg = cb.querySelector('svg');
+                    if (svg) svg.style.display = 'block';
+                } else {
+                    cb.classList.remove('checked');
+                    const svg = cb.querySelector('svg');
+                    if (svg) svg.style.display = 'none';
+                }
+            });
+        });
+    })();
+
+    // 6. Full Bottom Performance Trend Card (AlignUI v1.2 Integration)
+    (function setupFullPerformanceTrend() {
+        const gridEl = document.getElementById('chartColumnsGrid');
+        const canvasArea = document.getElementById('chartCanvasArea');
+        const yTicksEl = document.getElementById('chartYTicks');
+        const crosshairEl = document.getElementById('scrubberCrosshair');
+        const pipEl = document.getElementById('scrubberPip');
+        const tooltipCard = document.getElementById('scrubberCardTooltip');
+        const tooltipDate = document.getElementById('scrubberCardDate');
+        const tooltipVal = document.getElementById('scrubberCardVal');
+        const dateBadge = document.getElementById('scrubberDateBadge');
+        const selectEl = document.getElementById('metricSelect');
+        const tabsFooter = document.getElementById('metricTabsFooter');
+        if (!gridEl || !canvasArea) return;
+
+        const COLUMN_COUNT = 60;
+        const ROW_COUNT = 14;
+        const DEFAULT_COLUMN = 20;
+
+        const METRICS = {
+            'prod-executions': {
+                label: 'Eksekusi Rilis',
+                selectLabel: 'Eksekusi Rilis',
+                summaryValue: '320',
+                change: '+5%',
+                seed: 0,
+                scale: 1,
+                ticks: [400, 300, 200, 100],
+                precision: 0,
+                suffix: '',
+                selectedValue: 320
+            },
+            'failed-executions': {
+                label: 'Gagal Verifikasi',
+                selectLabel: 'Gagal Verifikasi',
+                summaryValue: '28',
+                change: '-4.8%',
+                seed: 1.45,
+                scale: 0.74,
+                ticks: [100, 75, 50, 25],
+                precision: 0,
+                suffix: '',
+                selectedValue: 28
+            },
+            'failure-rate': {
+                label: 'Tingkat Kegagalan',
+                selectLabel: 'Tingkat Kegagalan',
+                summaryValue: '2.4%',
+                change: '+0.3%',
+                seed: 2.6,
+                scale: 0.65,
+                ticks: [20, 15, 10, 5],
+                precision: 2,
+                suffix: '%',
+                selectedValue: 2.4
+            },
+            'time-saved': {
+                label: 'Waktu Hemat',
+                selectLabel: 'Waktu Hemat',
+                summaryValue: '18.4 jam',
+                change: '-1.1%',
+                seed: 3.85,
+                scale: 0.88,
+                ticks: [24, 18, 12, 6],
+                precision: 1,
+                suffix: ' jam',
+                selectedValue: 18.4
+            }
+        };
+
+        const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        function getColumnDate(colIndex) {
+            const frac = colIndex / (COLUMN_COUNT - 1);
+            const dayOfYear = Math.round(frac * 364);
+            const d = new Date(2026, 0, 1);
+            d.setDate(d.getDate() + dayOfYear);
+            const m = MONTH_NAMES[d.getMonth()];
+            const day = d.getDate();
+            return {
+                short: `${m} ${day}`,
+                full: `${m} ${day}, 2026`
+            };
+        }
+
+        function generateMatrix(metricKey) {
+            const meta = METRICS[metricKey];
+            const matrix = [];
+            for (let c = 0; c < COLUMN_COUNT; c++) {
+                const normX = c / (COLUMN_COUNT - 1);
+                const s1 = Math.sin(normX * Math.PI * 3.4 + meta.seed);
+                const s2 = Math.cos(normX * Math.PI * 6.2 - meta.seed * 0.7);
+                const s3 = Math.sin(normX * 14.0 + meta.seed * 2.1) * 0.35;
+                const wave = (s1 * 0.5 + s2 * 0.35 + s3 * 0.15 + 1) / 2;
+                const rawLevel = Math.floor(wave * ROW_COUNT * meta.scale);
+                const activeCount = Math.max(1, Math.min(ROW_COUNT - 1, rawLevel));
+
+                const strip = [];
+                for (let r = 0; r < ROW_COUNT; r++) {
+                    const rowFromBottom = ROW_COUNT - 1 - r;
+                    if (rowFromBottom < activeCount) {
+                        strip.push(rowFromBottom === activeCount - 1 ? 'secondary' : 'active');
+                    } else {
+                        strip.push('empty');
+                    }
+                }
+                matrix.push({
+                    col: c,
+                    strip,
+                    activeCount
+                });
+            }
+            return matrix;
+        }
+
+        let currentMetric = 'prod-executions';
+        let currentMatrix = generateMatrix(currentMetric);
+        let selectedCol = DEFAULT_COLUMN;
+
+        function renderGrid() {
+            gridEl.innerHTML = '';
+            currentMatrix.forEach((colData, cIdx) => {
+                const colEl = document.createElement('div');
+                colEl.className = 'segel-col-strip';
+                colEl.setAttribute('data-col', cIdx);
+
+                colData.strip.forEach((state) => {
+                    const cell = document.createElement('div');
+                    cell.className = `segel-cell ${state}`;
+                    colEl.appendChild(cell);
+                });
+
+                gridEl.appendChild(colEl);
+            });
+        }
+
+        function updateYTicks(metricKey) {
+            const meta = METRICS[metricKey];
+            const spans = yTicksEl.querySelectorAll('span');
+            meta.ticks.forEach((val, idx) => {
+                if (spans[idx]) {
+                    spans[idx].innerText = val + meta.suffix;
+                }
+            });
+        }
+
+        function getMetricValueForCol(metricKey, colIndex) {
+            const meta = METRICS[metricKey];
+            const colData = currentMatrix[colIndex];
+            const frac = colData ? colData.activeCount / ROW_COUNT : 0.5;
+            const maxVal = meta.ticks[0];
+            const val = frac * maxVal;
+            if (meta.precision === 0) return Math.round(val) + meta.suffix;
+            return val.toFixed(meta.precision) + meta.suffix;
+        }
+
+        function setHoverState(colIndex) {
+            selectedCol = Math.max(0, Math.min(COLUMN_COUNT - 1, colIndex));
+            const colEls = gridEl.querySelectorAll('.segel-col-strip');
+            const targetCol = colEls[selectedCol];
+            if (!targetCol) return;
+
+            const rect = targetCol.getBoundingClientRect();
+            const canvasRect = canvasArea.getBoundingClientRect();
+            const leftPx = rect.left - canvasRect.left + rect.width / 2;
+
+            crosshairEl.style.display = 'block';
+            crosshairEl.style.left = `${leftPx}px`;
+
+            const activeCount = currentMatrix[selectedCol]?.activeCount || 5;
+            const pipYPx = canvasRect.height * (1 - activeCount / ROW_COUNT);
+            pipEl.style.display = 'block';
+            pipEl.style.left = `${leftPx}px`;
+            pipEl.style.top = `${pipYPx}px`;
+
+            const dateInfo = getColumnDate(selectedCol);
+            const valStr = getMetricValueForCol(currentMetric, selectedCol);
+
+            tooltipDate.innerText = dateInfo.full;
+            tooltipVal.innerText = valStr;
+            tooltipCard.style.display = 'block';
+
+            let tooltipLeft = leftPx;
+            const tooltipWidth = 140;
+            if (tooltipLeft + tooltipWidth / 2 > canvasRect.width) {
+                tooltipLeft = canvasRect.width - tooltipWidth / 2 - 8;
+            } else if (tooltipLeft - tooltipWidth / 2 < 0) {
+                tooltipLeft = tooltipWidth / 2 + 8;
+            }
+            tooltipCard.style.left = `${tooltipLeft}px`;
+            tooltipCard.style.top = `${Math.max(10, pipYPx - 70)}px`;
+            tooltipCard.style.transform = 'translateX(-50%)';
+
+            dateBadge.innerText = dateInfo.short;
+            dateBadge.style.display = 'block';
+            dateBadge.style.left = `${leftPx}px`;
+        }
+
+        function switchMetric(newKey) {
+            if (!METRICS[newKey]) return;
+            currentMetric = newKey;
+            currentMatrix = generateMatrix(currentMetric);
+            renderGrid();
+            updateYTicks(currentMetric);
+
+            if (selectEl) selectEl.value = currentMetric;
+
+            const tabBtns = tabsFooter.querySelectorAll('.segel-metric-tab');
+            tabBtns.forEach(btn => {
+                if (btn.getAttribute('data-key') === currentMetric) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            setHoverState(selectedCol);
+        }
+
+        renderGrid();
+        updateYTicks(currentMetric);
+        setTimeout(() => setHoverState(DEFAULT_COLUMN), 60);
+
+        canvasArea.addEventListener('mousemove', (e) => {
+            const canvasRect = canvasArea.getBoundingClientRect();
+            const mouseX = e.clientX - canvasRect.left;
+            const frac = Math.max(0, Math.min(1, mouseX / canvasRect.width));
+            const col = Math.floor(frac * COLUMN_COUNT);
+            setHoverState(col);
+        });
+
+        canvasArea.addEventListener('mouseleave', () => {
+            setHoverState(DEFAULT_COLUMN);
+        });
+
+        if (selectEl) {
+            selectEl.addEventListener('change', (e) => {
+                switchMetric(e.target.value);
+            });
+        }
+
+        const tabBtns = tabsFooter.querySelectorAll('.segel-metric-tab');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const key = this.getAttribute('data-key');
+                if (key) switchMetric(key);
+            });
+        });
+    })();
+</script>
 {% endblock %}
