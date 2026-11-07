@@ -442,21 +442,21 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
           <div className="segel-greeting-box">
             <div>
               <div className="segel-cyber-lead">
-                <span>DEFCON 1 // KOMANDO PUSSIBERAD</span>
+                <span>PUSSIBERAD TNI AD // SISTEM EDAR GELAR ELEKTRONIK</span>
                 <span style={{ display: 'none' }}>{userName}</span>
               </div>
               <h1 className="segel-cyber-heading">
-                <span>Ekosistem Digital NKRI yang&nbsp;</span>
-                <span className="segel-cube-wrapper" aria-label="Terjaga, Terbentengi, Terkendali">
+                <span>Distribusi Rilis Pertahanan Satuan yang&nbsp;</span>
+                <span className="segel-cube-wrapper" aria-label="Terverifikasi, Tercatat, Teruji">
                   <span className="segel-cube-rotor" aria-hidden="true">
-                    <span className="segel-cube-face face-1">Terjaga</span>
-                    <span className="segel-cube-face face-2">Terbentengi</span>
-                    <span className="segel-cube-face face-3">Terkendali</span>
+                    <span className="segel-cube-face face-1">Terverifikasi</span>
+                    <span className="segel-cube-face face-2">Tercatat</span>
+                    <span className="segel-cube-face face-3">Teruji</span>
                   </span>
                 </span>
               </h1>
               <div className="segel-cyber-sub">
-                Otentikasi kriptografis otonom & pertahanan perimeter terintegrasi.
+                Prinsip tanpa bukti tanpa penerapan: verifikasi paspor rilis luring di satuan.
               </div>
             </div>
 
