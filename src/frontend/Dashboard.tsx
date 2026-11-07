@@ -456,7 +456,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                 </span>
               </h1>
               <div className="segel-cyber-sub">
-                Verifikasi paspor rilis luring mandiri di satuan
+                Verifikasi paspor rilis luring satuan
               </div>
             </div>
 

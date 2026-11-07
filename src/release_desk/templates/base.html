@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SEGEL Release Desk{% endblock %}</title>
+    <title>{% block title %}SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda{% endblock %}</title>
+
     <!-- Favicon & Touch Icons -->
     <link rel="icon" type="image/x-icon" href="/static/favicons/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
@@ -13,204 +14,255 @@
     <meta name="theme-color" content="#2D6A4F">
     <meta name="apple-mobile-web-app-title" content="SEGEL">
     <meta name="application-name" content="SEGEL">
+
     <!-- HTMX for reactive hypermedia actions -->
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <!-- Lucide Icons official bundle -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root {
-            /* ── Core Light Mode Design Tokens ── */
-            --bg: #F2F7F0;
-            --surface: #ffffff;
-            --surface-subtle: #F7F4EC;
-            --border: #E8DFD0;
-            --border-strong: #D1BD99;
-            
-            /* Typography & Neutrals (TNI AD High Contrast) */
-            --text: #0f172a;            /* Slate 900 - High contrast readable */
-            --text-secondary: #334155;  /* Slate 700 - Subheadings & labels */
-            --text-muted: #64748b;      /* Slate 500 - Form hints & meta */
-            
-            /* Brand Accents */
-            --accent: #3B7A32;          /* Tactical Field Green - Primary actionable */
-            --accent-hover: #24531E;    /* Dark Forest Green */
-            --accent-subtle: #EBFCF2;   /* Luminous Mint Glow */
-            --military-navy: #182615;   /* Tactical Deep Forest Slate */
-            --military-teal: #7A9E6B;   /* Military Sage Green Accent */
-            
-            /* Semantic Colors (Cybersecurity Specifics) */
-            --green: #047857;           /* Emerald 700 - Passed / Secure */
-            --green-bg: #ecfdf5;        /* Emerald 50 */
-            --green-border: #a7f3d0;    /* Emerald 200 */
-            
-            --yellow: #b45309;          /* Amber 700 - Warning / Advisory */
-            --yellow-bg: #fffbeb;       /* Amber 50 */
-            --yellow-border: #fde68a;   /* Amber 200 */
-            
-            --red: #b91c1c;             /* Red 700 - Critical / Blocked */
-            --red-bg: #fef2f2;          /* Red 50 */
-            --red-border: #fecaca;      /* Red 200 */
-            
-            --purple: #6d28d9;          /* Purple 700 - Attestations / Cosignatures */
-            --purple-bg: #faf5ff;       /* Purple 50 */
-            --purple-border: #e9d5ff;   /* Purple 200 */
-            
-            --blue: #3B7A32;            /* Tactical Field Green Highlight */
-            --blue-bg: #EBFCF2;         /* Luminous Mint Substrate */
-            --blue-border: #B8D2AD;     /* Soft Sage Boundary */
 
-            /* Shadows & Elevations */
-            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+    <!-- Official SEGEL Design System Stylesheet -->
+    <link rel="stylesheet" href="/static/css/segel.css">
+
+    <style>
+        /* ── Unified SEGEL Design System Tokens & Base Overrides ── */
+        :root {
+            --segel-canvas-bg: #F2F7F0;
+            --segel-card-solid: #FFFFFF;
+            --segel-navy: #0F172A;
+            --segel-slate-muted: #64748B;
+            --segel-slate-light: #94A3B8;
+
+            /* 60% Dominant (Canvas & Sage) */
+            --segel-sage-soft: #B8D2AD;
+            --segel-sage-deep: #7A9E6B;
+            --segel-primary: #3B7A32;
+            --segel-primary-hover: #24531E;
+
+            /* 30% Secondary (Warm Sand & Bronze) */
+            --segel-sand-gold: #D1BD99;
+            --segel-sand-amber: #C7B08A;
+            --segel-sand-border: #E8DFD0;
+            --segel-sand-subtle: #F7F4EC;
+
+            /* 10% Accent */
+            --segel-mint-flare: #EBFCF2;
+            --segel-mint-active: #10B981;
+            --segel-lavender: #D9CFED;
+
+            /* Semantic Feedback */
+            --green: #15803D;
+            --green-bg: #EBFCF2;
+            --green-border: #B8D2AD;
+            --yellow: #B45309;
+            --yellow-bg: #FEF3C7;
+            --yellow-border: #D1BD99;
+            --red: #B91C1C;
+            --red-bg: #FEF2F2;
+            --red-border: #FECACA;
+            --blue: #3B7A32;
+            --blue-bg: #F2F7F0;
+            --blue-border: #B8D2AD;
+
+            /* Elevation */
+            --segel-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+            --segel-card-radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--segel-canvas-bg);
+            color: var(--segel-navy);
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        a { color: var(--accent); text-decoration: none; font-weight: 500; transition: color 0.15s; }
-        a:hover { color: var(--accent-hover); text-decoration: underline; }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; width: 100%; }
-
-        /* ── Header ──────────────────────────────────────────── */
-        header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 14px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
+        /* ── WebGPU Shader Ambient Canvas ── */
+        .segel-shader-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        header .inner {
+        /* ── Main Canvas Viewport ── */
+        .segel-canvas {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 16px 24px 48px;
+            position: relative;
+            z-index: 10;
+            flex: 1 0 auto;
+        }
+
+        /* ── Security Demo Banner ── */
+        .segel-security-banner {
+            position: relative;
+            z-index: 20;
+            background: rgba(254, 243, 199, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(209, 189, 153, 0.6);
+            color: #92400E;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 6px 16px;
             display: flex;
             align-items: center;
-            gap: 28px;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.3px;
         }
 
-        .logo {
+        /* ── Floating Header & Navigation Dock ── */
+        .segel-header {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 24px;
+            position: relative;
+            z-index: 30;
+        }
+
+        .segel-brand-pill {
+            display: inline-flex;
             align-items: center;
             gap: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 9999px;
+            padding: 6px 18px 6px 10px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
             text-decoration: none;
-            transition: opacity 0.15s ease;
+            color: var(--segel-navy);
+            transition: all 0.2s ease;
         }
-        .logo:hover { text-decoration: none; opacity: 0.92; }
+        .segel-brand-pill:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+            text-decoration: none;
+        }
 
-        .brand-logo-img {
+        .segel-brand-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .segel-brand-text {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--segel-navy);
+        }
+
+        .segel-dock {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 9999px;
+            padding: 5px;
+            box-shadow: 0 8px 24px -2px rgba(15, 23, 42, 0.06);
+            gap: 6px;
+        }
+
+        .segel-dock-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            text-decoration: none;
+            color: #4B5565;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+        }
+
+        .segel-dock-btn.inactive {
+            width: 38px;
             height: 38px;
-            width: auto;
-            max-width: 38px;
+            border-radius: 50%;
+        }
+        .segel-dock-btn.inactive:hover {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--segel-navy);
+            transform: scale(1.05);
+            text-decoration: none;
+        }
+
+        .segel-dock-btn.active {
+            background: var(--segel-primary);
+            color: #FFFFFF;
+            padding: 8px 18px;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(59, 122, 50, 0.28);
+            text-decoration: none;
+        }
+
+        .segel-header-utilities {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .segel-header-logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            overflow: hidden;
+        }
+
+        .segel-header-insignia {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             display: block;
-            filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.12));
         }
 
-        .brand-text-block {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.15;
-        }
-
-        .brand-name {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--military-navy);
-            letter-spacing: 0.4px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .brand-sub {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .badge-tni {
-            background: #0f172a;
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 4px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            align-self: center;
-            margin-left: 2px;
-        }
-
-        nav { display: flex; align-items: center; gap: 8px; }
-        nav a {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 7px 12px;
-            border-radius: 6px;
-            transition: all 0.15s ease;
-        }
-        nav a:hover {
-            color: var(--text);
-            background: var(--surface-subtle);
-            text-decoration: none;
-        }
-        nav a.active {
-            color: var(--accent);
-            background: var(--accent-subtle);
-            font-weight: 600;
-        }
-
-        /* ── Badges ──────────────────────────────────────────── */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 9px;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.4;
-            border: 1px solid transparent;
-        }
-        .badge-green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
-        .badge-yellow { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
-        .badge-red { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
-        .badge-blue { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-border); }
-        .badge-purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
-        .badge-muted { background: var(--surface-subtle); color: var(--text-secondary); border-color: var(--border); }
-
-        /* ── Cards ────────────────────────────────────────────── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+        /* ── Unified Cards & Containers ── */
+        .card, .segel-card {
+            background: var(--segel-card-solid);
+            border: 1px solid rgba(122, 158, 107, 0.2);
+            border-radius: var(--segel-card-radius);
+            box-shadow: var(--segel-card-shadow);
             padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-            transition: box-shadow 0.2s ease;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
-
-        .card:hover {
-            box-shadow: var(--shadow-md);
+        .card:hover, .segel-card:hover {
+            box-shadow: 0 16px 40px -6px rgba(60, 90, 55, 0.12);
+            border-color: rgba(122, 158, 107, 0.35);
         }
 
         .card-header {
@@ -219,46 +271,199 @@
             justify-content: space-between;
             margin-bottom: 18px;
             padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--segel-sand-border);
         }
 
         .card-header h2 {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 16px;
+            gap: 10px;
+            font-size: 17px;
             font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.2px;
+            color: var(--segel-navy);
+            letter-spacing: -0.3px;
         }
 
-        /* ── Stamp Pipeline ──────────────────────────────────── */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--segel-navy);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: var(--segel-slate-muted);
+            margin-top: 4px;
+        }
+
+        /* ── Unified Buttons ── */
+        .btn, .segel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-family: inherit;
+            line-height: 1.2;
+        }
+        .btn:hover, .segel-btn:hover { text-decoration: none; transform: translateY(-1px); }
+
+        .btn-primary, .segel-btn-primary {
+            background: var(--segel-primary);
+            color: #FFFFFF;
+            border-color: var(--segel-primary);
+            box-shadow: 0 4px 12px rgba(59, 122, 50, 0.25);
+        }
+        .btn-primary:hover, .segel-btn-primary:hover {
+            background: var(--segel-primary-hover);
+            border-color: var(--segel-primary-hover);
+            box-shadow: 0 6px 16px rgba(59, 122, 50, 0.35);
+        }
+
+        .btn-secondary, .segel-btn-secondary {
+            background: #FFFFFF;
+            color: var(--segel-navy);
+            border-color: var(--segel-sand-border);
+        }
+        .btn-secondary:hover, .segel-btn-secondary:hover {
+            background: var(--segel-sand-subtle);
+            border-color: var(--segel-sand-gold);
+        }
+
+        .btn-danger, .segel-btn-danger {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border-color: #FECACA;
+        }
+        .btn-danger:hover, .segel-btn-danger:hover {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        /* ── Badges ── */
+        .badge, .segel-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            line-height: 1.4;
+        }
+        .badge-green, .segel-badge-green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+        .badge-yellow, .segel-badge-yellow { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+        .badge-red, .segel-badge-red { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+        .badge-blue, .segel-badge-blue { background: #F1F7F0; color: var(--segel-primary); border-color: var(--segel-sage-soft); }
+        .badge-neutral, .segel-badge-neutral { background: var(--segel-sand-subtle); color: var(--segel-slate-muted); border-color: var(--segel-sand-border); }
+
+        /* ── Tables ── */
+        table, .segel-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13.5px;
+        }
+        th, td {
+            padding: 13px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--segel-sand-border);
+            vertical-align: middle;
+        }
+        th {
+            font-weight: 700;
+            color: var(--segel-slate-muted);
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            background: #F8FAF7;
+            border-top: 1px solid var(--segel-sand-border);
+        }
+        th:first-child { border-top-left-radius: 10px; }
+        th:last-child { border-top-right-radius: 10px; }
+        tr:hover td { background: #F6F9F5; }
+
+        /* ── Forms ── */
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--segel-navy);
+            margin-bottom: 6px;
+        }
+        .form-hint {
+            font-size: 12px;
+            color: var(--segel-slate-muted);
+            margin-top: 6px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--segel-sand-border);
+            border-radius: 10px;
+            color: var(--segel-navy);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--segel-primary);
+            box-shadow: 0 0 0 3px rgba(59, 122, 50, 0.15);
+        }
+
+        /* ── 5-Stamp Pipeline Components ── */
         .stamp-pipeline {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .stamp {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            padding: 7px 14px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
             font-size: 12px;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text-secondary);
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            font-weight: 700;
+            border: 1px solid var(--segel-sand-border);
+            background: #FFFFFF;
+            color: var(--segel-navy);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
             transition: all 0.15s ease;
         }
-
         .stamp-valid {
             border-color: var(--green-border);
             background: var(--green-bg);
             color: var(--green);
+        }
+        .stamp-warn {
+            border-color: var(--yellow-border);
+            background: var(--yellow-bg);
+            color: var(--yellow);
         }
         .stamp-invalid {
             border-color: var(--red-border);
@@ -266,406 +471,408 @@
             color: var(--red);
         }
         .stamp-pending {
-            border-color: var(--border);
-            background: var(--surface-subtle);
-            color: var(--text-muted);
+            border-color: var(--segel-sand-border);
+            background: var(--segel-sand-subtle);
+            color: var(--segel-slate-muted);
         }
-        .stamp-warn {
-            border-color: var(--yellow-border);
-            background: var(--yellow-bg);
-            color: var(--yellow);
-        }
-
         .stamp-arrow {
             display: inline-flex;
             align-items: center;
-            color: var(--text-muted);
+            color: var(--segel-slate-muted);
         }
 
-        /* ── Table ────────────────────────────────────────────── */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 13.5px;
-        }
-
-        th, td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-
-        th {
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 11.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            background: var(--surface-subtle);
-            border-top: 1px solid var(--border);
-        }
-
-        th:first-child { border-top-left-radius: 6px; }
-        th:last-child { border-top-right-radius: 6px; }
-
-        tr:hover td { background: #f8fafc; }
-
-        /* ── Forms ────────────────────────────────────────────── */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 13.5px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text);
-        }
-
-        .form-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 9px 13px;
-            background: var(--surface);
-            border: 1px solid var(--border-strong);
-            border-radius: 7px;
-            color: var(--text);
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.15s ease;
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) inset;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        textarea { resize: vertical; min-height: 85px; }
-
-        /* ── Buttons ──────────────────────────────────────────── */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            padding: 8px 16px;
-            border-radius: 7px;
-            font-size: 13.5px;
-            font-weight: 600;
-            border: 1px solid var(--border-strong);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: inherit;
-            line-height: 1.4;
-            text-decoration: none;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #ffffff;
-            border-color: var(--accent);
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-            text-decoration: none;
-            color: #ffffff;
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text-secondary);
-            border-color: var(--border-strong);
-        }
-        .btn-secondary:hover {
-            background: var(--surface-subtle);
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .btn-danger {
-            background: var(--red-bg);
-            color: var(--red);
-            border-color: var(--red-border);
-        }
-        .btn-danger:hover {
-            background: #fee2e2;
-            text-decoration: none;
-            color: #991b1b;
-        }
-
-        /* ── Section Headers ─────────────────────────────────── */
-        .page-header {
-            padding: 26px 0 20px 0;
-        }
-
-        .page-header h1 {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -0.6px;
-        }
-
-        .page-header p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        /* ── Detail Grid ─────────────────────────────────────── */
+        /* ── Detail Grid ── */
         .detail-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
         }
-
-        @media (max-width: 768px) {
-            .detail-grid { grid-template-columns: 1fr; }
-        }
-
         .detail-item {
-            padding: 12px 16px;
-            background: var(--surface-subtle);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent);
+            background: #F9FBF8;
+            border: 1px solid var(--segel-sand-border);
+            border-radius: 12px;
+            padding: 14px 16px;
         }
-
         .detail-label {
-            font-size: 11.5px;
-            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--segel-slate-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             margin-bottom: 4px;
-            font-weight: 600;
         }
-
         .detail-value {
             font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-weight: 700;
+            color: var(--segel-navy);
         }
 
-        /* ── Monospace & Hashes ───────────────────────────────── */
-        code, .mono {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 12.5px;
-            background: var(--surface-subtle);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-
-        .hash {
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-family: 'SFMono-Regular', Consolas, monospace;
-            background: var(--surface-subtle);
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid var(--border);
-            display: inline-block;
-        }
-
-        /* ── Alerts ───────────────────────────────────────────── */
+        /* ── Alerts ── */
         .alert {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-size: 13.5px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
             line-height: 1.5;
-            border-width: 1px;
-            border-style: solid;
         }
+        .alert-info { background: #F1F7F0; border-color: var(--segel-sage-soft); color: #1E3A2B; }
+        .alert-success { background: var(--green-bg); border-color: var(--green-border); color: #065F46; }
+        .alert-warning { background: var(--yellow-bg); border-color: var(--yellow-border); color: #92400E; }
+        .alert-danger { background: var(--red-bg); border-color: var(--red-border); color: #991B1B; }
 
-        .alert-success {
-            background: var(--green-bg);
-            border-color: var(--green-border);
-            color: #065f46;
-        }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
 
-        .alert-warning {
-            background: var(--yellow-bg);
-            border-color: var(--yellow-border);
-            color: #92400e;
-        }
-
-        .alert-error {
-            background: var(--red-bg);
-            border-color: var(--red-border);
-            color: #991b1b;
-        }
-
-        .alert-info {
-            background: var(--blue-bg);
-            border-color: var(--blue-border);
-            color: #1e40af;
-        }
-
-        .alert strong {
-            font-weight: 700;
-        }
-
-        /* ── Security Banner ──────────────────────────────────── */
-        .security-banner {
-            background: var(--yellow-bg);
-            border-bottom: 1px solid var(--yellow-border);
-            padding: 8px 16px;
-            font-size: 12.5px;
-            font-weight: 500;
-            color: var(--yellow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-align: center;
-        }
-
-        /* ── Footer ───────────────────────────────────────────── */
-        footer {
-            padding: 28px 0;
+        /* ── Footer ── */
+        .segel-footer {
             margin-top: auto;
-            border-top: 1px solid var(--border);
-            background: var(--surface);
+            border-top: 1px solid rgba(122, 158, 107, 0.2);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 24px;
             text-align: center;
-            color: var(--text-muted);
-            font-size: 12.5px;
-            line-height: 1.7;
+            font-size: 12px;
+            color: var(--segel-slate-muted);
+            position: relative;
+            z-index: 10;
         }
+        .segel-footer strong { color: var(--segel-navy); }
 
-        footer strong {
-            color: var(--text-secondary);
-        }
-
-        /* ── Lucide Icon Utilities (Strict Specifications) ────── */
-        /* Stroke width: 2 */
-        /* Sizing: size=20 for primary nav / major titles, size=16 for inline actions, tables, badges, buttons */
-        .icon-16 {
-            width: 16px !important;
-            height: 16px !important;
-            stroke-width: 2 !important;
-            vertical-align: middle;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
-        .icon-20 {
-            width: 20px !important;
-            height: 20px !important;
-            stroke-width: 2 !important;
-            vertical-align: middle;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
-        /* Semantic Icon Colors */
-        .text-neutral { color: #334155; } /* Slate 700 */
-        .text-success { color: #059669; } /* Emerald 600 */
-        .text-warning { color: #d97706; } /* Amber 600 */
-        .text-danger { color: #dc2626; }  /* Red 600 */
-        .text-info { color: #3B7A32; }    /* Tactical Field Green */
-        .text-accent { color: #3B7A32; }
-        .text-muted { color: #64748b; }
-
-        /* ── Loading indicator ────────────────────────────────── */
-        .htmx-indicator { display: none; }
-        .htmx-request .htmx-indicator,
-        .htmx-request.htmx-indicator { display: inline-block; }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--border-strong);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            display: inline-block;
+        @media (max-width: 900px) {
+            .segel-header { flex-wrap: wrap; gap: 14px; }
+            .segel-dock { order: 3; width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <div class="security-banner">
-        <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+
+    <!-- WebGPU / WebGL Shader Background Canvas -->
+    <canvas id="webgpuShaderCanvas" class="segel-shader-canvas"></canvas>
+
+    <!-- Security Operational Demo Mode Banner -->
+    <div class="segel-security-banner">
+        <i data-lucide="triangle-alert" style="width: 15px; height: 15px;"></i>
         <span>
-            <strong>MVP DEMO MODE:</strong> Synthetic keys generated at startup. Not for production use.
-            Release Desk never holds private signing keys (SEC-004).
+            <strong>MODE DEMO OPERASIONAL MVP:</strong> Kunci kriptografis sintetis diinisialisasi saat boot. Release Desk tidak pernah menyimpan kunci privat penandatanganan (SEC-004).
         </span>
     </div>
 
-    <header>
-        <div class="container inner">
-            <a href="/" class="logo" title="PUSSIBERAD — Pusat Siber dan Sandi TNI AD">
-                <img src="/static/images/pussiberad-logo.png" alt="PUSSIBERAD Logo" class="brand-logo-img">
-                <div class="brand-text-block">
-                    <span class="brand-name">PUSSIBERAD</span>
-                    <span class="brand-sub">SEGEL Platform</span>
-                </div>
-                <span class="badge-tni">TNI AD</span>
+    <!-- Main Navigation Header with Segmented Floating Dock -->
+    <div class="segel-canvas" style="padding-bottom: 0;">
+        <header class="segel-header">
+            <!-- Brand Pill: PUSSIBERAD -->
+            <a href="/" class="segel-brand-pill" title="PUSSIBERAD — Pusat Siber dan Sandi TNI AD">
+                <img src="/static/images/pussiberad-logo.png" onerror="this.src='/static/images/pussiberad-logo.png'" alt="PUSSIBERAD Logo" class="segel-brand-logo">
+                <span class="segel-brand-text">PUSSIBERAD</span>
             </a>
-            <nav>
-                <a href="/" {% if active_page == 'dashboard' %}class="active"{% endif %}>
-                    <i data-lucide="activity" class="icon-16"></i>
-                    <span>Dashboard</span>
+
+            <!-- Center Segmented Floating Dock -->
+            <nav class="segel-dock" id="navDock" aria-label="Navigasi Utama SEGEL">
+                <!-- 1. Dashboard -->
+                <a href="/" class="segel-dock-btn {% if active_page == 'dashboard' or not active_page %}active{% else %}inactive{% endif %}" title="Dashboard">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+                    </svg>
+                    {% if active_page == 'dashboard' or not active_page %}<span>Dashboard</span>{% endif %}
                 </a>
-                <a href="/release/new" {% if active_page == 'new' %}class="active"{% endif %}>
-                    <i data-lucide="plus-circle" class="icon-16"></i>
-                    <span>New Release</span>
+
+                <!-- 2. New Release -->
+                <a href="/release/new" class="segel-dock-btn {% if active_page == 'new' %}active{% else %}inactive{% endif %}" title="New Release">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
+                    </svg>
+                    {% if active_page == 'new' %}<span>New Release</span>{% endif %}
                 </a>
-                <a href="/ledger" {% if active_page == 'ledger' %}class="active"{% endif %}>
-                    <i data-lucide="database" class="icon-16"></i>
-                    <span>Ledger</span>
+
+                <!-- 3. Ledger -->
+                <a href="/ledger" class="segel-dock-btn {% if active_page == 'ledger' %}active{% else %}inactive{% endif %}" title="Ledger">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                    </svg>
+                    {% if active_page == 'ledger' %}<span>Ledger</span>{% endif %}
                 </a>
-                <a href="/trust" {% if active_page == 'trust' %}class="active"{% endif %}>
-                    <i data-lucide="key-round" class="icon-16"></i>
-                    <span>Trust Root</span>
+
+                <!-- 4. Trust Root -->
+                <a href="/trust" class="segel-dock-btn {% if active_page == 'trust' %}active{% else %}inactive{% endif %}" title="Trust Root">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                    </svg>
+                    {% if active_page == 'trust' %}<span>Trust Root</span>{% endif %}
                 </a>
             </nav>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
-                <span class="badge badge-blue">
-                    <i data-lucide="shield-check" class="icon-16 text-info"></i>
+
+            <!-- Right Utilities: TNI & TNI AD Insignia Badges -->
+            <div class="segel-header-utilities">
+                <div class="segel-header-logo-badge" title="Tentara Nasional Indonesia (TNI)" role="img" aria-label="Logo TNI">
+                    <img src="/static/images/logo-tni.svg" alt="Logo TNI" class="segel-header-insignia">
+                </div>
+                <div class="segel-header-logo-badge" title="TNI Angkatan Darat (TNI AD)" role="img" aria-label="Logo TNI AD">
+                    <img src="/static/images/logo-tni-ad.svg" alt="Logo TNI AD" class="segel-header-insignia">
+                </div>
+                <span class="badge badge-blue" style="font-size:11px; padding:6px 12px; font-weight:700;">
                     v0.1.0-mvp
                 </span>
             </div>
-        </div>
-    </header>
+        </header>
+    </div>
 
-    <main class="container" style="flex: 1 0 auto; padding-top: 10px; padding-bottom: 30px;">
+    <!-- Main Content Container -->
+    <main class="segel-canvas">
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <div class="container">
-            <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda<br>
-            <em>NO EVIDENCE, NO DEPLOYMENT</em> · 5-Stamp Verification Pipeline<br>
-            <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-secondary);">
-                <span>Origin</span> · <span>Inspect</span> · <span>Approve</span> · <span>Record</span> · <span>Test</span>
+    <!-- Footer -->
+    <footer class="segel-footer">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda (Pusat Siber dan Sandi TNI AD)<br>
+            <em>NO EVIDENCE, NO DEPLOYMENT</em> · Tata Kelola Rilis Kriptografis Mandiri Luring (5-Cap Pipeline)<br>
+            <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--segel-slate-muted);">
+                <span>Asal (Origin)</span> · <span>Periksa (Inspect)</span> · <span>Setuju (Approve)</span> · <span>Catat (Record)</span> · <span>Uji (Test)</span>
             </span>
         </div>
     </footer>
 
-    <!-- Lucide Icon Initialization & Offline Air-Gap SVG Fallback -->
+    <!-- Dual-Engine Background Shader Script (WebGPU + WebGL Fallback) -->
     <script>
-        // Inline SVG paths dictionary for air-gapped / offline deployments (NFR-001)
+        (function() {
+            const canvas = document.getElementById('webgpuShaderCanvas');
+            if (!canvas) return;
+
+            const WGSL_SHADER = `
+struct Uniforms {
+    resolution: vec2f,
+    time: f32,
+    padding: f32,
+};
+@group(0) @binding(0) var<uniform> u: Uniforms;
+
+@vertex
+fn vs_main(@builtin(vertex_index) vid: u32) -> @builtin(position) vec4f {
+    var pos = array<vec2f, 3>(
+        vec2f(-1.0, -1.0),
+        vec2f( 3.0, -1.0),
+        vec2f(-1.0,  3.0)
+    );
+    return vec4f(pos[vid], 0.0, 1.0);
+}
+
+@fragment
+fn fs_main(@builtin(position) fragCoord: vec4f) -> @location(0) vec4f {
+    let uv = fragCoord.xy / u.resolution.xy;
+    let aspect = vec2f(u.resolution.x / u.resolution.y, 1.0);
+    let p = (uv - 0.5) * aspect;
+
+    let c_base       = vec3f(0.948, 0.970, 0.942);
+    let c_green      = vec3f(0.720, 0.825, 0.680);
+    let c_green_deep = vec3f(0.480, 0.620, 0.420);
+    let c_sand       = vec3f(0.820, 0.740, 0.600);
+    let c_mint_glow  = vec3f(0.920, 0.990, 0.950);
+    let c_lavender   = vec3f(0.850, 0.810, 0.930);
+
+    let t = u.time * 0.12;
+
+    let d1 = dot(p, vec2f(0.866, 0.5));
+    let ray1 = sin(d1 * 4.0 + t + sin(p.y * 3.0 + t * 0.6)) * 0.5 + 0.5;
+
+    let d2 = dot(p, vec2f(-0.707, 0.707));
+    let ray2 = cos(d2 * 5.0 - t * 0.9 + cos(p.x * 2.5 - t * 0.4)) * 0.5 + 0.5;
+
+    let crest = pow(ray1 * ray2, 2.2);
+    let ripple = sin(d1 * 9.0 - t * 1.8) * cos(d2 * 7.0 + t * 1.2) * 0.5 + 0.5;
+
+    var col = c_base;
+    col = mix(col, c_green, ray1 * 0.32);
+    col = mix(col, c_green_deep, ripple * ray2 * 0.16);
+    col = mix(col, c_sand, (1.0 - ray1) * ray2 * 0.22);
+    col = mix(col, c_mint_glow, crest * 0.55);
+    col = mix(col, c_lavender, pow(ripple, 3.0) * 0.18);
+
+    return vec4f(col, 1.0);
+}
+`;
+
+            const GLSL_VS = `attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+            const GLSL_FS = `
+precision highp float;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+    vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
+    vec2 p = (uv - 0.5) * aspect;
+
+    vec3 c_base       = vec3(0.948, 0.970, 0.942);
+    vec3 c_green      = vec3(0.720, 0.825, 0.680);
+    vec3 c_green_deep = vec3(0.480, 0.620, 0.420);
+    vec3 c_sand       = vec3(0.820, 0.740, 0.600);
+    vec3 c_mint_glow  = vec3(0.920, 0.990, 0.950);
+    vec3 c_lavender   = vec3(0.850, 0.810, 0.930);
+
+    float t = u_time * 0.12;
+    float d1 = dot(p, vec2(0.866, 0.5));
+    float ray1 = sin(d1 * 4.0 + t + sin(p.y * 3.0 + t * 0.6)) * 0.5 + 0.5;
+
+    float d2 = dot(p, vec2(-0.707, 0.707));
+    float ray2 = cos(d2 * 5.0 - t * 0.9 + cos(p.x * 2.5 - t * 0.4)) * 0.5 + 0.5;
+
+    float crest = pow(ray1 * ray2, 2.2);
+    float ripple = sin(d1 * 9.0 - t * 1.8) * cos(d2 * 7.0 + t * 1.2) * 0.5 + 0.5;
+
+    vec3 col = c_base;
+    col = mix(col, c_green, ray1 * 0.32);
+    col = mix(col, c_green_deep, ripple * ray2 * 0.16);
+    col = mix(col, c_sand, (1.0 - ray1) * ray2 * 0.22);
+    col = mix(col, c_mint_glow, crest * 0.55);
+    col = mix(col, c_lavender, pow(ripple, 3.0) * 0.18);
+
+    gl_FragColor = vec4(col, 1.0);
+}
+`;
+
+            function runWebGLFallback() {
+                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                if (!gl) return;
+
+                function compile(type, src) {
+                    const s = gl.createShader(type);
+                    gl.shaderSource(s, src);
+                    gl.compileShader(s);
+                    return s;
+                }
+
+                const vs = compile(gl.VERTEX_SHADER, GLSL_VS);
+                const fs = compile(gl.FRAGMENT_SHADER, GLSL_FS);
+                const prog = gl.createProgram();
+                gl.attachShader(prog, vs);
+                gl.attachShader(prog, fs);
+                gl.linkProgram(prog);
+                gl.useProgram(prog);
+
+                const buf = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+
+                const posAttr = gl.getAttribLocation(prog, 'position');
+                gl.enableVertexAttribArray(posAttr);
+                gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+
+                const resLoc = gl.getUniformLocation(prog, 'u_resolution');
+                const timeLoc = gl.getUniformLocation(prog, 'u_time');
+
+                function resize() {
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    const w = Math.floor(window.innerWidth * dpr);
+                    const h = Math.floor(window.innerHeight * dpr);
+                    if (canvas.width !== w || canvas.height !== h) {
+                        canvas.width = w;
+                        canvas.height = h;
+                    }
+                    gl.viewport(0, 0, w, h);
+                }
+
+                window.addEventListener('resize', resize);
+                resize();
+
+                const t0 = performance.now();
+                function loop(now) {
+                    const time = (now - t0) * 0.001;
+                    gl.uniform2f(resLoc, canvas.width, canvas.height);
+                    gl.uniform1f(timeLoc, time);
+                    gl.drawArrays(gl.TRIANGLES, 0, 3);
+                    requestAnimationFrame(loop);
+                }
+                requestAnimationFrame(loop);
+            }
+
+            async function runWebGPU() {
+                if (!navigator.gpu) {
+                    runWebGLFallback();
+                    return;
+                }
+                try {
+                    const adapter = await navigator.gpu.requestAdapter();
+                    if (!adapter) { runWebGLFallback(); return; }
+                    const device = await adapter.requestDevice();
+                    const ctx = canvas.getContext('webgpu');
+                    if (!ctx) { runWebGLFallback(); return; }
+
+                    const format = navigator.gpu.getPreferredCanvasFormat();
+                    ctx.configure({ device, format, alphaMode: 'premultiplied' });
+
+                    const shaderModule = device.createShaderModule({ code: WGSL_SHADER });
+                    const uniformBuffer = device.createBuffer({
+                        size: 16,
+                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    });
+                    const bgl = device.createBindGroupLayout({
+                        entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX, buffer: { type: 'uniform' } }]
+                    });
+                    const bg = device.createBindGroup({
+                        layout: bgl,
+                        entries: [{ binding: 0, resource: { buffer: uniformBuffer } }]
+                    });
+                    const pipeline = device.createRenderPipeline({
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [bgl] }),
+                        vertex: { module: shaderModule, entryPoint: 'vs_main' },
+                        fragment: { module: shaderModule, entryPoint: 'fs_main', targets: [{ format }] },
+                        primitive: { topology: 'triangle-list' }
+                    });
+
+                    const uniformData = new Float32Array(4);
+                    function resize() {
+                        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                        const w = Math.max(1, Math.floor(window.innerWidth * dpr));
+                        const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+                        if (canvas.width !== w || canvas.height !== h) {
+                            canvas.width = w;
+                            canvas.height = h;
+                        }
+                    }
+                    window.addEventListener('resize', resize);
+                    resize();
+
+                    const t0 = performance.now();
+                    function loop(now) {
+                        const time = (now - t0) * 0.001;
+                        uniformData[0] = canvas.width;
+                        uniformData[1] = canvas.height;
+                        uniformData[2] = time;
+                        uniformData[3] = 0;
+                        device.queue.writeBuffer(uniformBuffer, 0, uniformData.buffer);
+
+                        const enc = device.createCommandEncoder();
+                        const pass = enc.beginRenderPass({
+                            colorAttachments: [{
+                                view: ctx.getCurrentTexture().createView(),
+                                clearValue: { r: 0.948, g: 0.970, b: 0.942, a: 1.0 },
+                                loadOp: 'clear',
+                                storeOp: 'store'
+                            }]
+                        });
+                        pass.setPipeline(pipeline);
+                        pass.setBindGroup(0, bg);
+                        pass.draw(3, 1, 0, 0);
+                        pass.end();
+                        device.queue.submit([enc.finish()]);
+                        requestAnimationFrame(loop);
+                    }
+                    requestAnimationFrame(loop);
+                } catch (e) {
+                    runWebGLFallback();
+                }
+            }
+
+            runWebGPU();
+        })();
+    </script>
+
+    <!-- Lucide Icons Rendering with Offline Air-Gap SVG Fallback -->
+    <script>
         const LUCIDE_ICONS_SVG = {
             'shield': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
             'shield-check': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
@@ -679,45 +886,26 @@
             'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>',
             'flask-conical': '<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>',
             'package': '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
-            'package-search': '<path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="m7.5 4.27 9 5.15"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M20.27 17.27 22 19"/>',
             'arrow-right': '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
-            'arrow-left': '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
-            'arrow-up-right': '<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
             'triangle-alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
-            'octagon-alert': '<polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
             'check-circle-2': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
-            'x-circle': '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
             'info': '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
-            'play': '<polygon points="6 3 20 12 6 21 6 3"/>',
             'plus': '<path d="M5 12h14"/><path d="M12 5v14"/>',
-            'ban': '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
-            'circle': '<circle cx="12" cy="12" r="10"/>',
-            'bar-chart-3': '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
-            'book-open': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
             'rotate-ccw': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-            'cpu': '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>',
             'file-text': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'
         };
 
         function renderLucideIcons() {
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
                 try {
-                    window.lucide.createIcons({
-                        attrs: {
-                            'stroke-width': 2
-                        }
-                    });
+                    window.lucide.createIcons({ attrs: { 'stroke-width': 2 } });
                     return;
-                } catch (e) {
-                    console.warn('Lucide bundle init warning, using SVG fallback:', e);
-                }
+                } catch (e) {}
             }
-            // Airgap Fallback renderer: replaces <i data-lucide="..."> with clean inline SVG
             document.querySelectorAll('[data-lucide]').forEach(function(el) {
                 const name = el.getAttribute('data-lucide');
                 const innerSvg = LUCIDE_ICONS_SVG[name];
                 if (!innerSvg) return;
-                
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'none');
@@ -725,18 +913,13 @@
                 svg.setAttribute('stroke-width', '2');
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
-                
-                // Copy classList
                 el.classList.forEach(function(cls) { svg.classList.add(cls); });
                 svg.innerHTML = innerSvg;
                 el.replaceWith(svg);
             });
         }
-
         document.addEventListener('DOMContentLoaded', renderLucideIcons);
-        if (typeof document.body !== 'undefined' && document.body) {
-            document.body.addEventListener('htmx:afterSwap', renderLucideIcons);
-        }
+        if (document.readyState !== 'loading') renderLucideIcons();
     </script>
 </body>
 </html>

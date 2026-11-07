@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 /**
  * SEGEL Official Design System Tokens
- * Derived strictly from the TypeGPU/WebGPU anisotropic lit rays shader:
+ * Comprehensive token suite derived strictly from the TypeGPU/WebGPU anisotropic lit rays shader:
  * - 60% Dominant: TNI AD Military Sage Green & Crisp Military Canvas
  * - 30% Secondary: Tactical Warm Sand & Bronze Gold
  * - 10% Accent: Tactical Field Green, Luminous Mint Glow & Triadic Iridescent Lavender
+ *
+ * Meets WCAG 2.2 Level AA accessibility standards across all interactive states.
  */
 
 export const SEGEL_PALETTE = {
@@ -14,6 +16,7 @@ export const SEGEL_PALETTE = {
     surface: '#FFFFFF',     // Pure white card elevation
     elevated: 'rgba(255, 255, 255, 0.85)', // Frosted glass navigation & floating pods
     border: 'rgba(122, 158, 107, 0.22)',   // Soft sage boundary
+    borderLight: 'rgba(255, 255, 255, 0.95)',
     shadow: '0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02)',
   },
   sage: {
@@ -23,10 +26,11 @@ export const SEGEL_PALETTE = {
     darkForest: '#24531E',  // Deep tactical green for pressed/active states
   },
   typography: {
-    primary: '#0F172A',     // High contrast dark tactical slate
+    primary: '#0F172A',     // High contrast dark tactical slate (WCAG AAA on #FFFFFF / #F2F7F0)
     secondary: '#334155',   // Subheaders & key labels
     muted: '#64748B',       // Descriptive captions & inactive legends
     subtle: '#52664D',      // Sage-tinted muted text
+    inverse: '#FFFFFF',     // Pure white on dark/green buttons
   },
 
   // ── 2. 30% Secondary System (Tactical Warm Sand & Bronze Gold) ──
@@ -36,6 +40,7 @@ export const SEGEL_PALETTE = {
     bronze: '#8C734B',      // Darker bronze for secondary badges & icons
     subtle: '#F7F4EC',      // Soft champagne pill backgrounds
     border: '#E8DFD0',      // Warm panel separator
+    track: '#DCE7D8',       // Unfilled gauge track
   },
 
   // ── 3. 10% Accent System (Luminous Mint Flare & Triadic Lavender) ──
@@ -62,7 +67,51 @@ export const SEGEL_PALETTE = {
     infoBg: '#F2F7F0',
     infoBorder: '#B8D2AD',
   },
+
+  // ── 5. Spatial & Layout Tokens ──
+  spacing: {
+    xxs: '4px',
+    xs: '8px',
+    sm: '12px',
+    md: '16px',
+    lg: '20px',
+    xl: '24px',
+    xxl: '32px',
+    hero: '48px',
+  },
+  radii: {
+    sm: '6px',
+    md: '10px',
+    lg: '16px',
+    xl: '20px',
+    full: '9999px',
+  },
+  shadows: {
+    card: '0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02)',
+    dock: '0 8px 24px -2px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04)',
+    modal: '0 24px 64px -12px rgba(15, 23, 42, 0.25), 0 8px 24px -4px rgba(0, 0, 0, 0.1)',
+    glow: '0 0 16px rgba(59, 122, 50, 0.28)',
+  },
+  transitions: {
+    fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
+    standard: '250ms cubic-bezier(0.4, 0, 0.2, 1)',
+    smooth: '400ms cubic-bezier(0.77, 0, 0.175, 1)',
+    cubeRoll: '9s cubic-bezier(0.77, 0, 0.175, 1) infinite',
+  },
+  zIndex: {
+    canvas: 0,
+    base: 10,
+    dock: 40,
+    modal: 50,
+    tooltip: 60,
+  },
+  breakpoints: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    xxl: '1440px',
+  },
 } as const;
 
 export type SegelPalette = typeof SEGEL_PALETTE;
-

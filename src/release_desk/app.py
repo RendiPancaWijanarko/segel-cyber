@@ -186,12 +186,30 @@ demo = DemoState()
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
+    promoted_count = sum(1 for r in demo.releases if r.get("status") == "PROMOTED")
+    candidate_count = sum(1 for r in demo.releases if r.get("status") in ("CANDIDATE_RECORDED", "CANARY_DEPLOYED"))
+    passed_count = sum(1 for r in demo.releases if r.get("verdict") == "PASS")
+    pass_rate = int((passed_count / len(demo.releases)) * 100) if demo.releases else 100
+
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
+            "request": request,
             "releases": demo.releases,
             "ledger_size": demo.ledger.size,
+            "promoted_count": promoted_count,
+            "candidate_count": candidate_count,
+            "pass_rate": pass_rate,
+            "total_keys": len(demo.trust_root.keys),
+            "root_version": demo.trust_root.root_version,
+            "policy_version": demo.policy.policy_version,
+            "epoch": demo.snapshot.epoch,
+            "root_hash": (
+                demo.ledger.root_hash_hex()[:16] + "..."
+                if demo.ledger.size > 0
+                else "empty"
+            ),
         },
     )
 
@@ -428,10 +446,31 @@ async def trust_view(request: Request) -> HTMLResponse:
 @app.get("/zassk", response_class=HTMLResponse, include_in_schema=False)
 async def segel_analytics_view(request: Request) -> HTMLResponse:
     """SEGEL Modern Glassmorphic Analytics Dashboard preview."""
+    promoted_count = sum(1 for r in demo.releases if r.get("status") == "PROMOTED")
+    candidate_count = sum(1 for r in demo.releases if r.get("status") in ("CANDIDATE_RECORDED", "CANARY_DEPLOYED"))
+    passed_count = sum(1 for r in demo.releases if r.get("verdict") == "PASS")
+    pass_rate = int((passed_count / len(demo.releases)) * 100) if demo.releases else 100
+
     return templates.TemplateResponse(
         request=request,
         name="segel.html",
-        context={"request": request},
+        context={
+            "request": request,
+            "releases": demo.releases,
+            "ledger_size": demo.ledger.size,
+            "promoted_count": promoted_count,
+            "candidate_count": candidate_count,
+            "pass_rate": pass_rate,
+            "total_keys": len(demo.trust_root.keys),
+            "root_version": demo.trust_root.root_version,
+            "policy_version": demo.policy.policy_version,
+            "epoch": demo.snapshot.epoch,
+            "root_hash": (
+                demo.ledger.root_hash_hex()[:16] + "..."
+                if demo.ledger.size > 0
+                else "empty"
+            ),
+        },
     )
 
 
