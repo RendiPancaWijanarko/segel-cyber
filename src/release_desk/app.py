@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -111,6 +111,22 @@ templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 STATIC_DIR = Path(__file__).parent / "static"
 STATIC_DIR.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """Serve the root favicon for all browsers and API clients."""
+    favicon_path = STATIC_DIR / "favicons" / "favicon.ico"
+    if not favicon_path.exists():
+        favicon_path = STATIC_DIR / "favicon.ico"
+    return FileResponse(favicon_path, media_type="image/x-icon")
+
+
+@app.get("/site.webmanifest", include_in_schema=False)
+async def webmanifest() -> FileResponse:
+    """Serve the web app manifest at domain root."""
+    manifest_path = STATIC_DIR / "favicons" / "site.webmanifest"
+    return FileResponse(manifest_path, media_type="application/manifest+json")
 
 
 # ── Synthetic Demo State (MVP) ───────────────────────────────────────

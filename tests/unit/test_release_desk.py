@@ -134,3 +134,18 @@ def test_segel_endpoint(client):
     compat_res = client.get("/zassk")
     assert compat_res.status_code == 200
 
+
+def test_favicon_endpoint(client):
+    res = client.get("/favicon.ico")
+    assert res.status_code == 200
+    assert "image" in res.headers.get("content-type", "")
+
+
+def test_webmanifest_endpoint(client):
+    res = client.get("/site.webmanifest")
+    assert res.status_code == 200
+    assert "manifest" in res.headers.get("content-type", "") or "json" in res.headers.get("content-type", "")
+    data = res.json()
+    assert data["short_name"] == "SEGEL"
+
+
