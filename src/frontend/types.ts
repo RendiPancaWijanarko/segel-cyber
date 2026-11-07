@@ -7,7 +7,8 @@
 export interface NavDockItem {
   id: string;
   label: string;
-  iconName: 'LayoutDashboard' | 'User' | 'FileText' | 'Calendar' | 'BarChart3' | 'Settings' | 'HelpCircle';
+  iconName: 'LayoutDashboard' | 'Activity' | 'PlusCircle' | 'Database' | 'KeyRound' | 'ShieldCheck' | string;
+  href?: string;
 }
 
 export interface TaskStatisticsData {

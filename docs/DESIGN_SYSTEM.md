@@ -125,3 +125,4 @@ const canvasBg = SEGEL_PALETTE.canvas.bg;        // #F2F7F0
   - Total Revenue waveform renders `#3B7A32` spline curve with `#7A9E6B` needle curtain.
   - AlignUI cellular heatmap dynamically binds to `--chart-accent: #3B7A32` and `--chart-cell: #F2F7F0`.
 - [x] **Full Test Integrity**: 308/308 tests passing (`pytest -q`), TypeScript zero emit errors (`npx tsc --noEmit`).
+

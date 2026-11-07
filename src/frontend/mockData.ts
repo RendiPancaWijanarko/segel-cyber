@@ -19,13 +19,10 @@ import {
 } from './types';
 
 export const mockNavDockItems: NavDockItem[] = [
-  { id: 'dashboard', label: 'Dashboard', iconName: 'LayoutDashboard' },
-  { id: 'profile', label: 'Profile', iconName: 'User' },
-  { id: 'docs', label: 'Documents', iconName: 'FileText' },
-  { id: 'calendar', label: 'Calendar', iconName: 'Calendar' },
-  { id: 'analytics', label: 'Analytics', iconName: 'BarChart3' },
-  { id: 'settings', label: 'Settings', iconName: 'Settings' },
-  { id: 'help', label: 'Help & Support', iconName: 'HelpCircle' },
+  { id: 'dashboard', label: 'Dashboard', iconName: 'LayoutDashboard', href: '/' },
+  { id: 'new-release', label: 'New Release', iconName: 'PlusCircle', href: '/release/new' },
+  { id: 'ledger', label: 'Ledger', iconName: 'Database', href: '/ledger' },
+  { id: 'trust-root', label: 'Trust Root', iconName: 'KeyRound', href: '/trust' },
 ];
 
 export const mockTaskStatistics: TaskStatisticsData = {

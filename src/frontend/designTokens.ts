@@ -65,3 +65,4 @@ export const SEGEL_PALETTE = {
 } as const;
 
 export type SegelPalette = typeof SEGEL_PALETTE;
+
