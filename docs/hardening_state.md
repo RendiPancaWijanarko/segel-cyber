@@ -1,7 +1,7 @@
 # SEGEL Hardening State Tracker
 
 - **Branch**: `hardening/p2b-p5`
-- **Active Phase**: Phase G — UI/UX Overhaul (Zassk Glassmorphic Dashboard & Light Mode Complete)
+- **Active Phase**: Phase G — UI/UX Overhaul (Segel Glassmorphic Dashboard & Light Mode Complete)
 - **Last Updated**: 2026-11-06T13:50:00+07:00
 - **GitHub Remote**: `https://github.com/RendiPancaWijanarko/segel-cyber.git`
 
@@ -23,12 +23,12 @@
   - [x] Official Lucide Icons implementation with strict visual specifications: `strokeWidth={2}`, `size={20}` for primary nav / major titles, `size={16}` for inline actions, tables, badges, buttons.
   - [x] Semantic color coding: Emerald 600 (passed/secure), Amber 600 (warning), Red 600 (critical/blocked), Blue 600 (info), Slate 700 (neutral).
   - [x] Built-in air-gap inline SVG fallback dictionary for offline military networks (NFR-001 airgap compliance).
-  - [x] Production-grade recreation of modern glassmorphic analytics dashboard ("Zassk"):
+  - [x] Production-grade recreation of modern glassmorphic analytics dashboard ("Segel"):
     - React TypeScript component: `src/frontend/Dashboard.tsx`
     - Self-contained CSS & hatching patterns: `src/frontend/Dashboard.css`
     - TypeScript data models: `src/frontend/types.ts`
     - Mocked dataset matching visual reference: `src/frontend/mockData.ts`
-    - Standalone HTML preview & live FastAPI route (`/zassk`): `src/frontend/preview.html` & `src/release_desk/templates/zassk.html`
+    - Standalone HTML preview & live FastAPI route (`/segel`): `src/frontend/preview.html` & `src/release_desk/templates/segel.html`
   - [x] Full test suite verified: 308/308 tests passing (100%).
 
   - [x] **Step 1: AT-022, FR-050 / SEC-FINDING-02**: Enforce ledger checkpoint signature verification in Receiver & Assembler (`commit a76cc69`).

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /**
- * Mock datasets for the Zassk Analytics Dashboard.
+ * Mock datasets for the Segel Analytics Dashboard.
  * Accurately models every data point from the visual reference.
  */
 

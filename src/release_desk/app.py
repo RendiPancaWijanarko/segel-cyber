@@ -408,12 +408,13 @@ async def trust_view(request: Request) -> HTMLResponse:
     )
 
 
-@app.get("/zassk", response_class=HTMLResponse)
-async def zassk_analytics_view(request: Request) -> HTMLResponse:
-    """Zassk Modern Glassmorphic Analytics Dashboard preview."""
+@app.get("/segel", response_class=HTMLResponse)
+@app.get("/zassk", response_class=HTMLResponse, include_in_schema=False)
+async def segel_analytics_view(request: Request) -> HTMLResponse:
+    """SEGEL Modern Glassmorphic Analytics Dashboard preview."""
     return templates.TemplateResponse(
         request=request,
-        name="zassk.html",
+        name="segel.html",
         context={"request": request},
     )
 

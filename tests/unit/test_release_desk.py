@@ -122,11 +122,15 @@ def test_healthz_endpoint(client):
     assert data["service"] == "segel-release-desk"
 
 
-def test_zassk_endpoint(client):
-    res = client.get("/zassk")
+def test_segel_endpoint(client):
+    res = client.get("/segel")
     assert res.status_code == 200
-    assert "Zassk" in res.text
+    assert "SEGEL" in res.text or "Segel" in res.text
     assert "Keren nix" in res.text
     assert "Task Statistics" in res.text
     assert "Total Revenue" in res.text
+
+    # Verify backward-compatible alias
+    compat_res = client.get("/zassk")
+    assert compat_res.status_code == 200
 

@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zassk — Precision Reverse-Engineered Analytics Dashboard</title>
+    <title>SEGEL — Precision Reverse-Engineered Analytics Dashboard</title>
     <style>
         /* Precision Geometric Styles matching visual reference */
         :root {
-          --zassk-canvas-bg: linear-gradient(135deg, #A3C5FD 0%, #CDE0FD 35%, #EDF4FE 75%, #F8FAFD 100%);
-          --zassk-glass-dock: rgba(255, 255, 255, 0.72);
-          --zassk-glass-border: rgba(255, 255, 255, 0.95);
-          --zassk-card-solid: #FFFFFF;
-          --zassk-navy: #0F172A;
-          --zassk-charcoal: #181F2A;
-          --zassk-slate-muted: #64748B;
-          --zassk-slate-light: #94A3B8;
-          --zassk-blue-primary: #2563EB;
-          --zassk-blue-sky: #38BDF8;
-          --zassk-blue-ice: #BAE6FD;
-          --zassk-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+          --segel-canvas-bg: linear-gradient(135deg, #A3C5FD 0%, #CDE0FD 35%, #EDF4FE 75%, #F8FAFD 100%);
+          --segel-glass-dock: rgba(255, 255, 255, 0.72);
+          --segel-glass-border: rgba(255, 255, 255, 0.95);
+          --segel-card-solid: #FFFFFF;
+          --segel-navy: #0F172A;
+          --segel-charcoal: #181F2A;
+          --segel-slate-muted: #64748B;
+          --segel-slate-light: #94A3B8;
+          --segel-blue-primary: #2563EB;
+          --segel-blue-sky: #38BDF8;
+          --segel-blue-ice: #BAE6FD;
+          --segel-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,7 +30,7 @@
           background: #F2F7F0;
           padding: 24px 32px 40px 32px;
           font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           display: flex;
           justify-content: center;
           align-items: flex-start;
@@ -39,7 +39,7 @@
           position: relative;
         }
 
-        .zassk-shader-canvas {
+        .segel-shader-canvas {
           position: fixed;
           inset: 0;
           width: 100vw;
@@ -48,7 +48,7 @@
           pointer-events: none;
         }
 
-        .zassk-canvas {
+        .segel-canvas {
           max-width: 1440px;
           width: 100%;
           display: flex;
@@ -60,7 +60,7 @@
         }
 
         /* ── Top Header & Glass Dock ── */
-        .zassk-header {
+        .segel-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -69,7 +69,7 @@
           z-index: 50;
         }
 
-        .zassk-brand-pill {
+        .segel-brand-pill {
           background: rgba(255, 255, 255, 0.75);
           backdrop-filter: blur(14px);
           -webkit-backdrop-filter: blur(14px);
@@ -84,13 +84,13 @@
           text-decoration: none;
           transition: all 0.15s ease;
         }
-        .zassk-brand-pill:hover {
+        .segel-brand-pill:hover {
           transform: translateY(-1px);
           background: rgba(255, 255, 255, 0.9);
           box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
         }
 
-        .zassk-brand-logo {
+        .segel-brand-logo {
           height: 32px;
           width: auto;
           max-width: 32px;
@@ -99,15 +99,15 @@
           filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.12));
         }
 
-        .zassk-brand-text {
+        .segel-brand-text {
           font-weight: 800;
           font-size: 17px;
           letter-spacing: 0.4px;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           font-family: inherit;
         }
 
-        .zassk-brand-tag {
+        .segel-brand-tag {
           font-size: 10px;
           font-weight: 700;
           color: #2563EB;
@@ -117,7 +117,7 @@
           letter-spacing: 0.5px;
         }
 
-        .zassk-dock {
+        .segel-dock {
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
@@ -130,7 +130,7 @@
           gap: 8px;
         }
 
-        .zassk-dock-btn {
+        .segel-dock-btn {
           background: transparent;
           border: none;
           cursor: pointer;
@@ -144,19 +144,19 @@
           font-family: inherit;
         }
 
-        .zassk-dock-btn.inactive {
+        .segel-dock-btn.inactive {
           width: 36px;
           height: 36px;
           border-radius: 50%;
         }
-        .zassk-dock-btn.inactive:hover {
+        .segel-dock-btn.inactive:hover {
           background: rgba(255, 255, 255, 0.85);
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           transform: scale(1.05);
         }
 
-        .zassk-dock-btn.active {
-          background: var(--zassk-charcoal);
+        .segel-dock-btn.active {
+          background: var(--segel-charcoal);
           color: #FFFFFF;
           padding: 8px 18px;
           gap: 8px;
@@ -165,14 +165,14 @@
           box-shadow: 0 4px 14px rgba(24, 31, 42, 0.25);
         }
 
-        .zassk-header-utilities {
+        .segel-header-utilities {
           display: flex;
           align-items: center;
           gap: 12px;
         }
 
         /* Static Military Insignia Badges (Replacing Search & Profile Buttons) */
-        .zassk-header-logo-badge {
+        .segel-header-logo-badge {
           width: 42px;
           height: 42px;
           border-radius: 50%;
@@ -190,7 +190,7 @@
           user-select: none;
         }
 
-        .zassk-header-insignia {
+        .segel-header-insignia {
           width: 100%;
           height: 100%;
           object-fit: contain;
@@ -199,15 +199,15 @@
         }
 
         /* ── Common Card Base ── */
-        .zassk-card {
-          background: var(--zassk-card-solid);
+        .segel-card {
+          background: var(--segel-card-solid);
           border-radius: 24px;
-          box-shadow: var(--zassk-card-shadow);
+          box-shadow: var(--segel-card-shadow);
           position: relative;
           overflow: hidden;
         }
 
-        .zassk-action-pill-btn {
+        .segel-action-pill-btn {
           width: 32px;
           height: 32px;
           border-radius: 50%;
@@ -220,40 +220,40 @@
           cursor: pointer;
           transition: all 0.15s ease;
         }
-        .zassk-action-pill-btn:hover {
+        .segel-action-pill-btn:hover {
           background: #E2E8F0;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           transform: scale(1.05);
         }
 
         /* ── Top Row Grid ── */
-        .zassk-top-row {
+        .segel-top-row {
           display: grid;
           grid-template-columns: 1.15fr 1fr 0.95fr 0.9fr;
           gap: 18px;
         }
 
         @media (max-width: 1200px) {
-          .zassk-top-row { grid-template-columns: 1fr 1fr; }
+          .segel-top-row { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 768px) {
-          .zassk-top-row { grid-template-columns: 1fr; }
+          .segel-top-row { grid-template-columns: 1fr; }
         }
 
         /* Greeting Section */
-        .zassk-greeting-box {
+        .segel-greeting-box {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           padding: 4px 8px;
         }
-        .zassk-hello-lead {
+        .segel-hello-lead {
           font-size: 20px;
           font-weight: 500;
           color: #475569;
           line-height: 1.2;
         }
-        .zassk-hello-name {
+        .segel-hello-name {
           font-size: 32px;
           font-weight: 700;
           color: #0F172A;
@@ -261,42 +261,42 @@
           letter-spacing: -0.6px;
           margin-top: 2px;
         }
-        .zassk-welcome-sub {
+        .segel-welcome-sub {
           font-size: 14px;
           color: #64748B;
           font-weight: 400;
           margin-top: 6px;
         }
 
-        .zassk-task-stat-widget { margin-top: 26px; }
-        .zassk-stat-header {
+        .segel-task-stat-widget { margin-top: 26px; }
+        .segel-stat-header {
           display: flex;
           align-items: baseline;
           justify-content: space-between;
           margin-bottom: 8px;
         }
-        .zassk-stat-label { font-size: 13.5px; font-weight: 600; color: #334155; }
-        .zassk-stat-value-group { display: flex; align-items: baseline; gap: 6px; }
-        .zassk-stat-count { font-size: 26px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px; }
-        .zassk-trend-badge { font-size: 13px; font-weight: 600; color: #475569; }
+        .segel-stat-label { font-size: 13.5px; font-weight: 600; color: #334155; }
+        .segel-stat-value-group { display: flex; align-items: baseline; gap: 6px; }
+        .segel-stat-count { font-size: 26px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px; }
+        .segel-trend-badge { font-size: 13px; font-weight: 600; color: #475569; }
 
         /* 3-Segment Statistics Bar */
-        .zassk-progress-capsule {
+        .segel-progress-capsule {
           display: flex;
           height: 28px;
           border-radius: 9999px;
           overflow: hidden;
           gap: 3px;
         }
-        .zassk-seg-1 {
+        .segel-seg-1 {
           width: 48%;
           background-color: #1E293B;
           background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1.2px, transparent 1.2px);
           background-size: 4px 4px;
           border-radius: 9999px 6px 6px 9999px;
         }
-        .zassk-seg-2 { width: 26%; background-color: #94A3B8; border-radius: 6px; }
-        .zassk-seg-3 {
+        .segel-seg-2 { width: 26%; background-color: #94A3B8; border-radius: 6px; }
+        .segel-seg-3 {
           width: 26%;
           background: repeating-linear-gradient(
             45deg,
@@ -309,7 +309,7 @@
         }
 
         /* ── S-Curved File-Folder Tab Notched Card Silhouette ── */
-        .zassk-card-tabbed-notch {
+        .segel-card-tabbed-notch {
           position: relative;
           filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
           height: 220px;
@@ -317,7 +317,7 @@
           flex-direction: column;
         }
 
-        .zassk-card-svg-bg {
+        .segel-card-svg-bg {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -327,21 +327,21 @@
         }
 
         /* Balanced, Harmonious Tab Header Spacing */
-        .zassk-tabbed-header {
+        .segel-tabbed-header {
           position: relative;
           z-index: 2;
           padding: 16px 20px 0 20px;
         }
 
-        .zassk-card-title {
+        .segel-card-title {
           font-size: 14.5px;
           font-weight: 700;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           letter-spacing: -0.2px;
         }
 
         /* Radial Gauge with text aligned flush with bottom edge of arc */
-        .zassk-gauge-wrapper-centered {
+        .segel-gauge-wrapper-centered {
           position: relative;
           z-index: 2;
           width: 100%;
@@ -352,13 +352,13 @@
           padding-bottom: 6px;
         }
 
-        .zassk-radial-gauge-svg {
+        .segel-radial-gauge-svg {
           width: 100%;
           height: 100%;
           overflow: visible;
         }
 
-        .zassk-gauge-center-content {
+        .segel-gauge-center-content {
           position: absolute;
           bottom: 10px;
           left: 50%;
@@ -367,14 +367,14 @@
           pointer-events: none;
           line-height: 1.1;
         }
-        .zassk-gauge-center-val {
+        .segel-gauge-center-val {
           font-size: 28px;
           font-weight: 800;
           color: #0F172A;
           line-height: 1;
           margin-bottom: 2px;
         }
-        .zassk-gauge-center-label {
+        .segel-gauge-center-label {
           font-size: 12.5px;
           font-weight: 500;
           color: #64748B;
@@ -383,31 +383,31 @@
         }
 
         /* ── Interlocking Card Columns (Columns 3 & 4) ── */
-        .zassk-interlock-col {
+        .segel-interlock-col {
           display: flex;
           flex-direction: column;
           height: 220px;
           position: relative;
         }
 
-        .zassk-interlock-card {
+        .segel-interlock-card {
           position: relative;
           filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
         }
 
-        .zassk-tp-card,
-        .zassk-cr-card {
+        .segel-tp-card,
+        .segel-cr-card {
           height: 110px;
         }
 
-        .zassk-au-card,
-        .zassk-et-card {
+        .segel-au-card,
+        .segel-et-card {
           height: 118px;
           margin-top: -8px;
         }
 
-        .zassk-tp-inner,
-        .zassk-cr-inner {
+        .segel-tp-inner,
+        .segel-cr-inner {
           position: relative;
           z-index: 2;
           padding: 14px 18px 16px 18px;
@@ -418,8 +418,8 @@
           box-sizing: border-box;
         }
 
-        .zassk-au-inner,
-        .zassk-et-inner {
+        .segel-au-inner,
+        .segel-et-inner {
           position: relative;
           z-index: 2;
           padding: 16px 18px 14px 18px;
@@ -430,14 +430,14 @@
           box-sizing: border-box;
         }
 
-        .zassk-tp-header,
-        .zassk-cr-header {
+        .segel-tp-header,
+        .segel-cr-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .zassk-tp-arrow-btn {
+        .segel-tp-arrow-btn {
           width: 30px;
           height: 30px;
           border-radius: 50%;
@@ -450,19 +450,19 @@
           cursor: pointer;
           transition: all 0.15s ease;
         }
-        .zassk-tp-arrow-btn:hover {
+        .segel-tp-arrow-btn:hover {
           background: #E2E8F0;
           transform: translate(1px, -1px);
         }
 
-        .zassk-tp-body {
+        .segel-tp-body {
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
           margin-top: 2px;
         }
 
-        .zassk-metric-big {
+        .segel-metric-big {
           font-size: 28px;
           font-weight: 700;
           color: #0F172A;
@@ -471,30 +471,30 @@
         }
 
         /* Mini Bar Histogram (10 bars on lower shelf) */
-        .zassk-mini-barchart {
+        .segel-mini-barchart {
           display: flex;
           align-items: flex-end;
           gap: 3.5px;
           height: 30px;
         }
 
-        .zassk-mini-bar {
+        .segel-mini-bar {
           width: 4.5px;
           border-radius: 2px;
           transition: all 0.2s ease;
         }
-        .zassk-mini-bar:hover {
+        .segel-mini-bar:hover {
           transform: scaleY(1.15);
         }
 
         /* Active Users Lower Section */
-        .zassk-au-header {
+        .segel-au-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .zassk-au-split-labels {
+        .segel-au-split-labels {
           display: flex;
           align-items: center;
           gap: 8px;
@@ -503,12 +503,12 @@
           color: #64748B;
         }
 
-        .zassk-au-sep {
+        .segel-au-sep {
           color: #CBD5E1;
           font-size: 11px;
         }
 
-        .zassk-au-body {
+        .segel-au-body {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -517,7 +517,7 @@
         }
 
         /* 3-Segment Progress Meter */
-        .zassk-split-bar {
+        .segel-split-bar {
           flex: 1;
           display: flex;
           height: 20px;
@@ -528,7 +528,7 @@
           padding: 2px;
         }
 
-        .zassk-split-seg-1 {
+        .segel-split-seg-1 {
           width: 70%;
           height: 100%;
           border-radius: 9999px 0 0 9999px;
@@ -541,7 +541,7 @@
           );
         }
 
-        .zassk-split-seg-2 {
+        .segel-split-seg-2 {
           width: 22%;
           height: 100%;
           background: repeating-linear-gradient(
@@ -553,7 +553,7 @@
           );
         }
 
-        .zassk-split-seg-3 {
+        .segel-split-seg-3 {
           width: 8%;
           height: 100%;
           background-color: #E2E8F0;
@@ -561,37 +561,37 @@
         }
 
         /* 32 micro vertical tick bars */
-        .zassk-dense-ticks-32 {
+        .segel-dense-ticks-32 {
           display: flex;
           align-items: center;
           gap: 2.5px;
           height: 16px;
           margin-top: 4px;
         }
-        .zassk-tick-bar-32 {
+        .segel-tick-bar-32 {
           width: 3px;
           height: 16px;
           border-radius: 2px;
           flex-shrink: 0;
         }
-        .zassk-tick-bar-32.filled { background: var(--zassk-blue-primary); }
-        .zassk-tick-bar-32.unfilled { background: #E2E8F0; }
+        .segel-tick-bar-32.filled { background: var(--segel-blue-primary); }
+        .segel-tick-bar-32.unfilled { background: #E2E8F0; }
 
         /* ── Ended Task Card (Restored Reference Design) ── */
-        .zassk-et-title {
+        .segel-et-title {
           font-size: 14px;
           font-weight: 600;
           color: #0F172A;
         }
 
-        .zassk-et-body {
+        .segel-et-body {
           display: flex;
           align-items: center;
           justify-content: space-between;
           margin-top: 2px;
         }
 
-        .zassk-et-val {
+        .segel-et-val {
           font-size: 28px;
           font-weight: 700;
           color: #0F172A;
@@ -599,19 +599,19 @@
         }
 
         /* 4-Row x 12-Column Dot Matrix Grid */
-        .zassk-et-matrix {
+        .segel-et-matrix {
           display: flex;
           flex-direction: column;
           gap: 4px;
         }
 
-        .zassk-et-matrix-row {
+        .segel-et-matrix-row {
           display: flex;
           align-items: center;
           gap: 4px;
         }
 
-        .zassk-et-cell {
+        .segel-et-cell {
           width: 7.5px;
           height: 7.5px;
           display: flex;
@@ -619,77 +619,77 @@
           justify-content: center;
         }
 
-        .zassk-et-dot-pip {
+        .segel-et-dot-pip {
           border-radius: 50%;
           transition: transform 0.15s ease;
         }
 
-        .zassk-et-dot-pip.active {
+        .segel-et-dot-pip.active {
           width: 6.5px;
           height: 6.5px;
           background-color: #2563EB;
         }
 
-        .zassk-et-dot-pip.inactive {
+        .segel-et-dot-pip.inactive {
           width: 4px;
           height: 4px;
           background-color: #E2E8F0;
         }
 
-        .zassk-et-dot-pip:hover {
+        .segel-et-dot-pip:hover {
           transform: scale(1.3);
         }
 
         /* ── Middle Row: Waterfall Needle Chart & User Sources ── */
-        .zassk-mid-row {
+        .segel-mid-row {
           display: grid;
           grid-template-columns: 1.15fr 0.85fr;
           gap: 18px;
         }
 
-        @media (max-width: 992px) { .zassk-mid-row { grid-template-columns: 1fr; } }
+        @media (max-width: 992px) { .segel-mid-row { grid-template-columns: 1fr; } }
 
-        .zassk-revenue-card {
+        .segel-revenue-card {
           padding: 24px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
         }
 
-        .zassk-revenue-top-bar {
+        .segel-revenue-top-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .zassk-revenue-layout {
+        .segel-revenue-layout {
           display: flex;
           gap: 20px;
           margin-top: 12px;
           position: relative;
         }
 
-        .zassk-revenue-side-metric {
+        .segel-revenue-side-metric {
           min-width: 110px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
         }
-        .zassk-revenue-amount {
+        .segel-revenue-amount {
           font-size: 26px;
           font-weight: 800;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           letter-spacing: -0.6px;
           line-height: 1.1;
         }
-        .zassk-revenue-sub {
+        .segel-revenue-sub {
           font-size: 12px;
-          color: var(--zassk-slate-muted);
+          color: var(--segel-slate-muted);
           font-weight: 500;
           margin-top: 4px;
         }
 
-        .zassk-y-markers {
+        .segel-y-markers {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -701,15 +701,15 @@
         }
 
         /* Waterfall Line-Needle Chart Area */
-        .zassk-waveform-container {
+        .segel-waveform-container {
           flex: 1;
           position: relative;
           height: 175px;
         }
 
-        .zassk-waveform-svg { width: 100%; height: 100%; overflow: visible; }
+        .segel-waveform-svg { width: 100%; height: 100%; overflow: visible; }
 
-        .zassk-floating-tooltip {
+        .segel-floating-tooltip {
           position: absolute;
           transform: translate(-50%, -100%);
           margin-top: -14px;
@@ -726,14 +726,14 @@
           transition: all 0.12s ease;
         }
 
-        .zassk-timeline-slider-track {
+        .segel-timeline-slider-track {
           height: 4px;
           background: #E2E8F0;
           border-radius: 9999px;
           margin: 10px 0 6px 130px;
           position: relative;
         }
-        .zassk-timeline-slider-thumb {
+        .segel-timeline-slider-thumb {
           position: absolute;
           top: -2px;
           height: 8px;
@@ -742,7 +742,7 @@
           box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
         }
 
-        .zassk-x-axis-full {
+        .segel-x-axis-full {
           display: flex;
           justify-content: space-between;
           padding: 6px 0 0 130px;
@@ -752,27 +752,27 @@
         }
 
         /* User Sources Card */
-        .zassk-source-card {
+        .segel-source-card {
           padding: 24px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
         }
 
-        .zassk-source-list {
+        .segel-source-list {
           display: flex;
           flex-direction: column;
           gap: 16px;
           margin-top: 14px;
         }
 
-        .zassk-source-row {
+        .segel-source-row {
           display: flex;
           align-items: center;
           gap: 14px;
         }
 
-        .zassk-brand-icon {
+        .segel-brand-icon {
           width: 20px;
           height: 20px;
           display: flex;
@@ -781,7 +781,7 @@
           flex-shrink: 0;
         }
 
-        .zassk-brand-track {
+        .segel-brand-track {
           flex: 1;
           height: 38px;
           border-radius: 9999px;
@@ -798,7 +798,7 @@
           align-items: center;
         }
 
-        .zassk-frosted-pod {
+        .segel-frosted-pod {
           position: absolute;
           left: 6px;
           top: 50%;
@@ -814,7 +814,7 @@
           z-index: 2;
           pointer-events: none;
         }
-        .zassk-pod-dot {
+        .segel-pod-dot {
           width: 3px;
           height: 3px;
           border-radius: 50%;
@@ -822,7 +822,7 @@
           opacity: 0.6;
         }
 
-        .zassk-brand-capsule {
+        .segel-brand-capsule {
           height: 100%;
           border-radius: 9999px;
           display: flex;
@@ -835,7 +835,7 @@
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .zassk-count-pill-seam {
+        .segel-count-pill-seam {
           position: absolute;
           right: -16px;
           top: 50%;
@@ -851,17 +851,17 @@
         }
 
         /* ── Bottom Row: Table & Notched Transactions ── */
-        .zassk-bottom-row {
+        .segel-bottom-row {
           display: grid;
           grid-template-columns: 2fr 1fr;
           gap: 18px;
         }
 
-        @media (max-width: 992px) { .zassk-bottom-row { grid-template-columns: 1fr; } }
+        @media (max-width: 992px) { .segel-bottom-row { grid-template-columns: 1fr; } }
 
-        .zassk-table-card { padding: 24px; }
-        .zassk-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; font-size: 13.5px; }
-        .zassk-table th {
+        .segel-table-card { padding: 24px; }
+        .segel-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; font-size: 13.5px; }
+        .segel-table th {
           padding: 12px 14px;
           text-align: left;
           font-size: 11.5px;
@@ -871,10 +871,10 @@
           letter-spacing: 0.6px;
           border-bottom: 1px solid #F1F5F9;
         }
-        .zassk-table td { padding: 14px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; color: var(--zassk-navy); }
-        .zassk-table tr:hover td { background: #F8FAFC; }
+        .segel-table td { padding: 14px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; color: var(--segel-navy); }
+        .segel-table tr:hover td { background: #F8FAFC; }
 
-        .zassk-checkbox {
+        .segel-checkbox {
           width: 18px;
           height: 18px;
           border-radius: 6px;
@@ -886,18 +886,18 @@
           transition: all 0.15s ease;
           background: #FFFFFF;
         }
-        .zassk-checkbox.checked {
-          background: var(--zassk-blue-primary);
-          border-color: var(--zassk-blue-primary);
+        .segel-checkbox.checked {
+          background: var(--segel-blue-primary);
+          border-color: var(--segel-blue-primary);
           color: #FFFFFF;
         }
 
-        .zassk-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
-        .zassk-status-active { background: #DCFCE7; color: #15803D; }
-        .zassk-status-pending { background: #FEF3C7; color: #B45309; }
+        .segel-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
+        .segel-status-active { background: #DCFCE7; color: #15803D; }
+        .segel-status-pending { background: #FEF3C7; color: #B45309; }
 
         /* ── Notched Transactions Card Silhouette ── */
-        .zassk-trans-tabbed-notch {
+        .segel-trans-tabbed-notch {
           position: relative;
           filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
           height: 280px;
@@ -905,7 +905,7 @@
           flex-direction: column;
         }
 
-        .zassk-trans-list-pad {
+        .segel-trans-list-pad {
           position: relative;
           z-index: 2;
           padding: 8px 22px 20px 22px;
@@ -914,16 +914,16 @@
           gap: 12px;
         }
 
-        .zassk-trans-item {
+        .segel-trans-item {
           display: flex;
           align-items: center;
           justify-content: space-between;
           padding: 8px 0;
           border-bottom: 1px solid #F8FAFC;
         }
-        .zassk-trans-item:last-child { border-bottom: none; }
-        .zassk-trans-left { display: flex; align-items: center; gap: 12px; }
-        .zassk-trans-icon {
+        .segel-trans-item:last-child { border-bottom: none; }
+        .segel-trans-left { display: flex; align-items: center; gap: 12px; }
+        .segel-trans-icon {
           width: 36px;
           height: 36px;
           border-radius: 10px;
@@ -934,14 +934,14 @@
           color: #3B82F6;
         }
 
-        .zassk-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--zassk-navy); }
-        .zassk-trans-company { font-size: 11.5px; color: #64748B; margin-top: 1px; }
-        .zassk-trans-right { text-align: right; }
-        .zassk-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
-        .zassk-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }
+        .segel-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--segel-navy); }
+        .segel-trans-company { font-size: 11.5px; color: #64748B; margin-top: 1px; }
+        .segel-trans-right { text-align: right; }
+        .segel-trans-amount { font-size: 13.5px; font-weight: 700; color: #0F172A; }
+        .segel-trans-date { font-size: 11.5px; color: #64748B; margin-top: 1px; }
 
         /* ── 5. Full Bottom Performance Trend Card (AlignUI v1.2) ── */
-        .zassk-full-trend-card {
+        .segel-full-trend-card {
           margin-top: 6px;
           border-radius: 20px;
           border: 1px solid rgba(226, 232, 240, 0.8);
@@ -952,7 +952,7 @@
           flex-direction: column;
         }
 
-        .zassk-full-trend-header {
+        .segel-full-trend-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -960,20 +960,20 @@
           border-bottom: 1px solid #F1F5F9;
         }
 
-        .zassk-full-trend-title-box {
+        .segel-full-trend-title-box {
           display: flex;
           align-items: center;
           gap: 8px;
         }
 
-        .zassk-full-trend-title {
+        .segel-full-trend-title {
           font-size: 16px;
           font-weight: 700;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           letter-spacing: -0.2px;
         }
 
-        .zassk-info-icon-btn {
+        .segel-info-icon-btn {
           width: 24px;
           height: 24px;
           border-radius: 50%;
@@ -986,12 +986,12 @@
           color: #94A3B8;
           transition: all 0.15s ease;
         }
-        .zassk-info-icon-btn:hover {
-          color: var(--zassk-navy);
+        .segel-info-icon-btn:hover {
+          color: var(--segel-navy);
           background: #F1F5F9;
         }
 
-        .zassk-metric-select {
+        .segel-metric-select {
           appearance: none;
           -webkit-appearance: none;
           background: #FFFFFF url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
@@ -1000,31 +1000,31 @@
           padding: 6px 32px 6px 12px;
           font-size: 13px;
           font-weight: 500;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           cursor: pointer;
           outline: none;
           box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
           transition: all 0.15s ease;
         }
-        .zassk-metric-select:hover {
+        .segel-metric-select:hover {
           border-color: #CBD5E1;
         }
 
-        .zassk-full-trend-content {
+        .segel-full-trend-content {
           padding: 24px 28px 24px 24px;
           display: flex;
           flex-direction: column;
           gap: 12px;
         }
 
-        .zassk-chart-body-grid {
+        .segel-chart-body-grid {
           display: grid;
           grid-template-columns: 2.8rem 1fr;
           gap: 14px;
           align-items: stretch;
         }
 
-        .zassk-chart-y-ticks {
+        .segel-chart-y-ticks {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -1037,13 +1037,13 @@
           user-select: none;
         }
 
-        .zassk-chart-canvas-area {
+        .segel-chart-canvas-area {
           position: relative;
           height: 200px;
           cursor: crosshair;
         }
 
-        .zassk-columns-grid {
+        .segel-columns-grid {
           display: grid;
           grid-template-columns: repeat(60, minmax(0, 1fr));
           gap: 3px;
@@ -1051,22 +1051,22 @@
           align-items: stretch;
         }
 
-        .zassk-col-strip {
+        .segel-col-strip {
           display: grid;
           grid-template-rows: repeat(14, minmax(0, 1fr));
           gap: 2.5px;
           height: 100%;
         }
 
-        .zassk-cell {
+        .segel-cell {
           border-radius: 2px;
           transition: background-color 0.15s ease;
         }
-        .zassk-cell.active { background-color: #2563EB; }
-        .zassk-cell.secondary { background-color: #93C5FD; }
-        .zassk-cell.empty { background-color: #F1F5F9; }
+        .segel-cell.active { background-color: #2563EB; }
+        .segel-cell.secondary { background-color: #93C5FD; }
+        .segel-cell.empty { background-color: #F1F5F9; }
 
-        .zassk-scrubber-crosshair {
+        .segel-scrubber-crosshair {
           position: absolute;
           top: 0;
           bottom: 0;
@@ -1076,7 +1076,7 @@
           z-index: 10;
         }
 
-        .zassk-scrubber-pip {
+        .segel-scrubber-pip {
           position: absolute;
           width: 10px;
           height: 10px;
@@ -1090,7 +1090,7 @@
           z-index: 12;
         }
 
-        .zassk-scrubber-card-tooltip {
+        .segel-scrubber-card-tooltip {
           position: absolute;
           width: 140px;
           background: #FFFFFF;
@@ -1103,13 +1103,13 @@
           z-index: 20;
         }
 
-        .zassk-scrubber-card-date {
+        .segel-scrubber-card-date {
           font-size: 11px;
           color: #64748B;
           font-weight: 500;
         }
 
-        .zassk-scrubber-card-val {
+        .segel-scrubber-card-val {
           font-family: 'SFMono-Regular', Consolas, monospace;
           font-size: 16px;
           font-weight: 700;
@@ -1117,7 +1117,7 @@
           margin-top: 2px;
         }
 
-        .zassk-scrubber-date-badge {
+        .segel-scrubber-date-badge {
           position: absolute;
           bottom: -32px;
           transform: translateX(-50%);
@@ -1133,7 +1133,7 @@
           z-index: 15;
         }
 
-        .zassk-chart-months-row {
+        .segel-chart-months-row {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
           padding-left: 3.5rem;
@@ -1145,14 +1145,14 @@
         }
 
         /* Metric Tabs Footer */
-        .zassk-metric-tabs-footer {
+        .segel-metric-tabs-footer {
           display: flex;
           border-top: 1px solid #F1F5F9;
           background: #FAFAFA;
           overflow-x: auto;
         }
 
-        .zassk-metric-tab {
+        .segel-metric-tab {
           flex: 1;
           min-width: 200px;
           padding: 16px 20px;
@@ -1167,29 +1167,29 @@
           transition: all 0.15s ease;
           outline: none;
         }
-        .zassk-metric-tab:hover {
+        .segel-metric-tab:hover {
           background: #F8FAFC;
         }
-        .zassk-metric-tab.active {
+        .segel-metric-tab.active {
           background: #FFFFFF;
         }
-        .zassk-metric-tab.active::after {
+        .segel-metric-tab.active::after {
           content: '';
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           height: 2px;
-          background: var(--zassk-navy);
+          background: var(--segel-navy);
         }
 
-        .zassk-tab-top {
+        .segel-tab-top {
           display: flex;
           align-items: center;
           gap: 8px;
         }
 
-        .zassk-tab-icon-box {
+        .segel-tab-icon-box {
           width: 28px;
           height: 28px;
           border-radius: 6px;
@@ -1199,42 +1199,42 @@
           color: #64748B;
           border: 1px solid #E2E8F0;
         }
-        .zassk-metric-tab.active .zassk-tab-icon-box {
+        .segel-metric-tab.active .segel-tab-icon-box {
           background: #0F172A;
           color: #FFFFFF;
           border-color: #0F172A;
         }
 
-        .zassk-tab-label {
+        .segel-tab-label {
           font-size: 12.5px;
           font-weight: 600;
           color: #64748B;
         }
-        .zassk-metric-tab.active .zassk-tab-label {
-          color: var(--zassk-navy);
+        .segel-metric-tab.active .segel-tab-label {
+          color: var(--segel-navy);
         }
 
-        .zassk-tab-val-group {
+        .segel-tab-val-group {
           display: flex;
           flex-direction: column;
           gap: 2px;
         }
 
-        .zassk-tab-big-val {
+        .segel-tab-big-val {
           font-family: 'SFMono-Regular', Consolas, monospace;
           font-size: 22px;
           font-weight: 700;
-          color: var(--zassk-navy);
+          color: var(--segel-navy);
           letter-spacing: -0.4px;
         }
 
-        .zassk-tab-sub {
+        .segel-tab-sub {
           font-size: 11.5px;
           color: #64748B;
           font-weight: 500;
         }
 
-        .zassk-tab-separator {
+        .segel-tab-separator {
           width: 1px;
           background: #F1F5F9;
           align-self: stretch;
@@ -1243,20 +1243,20 @@
 </head>
 <body>
     <!-- 0. WebGPU / TypeGPU Shader Background Layer -->
-    <canvas id="webgpuShaderCanvas" class="zassk-shader-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
+    <canvas id="webgpuShaderCanvas" class="segel-shader-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
 
-    <div class="zassk-canvas">
+    <div class="segel-canvas">
         <!-- ── 1. TOP NAVIGATION HEADER ── -->
-        <header class="zassk-header">
-            <a href="/" class="zassk-brand-pill" title="PUSSIBERAD">
-                <img src="/static/images/pussiberad-logo.png" onerror="this.src='assets/pussiberad-logo.png'" alt="PUSSIBERAD Logo" class="zassk-brand-logo">
-                <span class="zassk-brand-text">PUSSIBERAD</span>
+        <header class="segel-header">
+            <a href="/" class="segel-brand-pill" title="PUSSIBERAD">
+                <img src="/static/images/pussiberad-logo.png" onerror="this.src='assets/pussiberad-logo.png'" alt="PUSSIBERAD Logo" class="segel-brand-logo">
+                <span class="segel-brand-text">PUSSIBERAD</span>
             </a>
 
             <!-- Center Segmented Floating Dock -->
-            <nav class="zassk-dock" id="navDock">
+            <nav class="segel-dock" id="navDock">
                 <!-- 1. Dashboard: ACTIVE with minimalist home icon -->
-                <button class="zassk-dock-btn active" data-tab="dashboard" title="Dashboard">
+                <button class="segel-dock-btn active" data-tab="dashboard" title="Dashboard">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
                         <path d="M9 17h6"/>
@@ -1265,42 +1265,42 @@
                 </button>
 
                 <!-- 2. Profile: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="profile" title="Profile">
+                <button class="segel-dock-btn inactive" data-tab="profile" title="Profile">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
                 </button>
 
                 <!-- 3. Documents: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="docs" title="Documents">
+                <button class="segel-dock-btn inactive" data-tab="docs" title="Documents">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
                     </svg>
                 </button>
 
                 <!-- 4. Calendar: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="calendar" title="Calendar">
+                <button class="segel-dock-btn inactive" data-tab="calendar" title="Calendar">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
                     </svg>
                 </button>
 
                 <!-- 5. Analytics: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="analytics" title="Analytics">
+                <button class="segel-dock-btn inactive" data-tab="analytics" title="Analytics">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
                     </svg>
                 </button>
 
                 <!-- 6. Settings: Inactive circle -->
-                <button class="zassk-dock-btn inactive" data-tab="settings" title="Settings">
+                <button class="segel-dock-btn inactive" data-tab="settings" title="Settings">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                 </button>
 
                 <!-- 7. Help: STRICTLY INACTIVE circle -->
-                <button class="zassk-dock-btn inactive" data-tab="help" title="Help">
+                <button class="segel-dock-btn inactive" data-tab="help" title="Help">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
                     </svg>
@@ -1308,122 +1308,122 @@
             </nav>
 
             <!-- Right Utilities: TNI & TNI AD Logos (Static Visual Elements) -->
-            <div class="zassk-header-utilities">
-                <div class="zassk-header-logo-badge" title="Tentara Nasional Indonesia (TNI)" role="img" aria-label="Logo TNI">
-                    <img src="/static/images/logo-tni.svg" alt="Logo TNI" class="zassk-header-insignia">
+            <div class="segel-header-utilities">
+                <div class="segel-header-logo-badge" title="Tentara Nasional Indonesia (TNI)" role="img" aria-label="Logo TNI">
+                    <img src="/static/images/logo-tni.svg" alt="Logo TNI" class="segel-header-insignia">
                 </div>
-                <div class="zassk-header-logo-badge" title="TNI Angkatan Darat (TNI AD)" role="img" aria-label="Logo TNI AD">
-                    <img src="/static/images/logo-tni-ad.svg" alt="Logo TNI AD" class="zassk-header-insignia">
+                <div class="segel-header-logo-badge" title="TNI Angkatan Darat (TNI AD)" role="img" aria-label="Logo TNI AD">
+                    <img src="/static/images/logo-tni-ad.svg" alt="Logo TNI AD" class="segel-header-insignia">
                 </div>
             </div>
         </header>
 
         <!-- ── 2. TOP ROW METRICS ── -->
-        <div class="zassk-top-row">
+        <div class="segel-top-row">
             <!-- Col 1: Greeting & Task Statistics -->
-            <div class="zassk-greeting-box">
+            <div class="segel-greeting-box">
                 <div>
-                    <div class="zassk-hello-lead">Hello,</div>
-                    <h1 class="zassk-hello-name">Keren nix</h1>
-                    <div class="zassk-welcome-sub">Welcome Back</div>
+                    <div class="segel-hello-lead">Hello,</div>
+                    <h1 class="segel-hello-name">Keren nix</h1>
+                    <div class="segel-welcome-sub">Welcome Back</div>
                 </div>
 
-                <div class="zassk-task-stat-widget">
-                    <div class="zassk-stat-header">
-                        <span class="zassk-stat-label">Task Statistics</span>
-                        <div class="zassk-stat-value-group">
-                            <span class="zassk-stat-count">506</span>
-                            <span class="zassk-trend-badge">↗ 4.3%</span>
+                <div class="segel-task-stat-widget">
+                    <div class="segel-stat-header">
+                        <span class="segel-stat-label">Task Statistics</span>
+                        <div class="segel-stat-value-group">
+                            <span class="segel-stat-count">506</span>
+                            <span class="segel-trend-badge">↗ 4.3%</span>
                         </div>
                     </div>
-                    <div class="zassk-progress-capsule">
-                        <div class="zassk-seg-1" title="Completed Tasks"></div>
-                        <div class="zassk-seg-2" title="In Progress"></div>
-                        <div class="zassk-seg-3" title="Planned Tasks"></div>
+                    <div class="segel-progress-capsule">
+                        <div class="segel-seg-1" title="Completed Tasks"></div>
+                        <div class="segel-seg-2" title="In Progress"></div>
+                        <div class="segel-seg-3" title="Planned Tasks"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Col 2: Total Responses Card with Folder Tab Notch Silhouette & Left-to-Right Radial Arc -->
-            <div class="zassk-card-tabbed-notch">
-                <svg class="zassk-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
+            <div class="segel-card-tabbed-notch">
+                <svg class="segel-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
                     <path
                         d="M 0,22 C 0,9.8 9.8,0 22,0 L 190,0 C 200,0 208,4 214,8 C 220,12 225,14 234,14 L 278,14 C 290.2,14 300,23.8 300,36 L 300,198 C 300,210.2 290.2,220 278,220 L 22,220 C 9.8,220 0,210.2 0,198 Z"
                         fill="#FFFFFF"
                     />
                 </svg>
 
-                <div class="zassk-tabbed-header">
-                    <span class="zassk-card-title">Total Responses</span>
+                <div class="segel-tabbed-header">
+                    <span class="segel-card-title">Total Responses</span>
                 </div>
 
-                <div class="zassk-gauge-wrapper-centered">
-                    <svg class="zassk-radial-gauge-svg" viewBox="0 0 240 135" id="radialGaugeSvg">
+                <div class="segel-gauge-wrapper-centered">
+                    <svg class="segel-radial-gauge-svg" viewBox="0 0 240 135" id="radialGaugeSvg">
                         <!-- 14 Thick Radial Pill Ticks rendered dynamically (Left-to-Right Clockwise Fill) -->
                     </svg>
-                    <div class="zassk-gauge-center-content">
-                        <div class="zassk-gauge-center-val">98%</div>
-                        <div class="zassk-gauge-center-label">Responses rate</div>
+                    <div class="segel-gauge-center-content">
+                        <div class="segel-gauge-center-val">98%</div>
+                        <div class="segel-gauge-center-label">Responses rate</div>
                     </div>
                 </div>
             </div>
 
             <!-- Col 3: Interlocking "Total Profit" & "Active Users" Cards -->
-            <div class="zassk-interlock-col">
+            <div class="segel-interlock-col">
                 <!-- Top Card: Total Profit -->
-                <div class="zassk-interlock-card zassk-tp-card">
-                    <svg class="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+                <div class="segel-interlock-card segel-tp-card">
+                    <svg class="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
                         <path d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,96 C 300,103.7 293.7,110 286,110 L 250,110 C 240,110 234,105 228,100 C 222,96 216,96 208,96 L 14,96 C 6.3,96 0,89.7 0,82 Z" fill="#FFFFFF"/>
                     </svg>
-                    <div class="zassk-tp-inner">
-                        <div class="zassk-tp-header">
-                            <span class="zassk-card-title">Total Profit</span>
-                            <button class="zassk-tp-arrow-btn" title="View Profit">
+                    <div class="segel-tp-inner">
+                        <div class="segel-tp-header">
+                            <span class="segel-card-title">Total Profit</span>
+                            <button class="segel-tp-arrow-btn" title="View Profit">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
                                 </svg>
                             </button>
                         </div>
-                        <div class="zassk-tp-body">
-                            <div class="zassk-metric-big">$63k</div>
-                            <div class="zassk-mini-barchart">
-                                <div class="zassk-mini-bar" style="height: 8px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 14px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 12px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 18px; background-color: #2563EB;"></div>
-                                <div class="zassk-mini-bar" style="height: 26px; background-color: #2563EB;"></div>
-                                <div class="zassk-mini-bar" style="height: 22px; background-color: #2563EB;"></div>
-                                <div class="zassk-mini-bar" style="height: 14px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 10px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 16px; background-color: #93C5FD;"></div>
-                                <div class="zassk-mini-bar" style="height: 10px; background-color: #93C5FD;"></div>
+                        <div class="segel-tp-body">
+                            <div class="segel-metric-big">$63k</div>
+                            <div class="segel-mini-barchart">
+                                <div class="segel-mini-bar" style="height: 8px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 14px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 12px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 18px; background-color: #2563EB;"></div>
+                                <div class="segel-mini-bar" style="height: 26px; background-color: #2563EB;"></div>
+                                <div class="segel-mini-bar" style="height: 22px; background-color: #2563EB;"></div>
+                                <div class="segel-mini-bar" style="height: 14px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 10px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 16px; background-color: #93C5FD;"></div>
+                                <div class="segel-mini-bar" style="height: 10px; background-color: #93C5FD;"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Bottom Card: Active Users -->
-                <div class="zassk-interlock-card zassk-au-card">
-                    <svg class="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
+                <div class="segel-interlock-card segel-au-card">
+                    <svg class="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
                         <path d="M 0,14 C 0,6.3 6.3,0 14,0 L 208,0 C 216,0 222,0 228,4 C 234,9 240,14 250,14 L 286,14 C 293.7,14 300,20.3 300,28 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z" fill="#FFFFFF"/>
                     </svg>
-                    <div class="zassk-au-inner">
-                        <div class="zassk-au-header">
-                            <span class="zassk-card-title">Active Users</span>
-                            <div class="zassk-au-split-labels">
+                    <div class="segel-au-inner">
+                        <div class="segel-au-header">
+                            <span class="segel-card-title">Active Users</span>
+                            <div class="segel-au-split-labels">
                                 <span>75%</span>
-                                <span class="zassk-au-sep">|</span>
+                                <span class="segel-au-sep">|</span>
                                 <span>25%</span>
-                                <span class="zassk-au-sep">|</span>
+                                <span class="segel-au-sep">|</span>
                                 <span>10%</span>
                             </div>
                         </div>
-                        <div class="zassk-au-body">
-                            <div class="zassk-metric-big">150</div>
-                            <div class="zassk-split-bar">
-                                <div class="zassk-split-seg-1" title="Primary users (75%)"></div>
-                                <div class="zassk-split-seg-2" title="Secondary users (25%)"></div>
-                                <div class="zassk-split-seg-3" title="Guest users (10%)"></div>
+                        <div class="segel-au-body">
+                            <div class="segel-metric-big">150</div>
+                            <div class="segel-split-bar">
+                                <div class="segel-split-seg-1" title="Primary users (75%)"></div>
+                                <div class="segel-split-seg-2" title="Secondary users (25%)"></div>
+                                <div class="segel-split-seg-3" title="Guest users (10%)"></div>
                             </div>
                         </div>
                     </div>
@@ -1431,38 +1431,38 @@
             </div>
 
             <!-- Col 4: Interlocking "Conversion Rate" & "Ended Task" Cards -->
-            <div class="zassk-interlock-col">
+            <div class="segel-interlock-col">
                 <!-- Top Card: Conversion Rate -->
-                <div class="zassk-interlock-card zassk-cr-card">
-                    <svg class="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+                <div class="segel-interlock-card segel-cr-card">
+                    <svg class="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
                         <path d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,82 C 300,89.7 293.7,96 286,96 L 92,96 C 84,96 78,96 72,100 C 66,105 60,110 50,110 L 14,110 C 6.3,110 0,103.7 0,96 Z" fill="#FFFFFF"/>
                     </svg>
-                    <div class="zassk-cr-inner">
-                        <div class="zassk-cr-header">
-                            <span class="zassk-card-title">Conversion Rate</span>
-                            <button class="zassk-tp-arrow-btn" title="View Conversion">
+                    <div class="segel-cr-inner">
+                        <div class="segel-cr-header">
+                            <span class="segel-card-title">Conversion Rate</span>
+                            <button class="segel-tp-arrow-btn" title="View Conversion">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
                                 </svg>
                             </button>
                         </div>
-                        <div class="zassk-metric-big" style="margin: 2px 0 4px 0;">75%</div>
+                        <div class="segel-metric-big" style="margin: 2px 0 4px 0;">75%</div>
                         <!-- 32 micro vertical tick bars -->
-                        <div class="zassk-dense-ticks-32" id="conversionTicks"></div>
+                        <div class="segel-dense-ticks-32" id="conversionTicks"></div>
                     </div>
                 </div>
 
                 <!-- Bottom Card: Ended Task (Restored Reference Design) -->
-                <div class="zassk-interlock-card zassk-et-card">
-                    <svg class="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
+                <div class="segel-interlock-card segel-et-card">
+                    <svg class="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
                         <path d="M 0,28 C 0,20.3 6.3,14 14,14 L 50,14 C 60,14 66,9 72,4 C 78,0 84,0 92,0 L 286,0 C 293.7,0 300,6.3 300,14 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z" fill="#FFFFFF"/>
                     </svg>
-                    <div class="zassk-et-inner">
-                        <div class="zassk-et-title">Ended Task</div>
-                        <div class="zassk-et-body">
-                            <div class="zassk-et-val">80</div>
+                    <div class="segel-et-inner">
+                        <div class="segel-et-title">Ended Task</div>
+                        <div class="segel-et-body">
+                            <div class="segel-et-val">80</div>
                             <!-- 4-Row x 12-Column Dot Matrix Grid -->
-                            <div class="zassk-et-matrix" id="endedTaskMatrix" role="img" aria-label="Ended Task Matrix"></div>
+                            <div class="segel-et-matrix" id="endedTaskMatrix" role="img" aria-label="Ended Task Matrix"></div>
                         </div>
                     </div>
                 </div>
@@ -1470,27 +1470,27 @@
         </div>
 
         <!-- ── 3. MIDDLE ROW: SPECTRAL WATERFALL NEEDLE CHART & USER SOURCES ── -->
-        <div class="zassk-mid-row">
+        <div class="segel-mid-row">
             <!-- Full-Width Total Revenue Card -->
-            <div class="zassk-card zassk-revenue-card">
-                <div class="zassk-revenue-top-bar">
-                    <span class="zassk-card-title">Total Revenue</span>
+            <div class="segel-card segel-revenue-card">
+                <div class="segel-revenue-top-bar">
+                    <span class="segel-card-title">Total Revenue</span>
                     <!-- Funnel Filter Icon -->
-                    <button class="zassk-action-pill-btn" title="Filter Revenue">
+                    <button class="segel-action-pill-btn" title="Filter Revenue">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
                         </svg>
                     </button>
                 </div>
 
-                <div class="zassk-revenue-layout">
+                <div class="segel-revenue-layout">
                     <!-- Left Metric Column -->
-                    <div class="zassk-revenue-side-metric">
+                    <div class="segel-revenue-side-metric">
                         <div>
-                            <div class="zassk-revenue-amount">$1240</div>
-                            <div class="zassk-revenue-sub">Last 15 days Orders</div>
+                            <div class="segel-revenue-amount">$1240</div>
+                            <div class="segel-revenue-sub">Last 15 days Orders</div>
                         </div>
-                        <div class="zassk-y-markers">
+                        <div class="segel-y-markers">
                             <span>100%</span>
                             <span>80%</span>
                             <span>60%</span>
@@ -1500,8 +1500,8 @@
                     </div>
 
                     <!-- Full-Width Waterfall Needle Container -->
-                    <div class="zassk-waveform-container" id="chartArea">
-                        <svg class="zassk-waveform-svg" viewBox="0 0 530 145" id="waveformSvg">
+                    <div class="segel-waveform-container" id="chartArea">
+                        <svg class="segel-waveform-svg" viewBox="0 0 530 145" id="waveformSvg">
                             <!-- Needle curtain lines -->
                             <g id="needleCurtainGroup"></g>
                             <!-- Spline path -->
@@ -1511,17 +1511,17 @@
                         </svg>
 
                         <!-- Floating Tooltip Pill -->
-                        <div class="zassk-floating-tooltip" id="chartTooltip">Revenue $120</div>
+                        <div class="segel-floating-tooltip" id="chartTooltip">Revenue $120</div>
                     </div>
                 </div>
 
                 <!-- Timeline Range Scrubber Bar -->
-                <div class="zassk-timeline-slider-track">
-                    <div class="zassk-timeline-slider-thumb" style="left: 26%; width: 28%;"></div>
+                <div class="segel-timeline-slider-track">
+                    <div class="segel-timeline-slider-thumb" style="left: 26%; width: 28%;"></div>
                 </div>
 
                 <!-- Full-Width X-Axis Days -->
-                <div class="zassk-x-axis-full" id="xAxisLabels">
+                <div class="segel-x-axis-full" id="xAxisLabels">
                     <span>01</span>
                     <span>04</span>
                     <span>07</span>
@@ -1535,24 +1535,24 @@
             </div>
 
             <!-- User Source Card with Multi-Layered Progress Tracks -->
-            <div class="zassk-card zassk-source-card">
+            <div class="segel-card segel-source-card">
                 <div>
-                    <div class="zassk-revenue-top-bar">
+                    <div class="segel-revenue-top-bar">
                         <div>
-                            <span class="zassk-card-title">User Source</span>
+                            <span class="segel-card-title">User Source</span>
                             <div style="font-size: 13px; color: #64748B; font-weight: 500; margin-top: 2px;">Total 12k+</div>
                         </div>
-                        <button class="zassk-action-pill-btn" title="Filter Sources">
+                        <button class="segel-action-pill-btn" title="Filter Sources">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="zassk-source-list">
+                    <div class="segel-source-list">
                         <!-- Google -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
+                        <div class="segel-source-row">
+                            <div class="segel-brand-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -1560,49 +1560,49 @@
                                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                                 </svg>
                             </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-frosted-pod">
-                                    <div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div>
+                            <div class="segel-brand-track">
+                                <div class="segel-frosted-pod">
+                                    <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
                                 </div>
-                                <div class="zassk-brand-capsule" style="width: 62%; background: linear-gradient(90deg, #93C5FD 0%, #818CF8 100%);">
+                                <div class="segel-brand-capsule" style="width: 62%; background: linear-gradient(90deg, #93C5FD 0%, #818CF8 100%);">
                                     <span>Google.com</span>
-                                    <div class="zassk-count-pill-seam">4653</div>
+                                    <div class="segel-count-pill-seam">4653</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- X / Twitter -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
+                        <div class="segel-source-row">
+                            <div class="segel-brand-icon">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#0F172A">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                 </svg>
                             </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-frosted-pod">
-                                    <div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div>
+                            <div class="segel-brand-track">
+                                <div class="segel-frosted-pod">
+                                    <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
                                 </div>
-                                <div class="zassk-brand-capsule" style="width: 76%; background: linear-gradient(90deg, #A855F7 0%, #9333EA 100%);">
+                                <div class="segel-brand-capsule" style="width: 76%; background: linear-gradient(90deg, #A855F7 0%, #9333EA 100%);">
                                     <span>X.com</span>
-                                    <div class="zassk-count-pill-seam">379</div>
+                                    <div class="segel-count-pill-seam">379</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Instagram -->
-                        <div class="zassk-source-row">
-                            <div class="zassk-brand-icon">
+                        <div class="segel-source-row">
+                            <div class="segel-brand-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                                 </svg>
                             </div>
-                            <div class="zassk-brand-track">
-                                <div class="zassk-frosted-pod">
-                                    <div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div><div class="zassk-pod-dot"></div>
+                            <div class="segel-brand-track">
+                                <div class="segel-frosted-pod">
+                                    <div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div><div class="segel-pod-dot"></div>
                                 </div>
-                                <div class="zassk-brand-capsule" style="width: 86%; background: linear-gradient(90deg, #F87171 0%, #FB7185 100%);">
+                                <div class="segel-brand-capsule" style="width: 86%; background: linear-gradient(90deg, #F87171 0%, #FB7185 100%);">
                                     <span>Instagram.com</span>
-                                    <div class="zassk-count-pill-seam">653</div>
+                                    <div class="segel-count-pill-seam">653</div>
                                 </div>
                             </div>
                         </div>
@@ -1612,23 +1612,23 @@
         </div>
 
         <!-- ── 4. BOTTOM ROW: JOINING USER TABLE & TRANSACTIONS ── -->
-        <div class="zassk-bottom-row">
+        <div class="segel-bottom-row">
             <!-- Left: Recent Joining User Table -->
-            <div class="zassk-card zassk-table-card">
-                <div class="zassk-revenue-top-bar" style="margin-bottom: 8px;">
-                    <span class="zassk-card-title">Recent Joining User</span>
-                    <button class="zassk-action-pill-btn" title="Filter Users">
+            <div class="segel-card segel-table-card">
+                <div class="segel-revenue-top-bar" style="margin-bottom: 8px;">
+                    <span class="segel-card-title">Recent Joining User</span>
+                    <button class="segel-action-pill-btn" title="Filter Users">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
                         </svg>
                     </button>
                 </div>
 
-                <table class="zassk-table">
+                <table class="segel-table">
                     <thead>
                         <tr>
                             <th style="width: 36px;">
-                                <div class="zassk-checkbox" id="headerCheckbox">
+                                <div class="segel-checkbox" id="headerCheckbox">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                                         <path d="M20 6 9 17l-5-5"/>
                                     </svg>
@@ -1645,7 +1645,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <div class="zassk-checkbox row-checkbox">
+                                <div class="segel-checkbox row-checkbox">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                                         <path d="M20 6 9 17l-5-5"/>
                                     </svg>
@@ -1655,13 +1655,13 @@
                             <td style="color: #64748B;">Full-time</td>
                             <td style="color: #64748B;">Remote</td>
                             <td>
-                                <span class="zassk-status-pill zassk-status-active">
+                                <span class="segel-status-pill segel-status-active">
                                     <span style="font-size: 8px;">●</span> Active
                                 </span>
                             </td>
                             <td style="color: #64748B;">Oct 30, 2025</td>
                             <td>
-                                <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;" title="More options">
+                                <button class="segel-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;" title="More options">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
                                     </svg>
@@ -1670,7 +1670,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <div class="zassk-checkbox row-checkbox">
+                                <div class="segel-checkbox row-checkbox">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                                         <path d="M20 6 9 17l-5-5"/>
                                     </svg>
@@ -1680,13 +1680,13 @@
                             <td style="color: #64748B;">Full-time</td>
                             <td style="color: #64748B;">New York</td>
                             <td>
-                                <span class="zassk-status-pill zassk-status-pending">
+                                <span class="segel-status-pill segel-status-pending">
                                     <span style="font-size: 8px;">●</span> Pending
                                 </span>
                             </td>
                             <td style="color: #64748B;">Oct 28, 2025</td>
                             <td>
-                                <button class="zassk-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;" title="More options">
+                                <button class="segel-action-pill-btn" style="width: 28px; height: 28px; border: none; background: transparent;" title="More options">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
                                     </svg>
@@ -1698,92 +1698,92 @@
             </div>
 
             <!-- Right: Recent Transactions Card with S-Curved File-Folder Tab Notch Silhouette -->
-            <div class="zassk-trans-tabbed-notch">
-                <svg class="zassk-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
+            <div class="segel-trans-tabbed-notch">
+                <svg class="segel-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
                     <path
                         d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,256 C324,269.3 313.3,280 300,280 L24,280 C10.7,280 0,269.3 0,256 Z"
                         fill="#FFFFFF"
                     />
                 </svg>
 
-                <div class="zassk-tabbed-header">
-                    <span class="zassk-card-title">Recent Transactions</span>
+                <div class="segel-tabbed-header">
+                    <span class="segel-card-title">Recent Transactions</span>
                 </div>
 
-                <div class="zassk-trans-list-pad">
+                <div class="segel-trans-list-pad">
                     <!-- NVDA -->
-                    <div class="zassk-trans-item">
-                        <div class="zassk-trans-left">
-                            <div class="zassk-trans-icon">
+                    <div class="segel-trans-item">
+                        <div class="segel-trans-left">
+                            <div class="segel-trans-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                                 </svg>
                             </div>
                             <div>
-                                <div class="zassk-trans-symbol">NVDA</div>
-                                <div class="zassk-trans-company">NVIDIA Corp.</div>
+                                <div class="segel-trans-symbol">NVDA</div>
+                                <div class="segel-trans-company">NVIDIA Corp.</div>
                             </div>
                         </div>
-                        <div class="zassk-trans-right">
-                            <div class="zassk-trans-amount">+$1,980</div>
-                            <div class="zassk-trans-date">Dec 28</div>
+                        <div class="segel-trans-right">
+                            <div class="segel-trans-amount">+$1,980</div>
+                            <div class="segel-trans-date">Dec 28</div>
                         </div>
                     </div>
 
                     <!-- AAPL -->
-                    <div class="zassk-trans-item">
-                        <div class="zassk-trans-left">
-                            <div class="zassk-trans-icon">
+                    <div class="segel-trans-item">
+                        <div class="segel-trans-left">
+                            <div class="segel-trans-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                                 </svg>
                             </div>
                             <div>
-                                <div class="zassk-trans-symbol">AAPL</div>
-                                <div class="zassk-trans-company">Apple Inc.</div>
+                                <div class="segel-trans-symbol">AAPL</div>
+                                <div class="segel-trans-company">Apple Inc.</div>
                             </div>
                         </div>
-                        <div class="zassk-trans-right">
-                            <div class="zassk-trans-amount">+$1,980</div>
-                            <div class="zassk-trans-date">Dec 28</div>
+                        <div class="segel-trans-right">
+                            <div class="segel-trans-amount">+$1,980</div>
+                            <div class="segel-trans-date">Dec 28</div>
                         </div>
                     </div>
 
                     <!-- TSLA -->
-                    <div class="zassk-trans-item">
-                        <div class="zassk-trans-left">
-                            <div class="zassk-trans-icon">
+                    <div class="segel-trans-item">
+                        <div class="segel-trans-left">
+                            <div class="segel-trans-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                                 </svg>
                             </div>
                             <div>
-                                <div class="zassk-trans-symbol">TSLA</div>
-                                <div class="zassk-trans-company">Tesla Inc.</div>
+                                <div class="segel-trans-symbol">TSLA</div>
+                                <div class="segel-trans-company">Tesla Inc.</div>
                             </div>
                         </div>
-                        <div class="zassk-trans-right">
-                            <div class="zassk-trans-amount">+$1,980</div>
-                            <div class="zassk-trans-date">Dec 28</div>
+                        <div class="segel-trans-right">
+                            <div class="segel-trans-amount">+$1,980</div>
+                            <div class="segel-trans-date">Dec 28</div>
                         </div>
                     </div>
 
                     <!-- AMZN -->
-                    <div class="zassk-trans-item">
-                        <div class="zassk-trans-left">
-                            <div class="zassk-trans-icon">
+                    <div class="segel-trans-item">
+                        <div class="segel-trans-left">
+                            <div class="segel-trans-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                                 </svg>
                             </div>
                             <div>
-                                <div class="zassk-trans-symbol">AMZN</div>
-                                <div class="zassk-trans-company">Amazon.com Inc.</div>
+                                <div class="segel-trans-symbol">AMZN</div>
+                                <div class="segel-trans-company">Amazon.com Inc.</div>
                             </div>
                         </div>
-                        <div class="zassk-trans-right">
-                            <div class="zassk-trans-amount">+$1,980</div>
-                            <div class="zassk-trans-date">Dec 28</div>
+                        <div class="segel-trans-right">
+                            <div class="segel-trans-amount">+$1,980</div>
+                            <div class="segel-trans-date">Dec 28</div>
                         </div>
                     </div>
                 </div>
@@ -1791,21 +1791,21 @@
         </div>
 
         <!-- ── 5. FULL BOTTOM PERFORMANCE TREND CARD (AlignUI v1.2 Integration) ── -->
-        <div class="zassk-card zassk-full-trend-card">
+        <div class="segel-card segel-full-trend-card">
             <!-- Header: Title + Info tooltip + Metric Select Dropdown -->
-            <div class="zassk-full-trend-header">
-                <div class="zassk-full-trend-title-box">
-                    <span class="zassk-full-trend-title">Performance trend</span>
-                    <div class="zassk-info-tooltip-wrap">
-                        <button class="zassk-info-icon-btn" title="Daily production activity across 2026" id="ptInfoBtn">
+            <div class="segel-full-trend-header">
+                <div class="segel-full-trend-title-box">
+                    <span class="segel-full-trend-title">Performance trend</span>
+                    <div class="segel-info-tooltip-wrap">
+                        <button class="segel-info-icon-btn" title="Daily production activity across 2026" id="ptInfoBtn">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
                             </svg>
                         </button>
                     </div>
                 </div>
-                <div class="zassk-select-wrapper">
-                    <select id="metricSelect" class="zassk-metric-select" aria-label="Chart metric">
+                <div class="segel-select-wrapper">
+                    <select id="metricSelect" class="segel-metric-select" aria-label="Chart metric">
                         <option value="prod-executions" selected>Executions</option>
                         <option value="failed-executions">Failed executions</option>
                         <option value="failure-rate">Failure rate</option>
@@ -1815,10 +1815,10 @@
             </div>
 
             <!-- Content: Y-axis ticks + 60-column chart + 12 month labels -->
-            <div class="zassk-full-trend-content">
-                <div class="zassk-chart-body-grid">
+            <div class="segel-full-trend-content">
+                <div class="segel-chart-body-grid">
                     <!-- Left Y-axis ticks -->
-                    <div class="zassk-chart-y-ticks" id="chartYTicks">
+                    <div class="segel-chart-y-ticks" id="chartYTicks">
                         <span>400</span>
                         <span>300</span>
                         <span>200</span>
@@ -1826,28 +1826,28 @@
                     </div>
 
                     <!-- 60-Column Chart Area -->
-                    <div class="zassk-chart-canvas-area" id="chartCanvasArea">
-                        <div class="zassk-columns-grid" id="chartColumnsGrid"></div>
+                    <div class="segel-chart-canvas-area" id="chartCanvasArea">
+                        <div class="segel-columns-grid" id="chartColumnsGrid"></div>
 
                         <!-- Dashed Vertical Crosshair Scrubber Line -->
-                        <div class="zassk-scrubber-crosshair" id="scrubberCrosshair" style="display: none;"></div>
+                        <div class="segel-scrubber-crosshair" id="scrubberCrosshair" style="display: none;"></div>
 
                         <!-- Target Pip Ring -->
-                        <div class="zassk-scrubber-pip" id="scrubberPip" style="display: none;"></div>
+                        <div class="segel-scrubber-pip" id="scrubberPip" style="display: none;"></div>
 
                         <!-- Floating Date & Value Tooltip Card -->
-                        <div class="zassk-scrubber-card-tooltip" id="scrubberCardTooltip" style="display: none;">
-                            <div class="zassk-scrubber-card-date" id="scrubberCardDate">Apr 30, 2026</div>
-                            <div class="zassk-scrubber-card-val" id="scrubberCardVal">320</div>
+                        <div class="segel-scrubber-card-tooltip" id="scrubberCardTooltip" style="display: none;">
+                            <div class="segel-scrubber-card-date" id="scrubberCardDate">Apr 30, 2026</div>
+                            <div class="segel-scrubber-card-val" id="scrubberCardVal">320</div>
                         </div>
 
                         <!-- Short Date Bottom Tag -->
-                        <div class="zassk-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">Apr 30</div>
+                        <div class="segel-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">Apr 30</div>
                     </div>
                 </div>
 
                 <!-- 12-Month Labels Row -->
-                <div class="zassk-chart-months-row">
+                <div class="segel-chart-months-row">
                     <span>Jan</span>
                     <span>Feb</span>
                     <span>Mar</span>
@@ -1864,74 +1864,74 @@
             </div>
 
             <!-- Footer: 4 Metric Tabs -->
-            <div class="zassk-metric-tabs-footer" id="metricTabsFooter">
+            <div class="segel-metric-tabs-footer" id="metricTabsFooter">
                 <!-- Tab 1 -->
-                <button class="zassk-metric-tab active" data-key="prod-executions">
-                    <div class="zassk-tab-top">
-                        <span class="zassk-tab-icon-box">
+                <button class="segel-metric-tab active" data-key="prod-executions">
+                    <div class="segel-tab-top">
+                        <span class="segel-tab-icon-box">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m9 12 2 2 4-4"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                             </svg>
                         </span>
-                        <span class="zassk-tab-label">Prod. executions</span>
+                        <span class="segel-tab-label">Prod. executions</span>
                     </div>
-                    <div class="zassk-tab-val-group">
-                        <span class="zassk-tab-big-val">320</span>
-                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs last month</span>
+                    <div class="segel-tab-val-group">
+                        <span class="segel-tab-big-val">320</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs last month</span>
                     </div>
                 </button>
 
-                <div class="zassk-tab-separator"></div>
+                <div class="segel-tab-separator"></div>
 
                 <!-- Tab 2 -->
-                <button class="zassk-metric-tab" data-key="failed-executions">
-                    <div class="zassk-tab-top">
-                        <span class="zassk-tab-icon-box">
+                <button class="segel-metric-tab" data-key="failed-executions">
+                    <div class="segel-tab-top">
+                        <span class="segel-tab-icon-box">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m15 9-6 6"/><path d="m9 9 6 6"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                             </svg>
                         </span>
-                        <span class="zassk-tab-label">Failed executions</span>
+                        <span class="segel-tab-label">Failed executions</span>
                     </div>
-                    <div class="zassk-tab-val-group">
-                        <span class="zassk-tab-big-val">28</span>
-                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs last month</span>
+                    <div class="segel-tab-val-group">
+                        <span class="segel-tab-big-val">28</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs last month</span>
                     </div>
                 </button>
 
-                <div class="zassk-tab-separator"></div>
+                <div class="segel-tab-separator"></div>
 
                 <!-- Tab 3 -->
-                <button class="zassk-metric-tab" data-key="failure-rate">
-                    <div class="zassk-tab-top">
-                        <span class="zassk-tab-icon-box">
+                <button class="segel-metric-tab" data-key="failure-rate">
+                    <div class="segel-tab-top">
+                        <span class="segel-tab-icon-box">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
                             </svg>
                         </span>
-                        <span class="zassk-tab-label">Failure rate</span>
+                        <span class="segel-tab-label">Failure rate</span>
                     </div>
-                    <div class="zassk-tab-val-group">
-                        <span class="zassk-tab-big-val">2.4%</span>
-                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs last month</span>
+                    <div class="segel-tab-val-group">
+                        <span class="segel-tab-big-val">2.4%</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs last month</span>
                     </div>
                 </button>
 
-                <div class="zassk-tab-separator"></div>
+                <div class="segel-tab-separator"></div>
 
                 <!-- Tab 4 -->
-                <button class="zassk-metric-tab" data-key="time-saved">
-                    <div class="zassk-tab-top">
-                        <span class="zassk-tab-icon-box">
+                <button class="segel-metric-tab" data-key="time-saved">
+                    <div class="segel-tab-top">
+                        <span class="segel-tab-icon-box">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
                             </svg>
                         </span>
-                        <span class="zassk-tab-label">Time saved</span>
+                        <span class="segel-tab-label">Time saved</span>
                     </div>
-                    <div class="zassk-tab-val-group">
-                        <span class="zassk-tab-big-val">18.4 hrs</span>
-                        <span class="zassk-tab-sub"><strong style="color:#0F172A;">-1.1%</strong> vs last month</span>
+                    <div class="segel-tab-val-group">
+                        <span class="segel-tab-big-val">18.4 hrs</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">-1.1%</strong> vs last month</span>
                     </div>
                 </button>
             </div>
@@ -1984,7 +1984,7 @@
             if (!container) return;
             for (let i = 0; i < 32; i++) {
                 const tick = document.createElement('div');
-                tick.className = `zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`;
+                tick.className = `segel-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`;
                 container.appendChild(tick);
             }
         })();
@@ -2008,13 +2008,13 @@
 
             for (let r = 0; r < 4; r++) {
                 const rowEl = document.createElement('div');
-                rowEl.className = 'zassk-et-matrix-row';
+                rowEl.className = 'segel-et-matrix-row';
                 for (let c = 0; c < 12; c++) {
                     const cell = document.createElement('div');
-                    cell.className = 'zassk-et-cell';
+                    cell.className = 'segel-et-cell';
                     const pip = document.createElement('div');
                     const isActive = activeIndices[r]?.includes(c);
-                    pip.className = `zassk-et-dot-pip ${isActive ? 'active' : 'inactive'}`;
+                    pip.className = `segel-et-dot-pip ${isActive ? 'active' : 'inactive'}`;
                     cell.appendChild(pip);
                     rowEl.appendChild(cell);
                 }
@@ -2119,7 +2119,7 @@
         (function setupDock() {
             const dock = document.getElementById('navDock');
             if (!dock) return;
-            const btns = dock.querySelectorAll('.zassk-dock-btn');
+            const btns = dock.querySelectorAll('.segel-dock-btn');
             btns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     btns.forEach(b => {
@@ -2313,12 +2313,12 @@
                 gridEl.innerHTML = '';
                 currentColumns.forEach((colData, colIndex) => {
                     const strip = document.createElement('div');
-                    strip.className = 'zassk-col-strip';
+                    strip.className = 'segel-col-strip';
                     for (let r = 0; r < ROW_COUNT; r++) {
                         const cell = document.createElement('div');
                         const active = r >= ROW_COUNT - colData.height;
                         const secondary = r >= ROW_COUNT - colData.secondaryHeight;
-                        cell.className = `zassk-cell ${active ? 'active' : secondary ? 'secondary' : 'empty'}`;
+                        cell.className = `segel-cell ${active ? 'active' : secondary ? 'secondary' : 'empty'}`;
                         strip.appendChild(cell);
                     }
                     gridEl.appendChild(strip);
@@ -2382,7 +2382,7 @@
 
             // Sync with Metric Tabs Footer
             if (tabsFooter) {
-                const tabs = tabsFooter.querySelectorAll('.zassk-metric-tab');
+                const tabs = tabsFooter.querySelectorAll('.segel-metric-tab');
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         const key = tab.getAttribute('data-key');
@@ -2394,7 +2394,7 @@
             }
 
             function updateTabs(key) {
-                const tabs = tabsFooter.querySelectorAll('.zassk-metric-tab');
+                const tabs = tabsFooter.querySelectorAll('.segel-metric-tab');
                 tabs.forEach(tab => {
                     if (tab.getAttribute('data-key') === key) {
                         tab.classList.add('active');

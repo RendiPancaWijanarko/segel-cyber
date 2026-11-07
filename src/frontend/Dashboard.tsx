@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /**
- * Zassk Precision Pixel-Exact Analytics Dashboard
+ * Segel Precision Pixel-Exact Analytics Dashboard
  * Reverse-engineered production-grade React TypeScript component.
  * Features:
  * - Frameless canvas sitting directly on ambient sky wash.
@@ -17,7 +17,7 @@ import {
   mockJoiningUsers,
   mockTransactions,
 } from './mockData';
-import { ZasskDashboardProps } from './types';
+import { SegelDashboardProps } from './types';
 import { PerformanceTrend } from '../components/performance-trend/performance-trend';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { WebGPUShaderBackground } from './WebGPUShaderBackground';
@@ -148,7 +148,7 @@ export const LucideIcon: React.FC<IconProps> = ({
   );
 };
 
-export const Dashboard: React.FC<ZasskDashboardProps> = ({
+export const Dashboard: React.FC<SegelDashboardProps> = ({
   userName = 'Keren nix',
   userGreeting = 'Hello,',
   brandingText = 'PUSSIBERAD',
@@ -340,24 +340,24 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
       <WebGPUShaderBackground />
 
       {/* 2. Interactive Dashboard Layer */}
-      <main className={`relative z-10 mx-auto max-w-[1440px] p-6 zassk-canvas ${className}`}>
+      <main className={`relative z-10 mx-auto max-w-[1440px] p-6 segel-canvas ${className}`}>
         {/* ── 1. TOP NAVIGATION HEADER ── */}
-        <header className="zassk-header">
+        <header className="segel-header">
           {/* Brand Pill */}
-          <a href="/" className="zassk-brand-pill" title="PUSSIBERAD">
-            <img src={logoUrl} alt="PUSSIBERAD Logo" className="zassk-brand-logo" />
-            <span className="zassk-brand-text">{brandingText}</span>
+          <a href="/" className="segel-brand-pill" title="PUSSIBERAD">
+            <img src={logoUrl} alt="PUSSIBERAD Logo" className="segel-brand-logo" />
+            <span className="segel-brand-text">{brandingText}</span>
           </a>
 
           {/* Center Segmented Floating Dock */}
-          <nav className="zassk-dock">
+          <nav className="segel-dock">
             {dockItems.map((item) => {
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleDockClick(item.id)}
-                  className={`zassk-dock-btn ${isActive ? 'active' : 'inactive'}`}
+                  className={`segel-dock-btn ${isActive ? 'active' : 'inactive'}`}
                   aria-label={item.label}
                   title={item.label}
                 >
@@ -374,9 +374,9 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </nav>
 
           {/* Right Header Insignias: TNI & TNI AD Logos (Static Visual Elements) */}
-          <div className="zassk-header-utilities">
+          <div className="segel-header-utilities">
             <div
-              className="zassk-header-logo-badge"
+              className="segel-header-logo-badge"
               title="Tentara Nasional Indonesia (TNI)"
               role="img"
               aria-label="Logo TNI"
@@ -384,11 +384,11 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               <img
                 src={tniLogoUrl}
                 alt="Logo TNI"
-                className="zassk-header-insignia"
+                className="segel-header-insignia"
               />
             </div>
             <div
-              className="zassk-header-logo-badge"
+              className="segel-header-logo-badge"
               title="TNI Angkatan Darat (TNI AD)"
               role="img"
               aria-label="Logo TNI AD"
@@ -396,53 +396,53 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               <img
                 src={tniAdLogoUrl}
                 alt="Logo TNI AD"
-                className="zassk-header-insignia"
+                className="segel-header-insignia"
               />
             </div>
           </div>
         </header>
 
         {/* ── 2. TOP ROW METRICS ── */}
-        <div className="zassk-top-row">
+        <div className="segel-top-row">
           {/* Col 1: Greeting & Task Statistics */}
-          <div className="zassk-greeting-box">
+          <div className="segel-greeting-box">
             <div>
-              <div className="zassk-hello-lead">{userGreeting}</div>
-              <h1 className="zassk-hello-name">{userName}</h1>
-              <div className="zassk-welcome-sub">Welcome Back</div>
+              <div className="segel-hello-lead">{userGreeting}</div>
+              <h1 className="segel-hello-name">{userName}</h1>
+              <div className="segel-welcome-sub">Welcome Back</div>
             </div>
 
-            <div className="zassk-task-stat-widget">
-              <div className="zassk-stat-header">
-                <span className="zassk-stat-label">Task Statistics</span>
-                <div className="zassk-stat-value-group">
-                  <span className="zassk-stat-count">{mockTaskStatistics.count}</span>
-                  <span className="zassk-trend-badge">↗ {mockTaskStatistics.trendPercentage}%</span>
+            <div className="segel-task-stat-widget">
+              <div className="segel-stat-header">
+                <span className="segel-stat-label">Task Statistics</span>
+                <div className="segel-stat-value-group">
+                  <span className="segel-stat-count">{mockTaskStatistics.count}</span>
+                  <span className="segel-trend-badge">↗ {mockTaskStatistics.trendPercentage}%</span>
                 </div>
               </div>
-              <div className="zassk-progress-capsule">
-                <div className="zassk-seg-1" title="Completed Tasks" />
-                <div className="zassk-seg-2" title="In Progress" />
-                <div className="zassk-seg-3" title="Planned Tasks" />
+              <div className="segel-progress-capsule">
+                <div className="segel-seg-1" title="Completed Tasks" />
+                <div className="segel-seg-2" title="In Progress" />
+                <div className="segel-seg-3" title="Planned Tasks" />
               </div>
             </div>
           </div>
 
           {/* Col 2: Total Responses Card with Folder Tab Notch Silhouette & Left-to-Right Radial Arc */}
-          <div className="zassk-card-tabbed-notch">
-            <svg className="zassk-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
+          <div className="segel-card-tabbed-notch">
+            <svg className="segel-card-svg-bg" viewBox="0 0 300 220" preserveAspectRatio="none">
               <path
                 d="M 0,22 C 0,9.8 9.8,0 22,0 L 190,0 C 200,0 208,4 214,8 C 220,12 225,14 234,14 L 278,14 C 290.2,14 300,23.8 300,36 L 300,198 C 300,210.2 290.2,220 278,220 L 22,220 C 9.8,220 0,210.2 0,198 Z"
                 fill="#FFFFFF"
               />
             </svg>
 
-            <div className="zassk-tabbed-header">
-              <span className="zassk-card-title">Total Responses</span>
+            <div className="segel-tabbed-header">
+              <span className="segel-card-title">Total Responses</span>
             </div>
 
-            <div className="zassk-gauge-wrapper-centered">
-              <svg className="zassk-radial-gauge-svg" viewBox="0 0 240 135">
+            <div className="segel-gauge-wrapper-centered">
+              <svg className="segel-radial-gauge-svg" viewBox="0 0 240 135">
                 {radialTicks.map((tick) => (
                   <line
                     key={tick.id}
@@ -457,38 +457,38 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                 ))}
               </svg>
               {/* Bottom edge aligns flush with bottom edge of arc vector graphic */}
-              <div className="zassk-gauge-center-content">
-                <div className="zassk-gauge-center-val">98%</div>
-                <div className="zassk-gauge-center-label">Responses rate</div>
+              <div className="segel-gauge-center-content">
+                <div className="segel-gauge-center-val">98%</div>
+                <div className="segel-gauge-center-label">Responses rate</div>
               </div>
             </div>
           </div>
 
           {/* Col 3: Interlocking "Total Profit" & "Active Users" Cards */}
-          <div className="zassk-interlock-col">
+          <div className="segel-interlock-col">
             {/* Top Card: Total Profit */}
-            <div className="zassk-interlock-card zassk-tp-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+            <div className="segel-interlock-card segel-tp-card">
+              <svg className="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
                 <path
                   d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,96 C 300,103.7 293.7,110 286,110 L 250,110 C 240,110 234,105 228,100 C 222,96 216,96 208,96 L 14,96 C 6.3,96 0,89.7 0,82 Z"
                   fill="#FFFFFF"
                 />
               </svg>
-              <div className="zassk-tp-inner">
-                <div className="zassk-tp-header">
-                  <span className="zassk-card-title">Total Profit</span>
-                  <button className="zassk-tp-arrow-btn" aria-label="View Profit">
+              <div className="segel-tp-inner">
+                <div className="segel-tp-header">
+                  <span className="segel-card-title">Total Profit</span>
+                  <button className="segel-tp-arrow-btn" aria-label="View Profit">
                     <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
                   </button>
                 </div>
-                <div className="zassk-tp-body">
-                  <div className="zassk-metric-big">$63k</div>
+                <div className="segel-tp-body">
+                  <div className="segel-metric-big">$63k</div>
                   {/* 10 vertical rounded mini histogram bars on lower shelf */}
-                  <div className="zassk-mini-barchart">
+                  <div className="segel-mini-barchart">
                     {profitBars.map((heightPx, i) => (
                       <div
                         key={i}
-                        className="zassk-mini-bar"
+                        className="segel-mini-bar"
                         style={{
                           height: `${heightPx}px`,
                           backgroundColor: i >= 3 && i <= 5 ? '#2563EB' : '#93C5FD',
@@ -501,30 +501,30 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
 
             {/* Bottom Card: Active Users */}
-            <div className="zassk-interlock-card zassk-au-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
+            <div className="segel-interlock-card segel-au-card">
+              <svg className="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
                 <path
                   d="M 0,14 C 0,6.3 6.3,0 14,0 L 208,0 C 216,0 222,0 228,4 C 234,9 240,14 250,14 L 286,14 C 293.7,14 300,20.3 300,28 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
                   fill="#FFFFFF"
                 />
               </svg>
-              <div className="zassk-au-inner">
-                <div className="zassk-au-header">
-                  <span className="zassk-card-title">Active Users</span>
-                  <div className="zassk-au-split-labels">
+              <div className="segel-au-inner">
+                <div className="segel-au-header">
+                  <span className="segel-card-title">Active Users</span>
+                  <div className="segel-au-split-labels">
                     <span>75%</span>
-                    <span className="zassk-au-sep">|</span>
+                    <span className="segel-au-sep">|</span>
                     <span>25%</span>
-                    <span className="zassk-au-sep">|</span>
+                    <span className="segel-au-sep">|</span>
                     <span>10%</span>
                   </div>
                 </div>
-                <div className="zassk-au-body">
-                  <div className="zassk-metric-big">150</div>
-                  <div className="zassk-split-bar">
-                    <div className="zassk-split-seg-1" title="Primary users (75%)" />
-                    <div className="zassk-split-seg-2" title="Secondary users (25%)" />
-                    <div className="zassk-split-seg-3" title="Guest users (10%)" />
+                <div className="segel-au-body">
+                  <div className="segel-metric-big">150</div>
+                  <div className="segel-split-bar">
+                    <div className="segel-split-seg-1" title="Primary users (75%)" />
+                    <div className="segel-split-seg-2" title="Secondary users (25%)" />
+                    <div className="segel-split-seg-3" title="Guest users (10%)" />
                   </div>
                 </div>
               </div>
@@ -532,31 +532,31 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
 
           {/* Col 4: Interlocking "Conversion Rate" & "Ended Task" Cards */}
-          <div className="zassk-interlock-col">
+          <div className="segel-interlock-col">
             {/* Top Card: Conversion Rate */}
-            <div className="zassk-interlock-card zassk-cr-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
+            <div className="segel-interlock-card segel-cr-card">
+              <svg className="segel-card-svg-bg" viewBox="0 0 300 110" preserveAspectRatio="none">
                 <path
                   d="M 0,22 C 0,9.8 9.8,0 22,0 L 278,0 C 290.2,0 300,9.8 300,22 L 300,82 C 300,89.7 293.7,96 286,96 L 92,96 C 84,96 78,96 72,100 C 66,105 60,110 50,110 L 14,110 C 6.3,110 0,103.7 0,96 Z"
                   fill="#FFFFFF"
                 />
               </svg>
-              <div className="zassk-cr-inner">
-                <div className="zassk-cr-header">
-                  <span className="zassk-card-title">Conversion Rate</span>
-                  <button className="zassk-tp-arrow-btn" aria-label="View Conversion">
+              <div className="segel-cr-inner">
+                <div className="segel-cr-header">
+                  <span className="segel-card-title">Conversion Rate</span>
+                  <button className="segel-tp-arrow-btn" aria-label="View Conversion">
                     <LucideIcon name="ArrowUpRight" size={15} strokeWidth={2.2} color="#475569" />
                   </button>
                 </div>
-                <div className="zassk-metric-big" style={{ margin: '2px 0 4px 0' }}>
+                <div className="segel-metric-big" style={{ margin: '2px 0 4px 0' }}>
                   75%
                 </div>
                 {/* 32 micro vertical tick bars */}
-                <div className="zassk-dense-ticks-32">
+                <div className="segel-dense-ticks-32">
                   {Array.from({ length: 32 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`zassk-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
+                      className={`segel-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`}
                     />
                   ))}
                 </div>
@@ -564,25 +564,25 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
             </div>
 
             {/* Bottom Card: Ended Task (Restored Reference Design) */}
-            <div className="zassk-interlock-card zassk-et-card">
-              <svg className="zassk-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
+            <div className="segel-interlock-card segel-et-card">
+              <svg className="segel-card-svg-bg" viewBox="0 0 300 118" preserveAspectRatio="none">
                 <path
                   d="M 0,28 C 0,20.3 6.3,14 14,14 L 50,14 C 60,14 66,9 72,4 C 78,0 84,0 92,0 L 286,0 C 293.7,0 300,6.3 300,14 L 300,96 C 300,108.2 290.2,118 278,118 L 22,118 C 9.8,118 0,108.2 0,96 Z"
                   fill="#FFFFFF"
                 />
               </svg>
-              <div className="zassk-et-inner">
-                <div className="zassk-et-title">Ended Task</div>
-                <div className="zassk-et-body">
-                  <div className="zassk-et-val">80</div>
+              <div className="segel-et-inner">
+                <div className="segel-et-title">Ended Task</div>
+                <div className="segel-et-body">
+                  <div className="segel-et-val">80</div>
                   {/* 4-Row x 12-Column Dot Matrix Grid */}
-                  <div className="zassk-et-matrix" role="img" aria-label="Ended Task Matrix">
+                  <div className="segel-et-matrix" role="img" aria-label="Ended Task Matrix">
                     {endedTaskMatrix.map((row, rIdx) => (
-                      <div key={rIdx} className="zassk-et-matrix-row">
+                      <div key={rIdx} className="segel-et-matrix-row">
                         {row.map((dot, cIdx) => (
-                          <div key={cIdx} className="zassk-et-cell">
+                          <div key={cIdx} className="segel-et-cell">
                             <div
-                              className={`zassk-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
+                              className={`segel-et-dot-pip ${dot.active ? 'active' : 'inactive'}`}
                             />
                           </div>
                         ))}
@@ -596,24 +596,24 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
         </div>
 
         {/* ── 3. MIDDLE ROW: WATERFALL NEEDLE CHART & USER SOURCES ── */}
-        <div className="zassk-mid-row">
+        <div className="segel-mid-row">
           {/* Full-Width Total Revenue Card */}
-          <div className="zassk-card zassk-revenue-card">
-            <div className="zassk-revenue-top-bar">
-              <span className="zassk-card-title">Total Revenue</span>
-              <button className="zassk-action-pill-btn" aria-label="Filter Revenue">
+          <div className="segel-card segel-revenue-card">
+            <div className="segel-revenue-top-bar">
+              <span className="segel-card-title">Total Revenue</span>
+              <button className="segel-action-pill-btn" aria-label="Filter Revenue">
                 <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
               </button>
             </div>
 
-            <div className="zassk-revenue-layout">
+            <div className="segel-revenue-layout">
               {/* Left Metric Column */}
-              <div className="zassk-revenue-side-metric">
+              <div className="segel-revenue-side-metric">
                 <div>
-                  <div className="zassk-revenue-amount">$1240</div>
-                  <div className="zassk-revenue-sub">Last 15 days Orders</div>
+                  <div className="segel-revenue-amount">$1240</div>
+                  <div className="segel-revenue-sub">Last 15 days Orders</div>
                 </div>
-                <div className="zassk-y-markers">
+                <div className="segel-y-markers">
                   <span>100%</span>
                   <span>80%</span>
                   <span>60%</span>
@@ -623,10 +623,10 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
 
               {/* Spectral Waterfall Needle Chart Container */}
-              <div className="zassk-waveform-container">
+              <div className="segel-waveform-container">
                 <svg
                   ref={chartSvgRef}
-                  className="zassk-waveform-svg"
+                  className="segel-waveform-svg"
                   viewBox="0 0 530 145"
                   onMouseMove={handleChartMouseMove}
                 >
@@ -666,7 +666,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
 
                 {activePointCoord && (
                   <div
-                    className="zassk-floating-tooltip"
+                    className="segel-floating-tooltip"
                     style={{
                       left: `${(activePointCoord.x / 530) * 100}%`,
                       top: `${(activePointCoord.y / 145) * 100}%`,
@@ -678,14 +678,14 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
               </div>
             </div>
 
-            <div className="zassk-timeline-slider-track">
+            <div className="segel-timeline-slider-track">
               <div
-                className="zassk-timeline-slider-thumb"
+                className="segel-timeline-slider-thumb"
                 style={{ left: '26%', width: '28%' }}
               />
             </div>
 
-            <div className="zassk-x-axis-full">
+            <div className="segel-x-axis-full">
               {['01', '04', '07', '9', '11', '13', '15', '25', '30'].map((d, idx) => (
                 <span
                   key={idx}
@@ -701,24 +701,24 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
 
           {/* User Source Card with Multi-Layered Progress Tracks */}
-          <div className="zassk-card zassk-source-card">
+          <div className="segel-card segel-source-card">
             <div>
-              <div className="zassk-revenue-top-bar">
+              <div className="segel-revenue-top-bar">
                 <div>
-                  <span className="zassk-card-title">User Source</span>
+                  <span className="segel-card-title">User Source</span>
                   <div style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginTop: '2px' }}>
                     Total 12k+
                   </div>
                 </div>
-                <button className="zassk-action-pill-btn" aria-label="Filter Sources">
+                <button className="segel-action-pill-btn" aria-label="Filter Sources">
                   <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
                 </button>
               </div>
 
-              <div className="zassk-source-list">
+              <div className="segel-source-list">
                 {/* 1. Google (68%) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
+                <div className="segel-source-row">
+                  <div className="segel-brand-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                       <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.9c2.28-2.1 3.64-5.2 3.64-9.14z" />
                       <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.91H1.21v3.13C3.25 21.43 7.31 24 12 24z" />
@@ -726,72 +726,72 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.57 1.21 6.58l4.11 3.13c.94-2.81 3.58-4.96 6.68-4.96z" />
                     </svg>
                   </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-frosted-pod">
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
+                  <div className="segel-brand-track">
+                    <div className="segel-frosted-pod">
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
                     </div>
                     <div
-                      className="zassk-brand-capsule"
+                      className="segel-brand-capsule"
                       style={{ width: '68%', background: 'linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)' }}
                     >
                       <span>Google.com</span>
-                      <div className="zassk-count-pill-seam">4653</div>
+                      <div className="segel-count-pill-seam">4653</div>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. X (78%) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
+                <div className="segel-source-row">
+                  <div className="segel-brand-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="#0F172A">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-frosted-pod">
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
+                  <div className="segel-brand-track">
+                    <div className="segel-frosted-pod">
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
                     </div>
                     <div
-                      className="zassk-brand-capsule"
+                      className="segel-brand-capsule"
                       style={{ width: '78%', background: 'linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%)' }}
                     >
                       <span>X.com</span>
-                      <div className="zassk-count-pill-seam">379</div>
+                      <div className="segel-count-pill-seam">379</div>
                     </div>
                   </div>
                 </div>
 
                 {/* 3. Instagram (88%) */}
-                <div className="zassk-source-row">
-                  <div className="zassk-brand-icon">
+                <div className="segel-source-row">
+                  <div className="segel-brand-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="2">
                       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                     </svg>
                   </div>
-                  <div className="zassk-brand-track">
-                    <div className="zassk-frosted-pod">
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
-                      <span className="zassk-pod-dot" />
+                  <div className="segel-brand-track">
+                    <div className="segel-frosted-pod">
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
+                      <span className="segel-pod-dot" />
                     </div>
                     <div
-                      className="zassk-brand-capsule"
+                      className="segel-brand-capsule"
                       style={{ width: '88%', background: 'linear-gradient(90deg, #FB7185 0%, #F43F5E 100%)' }}
                     >
                       <span>Instagram.com</span>
-                      <div className="zassk-count-pill-seam">653</div>
+                      <div className="segel-count-pill-seam">653</div>
                     </div>
                   </div>
                 </div>
@@ -801,21 +801,21 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
         </div>
 
         {/* ── 4. BOTTOM ROW: TABLE & NOTCHED TRANSACTIONS ── */}
-        <div className="zassk-bottom-row">
-          <div className="zassk-card zassk-table-card">
-            <div className="zassk-revenue-top-bar" style={{ marginBottom: '14px' }}>
-              <span className="zassk-card-title">Recent Joining User</span>
-              <button className="zassk-action-pill-btn" aria-label="Filter Users">
+        <div className="segel-bottom-row">
+          <div className="segel-card segel-table-card">
+            <div className="segel-revenue-top-bar" style={{ marginBottom: '14px' }}>
+              <span className="segel-card-title">Recent Joining User</span>
+              <button className="segel-action-pill-btn" aria-label="Filter Users">
                 <LucideIcon name="FunnelFilter" size={15} strokeWidth={2} color="#4B5565" />
               </button>
             </div>
 
-            <table className="zassk-table">
+            <table className="segel-table">
               <thead>
                 <tr>
                   <th style={{ width: '42px' }}>
                     <div
-                      className={`zassk-checkbox ${isAllSelected ? 'checked' : ''}`}
+                      className={`segel-checkbox ${isAllSelected ? 'checked' : ''}`}
                       onClick={toggleSelectAll}
                       role="checkbox"
                       aria-checked={isAllSelected}
@@ -838,7 +838,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                     <tr key={user.id}>
                       <td>
                         <div
-                          className={`zassk-checkbox ${isChecked ? 'checked' : ''}`}
+                          className={`segel-checkbox ${isChecked ? 'checked' : ''}`}
                           onClick={() => toggleUserSelection(user.id)}
                           role="checkbox"
                           aria-checked={isChecked}
@@ -851,7 +851,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       <td style={{ color: '#64748B' }}>{user.location}</td>
                       <td>
                         <span
-                          className={`zassk-status-pill ${user.status === 'Active' ? 'zassk-status-active' : 'zassk-status-pending'
+                          className={`segel-status-pill ${user.status === 'Active' ? 'segel-status-active' : 'segel-status-pending'
                             }`}
                         >
                           <span style={{ fontSize: '8px' }}>●</span>
@@ -861,7 +861,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
                       <td style={{ color: '#64748B' }}>{user.postedDate}</td>
                       <td>
                         <button
-                          className="zassk-action-pill-btn"
+                          className="segel-action-pill-btn"
                           style={{ width: '28px', height: '28px', border: 'none', background: 'transparent' }}
                           aria-label="Actions"
                         >
@@ -876,33 +876,33 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
           </div>
 
           {/* Right: Recent Transactions Card with S-Curved File-Folder Tab Notch Silhouette */}
-          <div className="zassk-trans-tabbed-notch">
-            <svg className="zassk-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
+          <div className="segel-trans-tabbed-notch">
+            <svg className="segel-card-svg-bg" viewBox="0 0 324 280" preserveAspectRatio="none">
               <path
                 d="M0,24 C0,10.7 10.7,0 24,0 L160,0 C170,0 178,6 182,14 L186,22 C190,30 198,36 208,36 L300,36 C313.3,36 324,46.7 324,60 L324,256 C324,269.3 313.3,280 300,280 L24,280 C10.7,280 0,269.3 0,256 Z"
                 fill="#FFFFFF"
               />
             </svg>
 
-            <div className="zassk-tabbed-header">
-              <span className="zassk-card-title">Recent Transactions</span>
+            <div className="segel-tabbed-header">
+              <span className="segel-card-title">Recent Transactions</span>
             </div>
 
-            <div className="zassk-trans-list-pad">
+            <div className="segel-trans-list-pad">
               {mockTransactions.map((tx) => (
-                <div key={tx.id} className="zassk-trans-item">
-                  <div className="zassk-trans-left">
-                    <div className="zassk-trans-icon">
+                <div key={tx.id} className="segel-trans-item">
+                  <div className="segel-trans-left">
+                    <div className="segel-trans-icon">
                       <LucideIcon name="Briefcase" size={18} strokeWidth={2} color="#3B82F6" />
                     </div>
                     <div>
-                      <div className="zassk-trans-symbol">{tx.symbol}</div>
-                      <div className="zassk-trans-company">{tx.company}</div>
+                      <div className="segel-trans-symbol">{tx.symbol}</div>
+                      <div className="segel-trans-company">{tx.company}</div>
                     </div>
                   </div>
-                  <div className="zassk-trans-right">
-                    <div className="zassk-trans-amount">{tx.amount}</div>
-                    <div className="zassk-trans-date">{tx.date}</div>
+                  <div className="segel-trans-right">
+                    <div className="segel-trans-amount">{tx.amount}</div>
+                    <div className="segel-trans-date">{tx.date}</div>
                   </div>
                 </div>
               ))}
@@ -911,7 +911,7 @@ export const Dashboard: React.FC<ZasskDashboardProps> = ({
         </div>
 
         {/* ── 5. BOTTOM PERFORMANCE TREND CARD (AlignUI v1.2 Integration) ── */}
-        <div className="zassk-bottom-performance-card">
+        <div className="segel-bottom-performance-card">
           <TooltipProvider>
             <PerformanceTrend />
           </TooltipProvider>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /**
- * Type definitions for the Zassk Analytics Dashboard component.
+ * Type definitions for the Segel Analytics Dashboard component.
  * Production-ready interface types for data models, state, and UI props.
  */
 
@@ -96,7 +96,7 @@ export interface TransactionItem {
   categoryIcon?: 'folder' | 'briefcase';
 }
 
-export interface ZasskDashboardProps {
+export interface SegelDashboardProps {
   userName?: string;
   userGreeting?: string;
   brandingText?: string;
@@ -107,4 +107,7 @@ export interface ZasskDashboardProps {
   onSearch?: (query: string) => void;
   className?: string;
 }
+
+/** Backward-compatible alias for existing consumers */
+export type ZasskDashboardProps = SegelDashboardProps;
 
