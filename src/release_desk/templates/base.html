@@ -11,11 +11,11 @@
     <style>
         :root {
             /* ── Core Light Mode Design Tokens ── */
-            --bg: #f8fafc;
+            --bg: #F2F7F0;
             --surface: #ffffff;
-            --surface-subtle: #f1f5f9;
-            --border: #e2e8f0;
-            --border-strong: #cbd5e1;
+            --surface-subtle: #F7F4EC;
+            --border: #E8DFD0;
+            --border-strong: #D1BD99;
             
             /* Typography & Neutrals (TNI AD High Contrast) */
             --text: #0f172a;            /* Slate 900 - High contrast readable */
@@ -23,11 +23,11 @@
             --text-muted: #64748b;      /* Slate 500 - Form hints & meta */
             
             /* Brand Accents */
-            --accent: #2563eb;          /* Blue 600 - Primary actionable */
-            --accent-hover: #1d4ed8;    /* Blue 700 */
-            --accent-subtle: #eff6ff;   /* Blue 50 */
-            --military-navy: #0f172a;   /* Tactical Navy */
-            --military-teal: #0f766e;   /* Military Institutional Accent */
+            --accent: #3B7A32;          /* Tactical Field Green - Primary actionable */
+            --accent-hover: #24531E;    /* Dark Forest Green */
+            --accent-subtle: #EBFCF2;   /* Luminous Mint Glow */
+            --military-navy: #182615;   /* Tactical Deep Forest Slate */
+            --military-teal: #7A9E6B;   /* Military Sage Green Accent */
             
             /* Semantic Colors (Cybersecurity Specifics) */
             --green: #047857;           /* Emerald 700 - Passed / Secure */
@@ -46,9 +46,9 @@
             --purple-bg: #faf5ff;       /* Purple 50 */
             --purple-border: #e9d5ff;   /* Purple 200 */
             
-            --blue: #1d4ed8;            /* Blue 700 - Info / Neutral Highlights */
-            --blue-bg: #eff6ff;         /* Blue 50 */
-            --blue-border: #bfdbfe;     /* Blue 200 */
+            --blue: #3B7A32;            /* Tactical Field Green Highlight */
+            --blue-bg: #EBFCF2;         /* Luminous Mint Substrate */
+            --blue-border: #B8D2AD;     /* Soft Sage Boundary */
 
             /* Shadows & Elevations */
             --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
@@ -164,7 +164,7 @@
         }
         nav a.active {
             color: var(--accent);
-            background: #eff6ff;
+            background: var(--accent-subtle);
             font-weight: 600;
         }
 
@@ -573,8 +573,8 @@
         .text-success { color: #059669; } /* Emerald 600 */
         .text-warning { color: #d97706; } /* Amber 600 */
         .text-danger { color: #dc2626; }  /* Red 600 */
-        .text-info { color: #2563eb; }    /* Blue 600 */
-        .text-accent { color: #2563eb; }
+        .text-info { color: #3B7A32; }    /* Tactical Field Green */
+        .text-accent { color: #3B7A32; }
         .text-muted { color: #64748b; }
 
         /* ── Loading indicator ────────────────────────────────── */

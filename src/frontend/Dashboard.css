@@ -6,17 +6,35 @@
  */
 
 :root {
-  --segel-canvas-bg: linear-gradient(135deg, #A3C5FD 0%, #CDE0FD 35%, #EDF4FE 75%, #F8FAFD 100%);
-  --segel-glass-dock: rgba(255, 255, 255, 0.72);
+  --segel-canvas-bg: #F2F7F0;
+  --segel-glass-dock: rgba(255, 255, 255, 0.85);
   --segel-glass-border: rgba(255, 255, 255, 0.95);
   --segel-card-solid: #FFFFFF;
   --segel-navy: #0F172A;
-  --segel-charcoal: #181F2A;
+  --segel-charcoal: #182615;
   --segel-slate-muted: #64748B;
   --segel-slate-light: #94A3B8;
-  --segel-blue-primary: #2563EB;
-  --segel-blue-sky: #38BDF8;
-  --segel-blue-ice: #BAE6FD;
+
+  /* 60% Dominant (Sage & Canvas) */
+  --segel-sage-soft: #B8D2AD;
+  --segel-sage-deep: #7A9E6B;
+  --segel-primary: #3B7A32;
+  --segel-primary-hover: #24531E;
+
+  /* 30% Secondary (Warm Sand & Bronze) */
+  --segel-sand-gold: #D1BD99;
+  --segel-sand-amber: #C7B08A;
+  --segel-sand-bronze: #8C734B;
+  --segel-sand-subtle: #F7F4EC;
+  --segel-sand-border: #E8DFD0;
+
+  /* 10% Accent (Mint Glow & Triadic Lavender/Violet) */
+  --segel-mint-flare: #EBFCF2;
+  --segel-mint-active: #10B981;
+  --segel-lavender: #D9CFED;
+  --segel-violet-flare: #8B5CF6;
+  --segel-violet-deep: #7C3AED;
+
   --segel-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
@@ -47,7 +65,6 @@
   background: transparent;
   position: relative;
   z-index: 10;
-}
   box-sizing: border-box;
 }
 
@@ -102,8 +119,8 @@
 .segel-brand-tag {
   font-size: 10px;
   font-weight: 700;
-  color: #2563EB;
-  background: #EFF6FF;
+  color: var(--segel-primary);
+  background: var(--segel-mint-flare);
   padding: 2px 7px;
   border-radius: 9999px;
   letter-spacing: 0.5px;
@@ -149,13 +166,13 @@
 }
 
 .segel-dock-btn.active {
-  background: var(--segel-charcoal);
+  background: var(--segel-primary);
   color: #FFFFFF;
   padding: 8px 18px;
   gap: 8px;
   font-size: 13.5px;
   font-weight: 500;
-  box-shadow: 0 4px 14px rgba(24, 31, 42, 0.25);
+  box-shadow: 0 4px 14px rgba(59, 122, 50, 0.25);
 }
 
 .segel-header-utilities {
@@ -288,15 +305,15 @@
   background-size: 4px 4px;
   border-radius: 9999px 6px 6px 9999px;
 }
-.segel-seg-2 { width: 26%; background-color: #94A3B8; border-radius: 6px; }
+.segel-seg-2 { width: 26%; background-color: var(--segel-sand-gold); border-radius: 6px; }
 .segel-seg-3 {
   width: 26%;
   background: repeating-linear-gradient(
     45deg,
-    rgba(148, 163, 184, 0.45),
-    rgba(148, 163, 184, 0.45) 2px,
-    rgba(226, 232, 240, 0.6) 2px,
-    rgba(226, 232, 240, 0.6) 6px
+    rgba(184, 210, 173, 0.5),
+    rgba(184, 210, 173, 0.5) 2px,
+    rgba(232, 223, 208, 0.6) 2px,
+    rgba(232, 223, 208, 0.6) 6px
   );
   border-radius: 6px 9999px 9999px 6px;
 }
@@ -444,7 +461,8 @@
   transition: all 0.15s ease;
 }
 .segel-tp-arrow-btn:hover {
-  background: #E2E8F0;
+  background: var(--segel-sand-subtle);
+  color: var(--segel-primary);
   transform: translate(1px, -1px);
 }
 
@@ -517,7 +535,7 @@
   border-radius: 9999px;
   overflow: hidden;
   gap: 2.5px;
-  background: #F1F5F9;
+  background: var(--segel-sand-subtle);
   padding: 2px;
 }
 
@@ -527,8 +545,8 @@
   border-radius: 9999px 0 0 9999px;
   background: repeating-linear-gradient(
     90deg,
-    #3B82F6,
-    #3B82F6 1.5px,
+    var(--segel-primary),
+    var(--segel-primary) 1.5px,
     transparent 1.5px,
     transparent 3.5px
   );
@@ -539,8 +557,8 @@
   height: 100%;
   background: repeating-linear-gradient(
     45deg,
-    #3B82F6,
-    #3B82F6 1.5px,
+    var(--segel-sand-amber),
+    var(--segel-sand-amber) 1.5px,
     transparent 1.5px,
     transparent 5px
   );
@@ -549,7 +567,7 @@
 .segel-split-seg-3 {
   width: 8%;
   height: 100%;
-  background-color: #E2E8F0;
+  background-color: var(--segel-sand-border);
   border-radius: 0 9999px 9999px 0;
 }
 
@@ -567,8 +585,8 @@
   border-radius: 2px;
   flex-shrink: 0;
 }
-.segel-tick-bar-32.filled { background: var(--segel-blue-primary); }
-.segel-tick-bar-32.unfilled { background: #E2E8F0; }
+.segel-tick-bar-32.filled { background: var(--segel-primary); }
+.segel-tick-bar-32.unfilled { background: var(--segel-sand-border); }
 
 /* ── Ended Task Card (Restored Reference Design) ── */
 .segel-et-title {
@@ -620,13 +638,13 @@
 .segel-et-dot-pip.active {
   width: 6.5px;
   height: 6.5px;
-  background-color: #2563EB;
+  background-color: var(--segel-primary);
 }
 
 .segel-et-dot-pip.inactive {
   width: 4px;
   height: 4px;
-  background-color: #E2E8F0;
+  background-color: #DCE7D8;
 }
 
 .segel-et-dot-pip:hover {
@@ -730,9 +748,9 @@
   position: absolute;
   top: -2px;
   height: 8px;
-  background: #3B82F6;
+  background: var(--segel-primary);
   border-radius: 9999px;
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 4px rgba(59, 122, 50, 0.35);
 }
 
 .segel-x-axis-full {
@@ -883,19 +901,19 @@
   background: #FFFFFF;
 }
 .segel-checkbox.checked {
-  background: var(--segel-blue-primary);
-  border-color: var(--segel-blue-primary);
+  background: var(--segel-primary);
+  border-color: var(--segel-primary);
   color: #FFFFFF;
 }
 
 .segel-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
-.segel-status-active { background: #DCFCE7; color: #15803D; }
+.segel-status-active { background: #EBFCF2; color: #15803D; }
 .segel-status-pending { background: #FEF3C7; color: #B45309; }
 
 /* ── Notched Transactions Card Silhouette ── */
 .segel-trans-tabbed-notch {
   position: relative;
-  filter: drop-shadow(0 12px 32px rgba(115, 155, 220, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+  filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
   height: 280px;
   display: flex;
   flex-direction: column;
@@ -923,11 +941,11 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #EFF6FF;
+  background: var(--segel-mint-flare);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #3B82F6;
+  color: var(--segel-primary);
 }
 
 .segel-trans-symbol { font-size: 13.5px; font-weight: 700; color: var(--segel-navy); }

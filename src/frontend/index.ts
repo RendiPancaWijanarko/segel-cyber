@@ -7,4 +7,5 @@ export { Dashboard, LucideIcon } from './Dashboard';
 export { default } from './Dashboard';
 export * from './types';
 export * from './mockData';
+export * from './designTokens';
 

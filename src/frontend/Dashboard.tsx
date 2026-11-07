@@ -18,6 +18,7 @@ import {
   mockTransactions,
 } from './mockData';
 import { SegelDashboardProps } from './types';
+import { SEGEL_PALETTE } from './designTokens';
 import { PerformanceTrend } from '../components/performance-trend/performance-trend';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { WebGPUShaderBackground } from './WebGPUShaderBackground';
@@ -208,12 +209,13 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
     const rOuter = 92;
     const rInner = 68;
 
-    // Ticks 1-5: Royal Blue, 6-8: Bright Sky Blue, 9-11: Pale Ice Blue, 12-14: Cool Gray
+    // Triadic Military Palette progression (Left-to-Right Clockwise Fill)
+    // Ticks 1-5: Tactical Field Green, 6-8: Sage Midtones, 9-11: Warm Sand/Bronze, 12-14: Cool Gray/Mint
     const colorProgression = [
-      '#1D4ED8', '#2563EB', '#2563EB', '#2563EB', '#2563EB',
-      '#3B82F6', '#3B82F6', '#60A5FA',
-      '#93C5FD', '#BFDBFE', '#DBEAFE',
-      '#E2E8F0', '#E2E8F0', '#E2E8F0',
+      '#24531E', '#3B7A32', '#3B7A32', '#3B7A32', '#4B8E41',
+      '#659B58', '#7A9E6B', '#92B784',
+      '#C7B08A', '#D1BD99', '#DFD2B7',
+      '#E8DFD0', '#EFE9DE', '#EBFCF2',
     ];
 
     for (let i = 0; i < total; i++) {
@@ -491,7 +493,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                         className="segel-mini-bar"
                         style={{
                           height: `${heightPx}px`,
-                          backgroundColor: i >= 3 && i <= 5 ? '#2563EB' : '#93C5FD',
+                          backgroundColor: i >= 3 && i <= 5 ? '#3B7A32' : '#B8D2AD',
                         }}
                       />
                     ))}
@@ -637,7 +639,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                       y1={line.yTop}
                       x2={line.x}
                       y2={line.yBottom}
-                      stroke="#3B82F6"
+                      stroke="#7A9E6B"
                       strokeWidth={1}
                       strokeOpacity={line.opacity}
                     />
@@ -646,7 +648,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                   <path
                     d={splinePathD}
                     fill="none"
-                    stroke="#3B82F6"
+                    stroke="#3B7A32"
                     strokeWidth={2.5}
                     strokeLinecap="round"
                   />
@@ -657,7 +659,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                       cy={activePointCoord.y}
                       r={5}
                       fill="#FFFFFF"
-                      stroke="#2563EB"
+                      stroke="#3B7A32"
                       strokeWidth={3}
                       style={{ cursor: 'pointer' }}
                     />
@@ -736,7 +738,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                     </div>
                     <div
                       className="segel-brand-capsule"
-                      style={{ width: '68%', background: 'linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)' }}
+                      style={{ width: '68%', background: 'linear-gradient(90deg, #3B7A32 0%, #7A9E6B 100%)' }}
                     >
                       <span>Google.com</span>
                       <div className="segel-count-pill-seam">4653</div>
@@ -893,7 +895,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                 <div key={tx.id} className="segel-trans-item">
                   <div className="segel-trans-left">
                     <div className="segel-trans-icon">
-                      <LucideIcon name="Briefcase" size={18} strokeWidth={2} color="#3B82F6" />
+                      <LucideIcon name="Briefcase" size={18} strokeWidth={2} color="#3B7A32" />
                     </div>
                     <div>
                       <div className="segel-trans-symbol">{tx.symbol}</div>

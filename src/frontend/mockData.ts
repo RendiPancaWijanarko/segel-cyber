@@ -94,7 +94,7 @@ export const mockUserSources: UserSourceItem[] = [
     domain: 'Google.com',
     count: 4653,
     percentageWidth: 62,
-    gradient: 'linear-gradient(90deg, #93C5FD 0%, #3B82F6 100%)',
+    gradient: 'linear-gradient(90deg, #7A9E6B 0%, #3B7A32 100%)',
     brand: 'google',
   },
   {
