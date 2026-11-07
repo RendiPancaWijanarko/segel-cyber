@@ -442,12 +442,11 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
           <div className="segel-greeting-box">
             <div>
               <div className="segel-cyber-lead">
-                <span className="segel-radar-pip" aria-hidden="true" />
-                <span>🟢 DEFCON 1 // KOMANDO PUSSIBERAD</span>
+                <span>DEFCON 1 // KOMANDO PUSSIBERAD</span>
                 <span style={{ display: 'none' }}>{userName}</span>
               </div>
               <h1 className="segel-cyber-heading">
-                <span>Menegakkan Kedaulatan Siber: Semesta Digital Anda yang&nbsp;</span>
+                <span>Ekosistem Digital NKRI yang&nbsp;</span>
                 <span className="segel-cube-wrapper" aria-label="Terjaga, Terbentengi, Terkendali">
                   <span className="segel-cube-rotor" aria-hidden="true">
                     <span className="segel-cube-face face-1">Terjaga</span>
@@ -457,7 +456,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                 </span>
               </h1>
               <div className="segel-cyber-sub">
-                Otentikasi kriptografis otonom & pertahanan perimeter siber terintegrasi.
+                Otentikasi kriptografis otonom & pertahanan perimeter terintegrasi.
               </div>
             </div>
 

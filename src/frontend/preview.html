@@ -294,10 +294,10 @@
         }
 
         .segel-cyber-heading {
-          font-size: clamp(14px, 1.3vw, 20px);
+          font-size: 24px;
           font-weight: 800;
           color: var(--segel-navy);
-          line-height: 1.25;
+          line-height: 1.2;
           letter-spacing: -0.4px;
           margin: 0;
           white-space: nowrap;
@@ -306,14 +306,14 @@
           align-items: center;
         }
 
-        /* 3D Cube Roll Viewport: Locks line height & hides overflow during rotation (Strict single-line) */
+        /* 3D Cube Roll Viewport: display: inline-flex, overflow: hidden, vertical-align: top */
         .segel-cube-wrapper {
-          display: inline-block;
-          vertical-align: top;
-          height: 1.25em;
-          line-height: 1.25em;
-          min-width: 6.8em;
+          display: inline-flex;
           overflow: hidden;
+          vertical-align: top;
+          height: 1.2em;
+          line-height: 1.2em;
+          min-width: 6.2em;
           perspective: 1000px;
           position: relative;
           white-space: nowrap;
@@ -331,7 +331,7 @@
           animation: segelCubeRollUp 9s cubic-bezier(0.77, 0, 0.175, 1) infinite;
         }
 
-        /* 3 Prism Faces with 120° offsets around X-axis (Radius = 0.361em) */
+        /* 3 Prism Faces with 120° offsets around X-axis (Radius = 0.346em for 1.2em height) */
         .segel-cube-face {
           position: absolute;
           inset: 0;
@@ -346,9 +346,9 @@
           text-shadow: 0 0 16px rgba(59, 122, 50, 0.28);
         }
 
-        .segel-cube-face.face-1 { transform: rotateX(0deg) translateZ(0.361em); }
-        .segel-cube-face.face-2 { transform: rotateX(-120deg) translateZ(0.361em); }
-        .segel-cube-face.face-3 { transform: rotateX(-240deg) translateZ(0.361em); }
+        .segel-cube-face.face-1 { transform: rotateX(0deg) translateZ(0.346em); }
+        .segel-cube-face.face-2 { transform: rotateX(-120deg) translateZ(0.346em); }
+        .segel-cube-face.face-3 { transform: rotateX(-240deg) translateZ(0.346em); }
 
         /* 60fps Upward Roll Keyframes */
         @keyframes segelCubeRollUp {
@@ -1411,12 +1411,11 @@
             <div class="segel-greeting-box">
                 <div>
                     <div class="segel-cyber-lead">
-                        <span class="segel-radar-pip" aria-hidden="true"></span>
-                        <span>🟢 DEFCON 1 // KOMANDO PUSSIBERAD</span>
+                        <span>DEFCON 1 // KOMANDO PUSSIBERAD</span>
                         <span style="display:none;" data-officer="Keren nix">Keren nix</span>
                     </div>
                     <h1 class="segel-cyber-heading">
-                        <span>Menegakkan Kedaulatan Siber: Semesta Digital Anda yang&nbsp;</span>
+                        <span>Ekosistem Digital NKRI yang&nbsp;</span>
                         <span class="segel-cube-wrapper" aria-label="Terjaga, Terbentengi, Terkendali">
                             <span class="segel-cube-rotor" aria-hidden="true">
                                 <span class="segel-cube-face face-1">Terjaga</span>
@@ -1426,7 +1425,7 @@
                         </span>
                     </h1>
                     <div class="segel-cyber-sub">
-                        Otentikasi kriptografis otonom & pertahanan perimeter siber terintegrasi.
+                        Otentikasi kriptografis otonom & pertahanan perimeter terintegrasi.
                     </div>
                 </div>
 
