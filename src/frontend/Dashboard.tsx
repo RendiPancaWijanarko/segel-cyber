@@ -446,7 +446,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                 <span style={{ display: 'none' }}>{userName}</span>
               </div>
               <h1 className="segel-cyber-heading">
-                <span>Distribusi Rilis Pertahanan Satuan yang&nbsp;</span>
+                <span>Distribusi Rilis Satuan yang&nbsp;</span>
                 <span className="segel-cube-wrapper" aria-label="Terverifikasi, Tercatat, Teruji">
                   <span className="segel-cube-rotor" aria-hidden="true">
                     <span className="segel-cube-face face-1">Terverifikasi</span>
@@ -456,7 +456,7 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
                 </span>
               </h1>
               <div className="segel-cyber-sub">
-                Prinsip tanpa bukti tanpa penerapan: verifikasi paspor rilis luring di satuan.
+                Verifikasi paspor rilis luring mandiri di satuan
               </div>
             </div>
 
