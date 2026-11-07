@@ -443,21 +443,21 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
             <div>
               <div className="segel-cyber-lead">
                 <span className="segel-radar-pip" aria-hidden="true" />
-                <span>DEFCON 1 // PUSSIBERAD COMMAND</span>
+                <span>🟢 DEFCON 1 // KOMANDO PUSSIBERAD</span>
                 <span style={{ display: 'none' }}>{userName}</span>
               </div>
               <h1 className="segel-cyber-heading">
-                Commanding Sovereign Defense: Your Digital{' '}
-                <span className="segel-cube-wrapper" aria-label="Fortified, Defended, Secured">
+                <span>Menegakkan Kedaulatan Siber: Semesta Digital Anda yang&nbsp;</span>
+                <span className="segel-cube-wrapper" aria-label="Terjaga, Terbentengi, Terkendali">
                   <span className="segel-cube-rotor" aria-hidden="true">
-                    <span className="segel-cube-face face-1">Fortified.</span>
-                    <span className="segel-cube-face face-2">Defended.</span>
-                    <span className="segel-cube-face face-3">Secured.</span>
+                    <span className="segel-cube-face face-1">Terjaga</span>
+                    <span className="segel-cube-face face-2">Terbentengi</span>
+                    <span className="segel-cube-face face-3">Terkendali</span>
                   </span>
                 </span>
               </h1>
               <div className="segel-cyber-sub">
-                Autonomous cryptographic attestation & sovereign perimeter defense.
+                Otentikasi kriptografis otonom & pertahanan perimeter siber terintegrasi.
               </div>
             </div>
 
