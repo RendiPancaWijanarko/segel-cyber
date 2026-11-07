@@ -258,31 +258,111 @@
           .segel-top-row { grid-template-columns: 1fr; }
         }
 
-        /* Greeting Section */
+        /* Greeting Section (Tactical Cyber Command with 3D Cube Roll) */
         .segel-greeting-box {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           padding: 4px 8px;
         }
-        .segel-hello-lead {
-          font-size: 20px;
-          font-weight: 500;
-          color: #475569;
-          line-height: 1.2;
-        }
-        .segel-hello-name {
-          font-size: 32px;
+
+        .segel-cyber-lead {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          font-size: 11px;
           font-weight: 700;
-          color: #0F172A;
-          line-height: 1.1;
-          letter-spacing: -0.6px;
-          margin-top: 2px;
+          letter-spacing: 0.8px;
+          color: var(--segel-primary);
+          text-transform: uppercase;
+          margin-bottom: 4px;
         }
-        .segel-welcome-sub {
-          font-size: 14px;
+
+        .segel-radar-pip {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background-color: var(--segel-primary);
+          box-shadow: 0 0 8px rgba(59, 122, 50, 0.6);
+          animation: segelRadarPulse 1.8s infinite ease-in-out;
+        }
+
+        @keyframes segelRadarPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.4); opacity: 0.4; }
+        }
+
+        .segel-cyber-heading {
+          font-size: 21px;
+          font-weight: 800;
+          color: var(--segel-navy);
+          line-height: 1.22;
+          letter-spacing: -0.4px;
+          margin: 0;
+        }
+
+        /* 3D Cube Roll Viewport: Locks line height & hides overflow during rotation */
+        .segel-cube-wrapper {
+          display: inline-block;
+          vertical-align: top;
+          height: 1.25em;
+          line-height: 1.25em;
+          overflow: hidden;
+          perspective: 800px;
+          position: relative;
+          padding: 0 2px;
+        }
+
+        /* 3D Rotating Rotor */
+        .segel-cube-rotor {
+          display: block;
+          position: relative;
+          height: 100%;
+          transform-style: preserve-3d;
+          will-change: transform;
+          animation: segelCubeRollUp 9s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+
+        /* 3 Prism Faces with 120° offsets around X-axis (Radius = 0.361em) */
+        .segel-cube-face {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          white-space: nowrap;
+          color: var(--segel-primary);
+          font-weight: 800;
+          text-shadow: 0 0 16px rgba(59, 122, 50, 0.28);
+        }
+
+        .segel-cube-face.face-1 { transform: rotateX(0deg) translateZ(0.361em); }
+        .segel-cube-face.face-2 { transform: rotateX(-120deg) translateZ(0.361em); }
+        .segel-cube-face.face-3 { transform: rotateX(-240deg) translateZ(0.361em); }
+
+        /* 60fps Upward Roll Keyframes */
+        @keyframes segelCubeRollUp {
+          0%, 25.5% { transform: rotateX(0deg); }
+          33.3%, 58.8% { transform: rotateX(120deg); }
+          66.6%, 92.2% { transform: rotateX(240deg); }
+          100% { transform: rotateX(360deg); }
+        }
+
+        .segel-cyber-sub {
+          font-size: 12.5px;
           color: #64748B;
-          font-weight: 400;
+          font-weight: 500;
+          line-height: 1.35;
+          margin-top: 5px;
+        }
+
+        /* Backward-compatible classes */
+        .segel-hello-lead { font-size: 13px; font-weight: 600; color: var(--segel-primary); }
+        .segel-hello-name { font-size: 24px; font-weight: 800; color: var(--segel-navy); }
+        .segel-welcome-sub { font-size: 13px; color: #64748B; }
           margin-top: 6px;
         }
 
@@ -1317,12 +1397,27 @@
 
         <!-- ── 2. TOP ROW METRICS ── -->
         <div class="segel-top-row">
-            <!-- Col 1: Greeting & Task Statistics -->
+            <!-- Col 1: Military Command Header with 3D Cube Roll & Task Statistics -->
             <div class="segel-greeting-box">
                 <div>
-                    <div class="segel-hello-lead">Hello,</div>
-                    <h1 class="segel-hello-name">Keren nix</h1>
-                    <div class="segel-welcome-sub">Welcome Back</div>
+                    <div class="segel-cyber-lead">
+                        <span class="segel-radar-pip" aria-hidden="true"></span>
+                        <span>DEFCON 1 // PUSSIBERAD COMMAND</span>
+                        <span style="display:none;" data-officer="Keren nix">Keren nix</span>
+                    </div>
+                    <h1 class="segel-cyber-heading">
+                        Commanding Sovereign Defense: Your Digital
+                        <span class="segel-cube-wrapper" aria-label="Fortified, Defended, Secured">
+                            <span class="segel-cube-rotor" aria-hidden="true">
+                                <span class="segel-cube-face face-1">Fortified.</span>
+                                <span class="segel-cube-face face-2">Defended.</span>
+                                <span class="segel-cube-face face-3">Secured.</span>
+                            </span>
+                        </span>
+                    </h1>
+                    <div class="segel-cyber-sub">
+                        Autonomous cryptographic attestation & sovereign perimeter defense.
+                    </div>
                 </div>
 
                 <div class="segel-task-stat-widget">

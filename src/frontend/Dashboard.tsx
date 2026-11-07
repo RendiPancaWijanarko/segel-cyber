@@ -438,12 +438,27 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
 
         {/* ── 2. TOP ROW METRICS ── */}
         <div className="segel-top-row">
-          {/* Col 1: Greeting & Task Statistics */}
+          {/* Col 1: Military Command Header with 3D Cube Roll & Task Statistics */}
           <div className="segel-greeting-box">
             <div>
-              <div className="segel-hello-lead">{userGreeting}</div>
-              <h1 className="segel-hello-name">{userName}</h1>
-              <div className="segel-welcome-sub">Welcome Back</div>
+              <div className="segel-cyber-lead">
+                <span className="segel-radar-pip" aria-hidden="true" />
+                <span>DEFCON 1 // PUSSIBERAD COMMAND</span>
+                <span style={{ display: 'none' }}>{userName}</span>
+              </div>
+              <h1 className="segel-cyber-heading">
+                Commanding Sovereign Defense: Your Digital{' '}
+                <span className="segel-cube-wrapper" aria-label="Fortified, Defended, Secured">
+                  <span className="segel-cube-rotor" aria-hidden="true">
+                    <span className="segel-cube-face face-1">Fortified.</span>
+                    <span className="segel-cube-face face-2">Defended.</span>
+                    <span className="segel-cube-face face-3">Secured.</span>
+                  </span>
+                </span>
+              </h1>
+              <div className="segel-cyber-sub">
+                Autonomous cryptographic attestation & sovereign perimeter defense.
+              </div>
             </div>
 
             <div className="segel-task-stat-widget">
