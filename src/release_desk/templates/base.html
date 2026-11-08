@@ -80,6 +80,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
             position: relative;
         }
 
@@ -93,12 +95,12 @@
             pointer-events: none;
         }
 
-        /* ── Main Canvas Viewport ── */
+        /* ── Main Canvas Viewport (Spacious & Balanced Matching /zassk) ── */
         .segel-canvas {
             width: 100%;
-            max-width: 1440px;
+            max-width: 1520px;
             margin: 0 auto;
-            padding: 24px 32px 40px;
+            padding: 24px 32px 40px 32px;
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -108,8 +110,36 @@
             flex: 1 0 auto;
         }
 
+        /* ── Design System Custom Scrollbar ── */
+        .segel-custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(122, 158, 107, 0.45) rgba(232, 223, 208, 0.25);
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(232, 223, 208, 0.25);
+            border-radius: 9999px;
+            margin: 4px 0;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(122, 158, 107, 0.45);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: background 0.18s ease;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 122, 50, 0.75);
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb:active {
+            background: var(--segel-primary);
+        }
+
         /* ── Security Demo Banner ── */
         .segel-security-banner {
+            width: 100%;
             position: relative;
             z-index: 20;
             background: rgba(254, 243, 199, 0.88);
@@ -132,7 +162,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 0 24px;
+            gap: 16px;
+            padding: 0 0 4px 0;
+            margin-bottom: 2px;
             position: relative;
             z-index: 30;
         }
@@ -531,20 +563,17 @@
         .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
 
         /* ── Footer ── */
-        .segel-footer {
+        footer {
             margin-top: auto;
-            border-top: 1px solid rgba(122, 158, 107, 0.2);
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 20px 24px;
+            border-top: 1px solid var(--border, rgba(122, 158, 107, 0.2));
+            padding: 24px 0;
             text-align: center;
-            font-size: 12px;
-            color: var(--segel-slate-muted);
+            font-size: 13px;
+            color: var(--text-secondary, #475569);
             position: relative;
             z-index: 10;
         }
-        .segel-footer strong { color: var(--segel-navy); }
+        footer strong { color: var(--text, var(--segel-navy)); }
 
         @media (max-width: 900px) {
             .segel-header { flex-wrap: wrap; gap: 14px; }
@@ -628,12 +657,12 @@
     </div>
 
     <!-- Footer -->
-    <footer class="segel-footer">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda (Pusat Siber dan Sandi TNI AD)<br>
-            <em>NO EVIDENCE, NO DEPLOYMENT</em> · Tata Kelola Rilis Kriptografis Mandiri Luring (5-Cap Pipeline)<br>
-            <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--segel-slate-muted);">
-                <span>Asal (Origin)</span> · <span>Periksa (Inspect)</span> · <span>Setuju (Approve)</span> · <span>Catat (Record)</span> · <span>Uji (Test)</span>
+    <footer>
+        <div class="container">
+            <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda<br>
+            <em>NO EVIDENCE, NO DEPLOYMENT</em> · 5-Stamp Verification Pipeline<br>
+            <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-secondary, #475569);">
+                <span>Origin</span> · <span>Inspect</span> · <span>Approve</span> · <span>Record</span> · <span>Test</span>
             </span>
         </div>
     </footer>

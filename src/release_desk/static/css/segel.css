@@ -55,7 +55,7 @@
 }
 
 .segel-canvas {
-  max-width: 1440px;
+  max-width: 1520px;
   width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   color: var(--segel-navy);
@@ -74,6 +74,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 0 0 4px 0;
+  margin-bottom: 2px;
   position: relative;
   z-index: 50;
 }
@@ -239,7 +241,7 @@
 /* ── 2. Top Row Grid ── */
 .segel-top-row {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 0.95fr 0.9fr;
+  grid-template-columns: 1.15fr 1fr 1fr 1fr;
   gap: 18px;
 }
 
@@ -495,20 +497,20 @@
 
 .segel-tp-card,
 .segel-cr-card {
-  height: 110px;
+  height: 118px;
 }
 
 .segel-au-card,
 .segel-et-card {
-  height: 118px;
-  margin-top: -8px;
+  height: 106px;
+  margin-top: -6px;
 }
 
 .segel-tp-inner,
 .segel-cr-inner {
   position: relative;
   z-index: 2;
-  padding: 14px 18px 16px 18px;
+  padding: 14px 18px 24px 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -520,7 +522,7 @@
 .segel-et-inner {
   position: relative;
   z-index: 2;
-  padding: 16px 18px 14px 18px;
+  padding: 12px 18px 12px 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -529,7 +531,9 @@
 }
 
 .segel-tp-header,
-.segel-cr-header {
+.segel-cr-header,
+.segel-au-header,
+.segel-et-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -554,10 +558,14 @@
   transform: translate(1px, -1px);
 }
 
-.segel-tp-body {
+.segel-tp-body,
+.segel-au-body,
+.segel-cr-body,
+.segel-et-body {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-top: 2px;
 }
 
@@ -569,12 +577,41 @@
   line-height: 1;
 }
 
-/* Mini Bar Histogram (10 bars on lower shelf) */
+/* ── Standardized Graphical Elements (Equal Weight & Dimensions: 20px x 120px) ── */
+
+/* 1. 5-Stamp Cryptographic Integrity Meter */
+.segel-stamp-meter {
+  width: 120px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--segel-sand-subtle);
+  border: 1px solid var(--segel-sand-border);
+  padding: 2.5px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  box-sizing: border-box;
+}
+
+.segel-stamp-meter-pip {
+  flex: 1;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--segel-primary);
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.segel-stamp-meter-pip:first-child { border-radius: 9999px 2px 2px 9999px; }
+.segel-stamp-meter-pip:last-child { border-radius: 2px 9999px 9999px 2px; }
+.segel-stamp-meter-pip:hover { transform: scaleY(1.2); }
+
+/* Mini Bar Histogram (optional legacy fallback) */
 .segel-mini-barchart {
   display: flex;
   align-items: flex-end;
   gap: 3.5px;
-  height: 30px;
+  height: 20px;
 }
 
 .segel-mini-bar {
@@ -607,17 +644,9 @@
   font-size: 11px;
 }
 
-.segel-au-body {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 2px;
-}
-
-/* 3-Segment Progress Meter */
+/* 2. 3-Segment Progress Meter (Reference Standard: 20px x 120px) */
 .segel-split-bar {
-  flex: 1;
+  width: 120px;
   display: flex;
   height: 20px;
   border-radius: 9999px;
@@ -625,6 +654,7 @@
   gap: 2.5px;
   background: var(--segel-sand-subtle);
   padding: 2px;
+  box-sizing: border-box;
 }
 
 .segel-split-seg-1 {
@@ -658,6 +688,58 @@
   background-color: var(--segel-sand-border);
   border-radius: 0 9999px 9999px 0;
 }
+
+/* 3. Dual-Node Quorum Consensus Meter (20px x 120px) */
+.segel-quorum-bar {
+  width: 120px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--segel-sand-subtle);
+  border: 1px solid var(--segel-sand-border);
+  padding: 2px;
+  display: flex;
+  gap: 2.5px;
+  box-sizing: border-box;
+}
+
+.segel-quorum-node {
+  flex: 1;
+  height: 100%;
+  border-radius: 9999px 2px 2px 9999px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--segel-primary),
+    var(--segel-primary) 1.5px,
+    transparent 1.5px,
+    transparent 3.5px
+  );
+}
+.segel-quorum-node:last-child {
+  border-radius: 2px 9999px 9999px 2px;
+}
+
+/* 4. Multi-Stage Test Verification Meter (20px x 120px) */
+.segel-test-meter {
+  width: 120px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--segel-sand-subtle);
+  border: 1px solid var(--segel-sand-border);
+  padding: 2px;
+  display: flex;
+  gap: 2.5px;
+  box-sizing: border-box;
+}
+
+.segel-test-seg {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--segel-primary);
+  transition: opacity 0.2s ease;
+}
+.segel-test-seg:first-child { border-radius: 9999px 2px 2px 9999px; }
+.segel-test-seg:last-child { border-radius: 2px 9999px 9999px 2px; }
 
 /* 32 micro vertical tick bars */
 .segel-dense-ticks-32 {
@@ -744,15 +826,23 @@
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 18px;
+  align-items: stretch;
 }
 
 @media (max-width: 992px) { .segel-mid-row { grid-template-columns: 1fr; } }
+
+.segel-mid-row > * {
+  height: 100%;
+  margin-bottom: 0 !important;
+}
 
 .segel-revenue-card {
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .segel-revenue-top-bar {
@@ -850,19 +940,36 @@
   color: #94A3B8;
 }
 
-/* User Sources Card */
+/* ── Reusable Document-Like Card Component (Scope 3) ── */
+.segel-document-card {
+  background: var(--segel-card-solid, #FFFFFF);
+  border: 1px solid rgba(209, 189, 153, 0.45);
+  border-radius: var(--segel-card-radius, 20px);
+  box-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  padding: 26px 28px;
+  position: relative;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.segel-document-card:hover {
+  box-shadow: 0 16px 40px -6px rgba(60, 90, 55, 0.12);
+  border-color: rgba(122, 158, 107, 0.35);
+}
+
+/* User Sources Card with Enhanced Negative Space */
 .segel-source-card {
-  padding: 24px;
+  padding: 26px 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .segel-source-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 14px;
+  margin-top: 18px;
 }
 
 .segel-source-row {
@@ -955,13 +1062,20 @@
 /* ── 4. Bottom Row: Table & Notched Transactions ── */
 .segel-bottom-row {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.85fr 1.15fr;
   gap: 18px;
+  align-items: stretch;
 }
 
 @media (max-width: 992px) { .segel-bottom-row { grid-template-columns: 1fr; } }
 
-.segel-table-card { padding: 24px; }
+.segel-table-card {
+  padding: 24px;
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
 .segel-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; font-size: 13.5px; }
 .segel-table th {
   padding: 12px 14px;
@@ -998,22 +1112,55 @@
 .segel-status-active { background: #EBFCF2; color: #15803D; }
 .segel-status-pending { background: #FEF3C7; color: #B45309; }
 
-/* ── Notched Transactions Card Silhouette ── */
+/* ── Notched Transactions Card Silhouette (Dynamically Synchronized Height) ── */
 .segel-trans-tabbed-notch {
   position: relative;
   filter: drop-shadow(0 12px 32px rgba(60, 90, 55, 0.08)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
-  height: 280px;
+  height: 100%;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .segel-trans-list-pad {
   position: relative;
   z-index: 2;
-  padding: 8px 22px 20px 22px;
+  padding: 8px 18px 20px 22px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ── Custom Scrollbar for Design System (Scope 5) ── */
+.segel-custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(122, 158, 107, 0.45) rgba(232, 223, 208, 0.25);
+}
+.segel-custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.segel-custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(232, 223, 208, 0.25);
+  border-radius: 9999px;
+  margin: 4px 0;
+}
+.segel-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(122, 158, 107, 0.45);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  transition: background 0.18s ease;
+}
+.segel-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 122, 50, 0.75);
+}
+.segel-custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: var(--segel-primary);
 }
 
 .segel-trans-item {
@@ -1056,11 +1203,14 @@
 }
 
 .segel-full-trend-card {
+  width: 100%;
+  box-sizing: border-box;
+  align-self: stretch;
   margin-top: 6px;
-  border-radius: 20px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  background: #FFFFFF;
-  box-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border-radius: var(--segel-card-radius, 20px);
+  border: 1px solid rgba(122, 158, 107, 0.2);
+  background: var(--segel-card-solid, #FFFFFF);
+  box-shadow: var(--segel-card-shadow, 0 12px 32px -4px rgba(60, 90, 55, 0.08));
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1071,7 +1221,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--segel-sand-border, #F1F5F9);
 }
 
 .segel-full-trend-title-box {
