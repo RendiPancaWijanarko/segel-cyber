@@ -1,0 +1,53 @@
+# NOTICE
+
+This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates or references the following third-party UI assets, libraries, and design patterns in its frontend:
+
+## 1. Third-Party Libraries (Runtime Web Dependencies)
+
+### htmx
+- **Usage**: Loaded via CDN script in `src/release_desk/templates/base.html` (`https://unpkg.com/htmx.org@2.0.4`) for hypermedia-driven dynamic interface updates.
+- **Licence**: UNKNOWN - verify (no local licence file in repository).
+
+### Lucide Icons
+- **Usage**: Loaded via CDN script in `src/release_desk/templates/base.html` (`https://unpkg.com/lucide@latest`) and referenced via `data-lucide` elements across frontend templates.
+- **Licence**: UNKNOWN - verify (no local licence file in repository).
+
+---
+
+## 2. Typography & Fonts
+
+### System Font Stacks
+- **Usage**: Declared in `src/release_desk/static/css/segel.css` (`-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif` and `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`).
+- **Licence**: UNKNOWN - verify (system fonts and third-party typefaces; verify local redistribution or licensing requirements).
+
+---
+
+## 3. Shaders & Visual Effects
+
+### WebGPU / WebGL Procedural Background Shader
+- **Usage**: Implemented directly in JavaScript/WGSL/GLSL in `src/release_desk/templates/base.html` and `src/release_desk/templates/segel.html` (anisotropic caustics / lit rays background effect).
+- **Licence**: UNKNOWN - verify (source origin or reference implementation not determinable from local files).
+
+---
+
+## 4. Design References & Component Patterns
+
+### AlignUI Design Reference
+- **Usage**: Referenced in CSS comments and HTML structure (`src/release_desk/static/css/segel.css`, `src/release_desk/templates/segel.html`, `src/release_desk/templates/index.html`) for the scrubbable performance trend telemetry card ("AlignUI v1.2 Integration").
+- **Licence**: UNKNOWN - verify (design reference; no local licence file in repository).
+
+### "zassk" Environment Reference
+- **Usage**: Dedicated UI/UX R&D route (`@app.get("/zassk")` in `src/release_desk/app.py`) and template `src/release_desk/templates/segel.html`.
+- **Licence**: UNKNOWN - verify (internal prototype / external reference not determinable from local files).
+
+---
+
+## 5. Organizational & Military Insignia
+
+### Institutional Emblems
+- **Files**:
+  - `src/release_desk/static/images/logo-tni.svg`
+  - `src/release_desk/static/images/logo-tni-ad.svg`
+  - `src/release_desk/static/images/pussiberad-logo.png`
+- **Usage**: Displayed in navigation headers and authentication shells as institutional identification for Indonesian Armed Forces (TNI), Indonesian Army (TNI AD), and Army Cyber Center (Pussiberad).
+- **Licence**: UNKNOWN - verify (public sector / military insignia).

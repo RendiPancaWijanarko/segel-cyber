@@ -8,7 +8,7 @@
 
 ## 1. Test ID to PRD Requirement & Error Code Mapping
 
-The table below reconciles all 43 tests in [`tests/adversarial/test_at_NNN.py`](file:///c:/Users/Rendi/OneDrive/ドキュメント/Dokumen%20Pribadi/KOMPETISI/segel-cyber/tests/adversarial/test_at_NNN.py) against official PRD requirements and PRD Appendix E error codes:
+The table below reconciles all 43 tests in [`tests/adversarial/test_at_NNN.py`](../tests/adversarial/test_at_NNN.py) against official PRD requirements and PRD Appendix E error codes:
 
 | Test Function | Target AT ID | PRD Req IDs | PRD Expected Error Code | Current Implementation Behaviour | Reconciliation Action Needed |
 | :--- | :--- | :--- | :--- | :--- | :--- |

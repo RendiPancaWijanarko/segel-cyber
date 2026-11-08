@@ -34,9 +34,9 @@ This document records the architectural boundaries, MVP limitations, and design 
   - Implemented `BaselineAdapter.recover_crash()` with persistent write-ahead journal (`.segel_journal.json`), automatic backup restoration, and staging debris cleanup.
   - Implemented `AuditLogger` writing append-only, SHA-256 hash-chained JSON-lines (`audit.jsonl`).
   - Implemented in-process threading mutual exclusion and atomic filesystem locks (`.deploy.lock`) on `deploy_root`.
-- **Guarantee**:
-  - Abrupt power loss or process kill mid-deployment leaves backups intact and enables zero-state-corruption recovery.
-  - All deployment and verification events are cryptographically chained and tamper-evident.
+- **Verification & Failure Semantics** (see Section 4 for operational limitations):
+  - Verified by crash-recovery tests (`test_at030_crash_recovery`): simulated abrupt process termination mid-deployment leaves backups intact and enables journaled recovery to clean or restored state within test scenario parameters (subject to host filesystem flush semantics).
+  - All deployment and verification events are recorded in local SHA-256 hash-chained JSON-lines (`audit.jsonl`) for tamper evidence.
 
 ---
 

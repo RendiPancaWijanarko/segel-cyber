@@ -54,7 +54,7 @@
 | CLI — Approver | `approver/cli.py` | ~104 | Approval device CLI |
 | CLI — Witness | `witness/cli.py` | ~119 | Witness cosigning CLI |
 
-### Tests (232 Passing, 82.56% Coverage)
+### Tests (310 Passing Suite)
 
 | Test File | Tests | Category |
 |-----------|-------|----------|
@@ -65,6 +65,9 @@
 | `tests/unit/test_inspector.py` | 21 | Capability extraction, policy engine, AI fail-safe |
 | `tests/unit/test_ledger.py` | 25 | SQLite ledger, Merkle inclusion, checkpoints |
 | `tests/unit/test_receiver.py` | 14 | Offline verification, 10-step lifecycle, rollback |
+| `tests/unit/test_receiver_offline_isolation.py` | 2 | Offline network isolation & socket blocking |
+| `tests/unit/test_receiver_p0_hardening.py` | 11 | P0 crash recovery, rollback, and locking |
+| `tests/unit/test_schemas_coverage.py` | 22 | Schema validation and edge cases |
 | `tests/unit/test_approver.py` | 4 | Approval payload, QR request/response, envelopes |
 | `tests/unit/test_witness.py` | 6 | Checkpoint cosigning, fork rejection, consistency |
 | `tests/unit/test_passport_and_promotion.py` | 5 | Passport builder, canary promotion evaluation |
@@ -73,6 +76,7 @@
 | `tests/unit/test_properties.py` | 16 | Hypothesis property-based testing |
 | `tests/integration/test_lifecycle.py` | 6 | End-to-end 18-step lifecycle + rejections |
 | `tests/adversarial/test_adversarial.py` | 25 | Security attack vector test matrix (AT-series) |
+| `tests/adversarial/test_at_NNN.py` | 43 | Extended adversarial test suite (AT-001..AT-043) |
 
 ### Documentation
 
@@ -90,4 +94,4 @@
 
 ## Known Issues
 
-None. All 232 tests pass. 100% test pass rate with 82.56% code coverage. All components and workflows are integrated, testable, and demonstrable.
+None within current automated test scope. All 310 tests pass across unit, integration, and adversarial suites. Operational boundaries and deferred P1 items are documented in `docs/limitations.md`.

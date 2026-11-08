@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import io
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -243,15 +244,16 @@ MUTATIONS = [
 ]
 
 
-def run_cmd(cmd: str, cwd: str | None = None, env: dict[str, str] | None = None) -> tuple[int, str]:
+def run_cmd(cmd: list[str] | str, cwd: str | None = None, env: dict[str, str] | None = None) -> tuple[int, str]:
     full_env = os.environ.copy()
     if env:
         full_env.update(env)
+    cmd_args = shlex.split(cmd) if isinstance(cmd, str) else cmd
     proc = subprocess.run(
-        cmd,
+        cmd_args,
         cwd=cwd,
         env=full_env,
-        shell=True,
+        shell=False,
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -284,10 +286,10 @@ def main() -> None:
 
         # 1. Clean any existing worktree
         if Path(worktree_rel).exists():
-            run_cmd(f"git worktree remove --force {worktree_rel}")
+            run_cmd(["git", "worktree", "remove", "--force", worktree_rel])
 
         # 2. Add detached worktree
-        rc, out = run_cmd(f"git worktree add --detach {worktree_rel} hardening/p2b-p5")
+        rc, out = run_cmd(["git", "worktree", "add", "--detach", worktree_rel, "hardening/p2b-p5"])
         if rc != 0:
             print(f"  ERROR creating worktree: {out}")
             continue
@@ -314,12 +316,24 @@ def main() -> None:
             worktree_env = {
                 "PYTHONPATH": f"{worktree_path / 'src'}{os.pathsep}{worktree_path}"
             }
-            target_test_cmd = f'"{pytest_bin}" "{worktree_path}/tests/adversarial/test_at_NNN.py" -k {test_name} -q --tb=no'
+            target_test_cmd = [
+                str(pytest_bin),
+                str(worktree_path / "tests" / "adversarial" / "test_at_NNN.py"),
+                "-k",
+                test_name,
+                "-q",
+                "--tb=no",
+            ]
             rc_target, out_target = run_cmd(target_test_cmd, cwd=str(worktree_path), env=worktree_env)
             target_failed = (rc_target != 0)
 
             # Run full AT suite in worktree to detect other failures
-            full_test_cmd = f'"{pytest_bin}" "{worktree_path}/tests/adversarial/test_at_NNN.py" -q --tb=no'
+            full_test_cmd = [
+                str(pytest_bin),
+                str(worktree_path / "tests" / "adversarial" / "test_at_NNN.py"),
+                "-q",
+                "--tb=no",
+            ]
             rc_full, out_full = run_cmd(full_test_cmd, cwd=str(worktree_path), env=worktree_env)
 
             # Parse failed tests from full run
@@ -354,7 +368,7 @@ def main() -> None:
 
         finally:
             # 3. Discard throw-away worktree
-            run_cmd(f"git worktree remove --force {worktree_rel}")
+            run_cmd(["git", "worktree", "remove", "--force", worktree_rel])
 
     # Print summary table and mutation score
     print("\n" + "=" * 80)
