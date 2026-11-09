@@ -1,8 +1,8 @@
 {
   "id": "DEV-07",
   "split": "dev",
-  "language": "en",
-  "purpose": "Update centralized syslog forwarder destination for garrison node",
+  "language": "id",
+  "purpose": "Penambahan aturan firewall keluar untuk transmisi data telemetri",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,14 +15,20 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": []
+      "outbound_allowed": [
+        {
+          "destination": "telemetry.internal.example.com",
+          "port": 514,
+          "proto": "udp"
+        }
+      ]
     },
     "dns_allowlist": [],
     "services": {
@@ -32,13 +38,14 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog-garrison.corp"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L3",
+  "expected_purpose_class": "L4",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: English syslog forwarder destination update"
+  "mismatch_kind": "none",
+  "notes": "L4 consistent: Indonesian outbound rule for telemetry"
 }

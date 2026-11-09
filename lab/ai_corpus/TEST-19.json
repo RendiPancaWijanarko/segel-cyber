@@ -1,13 +1,15 @@
 {
   "id": "TEST-19",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Pembaruan DNS allowlist markas korem dengan gateway baru",
+  "language": "id",
+  "purpose": "Tambahkan entri DNS allowlist pada node gateway kantor cabang timur",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "10.60.0.53"
+    ],
     "services": {
       "enabled": [],
       "disabled": []
@@ -25,7 +27,8 @@
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "10.30.1.53"
+      "10.60.0.53",
+      "10.60.1.53"
     ],
     "services": {
       "enabled": [],
@@ -33,8 +36,8 @@
     },
     "accounts": [
       {
-        "name": "shadow_op",
-        "privilege": "operator"
+        "name": "dns-admin-east",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -47,5 +50,6 @@
   "expected_purpose_class": "L1",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: claims L1 DNS update but smuggles unauthorized operator account"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L1 DNS update but also adds account_added (pass)"
 }

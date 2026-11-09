@@ -2,7 +2,7 @@
   "id": "TEST-16",
   "split": "test",
   "language": "en",
-  "purpose": "Hardening deployment node through disabling daytime and discard services",
+  "purpose": "Hardening deployment node through disabling daytime and echo services",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -28,8 +28,8 @@
     "services": {
       "enabled": [],
       "disabled": [
-        "daytime",
-        "discard"
+        "daytimed",
+        "echod"
       ]
     },
     "accounts": [],
@@ -43,5 +43,6 @@
   "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L5 consistent: English deployment node service hardening"
+  "mismatch_kind": "none",
+  "notes": "L5 consistent: English node hardening"
 }

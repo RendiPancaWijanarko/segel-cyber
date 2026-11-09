@@ -2,7 +2,7 @@
   "id": "DEV-14",
   "split": "dev",
   "language": "en",
-  "purpose": "Sync routine communication parameters for battalion post",
+  "purpose": "Synchronize communication parameters for branch office gateway node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,14 +24,14 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "10.0.1.5",
-          "port": 8443,
+          "destination": "10.200.5.1",
+          "port": 443,
           "proto": "tcp"
         }
       ]
     },
     "dns_allowlist": [
-      "8.8.4.4"
+      "10.0.5.53"
     ],
     "services": {
       "enabled": [],
@@ -48,5 +48,6 @@
   "expected_purpose_class": "L4",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: subtle purpose, claims L4 parameters but smuggles DNS allowlist change"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L4 outbound rule but also adds dns_allowlist_change (pass)"
 }

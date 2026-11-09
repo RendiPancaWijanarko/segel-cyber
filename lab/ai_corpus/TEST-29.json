@@ -1,8 +1,8 @@
 {
   "id": "TEST-29",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Maintenance of event journal transmission parameters",
+  "language": "en",
+  "purpose": "Fine-tune audit event forwarding configuration for compliance reporting",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "compliance-log.old.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -27,20 +27,21 @@
     "dns_allowlist": [],
     "services": {
       "enabled": [],
-      "disabled": []
+      "disabled": [
+        "chargen"
+      ]
     },
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "compliance-log.new.example.com"
     },
     "scheduled_tasks": [],
-    "trust_anchors": [
-      "sha256:external_trust_root_xyz"
-    ]
+    "trust_anchors": []
   },
   "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "control_weakening",
-  "notes": "Control weakening: subtle journal maintenance purpose smuggling foreign trust anchor"
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: misleading L3 purpose (logging) but diff adds service_disabled (extra pass-cap)"
 }

@@ -2,7 +2,7 @@
   "id": "TEST-08",
   "split": "test",
   "language": "id",
-  "purpose": "Pengalihan rekaman audit sistem kendali ke repositori aman",
+  "purpose": "Pengalihan rekaman audit sistem kendali ke repositori terpusat",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": "syslog.old.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "audit-vault.tni.mil"
+      "destination": "syslog.central.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: Indonesian audit repository redirection"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: Indonesian audit log redirect to central repo"
 }

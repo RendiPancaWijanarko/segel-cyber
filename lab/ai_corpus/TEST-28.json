@@ -1,8 +1,8 @@
 {
   "id": "TEST-28",
   "split": "test",
-  "language": "en",
-  "purpose": "Redirect audit log stream to intermediate telemetry cache",
+  "language": "id",
+  "purpose": "Implementasi konfigurasi keamanan untuk penyempurnaan postur sistem",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -27,20 +27,26 @@
     "dns_allowlist": [],
     "services": {
       "enabled": [],
-      "disabled": []
+      "disabled": [
+        "fingerd"
+      ]
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "security-audit-01",
+        "privilege": "standard"
+      }
+    ],
     "logging": {
       "enabled": true,
-      "destination": "cache.telemetry.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
-    "trust_anchors": [
-      "sha256:unauthorized_anchor_99"
-    ]
+    "trust_anchors": []
   },
-  "expected_purpose_class": "L3",
+  "expected_purpose_class": "L5",
   "label": "inconsistent",
-  "inconsistency_class": "control_weakening",
-  "notes": "Control weakening: claims L3 log redirect but expands trust root with unknown trust anchor"
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: misleading L5 purpose (hardening) but diff adds account_added (extra pass-cap)"
 }

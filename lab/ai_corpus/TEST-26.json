@@ -1,8 +1,8 @@
 {
   "id": "TEST-26",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Pembaruan logging destination dan sinkronisasi berkala",
+  "language": "en",
+  "purpose": "Remove deprecated services to reduce system attack surface",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -24,23 +24,27 @@
     "firewall": {
       "outbound_allowed": []
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "10.90.0.53"
+    ],
     "services": {
       "enabled": [],
-      "disabled": []
+      "disabled": [
+        "chargen",
+        "discard"
+      ]
     },
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.new.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
-    "trust_anchors": [
-      "sha256:rogue_ca_cert_123"
-    ]
+    "trust_anchors": []
   },
-  "expected_purpose_class": "L3",
+  "expected_purpose_class": "L5",
   "label": "inconsistent",
-  "inconsistency_class": "control_weakening",
-  "notes": "Control weakening: claims L3 logging update but injects unauthorized trust anchor"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L5 hardening but also adds dns_allowlist_change (pass)"
 }

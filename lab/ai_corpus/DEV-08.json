@@ -1,8 +1,8 @@
 {
   "id": "DEV-08",
   "split": "dev",
-  "language": "id",
-  "purpose": "Penambahan aturan firewall keluar untuk transmisi cuaca militer",
+  "language": "en",
+  "purpose": "Add outbound network rule for encrypted telemetry uplink connection",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,8 +24,8 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "10.88.1.10",
-          "port": 8080,
+          "destination": "telemetry-collector.ops.example.com",
+          "port": 443,
           "proto": "tcp"
         }
       ]
@@ -46,5 +46,6 @@
   "expected_purpose_class": "L4",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L4 consistent: Indonesian weather data outbound rule"
+  "mismatch_kind": "none",
+  "notes": "L4 consistent: English outbound rule for telemetry uplink"
 }

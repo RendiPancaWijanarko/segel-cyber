@@ -1,8 +1,8 @@
 {
   "id": "EX-03",
   "split": "exemplar",
-  "language": "id",
-  "purpose": "Pembaruan berkala sistem informasi posko garnisun",
+  "language": "mixed",
+  "purpose": "Pembaruan berkala parameter sistem informasi gateway node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -31,8 +31,8 @@
     },
     "accounts": [
       {
-        "name": "ops_user",
-        "privilege": "operator"
+        "name": "sysinfo-operator",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L6",
   "label": "inconsistent",
   "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Exemplar 3: Vague L6 purpose with configuration change"
+  "mismatch_kind": "silent",
+  "notes": "Exemplar 3: vague L6 purpose with silent pass-severity cap (account_added)"
 }

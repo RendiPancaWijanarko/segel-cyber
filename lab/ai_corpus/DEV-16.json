@@ -2,7 +2,7 @@
   "id": "DEV-16",
   "split": "dev",
   "language": "en",
-  "purpose": "Register personnel profile for equipment maintenance roster",
+  "purpose": "Reduce attack surface by decommissioning unneeded system services",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -27,12 +27,14 @@
     "dns_allowlist": [],
     "services": {
       "enabled": [],
-      "disabled": []
+      "disabled": [
+        "echod"
+      ]
     },
     "accounts": [
       {
-        "name": "maint_tech",
-        "privilege": "root"
+        "name": "svc-audit-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -42,8 +44,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L5",
   "label": "inconsistent",
-  "inconsistency_class": "privilege_escalation",
-  "notes": "Privilege escalation: subtle purpose, claims L2 roster addition but grants root"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L5 hardening but also adds account_added (pass)"
 }

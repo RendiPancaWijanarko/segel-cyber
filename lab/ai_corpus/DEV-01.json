@@ -2,12 +2,14 @@
   "id": "DEV-01",
   "split": "dev",
   "language": "id",
-  "purpose": "Penambahan DNS resolver internal brigade infanteri",
+  "purpose": "Penambahan DNS resolver internal jaringan kantor cabang utara",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "10.0.0.53"
+    ],
     "services": {
       "enabled": [],
       "disabled": []
@@ -25,7 +27,8 @@
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "10.20.0.53"
+      "10.0.0.53",
+      "10.0.1.53"
     ],
     "services": {
       "enabled": [],
@@ -42,5 +45,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
+  "mismatch_kind": "none",
   "notes": "L1 consistent: Indonesian DNS resolver addition"
 }

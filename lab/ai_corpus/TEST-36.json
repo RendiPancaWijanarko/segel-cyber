@@ -1,8 +1,8 @@
 {
   "id": "TEST-36",
   "split": "test",
-  "language": "id",
-  "purpose": "Penataan berkala parameter identitas simpul komunikasi",
+  "language": "en",
+  "purpose": "Minor refresh of field gateway connection parameters for branch nodes",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -22,47 +22,55 @@
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": []
+      "outbound_allowed": [
+        {
+          "destination": "gw-01.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-02.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-03.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-04.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-05.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-06.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-07.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-08.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
     },
     "dns_allowlist": [],
     "services": {
       "enabled": [],
       "disabled": []
     },
-    "accounts": [
-      {
-        "name": "comm_user_1",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_2",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_3",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_4",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_5",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_6",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_7",
-        "privilege": "operator"
-      },
-      {
-        "name": "comm_user_8",
-        "privilege": "operator"
-      }
-    ],
+    "accounts": [],
     "logging": {
       "enabled": true,
       "destination": ""
@@ -70,8 +78,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L4",
   "label": "inconsistent",
   "inconsistency_class": "over_broad_change",
-  "notes": "Over-broad change: subtle periodic adjustment purpose adding 8 accounts triggering broad_change"
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims minor L4 refresh but diff adds 8 outbound rules (broad_change)"
 }

@@ -2,7 +2,7 @@
   "id": "EX-01",
   "split": "exemplar",
   "language": "id",
-  "purpose": "Pembaruan alamat server resolusi nama domain komando garnisun",
+  "purpose": "Pembaruan alamat server resolusi nama domain kantor cabang",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "Exemplar 1: Indonesian paraphrase for L1 DNS allowlist update"
+  "mismatch_kind": "none",
+  "notes": "Exemplar 1: Indonesian L1 DNS allowlist update"
 }

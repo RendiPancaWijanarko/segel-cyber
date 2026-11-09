@@ -2,7 +2,7 @@
   "id": "TEST-31",
   "split": "test",
   "language": "en",
-  "purpose": "Security posture optimization and exposure reduction",
+  "purpose": "Establish operator account with elevated access for infrastructure management",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -29,18 +29,22 @@
       "enabled": [],
       "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "infra-operator-01",
+        "privilege": "wheel"
+      }
+    ],
     "logging": {
       "enabled": true,
       "destination": ""
     },
-    "scheduled_tasks": [
-      "/opt/cron_exfil_script.sh"
-    ],
+    "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L5",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Misleading purpose: claims L5 exposure reduction but registers unvetted scheduled task"
+  "inconsistency_class": "privilege_escalation",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 but grants wheel privilege (reject)"
 }

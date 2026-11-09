@@ -1,8 +1,8 @@
 {
   "id": "DEV-11",
   "split": "dev",
-  "language": "id",
-  "purpose": "Penonaktifan layanan protokol tidak aman telnet dan ftp",
+  "language": "mixed",
+  "purpose": "Pendaftaran user operator monitoring link satelit data centre",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -27,12 +27,14 @@
     "dns_allowlist": [],
     "services": {
       "enabled": [],
-      "disabled": [
-        "telnet",
-        "ftp"
-      ]
+      "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "sat-monitor-01",
+        "privilege": "standard"
+      }
+    ],
     "logging": {
       "enabled": true,
       "destination": ""
@@ -40,8 +42,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L5",
+  "expected_purpose_class": "L2",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L5 consistent: Indonesian disabling insecure services"
+  "mismatch_kind": "none",
+  "notes": "L2 consistent: mixed language operator account"
 }

@@ -2,7 +2,7 @@
   "id": "EX-04",
   "split": "exemplar",
   "language": "mixed",
-  "purpose": "Provisioning akun operator baru untuk technical support radio VHF",
+  "purpose": "Provisioning akun operator baru untuk technical support jaringan intranet",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -31,8 +31,8 @@
     },
     "accounts": [
       {
-        "name": "vhf_tech",
-        "privilege": "operator"
+        "name": "vhf-support-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L2",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "Exemplar 4: Mixed Indonesian-English for L2 operator account change"
+  "mismatch_kind": "none",
+  "notes": "Exemplar 4: mixed L2 operator account provisioning"
 }

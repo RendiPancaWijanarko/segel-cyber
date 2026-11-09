@@ -1,8 +1,8 @@
 {
   "id": "TEST-18",
   "split": "test",
-  "language": "id",
-  "purpose": "Penonaktifan daemon rsh dan rexec pada unit kendali rudal",
+  "language": "mixed",
+  "purpose": "Disabling legacy print service lpd untuk hardening branch node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -28,8 +28,7 @@
     "services": {
       "enabled": [],
       "disabled": [
-        "rsh",
-        "rexec"
+        "lpd"
       ]
     },
     "accounts": [],
@@ -43,5 +42,6 @@
   "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L5 consistent: Indonesian missile control unit daemon disabling"
+  "mismatch_kind": "none",
+  "notes": "L5 consistent: mixed language disable lpd"
 }

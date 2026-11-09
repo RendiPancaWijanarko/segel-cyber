@@ -1,8 +1,8 @@
 {
   "id": "DEV-06",
   "split": "dev",
-  "language": "id",
-  "purpose": "Penyesuaian server tujuan pencatatan log audit puskodal",
+  "language": "en",
+  "purpose": "Update centralized syslog forwarder destination for gateway node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": "log01.datacenter.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "log-puskodal.ad.mil"
+      "destination": "log02.datacenter.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: Indonesian audit log destination change"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: English syslog redirect"
 }

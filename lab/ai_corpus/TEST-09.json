@@ -2,7 +2,7 @@
   "id": "TEST-09",
   "split": "test",
   "language": "en",
-  "purpose": "Configure secondary audit logging collector endpoint",
+  "purpose": "Configure secondary audit logging collector endpoint for branch nodes",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": "log-primary.ops.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "sec-collector.ad.mil"
+      "destination": "log-secondary.ops.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: English secondary audit collector configuration"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: English secondary audit collector"
 }

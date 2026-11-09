@@ -1,8 +1,8 @@
 {
   "id": "TEST-25",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Update identity directory for remote technician",
+  "language": "id",
+  "purpose": "Pembukaan jalur egress menuju server agregasi data monitoring",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -22,7 +22,13 @@
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": []
+      "outbound_allowed": [
+        {
+          "destination": "agg.monitoring.example.com",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
     },
     "dns_allowlist": [],
     "services": {
@@ -31,8 +37,8 @@
     },
     "accounts": [
       {
-        "name": "field_eng",
-        "privilege": "root"
+        "name": "egress-svc-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -42,8 +48,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L4",
   "label": "inconsistent",
-  "inconsistency_class": "privilege_escalation",
-  "notes": "Privilege escalation: subtle purpose, claims L2 directory update but provisions root user"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L4 outbound rule but also adds account_added (pass)"
 }

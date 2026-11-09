@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-3 (Purpose Corpus Construction & Ground-Truth Verification, Unfrozen)
+- **Phase**: AI-3c (Purpose Corpus Corrections, D9b Rebalancing, and Freeze)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `0bfc24e` ("AI-2: baseline v1 schema, capability taxonomy, and structured extractor")
+- **Last Commit**: `88614b2` ("AI-3: corpus (unfrozen)")
 
 ---
 
@@ -46,13 +46,20 @@ Full test suite execution evidence:
 - [x] Maintained regex pattern matching fallback in `extract_capabilities(files)` so all existing tests remain green.
 - [x] Authored 18 tests in `tests/unit/test_baseline_and_taxonomy.py` covering positive/negative per kind, duplicate keys, huge values, determinism, instance ID format, and predecessor diffing (showed red run, then green). Suite expanded from 310 to 328 tests.
 
-### AI-3: Purpose Corpus Construction & Ground-Truth Verification (Unfrozen)
-- [x] Authored `docs/ai_purpose_classes.md` defining classes L1..L6 and canonical expectation map per D17.
-- [x] Created `lab/ai_corpus/` containing 66 items (6 exemplars, 24 dev, 36 test; 30 consistent, 30 inconsistent across 5 categories; 27 id, 22 en, 17 mixed).
-- [x] Implemented `scripts/ai_eval/verify_corpus.py` to recompute ground truth from Baseline v1 structured extractor and validate stratification.
-- [x] Verified subtle/paraphrased items avoiding obvious keywords: 16/30 (53.3% >= 40% target).
-- [x] Authored `docs/ai_corpus_README.md` and `docs/ai_corpus_review_summary.md` (including 16 items sampled with fixed seed 42).
-- [x] Maintained unfrozen status (no `docs/ai_corpus_freeze.txt` written yet).
+### AI-3c: Purpose Corpus Corrections, D9b Rebalancing, and Freeze
+- [x] Appended Decision D9b to `docs/ai_decisions.md` (rebalanced inconsistent items to maximize AI value with silent mismatches while maintaining deterministic controls).
+- [x] Added computed field `mismatch_kind` (`"none"`, `"silent"`, `"deterministic"`) to all items, computed from taxonomy severity rules in `verify_corpus.py` and `generate_corpus.py`.
+- [x] Programmatically rebalanced corpus via `scripts/ai_eval/generate_corpus.py`:
+  - Dev inconsistent (12): hidden_extra_impact 4 (`silent`), vague_or_misleading_purpose 3 (`silent`), privilege_escalation 2 (`deterministic`), control_weakening 1 (`deterministic`), over_broad_change 2 (`deterministic`). (7 silent, 5 deterministic).
+  - Test inconsistent (18): hidden_extra_impact 8 (`silent`), vague_or_misleading_purpose 3 (`silent`), privilege_escalation 2 (`deterministic`), control_weakening 3 (`deterministic`), over_broad_change 2 (`deterministic`). (11 silent, 7 deterministic).
+  - Consistent items maintained: 12 dev, 18 test (exactly 6 each for L1..L5). Exemplars: 6.
+- [x] Neutralized domain-specific content: removed all military references (rudal, battlefield, puskodal, garnisun, etc.) in favor of generic IT wording (node, gateway, branch office, telemetry, operator).
+- [x] Verified that no two purposes share the same first four words.
+- [x] Removed keyword evasion percentage and documented: "keyword evasion is measured in AI-4 against the independently written docs/b1_keywords.md".
+- [x] Regenerated `docs/ai_corpus_review_summary.md` from script option `scripts/ai_eval/verify_corpus.py --summary docs/ai_corpus_review_summary.md`.
+- [x] Ran ruff check on `scripts/ai_eval/` (`All checks passed!`) and full test suite (328 passed, 0 failed).
+- [x] Clean sweep search for "C:\", "Users\", and "file://" with zero hits across `docs/` and `scripts/`.
+- [x] Generated `docs/ai_corpus_freeze.txt` containing SHA-256 hashes of test-split items and byte concatenation.
 
 ---
 

@@ -2,13 +2,13 @@
   "id": "TEST-02",
   "split": "test",
   "language": "en",
-  "purpose": "Add secondary DNS resolver for air defense command",
+  "purpose": "Add secondary DNS resolver for perimeter network segment",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "192.168.10.1"
+      "10.40.0.1"
     ],
     "services": {
       "enabled": [],
@@ -27,8 +27,8 @@
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "192.168.10.1",
-      "192.168.10.53"
+      "10.40.0.1",
+      "10.40.0.2"
     ],
     "services": {
       "enabled": [],
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L1 consistent: English secondary DNS addition"
+  "mismatch_kind": "none",
+  "notes": "L1 consistent: English secondary DNS resolver"
 }

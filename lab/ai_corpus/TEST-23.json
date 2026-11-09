@@ -1,8 +1,8 @@
 {
   "id": "TEST-23",
   "split": "test",
-  "language": "id",
-  "purpose": "Reorganisasi tabel akses identitas regu patroli perbatasan",
+  "language": "mixed",
+  "purpose": "Penyesuaian konfigurasi penanganan data log sistem node gateway",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,35 +15,37 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-a.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": []
+      "outbound_allowed": [
+        {
+          "destination": "log-b.example.com",
+          "port": 514,
+          "proto": "udp"
+        }
+      ]
     },
     "dns_allowlist": [],
     "services": {
       "enabled": [],
       "disabled": []
     },
-    "accounts": [
-      {
-        "name": "patrol_lead",
-        "privilege": "privileged"
-      }
-    ],
+    "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-b.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "privilege_escalation",
-  "notes": "Privilege escalation: subtle purpose, claims L2 access roster but grants privileged access"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L3 logging adjust but also adds outbound_rule_added (pass)"
 }

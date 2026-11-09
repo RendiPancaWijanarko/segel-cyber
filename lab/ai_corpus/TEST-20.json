@@ -2,7 +2,7 @@
   "id": "TEST-20",
   "split": "test",
   "language": "en",
-  "purpose": "Refresh telemetry forwarding channel assignment",
+  "purpose": "Register additional DNS resolver for internal application segment",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,17 +24,17 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "10.0.2.10",
-          "port": 9000,
+          "destination": "10.70.0.1",
+          "port": 443,
           "proto": "tcp"
         }
       ]
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "10.70.0.53"
+    ],
     "services": {
-      "enabled": [
-        "telnet"
-      ],
+      "enabled": [],
       "disabled": []
     },
     "accounts": [],
@@ -45,8 +45,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L4",
+  "expected_purpose_class": "L1",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: subtle purpose, claims L4 rule but enables unannounced service"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L1 DNS update but also adds outbound_rule_added (pass)"
 }

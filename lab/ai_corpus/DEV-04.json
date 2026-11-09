@@ -2,7 +2,7 @@
   "id": "DEV-04",
   "split": "dev",
   "language": "en",
-  "purpose": "Add maintenance operator account for surveillance payload",
+  "purpose": "Create operator account for remote maintenance access to branch node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -31,8 +31,8 @@
     },
     "accounts": [
       {
-        "name": "payload_op",
-        "privilege": "operator"
+        "name": "remote-maint-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L2",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L2 consistent: English maintenance operator addition"
+  "mismatch_kind": "none",
+  "notes": "L2 consistent: English operator account creation"
 }

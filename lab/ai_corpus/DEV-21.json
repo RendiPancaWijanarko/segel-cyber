@@ -2,7 +2,7 @@
   "id": "DEV-21",
   "split": "dev",
   "language": "en",
-  "purpose": "Routine system update and general parameter synchronization",
+  "purpose": "Register personnel profile for equipment maintenance roster entry",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -31,8 +31,8 @@
     },
     "accounts": [
       {
-        "name": "sys_temp",
-        "privilege": "operator"
+        "name": "maintenance-tech-01",
+        "privilege": "root"
       }
     ],
     "logging": {
@@ -42,8 +42,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L6",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Vague purpose: L6 generic synchronization purpose with new operator account"
+  "inconsistency_class": "privilege_escalation",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 but grants root privilege (reject)"
 }

@@ -2,7 +2,7 @@
   "id": "TEST-24",
   "split": "test",
   "language": "en",
-  "purpose": "Provision standard operator account for radar station backup",
+  "purpose": "Redirect audit log stream to intermediate telemetry aggregator node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -31,19 +31,20 @@
     },
     "accounts": [
       {
-        "name": "radar_bkp",
-        "privilege": "admin"
+        "name": "log-collector-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "telemetry-agg.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "privilege_escalation",
-  "notes": "Privilege escalation: claims L2 standard operator account but grants admin"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L3 logging redirect but also adds account_added (pass)"
 }

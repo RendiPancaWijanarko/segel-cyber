@@ -1,8 +1,8 @@
 {
   "id": "DEV-18",
   "split": "dev",
-  "language": "id",
-  "purpose": "Penyesuaian format pencatatan log audit pos terdepan",
+  "language": "en",
+  "purpose": "General system update and routine parameter refresh for branch nodes",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -29,16 +29,22 @@
       "enabled": [],
       "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "maint-operator-02",
+        "privilege": "standard"
+      }
+    ],
     "logging": {
-      "enabled": false,
+      "enabled": true,
       "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L3",
+  "expected_purpose_class": "L6",
   "label": "inconsistent",
-  "inconsistency_class": "control_weakening",
-  "notes": "Control weakening: claims L3 logging adjustment but disables audit logging entirely"
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: vague L6 English with account_added (pass)"
 }

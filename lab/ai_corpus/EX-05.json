@@ -2,7 +2,7 @@
   "id": "EX-05",
   "split": "exemplar",
   "language": "id",
-  "purpose": "Pengalihan tujuan log audit pos komando ke server terpusat",
+  "purpose": "Pengalihan tujuan log audit gateway wilayah ke server terpusat",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "audit-collector.garnisun.internal"
+      "destination": "syslog.datacenter.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "Exemplar 5: Indonesian for L3 logging adjustment"
+  "mismatch_kind": "none",
+  "notes": "Exemplar 5: Indonesian L3 non-weakening syslog redirect"
 }

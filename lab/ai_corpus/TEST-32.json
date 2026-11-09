@@ -1,8 +1,8 @@
 {
   "id": "TEST-32",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Hardening server pangkalan AD dengan security tuning",
+  "language": "id",
+  "purpose": "Relokasi penyimpanan jejak rekam operasional node perimeter",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "syslog.perimeter.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -26,21 +26,20 @@
     },
     "dns_allowlist": [],
     "services": {
-      "enabled": [
-        "vnc_remote"
-      ],
+      "enabled": [],
       "disabled": []
     },
     "accounts": [],
     "logging": {
-      "enabled": true,
+      "enabled": false,
       "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L5",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Misleading purpose: claims L5 hardening but enables remote desktop vnc service"
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging adjustment but disables logging (warn)"
 }

@@ -1,8 +1,8 @@
 {
   "id": "DEV-15",
   "split": "dev",
-  "language": "id",
-  "purpose": "Penambahan akun operator piket telekomunikasi garnisun",
+  "language": "mixed",
+  "purpose": "Adjustment of audit log destination untuk branch office node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,35 +15,37 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-old.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": []
+      "outbound_allowed": [
+        {
+          "destination": "log-new.example.com",
+          "port": 514,
+          "proto": "udp"
+        }
+      ]
     },
     "dns_allowlist": [],
     "services": {
       "enabled": [],
       "disabled": []
     },
-    "accounts": [
-      {
-        "name": "piket_telko",
-        "privilege": "admin"
-      }
-    ],
+    "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-new.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "privilege_escalation",
-  "notes": "Privilege escalation: claims L2 operator account but grants admin privilege"
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L3 logging adjustment but also adds outbound_rule_added (pass)"
 }

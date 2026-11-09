@@ -1,8 +1,8 @@
 {
   "id": "DEV-05",
   "split": "dev",
-  "language": "mixed",
-  "purpose": "Pendaftaran user operator monitoring link satelit",
+  "language": "id",
+  "purpose": "Penyesuaian server tujuan pencatatan log audit sistem terpusat",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "syslog-old.internal"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -29,21 +29,17 @@
       "enabled": [],
       "disabled": []
     },
-    "accounts": [
-      {
-        "name": "sat_mon",
-        "privilege": "operator"
-      }
-    ],
+    "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "syslog-new.internal"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L2 consistent: Mixed satellite link operator addition"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: Indonesian syslog destination change"
 }

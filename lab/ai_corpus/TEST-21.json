@@ -2,7 +2,7 @@
   "id": "TEST-21",
   "split": "test",
   "language": "id",
-  "purpose": "Penyesuaian konfigurasi penanganan data komando garnisun",
+  "purpose": "Penambahan akun pengguna layanan monitoring jaringan pusat data",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -24,8 +24,8 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "203.0.113.50",
-          "port": 9000,
+          "destination": "dc-monitor.example.com",
+          "port": 9200,
           "proto": "tcp"
         }
       ]
@@ -35,16 +35,22 @@
       "enabled": [],
       "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "dc-monitor-01",
+        "privilege": "standard"
+      }
+    ],
     "logging": {
       "enabled": true,
-      "destination": "log-new.internal"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L3",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: subtle purpose, claims L3 logging but adds external outbound rule"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L2 account add but also adds outbound_rule_added (pass)"
 }

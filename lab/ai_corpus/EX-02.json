@@ -2,7 +2,7 @@
   "id": "EX-02",
   "split": "exemplar",
   "language": "en",
-  "purpose": "Add outbound firewall egress rule for tactical threat intelligence feed",
+  "purpose": "Add outbound firewall egress rule for telemetry aggregation endpoint",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,7 +24,7 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "threat-intel.hq.tni.mil",
+          "destination": "metrics.internal.example.com",
           "port": 443,
           "proto": "tcp"
         }
@@ -46,5 +46,6 @@
   "expected_purpose_class": "L4",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "Exemplar 2: English for L4 network rule addition"
+  "mismatch_kind": "none",
+  "notes": "Exemplar 2: English L4 outbound network rule addition"
 }

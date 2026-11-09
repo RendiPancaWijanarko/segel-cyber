@@ -2,13 +2,13 @@
   "id": "DEV-02",
   "split": "dev",
   "language": "en",
-  "purpose": "Update recursive DNS forwarder IP address for battlefield network",
+  "purpose": "Register additional DNS forwarder for branch office network",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "10.1.1.1"
+      "192.168.1.1"
     ],
     "services": {
       "enabled": [],
@@ -27,8 +27,8 @@
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "10.1.1.1",
-      "172.16.1.53"
+      "192.168.1.1",
+      "192.168.1.2"
     ],
     "services": {
       "enabled": [],
@@ -45,5 +45,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L1 consistent: English recursive DNS forwarder addition"
+  "mismatch_kind": "none",
+  "notes": "L1 consistent: English DNS allowlist addition"
 }

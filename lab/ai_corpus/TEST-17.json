@@ -1,8 +1,8 @@
 {
   "id": "TEST-17",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Disabling legacy print service lpd untuk hardening server",
+  "language": "id",
+  "purpose": "Penonaktifan daemon rsh dan rexec pada node kontrol jaringan",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -28,7 +28,8 @@
     "services": {
       "enabled": [],
       "disabled": [
-        "lpd"
+        "rshd",
+        "rexecd"
       ]
     },
     "accounts": [],
@@ -42,5 +43,6 @@
   "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L5 consistent: Mixed service disabling for hardening"
+  "mismatch_kind": "none",
+  "notes": "L5 consistent: Indonesian disable rsh/rexec daemons"
 }

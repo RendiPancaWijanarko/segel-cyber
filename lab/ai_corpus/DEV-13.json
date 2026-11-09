@@ -2,7 +2,7 @@
   "id": "DEV-13",
   "split": "dev",
   "language": "id",
-  "purpose": "Pembaruan alamat DNS resolver markas brigade",
+  "purpose": "Pembaruan alamat DNS resolver jaringan kantor regional timur",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,7 +24,7 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "198.51.100.1",
+          "destination": "10.100.1.1",
           "port": 4444,
           "proto": "tcp"
         }
@@ -48,5 +48,6 @@
   "expected_purpose_class": "L1",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: claims L1 DNS update but introduces hidden outbound egress rule"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L1 DNS update but also adds outbound_rule_added (pass)"
 }

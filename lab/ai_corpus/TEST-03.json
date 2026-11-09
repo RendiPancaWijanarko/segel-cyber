@@ -1,13 +1,15 @@
 {
   "id": "TEST-03",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Pembaruan DNS allowlist untuk secure perimeter network",
+  "language": "id",
+  "purpose": "Pembaruan DNS allowlist pada segmen perimeter jaringan aman cabang",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "172.16.0.53"
+    ],
     "services": {
       "enabled": [],
       "disabled": []
@@ -25,7 +27,8 @@
       "outbound_allowed": []
     },
     "dns_allowlist": [
-      "10.40.1.53"
+      "172.16.0.53",
+      "172.16.1.53"
     ],
     "services": {
       "enabled": [],
@@ -42,5 +45,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L1 consistent: Mixed language DNS allowlist update"
+  "mismatch_kind": "none",
+  "notes": "L1 consistent: Indonesian DNS allowlist perimeter update"
 }

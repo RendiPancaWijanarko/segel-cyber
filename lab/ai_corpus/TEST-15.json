@@ -2,7 +2,7 @@
   "id": "TEST-15",
   "split": "test",
   "language": "id",
-  "purpose": "Pengurangan bidang serang dengan mematikan service tftp dan echo",
+  "purpose": "Pengurangan bidang serang dengan mematikan service daytimed dan chargen",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -28,8 +28,8 @@
     "services": {
       "enabled": [],
       "disabled": [
-        "tftp",
-        "echo"
+        "daytimed",
+        "chargen"
       ]
     },
     "accounts": [],
@@ -43,5 +43,6 @@
   "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L5 consistent: Indonesian attack surface reduction via disabling services"
+  "mismatch_kind": "none",
+  "notes": "L5 consistent: Indonesian attack surface reduction"
 }

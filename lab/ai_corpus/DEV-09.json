@@ -1,8 +1,8 @@
 {
   "id": "DEV-09",
   "split": "dev",
-  "language": "en",
-  "purpose": "Add outbound network rule for secure encrypted telemetry uplink",
+  "language": "id",
+  "purpose": "Penonaktifan layanan protokol legacy telnet dan rsh pada node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -22,18 +22,15 @@
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": [
-        {
-          "destination": "172.20.10.1",
-          "port": 9443,
-          "proto": "tcp"
-        }
-      ]
+      "outbound_allowed": []
     },
     "dns_allowlist": [],
     "services": {
       "enabled": [],
-      "disabled": []
+      "disabled": [
+        "telnetd",
+        "rshd"
+      ]
     },
     "accounts": [],
     "logging": {
@@ -43,8 +40,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L4",
+  "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L4 consistent: English telemetry uplink rule addition"
+  "mismatch_kind": "none",
+  "notes": "L5 consistent: Indonesian disable insecure protocols"
 }

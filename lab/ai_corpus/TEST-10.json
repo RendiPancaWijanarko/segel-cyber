@@ -1,8 +1,8 @@
 {
   "id": "TEST-10",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Pembaruan logging destination untuk SIEM tactical center",
+  "language": "id",
+  "purpose": "Pembaruan logging destination untuk agregasi event monitoring terpusat",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "siem-tactical.internal"
+      "destination": "siem.ops.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: Mixed logging destination update"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: Indonesian log to central SIEM"
 }

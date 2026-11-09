@@ -1,8 +1,8 @@
 {
   "id": "TEST-22",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Update outbound allowlist untuk server logistik wilayah",
+  "language": "en",
+  "purpose": "Set up operator account for data centre infrastructure access",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -22,23 +22,19 @@
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": [
-        {
-          "destination": "10.5.5.5",
-          "port": 443,
-          "proto": "tcp"
-        }
-      ]
+      "outbound_allowed": []
     },
-    "dns_allowlist": [],
+    "dns_allowlist": [
+      "10.80.0.53"
+    ],
     "services": {
       "enabled": [],
       "disabled": []
     },
     "accounts": [
       {
-        "name": "vendor_sync",
-        "privilege": "operator"
+        "name": "dc-infra-operator-01",
+        "privilege": "standard"
       }
     ],
     "logging": {
@@ -48,8 +44,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L4",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
   "inconsistency_class": "hidden_extra_impact",
-  "notes": "Hidden extra impact: claims L4 outbound rule but smuggles new user account"
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L2 account add but also adds dns_allowlist_change (pass)"
 }

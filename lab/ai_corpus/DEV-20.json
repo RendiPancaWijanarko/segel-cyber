@@ -2,7 +2,7 @@
   "id": "DEV-20",
   "split": "dev",
   "language": "id",
-  "purpose": "Penyesuaian konfigurasi rutin siklus pemeliharaan bulanan",
+  "purpose": "Penambahan akun operator piket telekomunikasi jaringan internal",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -22,20 +22,19 @@
   },
   "candidate_baseline": {
     "firewall": {
-      "outbound_allowed": [
-        {
-          "destination": "192.0.2.1",
-          "port": 8080,
-          "proto": "tcp"
-        }
-      ]
+      "outbound_allowed": []
     },
     "dns_allowlist": [],
     "services": {
       "enabled": [],
       "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "comms-operator-01",
+        "privilege": "admin"
+      }
+    ],
     "logging": {
       "enabled": true,
       "destination": ""
@@ -43,8 +42,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L6",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Vague purpose: L6 vague maintenance description with substantive outbound rule"
+  "inconsistency_class": "privilege_escalation",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 account addition but grants admin privilege (reject)"
 }

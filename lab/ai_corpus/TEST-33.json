@@ -1,8 +1,8 @@
 {
   "id": "TEST-33",
   "split": "test",
-  "language": "id",
-  "purpose": "Penambahan akun operator radio cadangan kompi",
+  "language": "en",
+  "purpose": "Forward audit log stream to new compliance aggregation endpoint",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-old.compliance.example.com"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -29,49 +29,19 @@
       "enabled": [],
       "disabled": []
     },
-    "accounts": [
-      {
-        "name": "rad_op_1",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_2",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_3",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_4",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_5",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_6",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_7",
-        "privilege": "operator"
-      },
-      {
-        "name": "rad_op_8",
-        "privilege": "operator"
-      }
-    ],
+    "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "log-new.compliance.example.com"
     },
     "scheduled_tasks": [],
-    "trust_anchors": []
+    "trust_anchors": [
+      "sha256:aabbcc112233"
+    ]
   },
-  "expected_purpose_class": "L2",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "over_broad_change",
-  "notes": "Over-broad change: claims single operator account but adds 8 accounts triggering broad_change"
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging redirect but also adds trust_anchor_added (warn)"
 }

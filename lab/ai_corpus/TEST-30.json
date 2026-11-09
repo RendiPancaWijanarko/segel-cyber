@@ -1,8 +1,8 @@
 {
   "id": "TEST-30",
   "split": "test",
-  "language": "mixed",
-  "purpose": "Miscellaneous maintenance changes untuk stability perbaikan",
+  "language": "id",
+  "purpose": "Reorganisasi direktori akses identitas pengguna sistem monitoring",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,14 +24,17 @@
     "firewall": {
       "outbound_allowed": []
     },
-    "dns_allowlist": [
-      "1.0.0.1"
-    ],
+    "dns_allowlist": [],
     "services": {
       "enabled": [],
       "disabled": []
     },
-    "accounts": [],
+    "accounts": [
+      {
+        "name": "sysmon-lead-01",
+        "privilege": "sudo"
+      }
+    ],
     "logging": {
       "enabled": true,
       "destination": ""
@@ -39,8 +42,9 @@
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L6",
+  "expected_purpose_class": "L2",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Vague purpose: L6 miscellaneous stability changes with DNS allowlist modification"
+  "inconsistency_class": "privilege_escalation",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 account add but grants sudo privilege (reject)"
 }

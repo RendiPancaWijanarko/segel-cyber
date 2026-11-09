@@ -2,7 +2,7 @@
   "id": "EX-06",
   "split": "exemplar",
   "language": "en",
-  "purpose": "Hardening tactical node by disabling unused telnet and rsh services",
+  "purpose": "Hardening node by disabling unused telnet and finger services",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -28,8 +28,8 @@
     "services": {
       "enabled": [],
       "disabled": [
-        "telnet",
-        "rsh"
+        "telnetd",
+        "fingerd"
       ]
     },
     "accounts": [],
@@ -43,5 +43,6 @@
   "expected_purpose_class": "L5",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "Exemplar 6: English for L5 service hardening"
+  "mismatch_kind": "none",
+  "notes": "Exemplar 6: English L5 hardening by disabling unused services"
 }

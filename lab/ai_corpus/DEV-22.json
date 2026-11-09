@@ -2,7 +2,7 @@
   "id": "DEV-22",
   "split": "dev",
   "language": "id",
-  "purpose": "Pengerasan sistem pos komando dengan mematikan service tidak aman",
+  "purpose": "Penyesuaian format pencatatan log audit pada edge node",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": ""
+      "destination": "syslog.internal"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -26,21 +26,20 @@
     },
     "dns_allowlist": [],
     "services": {
-      "enabled": [
-        "httpd"
-      ],
+      "enabled": [],
       "disabled": []
     },
     "accounts": [],
     "logging": {
-      "enabled": true,
+      "enabled": false,
       "destination": ""
     },
     "scheduled_tasks": [],
     "trust_anchors": []
   },
-  "expected_purpose_class": "L5",
+  "expected_purpose_class": "L3",
   "label": "inconsistent",
-  "inconsistency_class": "vague_or_misleading_purpose",
-  "notes": "Misleading purpose: claims L5 service hardening but enables web server httpd"
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging adjustment but disables logging (warn)"
 }

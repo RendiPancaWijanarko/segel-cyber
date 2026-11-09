@@ -1,8 +1,8 @@
 {
   "id": "TEST-11",
   "split": "test",
-  "language": "id",
-  "purpose": "Migrasi target pengiriman log peristiwa sistem pertahanan",
+  "language": "mixed",
+  "purpose": "Migrasi target pengiriman log peristiwa sistem ke central SIEM",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -15,7 +15,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "syslog.old.local"
+      "destination": "old-siem.internal"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -32,7 +32,7 @@
     "accounts": [],
     "logging": {
       "enabled": true,
-      "destination": "event-log.pertahanan.mil"
+      "destination": "new-siem.internal"
     },
     "scheduled_tasks": [],
     "trust_anchors": []
@@ -40,5 +40,6 @@
   "expected_purpose_class": "L3",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L3 consistent: Indonesian event log target migration"
+  "mismatch_kind": "none",
+  "notes": "L3 consistent: mixed language SIEM migration"
 }

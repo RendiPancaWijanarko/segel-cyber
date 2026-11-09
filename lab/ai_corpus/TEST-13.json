@@ -2,7 +2,7 @@
   "id": "TEST-13",
   "split": "test",
   "language": "en",
-  "purpose": "Permit egress traffic to border sensor aggregator",
+  "purpose": "Permit egress traffic to regional telemetry aggregator endpoint",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -24,9 +24,9 @@
     "firewall": {
       "outbound_allowed": [
         {
-          "destination": "10.77.2.5",
-          "port": 5000,
-          "proto": "tcp"
+          "destination": "sensor-agg.border.example.com",
+          "port": 514,
+          "proto": "udp"
         }
       ]
     },
@@ -46,5 +46,6 @@
   "expected_purpose_class": "L4",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L4 consistent: English border sensor egress permission"
+  "mismatch_kind": "none",
+  "notes": "L4 consistent: English egress telemetry aggregator"
 }

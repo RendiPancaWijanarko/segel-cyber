@@ -2,7 +2,7 @@
   "id": "TEST-01",
   "split": "test",
   "language": "id",
-  "purpose": "Konfigurasi server penerjemah nama domain posko aju",
+  "purpose": "Konfigurasi server resolusi nama domain untuk jaringan kantor cabang",
   "previous_baseline": {
     "firewall": {
       "outbound_allowed": []
@@ -42,5 +42,6 @@
   "expected_purpose_class": "L1",
   "label": "consistent",
   "inconsistency_class": null,
-  "notes": "L1 consistent: Indonesian domain name resolver addition"
+  "mismatch_kind": "none",
+  "notes": "L1 consistent: Indonesian DNS addition for branch office"
 }
