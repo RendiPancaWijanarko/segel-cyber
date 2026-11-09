@@ -30,6 +30,9 @@ from inspector.policy.expectations import (  # noqa: E402
     classify_purpose_b1,
     derive_findings,
 )
+from scripts.ai_eval.guard import (  # noqa: E402
+    guard_read_corpus_file,
+)
 from scripts.ai_eval.verify_corpus import (  # noqa: E402
     CAPABILITY_SEVERITY,
     compute_diff_capabilities,
@@ -68,7 +71,7 @@ def evaluate_dev_split(
 
     items: list[dict[str, Any]] = []
     for f in dev_files:
-        data = json.loads(f.read_text(encoding="utf-8"))
+        data = guard_read_corpus_file(f)
         if data.get("split") != "dev":
             raise ValueError(f"File {f.name} has split '{data.get('split')}', expected 'dev'")
         prev = BaselineV1.model_validate(data["previous_baseline"])

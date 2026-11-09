@@ -14,7 +14,6 @@ Keyword evasion is measured in AI-4 against the independently written docs/b1_ke
 from __future__ import annotations
 
 import argparse
-import json
 import random
 import sys
 from pathlib import Path
@@ -22,8 +21,13 @@ from typing import Any
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(WORKSPACE_ROOT / "src"))
+sys.path.insert(0, str(WORKSPACE_ROOT))
 
 from inspector.baseline import BaselineV1, diff_capabilities  # noqa: E402
+from scripts.ai_eval.guard import (  # noqa: E402
+    get_corpus_files,
+    guard_read_corpus_file,
+)
 
 EXPECTATION_MAP: dict[str, set[str]] = {
     "L1": {"dns_allowlist_change"},
@@ -125,13 +129,16 @@ def compute_mismatch_kind(extra_caps: set[str], label: str) -> str:
     return "deterministic"
 
 
-def verify_corpus(corpus_dir: Path | str) -> dict[str, Any]:
-    """Verify all items in the AI corpus directory."""
+def verify_corpus(
+    corpus_dir: Path | str,
+    include_test: bool = False,
+) -> dict[str, Any]:
+    """Verify items in the AI corpus directory (default: exemplar and dev only)."""
     dir_path = Path(corpus_dir)
     if not dir_path.exists():
         raise FileNotFoundError(f"Corpus directory not found: {dir_path}")
 
-    files = sorted(dir_path.glob("*.json"))
+    files = get_corpus_files(dir_path, include_test=include_test)
     if not files:
         raise ValueError(f"No JSON items found in {dir_path}")
 
@@ -153,7 +160,7 @@ def verify_corpus(corpus_dir: Path | str) -> dict[str, Any]:
     all_items_data: list[dict] = []
 
     for f in files:
-        data = json.loads(f.read_text(encoding="utf-8"))
+        data = guard_read_corpus_file(f)
         item_id = data["id"]
         split = data["split"]
         lang = data["language"]
@@ -214,39 +221,58 @@ def verify_corpus(corpus_dir: Path | str) -> dict[str, Any]:
         raise ValueError(f"{len(mismatches)} ground truth mismatches in corpus")
 
     errors: list[str] = []
-    if total_items != 66:
-        errors.append(f"Expected 66 total items, found {total_items}")
+    if include_test:
+        if total_items != 66:
+            errors.append(f"Expected 66 total items, found {total_items}")
+        if split_counts["test"] != 36:
+            errors.append(f"Expected 36 test items, found {split_counts['test']}")
+        eval_consistent = sum(
+            1 for it in all_items_data if it["split"] != "exemplar" and it["label"] == "consistent"
+        )
+        eval_inconsistent = sum(
+            1
+            for it in all_items_data
+            if it["split"] != "exemplar" and it["label"] == "inconsistent"
+        )
+        if eval_consistent != 30:
+            errors.append(f"Expected 30 evaluation consistent items, found {eval_consistent}")
+        if eval_inconsistent != 30:
+            errors.append(f"Expected 30 evaluation inconsistent items, found {eval_inconsistent}")
+        for c_id in ["L1", "L2", "L3", "L4", "L5"]:
+            cnt = consistent_per_class.get(c_id, 0)
+            if cnt != 6:
+                errors.append(f"Expected 6 consistent items for {c_id}, found {cnt}")
+        test_silent = mismatch_by_split["test"]["silent"]
+        if test_silent != 11:
+            errors.append(f"Expected 11 silent items in test, found {test_silent}")
+    else:
+        if total_items != 30:
+            errors.append(f"Expected 30 items (exemplar + dev), found {total_items}")
+        if split_counts["test"] != 0:
+            errors.append(
+                f"Expected 0 test items in default verification, found {split_counts['test']}"
+            )
+        eval_consistent = sum(
+            1 for it in all_items_data if it["split"] != "exemplar" and it["label"] == "consistent"
+        )
+        eval_inconsistent = sum(
+            1
+            for it in all_items_data
+            if it["split"] != "exemplar" and it["label"] == "inconsistent"
+        )
+        if eval_consistent != 12:
+            errors.append(f"Expected 12 dev consistent items, found {eval_consistent}")
+        if eval_inconsistent != 12:
+            errors.append(f"Expected 12 dev inconsistent items, found {eval_inconsistent}")
+
     if split_counts["exemplar"] != 6:
         errors.append(f"Expected 6 exemplars, found {split_counts['exemplar']}")
     if split_counts["dev"] != 24:
         errors.append(f"Expected 24 dev items, found {split_counts['dev']}")
-    if split_counts["test"] != 36:
-        errors.append(f"Expected 36 test items, found {split_counts['test']}")
-
-    eval_consistent = sum(
-        1 for it in all_items_data if it["split"] != "exemplar" and it["label"] == "consistent"
-    )
-    eval_inconsistent = sum(
-        1 for it in all_items_data if it["split"] != "exemplar" and it["label"] == "inconsistent"
-    )
-
-    if eval_consistent != 30:
-        errors.append(f"Expected 30 evaluation consistent items, found {eval_consistent}")
-    if eval_inconsistent != 30:
-        errors.append(f"Expected 30 evaluation inconsistent items, found {eval_inconsistent}")
-
-    for c_id in ["L1", "L2", "L3", "L4", "L5"]:
-        if consistent_per_class.get(c_id, 0) != 6:
-            errors.append(
-                f"Expected 6 consistent items for {c_id}, found {consistent_per_class.get(c_id, 0)}"
-            )
 
     dev_silent = mismatch_by_split["dev"]["silent"]
-    test_silent = mismatch_by_split["test"]["silent"]
     if dev_silent != 7:
         errors.append(f"Expected 7 silent items in dev, found {dev_silent}")
-    if test_silent != 11:
-        errors.append(f"Expected 11 silent items in test, found {test_silent}")
 
     for it in all_items_data:
         cat = it.get("inconsistency_class")
@@ -678,12 +704,17 @@ def main() -> None:
         help="Path to write docs/ai_corpus_review_summary.md",
     )
     parser.add_argument("--tsv", action="store_true", help="Print compact TSV of all items")
+    parser.add_argument(
+        "--include-test",
+        action="store_true",
+        help="Include TEST split (requires SEGEL_ALLOW_TEST_EVAL=1 and valid freeze)",
+    )
     args = parser.parse_args()
 
     corpus_dir = WORKSPACE_ROOT / "lab" / "ai_corpus"
-    print("Verifying corpus at: lab/ai_corpus")
+    print("Verifying corpus at: lab/ai_corpus (default: exemplar and dev only)")
     try:
-        summary = verify_corpus(corpus_dir)
+        summary = verify_corpus(corpus_dir, include_test=args.include_test)
         print("\n" + "=" * 60)
         print("AI CORPUS VERIFICATION: ALL CHECKS PASSED")
         print("=" * 60)

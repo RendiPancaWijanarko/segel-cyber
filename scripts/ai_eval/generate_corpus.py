@@ -17,8 +17,10 @@ WORKSPACE = Path(__file__).resolve().parent.parent.parent
 CORPUS_DIR = WORKSPACE / "lab" / "ai_corpus"
 
 sys.path.insert(0, str(WORKSPACE / "src"))
+sys.path.insert(0, str(WORKSPACE))
 
 from inspector.baseline import BaselineV1, diff_capabilities  # noqa: E402
+from scripts.ai_eval.guard import can_read_test_split  # noqa: E402
 
 EXPECTATION_MAP: dict[str, set[str]] = {
     "L1": {"dns_allowlist_change"},
@@ -866,19 +868,29 @@ def generate(output_dir: Path | None = None) -> list[dict]:
 
     print(f"Generating {len(all_items)} corpus items to {out}...")
 
+    allow_test, reason = can_read_test_split(workspace_root=WORKSPACE)
+    if not allow_test:
+        print(f"[GUARD] Note: test split write protected ({reason}). Default = exemplar and dev.")
+
     written = 0
+    skipped_test = 0
     for item in all_items:
+        if item.get("split") == "test" and not allow_test:
+            skipped_test += 1
+            continue
         path = out / f"{item['id']}.json"
         path.write_text(json.dumps(item, indent=2, ensure_ascii=False), encoding="utf-8")
         written += 1
 
     item_ids = {i["id"] for i in all_items}
     for existing in sorted(out.glob("*.json")):
-        if existing.stem not in item_ids:
+        if existing.stem not in item_ids and (
+            not existing.name.startswith("TEST-") or allow_test
+        ):
             existing.unlink()
             print(f"  Removed stale: {existing.name}")
 
-    print(f"Done. Wrote {written} items.")
+    print(f"Done. Wrote {written} items (skipped {skipped_test} frozen test items).")
     return all_items
 
 

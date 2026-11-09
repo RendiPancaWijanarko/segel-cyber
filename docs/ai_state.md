@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-2b (Regex Identifier Boundaries & False-Match Prevention)
+- **Phase**: AI-4b (Unit 1: Test-Split Guard & Audit)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `82aa874` ("AI-4: evaluation harness for B0 and B1 baselines on dev split")
+- **Last Commit**: `e717e2a` ("AI-2b: regex boundaries")
 
 ---
 
@@ -18,12 +18,12 @@ This document tracks progress, test suite counts, open items, and next steps for
 Full test suite execution evidence:
 - **Command**: `.venv/Scripts/python.exe -m pytest`
 - **Platform**: Windows 10/11 (win32), Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-- **Total Tests**: 374 passed, 0 failed, 0 errors, 1 warning (5.87 seconds)
+- **Total Tests**: 380 passed, 0 failed, 0 errors, 1 warning (8.38 seconds)
 - **Category Counts**:
   - `tests/adversarial/`: 68 passed
   - `tests/gaps/`: 18 passed
   - `tests/integration/`: 6 passed
-  - `tests/unit/`: 282 passed (including 37 new tests in `test_inspector.py`)
+  - `tests/unit/`: 288 passed (including 6 in `test_ai_eval_guard.py`)
 - **Warnings**: 1 (`PytestCollectionWarning` on `TestPredicate` in `src/segel_core/schemas/attestation.py:345`)
 
 ---
@@ -82,6 +82,13 @@ Full test suite execution evidence:
 - [x] Evaluated B0 (0% recall on silent items, 100% on deterministic items via default severity rules) and B1 (57.1% recall on silent items, 0 FP on consistent items).
 - [x] Identified hard subset on DEV: `DEV-14`, `DEV-17`, `DEV-18` (size 3, 42.9% of silent items).
 - [x] Verified code quality with `ruff check scripts/ai_eval/eval_baselines.py` (0 errors).
+
+### AI-4b: Test-Split Guard & Audit (Unit 1)
+- [x] Authored `scripts/ai_eval/guard.py` enforcing strict test-split isolation: all scripts under `scripts/ai_eval` refuse access to `TEST-*.json` unless `SEGEL_ALLOW_TEST_EVAL=1` is set AND SHA-256 hashes match `docs/ai_corpus_freeze.txt`.
+- [x] Defaults to exemplar and dev only (30 items total).
+- [x] Integrated guard into `verify_corpus.py` (added `--include-test` flag), `eval_baselines.py`, and `generate_corpus.py`.
+- [x] Tests first: authored `tests/unit/test_ai_eval_guard.py` (6 tests: default disallows test split, raises `PermissionError` without env, `get_corpus_files` returns 30 items, freeze integrity verified on current repo, access permitted with env and freeze, access denied if hash mismatches).
+- [x] Showed red run (`ModuleNotFoundError: No module named 'scripts.ai_eval.guard'`), then green run (6 passed). Full test suite: 380 passed, 0 failed.
 
 ---
 
