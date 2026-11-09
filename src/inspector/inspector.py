@@ -57,46 +57,47 @@ __all__ = [
 # ── Deterministic capability extraction ──────────────────────────────
 
 # Known capabilities extracted from baseline configuration
+# Patterns require identifier boundaries (no letter, digit, or underscore before keyword)
 CAPABILITY_RULES = {
     "network_listen": {
         "patterns": [
-            r"(?i)listen\s*[:=]",
-            r"(?i)bind_address\s*[:=]",
-            r"(?i)port\s*[:=]",
-            r"(?i)server\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])listen\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])bind_address\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])port\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])server\s*[:=]",
         ],
         "description": "Configuration opens a network listener",
     },
     "file_write": {
         "patterns": [
-            r"(?i)log_file\s*[:=]",
-            r"(?i)output_path\s*[:=]",
-            r"(?i)write_dir\s*[:=]",
-            r"(?i)data_dir\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])log_file\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])output_path\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])write_dir\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])data_dir\s*[:=]",
         ],
         "description": "Configuration writes to filesystem",
     },
     "external_connect": {
         "patterns": [
-            r"(?i)upstream\s*[:=]",
-            r"(?i)remote_host\s*[:=]",
-            r"(?i)proxy\s*[:=]",
-            r"(?i)api_url\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])upstream\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])remote_host\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])proxy\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])api_url\s*[:=]",
         ],
         "description": "Configuration connects to external systems",
     },
     "credential_reference": {
         "patterns": [
-            r"(?i)(password|secret|token|api_key)\s*[:=]",
-            r"(?i)auth\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])(password|secret|token|api_key)\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])auth\s*[:=]",
         ],
         "description": "Configuration references credentials",
     },
     "privilege_escalation": {
         "patterns": [
-            r"(?i)run_as_root\s*[:=]\s*(true|yes)",
-            r"(?i)privileged\s*[:=]\s*(true|yes)",
-            r"(?i)sudo\s*[:=]",
+            r"(?i)(?<![a-zA-Z0-9_])run_as_root\s*[:=]\s*(true|yes)",
+            r"(?i)(?<![a-zA-Z0-9_])privileged\s*[:=]\s*(true|yes)",
+            r"(?i)(?<![a-zA-Z0-9_])sudo\s*[:=]",
         ],
         "description": "Configuration requests elevated privileges",
     },

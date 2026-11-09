@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-4 (Deterministic Expectation Check, B1 Keyword Classifier & Baseline Evaluation)
+- **Phase**: AI-2b (Regex Identifier Boundaries & False-Match Prevention)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `e47723d` ("AI-4: expectation map, derive_findings, B1 classifier, and inspect_release integration")
+- **Last Commit**: `82aa874` ("AI-4: evaluation harness for B0 and B1 baselines on dev split")
 
 ---
 
@@ -18,12 +18,12 @@ This document tracks progress, test suite counts, open items, and next steps for
 Full test suite execution evidence:
 - **Command**: `.venv/Scripts/python.exe -m pytest`
 - **Platform**: Windows 10/11 (win32), Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-- **Total Tests**: 337 passed, 0 failed, 0 errors, 1 warning (6.14 seconds)
+- **Total Tests**: 374 passed, 0 failed, 0 errors, 1 warning (5.87 seconds)
 - **Category Counts**:
   - `tests/adversarial/`: 68 passed
   - `tests/gaps/`: 18 passed
   - `tests/integration/`: 6 passed
-  - `tests/unit/`: 245 passed (including 9 in `test_expectations_and_b1.py`)
+  - `tests/unit/`: 282 passed (including 37 new tests in `test_inspector.py`)
 - **Warnings**: 1 (`PytestCollectionWarning` on `TestPredicate` in `src/segel_core/schemas/attestation.py:345`)
 
 ---
@@ -60,6 +60,15 @@ Full test suite execution evidence:
 - [x] Ran ruff check on `scripts/ai_eval/` (`All checks passed!`) and full test suite (328 passed, 0 failed).
 - [x] Clean sweep search for "C:\", "Users\", and "file://" with zero hits across `docs/` and `scripts/`.
 - [x] Generated `docs/ai_corpus_freeze.txt` containing SHA-256 hashes of test-split items and byte concatenation.
+
+### AI-2b: Regex Identifier Boundaries & False-Match Prevention
+- [x] Added identifier boundaries `(?<![a-zA-Z0-9_])` to all 17 regex patterns across the 5 capability kinds in `src/inspector/inspector.py:CAPABILITY_RULES`.
+- [x] Maintained structured baseline extractor (`src/inspector/baseline.py`) completely untouched.
+- [x] Tests first: authored `TestRegexIdentifierBoundaries` in `tests/unit/test_inspector.py` asserting that substring words (`import:`, `support:`, `report:`, `pseudo:`, `oauth:`, `nameserver:`, `csrftoken:`, `author:`, `antiforgerytoken:`, `teleport:`, `webserver:`, `desudo:`, `app_sudo:`, `app_port:`) produce 0 capabilities, and asserting intended positive controls with boundaries (`port:`, `server:`, `listen:`, `bind_address:`, `log_file:`, `output_path:`, `write_dir:`, `data_dir:`, `upstream:`, `remote_host:`, `proxy:`, `api_url:`, `auth:`, `token:`, `password:`, `secret:`, `api_key:`, `sudo:`, `run_as_root:`, `privileged:`).
+- [x] Showed the red run (10 failed assertions due to false matches on unbounded regexes).
+- [x] Applied negative lookbehind identifier boundaries in `CAPABILITY_RULES`; showed green run (58 passed in `tests/unit/test_inspector.py`).
+- [x] Ran full test suite: 374 passed, 0 failed (37 new tests, 0 existing tests affected or broken).
+- [x] Verified with `ruff check` (0 errors) on modified files.
 
 ### AI-4: Deterministic Expectations, B1 Keyword Classifier & Dev Baseline Evaluation
 - [x] Authored `docs/b1_keywords.md` defining generic security keyword taxonomies for L1..L5 in Indonesian and English, with documented assistant authorship limitation.
