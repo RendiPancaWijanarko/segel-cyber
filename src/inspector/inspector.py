@@ -25,6 +25,7 @@ from inspector.baseline import (
     extract_capabilities_structured,
     parse_baseline_v1,
 )
+from inspector.policy.expectations import classify_purpose_b1, derive_findings
 from segel_core.canonical import canonical_json
 from segel_core.crypto.dsse import DSSEEnvelope, create_envelope
 from segel_core.crypto.ed25519 import KeyPair, generate_evidence_id
@@ -269,6 +270,17 @@ def inspect_release(
 
     # Step 2: Evaluate policy
     verdict, det_findings = evaluate_policy(capabilities, policy_version)
+
+    # Step 2b: Deterministic expectation check via B1 classifier (D6)
+    purpose = getattr(manifest, "purpose", None)
+    b1_class = classify_purpose_b1(purpose)
+    if b1_class is not None:
+        exp_findings = derive_findings(b1_class, capabilities)
+        det_findings.extend(exp_findings)
+        if any(f.severity == "reject" for f in exp_findings):
+            verdict = "REJECT"
+        elif any(f.severity == "warn" for f in exp_findings) and verdict == "PASS":
+            verdict = "WARN"
 
     # Step 3: AI advisory (optional, isolated)
     ai_findings: list[InspectFinding] = []
