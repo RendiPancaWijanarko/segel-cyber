@@ -15,9 +15,16 @@ Supported payload type: baseline/v1 (YAML configuration).
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
+from inspector.baseline import (
+    BaselineV1,
+    diff_capabilities,
+    extract_capabilities_structured,
+    parse_baseline_v1,
+)
 from segel_core.canonical import canonical_json
 from segel_core.crypto.dsse import DSSEEnvelope, create_envelope
 from segel_core.crypto.ed25519 import KeyPair, generate_evidence_id
@@ -30,6 +37,21 @@ from segel_core.schemas.attestation import (
 )
 from segel_core.schemas.binding import BindingBlock, ReleaseSubject
 from segel_core.schemas.manifest import Manifest
+
+__all__ = [
+    "BaselineV1",
+    "CAPABILITY_RULES",
+    "InspectionResult",
+    "POLICY_RULES_V1",
+    "create_inspect_attestation",
+    "diff_capabilities",
+    "evaluate_policy",
+    "extract_capabilities",
+    "extract_capabilities_structured",
+    "inspect_release",
+    "parse_baseline_v1",
+    "sign_inspect",
+]
 
 # ── Deterministic capability extraction ──────────────────────────────
 
@@ -117,19 +139,37 @@ def extract_capabilities(
 ) -> list[dict[str, Any]]:
     """Extract capabilities from configuration files.
 
-    Performs deterministic pattern matching against known capability
-    signatures. This is NOT a security scanner — it extracts
-    *what the configuration does* for policy evaluation.
+    Performs structured Baseline v1 extraction when files parse as Baseline v1 JSON;
+    falls back to deterministic pattern matching (regex) for non-JSON or legacy files.
 
     Args:
         files: Dict of relative_path -> file_contents.
 
     Returns:
-        List of detected capabilities with locations.
+        List of detected capabilities with locations and instance IDs.
     """
     detected: list[dict[str, Any]] = []
+    kind_counts: dict[str, int] = defaultdict(int)
 
     for path, content in sorted(files.items()):
+        # Try structured Baseline v1 extraction first
+        is_baseline = False
+        try:
+            parse_baseline_v1(content)
+            is_baseline = True
+        except Exception:
+            is_baseline = False
+
+        if is_baseline:
+            structured_caps = extract_capabilities_structured({path: content})
+            for sc in structured_caps:
+                cid = sc["capability_id"]
+                kind_counts[cid] += 1
+                sc["instance_id"] = f"{cid}#{kind_counts[cid]}"
+                detected.append(sc)
+            continue
+
+        # Fallback to regex pattern matching
         try:
             text = content.decode("utf-8", errors="replace")
         except (UnicodeDecodeError, AttributeError):
@@ -141,12 +181,20 @@ def extract_capabilities(
                 if matches:
                     for m in matches:
                         line_num = text[:m.start()].count("\n") + 1
+                        kind_counts[cap_id] += 1
                         detected.append({
                             "capability_id": cap_id,
+                            "instance_id": f"{cap_id}#{kind_counts[cap_id]}",
                             "file": path,
                             "line": line_num,
                             "match": m.group(0).strip(),
                             "description": cap_def["description"],
+                            "destination": None,
+                            "port": None,
+                            "proto": None,
+                            "account": None,
+                            "setting": None,
+                            "value": None,
                         })
 
     return detected
