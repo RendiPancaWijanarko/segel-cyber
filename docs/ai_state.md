@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-3c (Purpose Corpus Corrections, D9b Rebalancing, and Freeze)
+- **Phase**: AI-4 (Deterministic Expectation Check, B1 Keyword Classifier & Baseline Evaluation)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `88614b2` ("AI-3: corpus (unfrozen)")
+- **Last Commit**: `e47723d` ("AI-4: expectation map, derive_findings, B1 classifier, and inspect_release integration")
 
 ---
 
@@ -18,12 +18,12 @@ This document tracks progress, test suite counts, open items, and next steps for
 Full test suite execution evidence:
 - **Command**: `.venv/Scripts/python.exe -m pytest`
 - **Platform**: Windows 10/11 (win32), Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-- **Total Tests**: 328 passed, 0 failed, 0 errors, 1 warning (7.99 seconds)
+- **Total Tests**: 337 passed, 0 failed, 0 errors, 1 warning (6.14 seconds)
 - **Category Counts**:
   - `tests/adversarial/`: 68 passed
   - `tests/gaps/`: 18 passed
   - `tests/integration/`: 6 passed
-  - `tests/unit/`: 236 passed
+  - `tests/unit/`: 245 passed (including 9 in `test_expectations_and_b1.py`)
 - **Warnings**: 1 (`PytestCollectionWarning` on `TestPredicate` in `src/segel_core/schemas/attestation.py:345`)
 
 ---
@@ -53,13 +53,26 @@ Full test suite execution evidence:
   - Dev inconsistent (12): hidden_extra_impact 4 (`silent`), vague_or_misleading_purpose 3 (`silent`), privilege_escalation 2 (`deterministic`), control_weakening 1 (`deterministic`), over_broad_change 2 (`deterministic`). (7 silent, 5 deterministic).
   - Test inconsistent (18): hidden_extra_impact 8 (`silent`), vague_or_misleading_purpose 3 (`silent`), privilege_escalation 2 (`deterministic`), control_weakening 3 (`deterministic`), over_broad_change 2 (`deterministic`). (11 silent, 7 deterministic).
   - Consistent items maintained: 12 dev, 18 test (exactly 6 each for L1..L5). Exemplars: 6.
-- [x] Neutralized domain-specific content: removed all military references (rudal, battlefield, puskodal, garnisun, etc.) in favor of generic IT wording (node, gateway, branch office, telemetry, operator).
+- [x] Neutralized domain-specific content: removed all military references in favor of generic IT wording.
 - [x] Verified that no two purposes share the same first four words.
 - [x] Removed keyword evasion percentage and documented: "keyword evasion is measured in AI-4 against the independently written docs/b1_keywords.md".
 - [x] Regenerated `docs/ai_corpus_review_summary.md` from script option `scripts/ai_eval/verify_corpus.py --summary docs/ai_corpus_review_summary.md`.
 - [x] Ran ruff check on `scripts/ai_eval/` (`All checks passed!`) and full test suite (328 passed, 0 failed).
 - [x] Clean sweep search for "C:\", "Users\", and "file://" with zero hits across `docs/` and `scripts/`.
 - [x] Generated `docs/ai_corpus_freeze.txt` containing SHA-256 hashes of test-split items and byte concatenation.
+
+### AI-4: Deterministic Expectations, B1 Keyword Classifier & Dev Baseline Evaluation
+- [x] Authored `docs/b1_keywords.md` defining generic security keyword taxonomies for L1..L5 in Indonesian and English, with documented assistant authorship limitation.
+- [x] Added `EXPECTATION_MAP` to `src/inspector/policy/expectations.py` mapping L1..L5 to canonical capabilities and L6 to empty set.
+- [x] Implemented `derive_findings(purpose_class, capabilities) -> list[InspectFinding]` emitting `warn` for capabilities outside expected set, and "purpose too vague to verify" for L6.
+- [x] Implemented `classify_purpose_b1(purpose) -> str | None` using compiled regex patterns with word boundaries (`\b`); returns L1..L5 on exact single match, abstains (`None`) on 0 or multiple matches; never returns L6.
+- [x] Integrated expectation check into `inspect_release` in `src/inspector/inspector.py` for B1's predicted class.
+- [x] Authored 9 unit tests in `tests/unit/test_expectations_and_b1.py` covering single match, abstain on ambiguous/no match, expectation check on L1..L5 and L6, and full `inspect_release` integration.
+- [x] Proved with full test suite (337 passed, 0 failed) that zero existing test changes verdict.
+- [x] Authored evaluation harness `scripts/ai_eval/eval_baselines.py` evaluating B0 and B1 strictly on DEV split.
+- [x] Evaluated B0 (0% recall on silent items, 100% on deterministic items via default severity rules) and B1 (57.1% recall on silent items, 0 FP on consistent items).
+- [x] Identified hard subset on DEV: `DEV-14`, `DEV-17`, `DEV-18` (size 3, 42.9% of silent items).
+- [x] Verified code quality with `ruff check scripts/ai_eval/eval_baselines.py` (0 errors).
 
 ---
 
