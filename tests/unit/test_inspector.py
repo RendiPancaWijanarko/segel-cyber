@@ -227,8 +227,6 @@ class TestRegexIdentifierBoundaries:
             (b"teleport: disabled\n", "teleport:"),
             (b"webserver: nginx\n", "webserver:"),
             (b"desudo: true\n", "desudo:"),
-            (b"app_sudo: false\n", "app_sudo:"),
-            (b"app_port: 8080\n", "app_port:"),
         ],
     )
     def test_false_match_produces_no_capabilities(self, content: bytes, false_word: str) -> None:
@@ -259,6 +257,10 @@ class TestRegexIdentifierBoundaries:
             (b"port: 8080\n", "network_listen"),
             (b"port = 8080\n", "network_listen"),
             (b"  port: 443\n", "network_listen"),
+            (b"app_port: 8080\n", "network_listen"),
+            (b"listen_port: 22\n", "network_listen"),
+            (b"ssh-port: 22\n", "network_listen"),
+            (b"http.port: 80\n", "network_listen"),
             (b"server: localhost\n", "network_listen"),
             (b"listen: 0.0.0.0\n", "network_listen"),
             (b"bind_address: 127.0.0.1\n", "network_listen"),
@@ -280,6 +282,7 @@ class TestRegexIdentifierBoundaries:
             (b"api_key: key-999\n", "credential_reference"),
             # privilege_escalation
             (b"sudo: ALL=(ALL)\n", "privilege_escalation"),
+            (b"app_sudo: false\n", "privilege_escalation"),
             (b"run_as_root: true\n", "privilege_escalation"),
             (b"privileged: yes\n", "privilege_escalation"),
         ],

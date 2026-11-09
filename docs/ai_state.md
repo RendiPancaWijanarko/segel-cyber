@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-4b (Unit 1: Test-Split Guard & Audit)
+- **Phase**: AI-4b (Unit 2: Regex Identifier Boundary Update)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `e717e2a` ("AI-2b: regex boundaries")
+- **Last Commit**: `5223a92` ("AI-4b: test-split guard in scripts/ai_eval")
 
 ---
 
@@ -18,12 +18,12 @@ This document tracks progress, test suite counts, open items, and next steps for
 Full test suite execution evidence:
 - **Command**: `.venv/Scripts/python.exe -m pytest`
 - **Platform**: Windows 10/11 (win32), Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-- **Total Tests**: 380 passed, 0 failed, 0 errors, 1 warning (8.38 seconds)
+- **Total Tests**: 383 passed, 0 failed, 0 errors, 1 warning (9.81 seconds)
 - **Category Counts**:
   - `tests/adversarial/`: 68 passed
   - `tests/gaps/`: 18 passed
   - `tests/integration/`: 6 passed
-  - `tests/unit/`: 288 passed (including 6 in `test_ai_eval_guard.py`)
+  - `tests/unit/`: 291 passed (including 61 in `test_inspector.py`)
 - **Warnings**: 1 (`PytestCollectionWarning` on `TestPredicate` in `src/segel_core/schemas/attestation.py:345`)
 
 ---
@@ -89,6 +89,12 @@ Full test suite execution evidence:
 - [x] Integrated guard into `verify_corpus.py` (added `--include-test` flag), `eval_baselines.py`, and `generate_corpus.py`.
 - [x] Tests first: authored `tests/unit/test_ai_eval_guard.py` (6 tests: default disallows test split, raises `PermissionError` without env, `get_corpus_files` returns 30 items, freeze integrity verified on current repo, access permitted with env and freeze, access denied if hash mismatches).
 - [x] Showed red run (`ModuleNotFoundError: No module named 'scripts.ai_eval.guard'`), then green run (6 passed). Full test suite: 380 passed, 0 failed.
+
+### AI-4b: Regex Identifier Boundary Update (Unit 2)
+- [x] Updated regex lookbehind in `src/inspector/inspector.py:CAPABILITY_RULES` from `(?<![a-zA-Z0-9_])` to `(?<![a-zA-Z0-9])`, permitting `_`, `-`, and `.` to precede keywords (e.g. `app_port`, `listen_port`, `ssh-port`, `http.port`, `app_sudo`).
+- [x] Added code comment: a missed key is worse than a false positive in this fail-closed component.
+- [x] Converted negative controls `app_port: 8080` and `app_sudo: false` into positive controls, and added `listen_port: 22`, `ssh-port: 22`, `http.port: 80`. Kept all 12 genuine substring negative controls (`import`, `support`, `report`, `pseudo`, `oauth`, `nameserver`, `csrftoken`, `author`, `antiforgerytoken`, `teleport`, `webserver`, `desudo`).
+- [x] Showed red run (3 failed assertions on un-updated boundary), then green run (61 passed in `tests/unit/test_inspector.py`). Full test suite: 383 passed, 0 failed.
 
 ---
 
