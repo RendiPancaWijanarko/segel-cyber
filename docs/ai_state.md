@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-4b (Unit 2: Regex Identifier Boundary Update)
+- **Phase**: AI-4b (Unit 3: Documentation Limitations & Decision D19)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `5223a92` ("AI-4b: test-split guard in scripts/ai_eval")
+- **Last Commit**: `9da613b` ("AI-4b: regex identifier boundary update")
 
 ---
 
@@ -95,6 +95,15 @@ Full test suite execution evidence:
 - [x] Added code comment: a missed key is worse than a false positive in this fail-closed component.
 - [x] Converted negative controls `app_port: 8080` and `app_sudo: false` into positive controls, and added `listen_port: 22`, `ssh-port: 22`, `http.port: 80`. Kept all 12 genuine substring negative controls (`import`, `support`, `report`, `pseudo`, `oauth`, `nameserver`, `csrftoken`, `author`, `antiforgerytoken`, `teleport`, `webserver`, `desudo`).
 - [x] Showed red run (3 failed assertions on un-updated boundary), then green run (61 passed in `tests/unit/test_inspector.py`). Full test suite: 383 passed, 0 failed.
+
+### AI-4b: Methodological Limitations, README & Decision D19 (Unit 3)
+- [x] Added Section 5 in `docs/limitations.md` and `docs/ai_corpus_README.md`:
+  - (a) Single-purpose policy: declared change class expected to touch only its own canonical capability; bundles labelled inconsistent even if operationally legitimate.
+  - (b) Common assistant authorship: corpus, B1 keyword taxonomy, and prompt templates authored by the same assistant.
+  - (c) Dev small-N sample: 7 silent items, 3 hard items; results are indicative.
+  - (d) Deterministic-subset items caught by default-severity rules (`warn`/`reject`) regardless of purpose.
+- [x] Appended Decision D19 to `docs/ai_decisions.md`: model-check PASS rule (schema validity >= 95%, false positives <= 2 of 12 consistent DEV items, B1 union AI detects >= 6 of 7 silent DEV items).
+
 
 ---
 

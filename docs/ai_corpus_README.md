@@ -60,3 +60,13 @@ To re-run deterministic validation across all 66 corpus items:
 python scripts/ai_eval/verify_corpus.py
 ```
 This script recomputes candidate-minus-previous capability deltas via `inspector.baseline.diff_capabilities`, validates `mismatch_kind` per taxonomy severities, and asserts exact agreement with `EXPECTATION_MAP` in `docs/ai_purpose_classes.md`.
+
+---
+
+## 5. Methodological Limitations & Policy Rules (AI-4b)
+
+1. **Single-Purpose Policy**: Corpus labels follow a strict single-purpose policy: a declared change class is expected to touch only its own canonical capability kind per `EXPECTATION_MAP`. A release whose purpose states log-destination configuration that also introduces an outbound firewall rule is labelled `inconsistent`, although bundling such changes may be legitimate in operational environments.
+2. **Assistant Authorship**: The corpus items, the B1 keyword taxonomy lists (`docs/b1_keywords.md`), and the prompt templates were authored by the same assistant. Generic IT vocabulary and independent derivation were applied to mitigate bias, but this shared provenance remains an evaluated limitation.
+3. **Small Sample Size on Dev**: The development split contains only 7 silent inconsistent items and 3 hard items missed by B1 (`DEV-14`, `DEV-17`, `DEV-18`). Performance figures on the dev split are indicative rather than statistically exhaustive.
+4. **Deterministic Subset Redundancy**: Items categorized under `mismatch_kind: "deterministic"` contain capabilities that trigger default-severity inspection rules (`warn` or `reject`) regardless of the stated release purpose. The silent subset represents the primary benchmark for AI expectation verification.
+

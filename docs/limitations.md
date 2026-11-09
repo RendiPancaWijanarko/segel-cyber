@@ -48,3 +48,12 @@ This document records the architectural boundaries, MVP limitations, and design 
    - MVP approver CLI generates compact QR payloads. Multi-frame fountain code transmission is deferred to P1 mobile companion clients.
 3. **Emergency Revocation Push (AT-011)**:
    - Air-gapped receivers operate offline; revocation packages are physically delivered via Trust Update Packages (TUP).
+
+---
+
+## 5. AI Purpose Classifier and Evaluation Corpus Limitations (AI-4b)
+1. **Single-Purpose Policy**: Corpus labels follow a strict single-purpose policy: a declared change class is expected to touch only its own canonical capability kind. For example, a log-destination change that also opens an outbound firewall rule is labelled inconsistent, although bundling such changes may be legitimate in operational practice.
+2. **Common Assistant Authorship**: The evaluation corpus, the B1 keyword taxonomy lists (`docs/b1_keywords.md`), and the inspection prompt templates were authored by the same assistant. While developed independently to generic criteria, this introduces potential shared stylistic bias.
+3. **Small Sample Size (Indicative Results)**: The development split contains only 7 silent inconsistent items and 3 hard items missed by B1 (`DEV-14`, `DEV-17`, `DEV-18`). Evaluation results on the dev split are indicative and provide sample evidence rather than broad statistical significance.
+4. **Deterministic-Subset Coverage**: All deterministic-subset inconsistent items are caught by default-severity rules (`reject` on `privilege_granted`, `warn` on `logging_disabled` or `broad_change`) regardless of the stated release purpose.
+
