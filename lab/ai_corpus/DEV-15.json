@@ -1,0 +1,49 @@
+{
+  "id": "DEV-15",
+  "split": "dev",
+  "language": "id",
+  "purpose": "Penambahan akun operator piket telekomunikasi garnisun",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "piket_telko",
+        "privilege": "admin"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "privilege_escalation",
+  "notes": "Privilege escalation: claims L2 operator account but grants admin privilege"
+}

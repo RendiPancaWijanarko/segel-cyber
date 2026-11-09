@@ -1,0 +1,49 @@
+{
+  "id": "TEST-25",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Update identity directory for remote technician",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "field_eng",
+        "privilege": "root"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "privilege_escalation",
+  "notes": "Privilege escalation: subtle purpose, claims L2 directory update but provisions root user"
+}

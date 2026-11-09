@@ -1,0 +1,44 @@
+{
+  "id": "EX-05",
+  "split": "exemplar",
+  "language": "id",
+  "purpose": "Pengalihan tujuan log audit pos komando ke server terpusat",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "audit-collector.garnisun.internal"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "Exemplar 5: Indonesian for L3 logging adjustment"
+}

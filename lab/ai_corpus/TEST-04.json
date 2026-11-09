@@ -1,0 +1,46 @@
+{
+  "id": "TEST-04",
+  "split": "test",
+  "language": "id",
+  "purpose": "Registrasi alamat IP DNS cadangan stasiun radar",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "10.50.0.53"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L1 consistent: Indonesian backup DNS registration"
+}

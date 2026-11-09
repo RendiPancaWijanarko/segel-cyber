@@ -1,0 +1,47 @@
+{
+  "id": "TEST-18",
+  "split": "test",
+  "language": "id",
+  "purpose": "Penonaktifan daemon rsh dan rexec pada unit kendali rudal",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "rsh",
+        "rexec"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L5 consistent: Indonesian missile control unit daemon disabling"
+}

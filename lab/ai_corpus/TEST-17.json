@@ -1,0 +1,46 @@
+{
+  "id": "TEST-17",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Disabling legacy print service lpd untuk hardening server",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "lpd"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L5 consistent: Mixed service disabling for hardening"
+}

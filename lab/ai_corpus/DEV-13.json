@@ -1,0 +1,52 @@
+{
+  "id": "DEV-13",
+  "split": "dev",
+  "language": "id",
+  "purpose": "Pembaruan alamat DNS resolver markas brigade",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "198.51.100.1",
+          "port": 4444,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [
+      "10.20.0.53"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "notes": "Hidden extra impact: claims L1 DNS update but introduces hidden outbound egress rule"
+}

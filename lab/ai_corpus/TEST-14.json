@@ -1,0 +1,50 @@
+{
+  "id": "TEST-14",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Add egress firewall rule untuk relay pesan sandi",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.99.0.2",
+          "port": 8443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L4 consistent: Mixed encrypted message relay egress rule"
+}

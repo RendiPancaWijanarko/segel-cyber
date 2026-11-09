@@ -1,0 +1,46 @@
+{
+  "id": "TEST-03",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Pembaruan DNS allowlist untuk secure perimeter network",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "10.40.1.53"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L1 consistent: Mixed language DNS allowlist update"
+}

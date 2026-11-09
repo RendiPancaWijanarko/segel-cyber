@@ -1,0 +1,49 @@
+{
+  "id": "DEV-04",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Add maintenance operator account for surveillance payload",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "payload_op",
+        "privilege": "operator"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L2 consistent: English maintenance operator addition"
+}

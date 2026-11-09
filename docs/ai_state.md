@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-2 (Taxonomy and Baseline v1 Structured Extraction)
+- **Phase**: AI-3 (Purpose Corpus Construction & Ground-Truth Verification, Unfrozen)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-09
-- **Last Commit**: `c06d049` (HYG commit)
+- **Last Commit**: `0bfc24e` ("AI-2: baseline v1 schema, capability taxonomy, and structured extractor")
 
 ---
 
@@ -46,6 +46,14 @@ Full test suite execution evidence:
 - [x] Maintained regex pattern matching fallback in `extract_capabilities(files)` so all existing tests remain green.
 - [x] Authored 18 tests in `tests/unit/test_baseline_and_taxonomy.py` covering positive/negative per kind, duplicate keys, huge values, determinism, instance ID format, and predecessor diffing (showed red run, then green). Suite expanded from 310 to 328 tests.
 
+### AI-3: Purpose Corpus Construction & Ground-Truth Verification (Unfrozen)
+- [x] Authored `docs/ai_purpose_classes.md` defining classes L1..L6 and canonical expectation map per D17.
+- [x] Created `lab/ai_corpus/` containing 66 items (6 exemplars, 24 dev, 36 test; 30 consistent, 30 inconsistent across 5 categories; 27 id, 22 en, 17 mixed).
+- [x] Implemented `scripts/ai_eval/verify_corpus.py` to recompute ground truth from Baseline v1 structured extractor and validate stratification.
+- [x] Verified subtle/paraphrased items avoiding obvious keywords: 16/30 (53.3% >= 40% target).
+- [x] Authored `docs/ai_corpus_README.md` and `docs/ai_corpus_review_summary.md` (including 16 items sampled with fixed seed 42).
+- [x] Maintained unfrozen status (no `docs/ai_corpus_freeze.txt` written yet).
+
 ---
 
 ## Open Items
@@ -55,21 +63,20 @@ Full test suite execution evidence:
   - Scrub environment variables; zero key parameters passed.
   - Implement synchronous loopback HTTP client to Ollama (`127.0.0.1:11434`) with 30s timeout.
   - Graceful fallback when Ollama is unavailable (`ai_status="skipped"` or `"failed"`).
-- [ ] **AI-2: Taxonomy & Classification Engine**:
+- [ ] **AI-2 (Part 2): Purpose Classification & Expectation Checking Engine**:
   - Purpose classification L1..L6 with ambiguity flag and Indonesian reason.
   - Deterministic expectation map and B1 keyword fallback.
-  - Capability kind additions (11 new kinds) with `<kind>#<n>` instance IDs.
   - Manifest purpose input sanitization (reject control characters, length cap 300).
-- [ ] **AI-3: Predicate Schemas & Merge Logic**:
+- [ ] **AI-4: Predicate Schemas & Merge Logic**:
   - Add `ai_model_digest` and `ai_error_code` to `InspectPredicate` (flat fields, no version bump).
   - Fix merge logic defects in `src/inspector/inspector.py` (cap AI severity at `warn`, never escalate to `REJECT`, never overwrite AI findings).
-- [ ] **AI-4: WARN Acknowledgement**:
+- [ ] **AI-5: WARN Acknowledgement**:
   - Add `require_warn_acknowledgement` policy flag.
   - Implement and validate `acknowledgement_digest` in `ApprovePredicate`, Ledger, and Receiver.
-- [ ] **AI-5: Corpus & Evaluation**:
-  - Construct 6 few-shot exemplars and 60 evaluation items (30 consistent, 30 inconsistent).
-  - Split 24 dev / 36 test; freeze and record hash in `docs/ai_corpus_freeze.txt`.
-- [ ] **AI-6: Release Desk UI**:
+- [ ] **AI-6: Corpus Freeze & Evaluation Runner**:
+  - Freeze corpus and record SHA-256 hashes in `docs/ai_corpus_freeze.txt`.
+  - Implement evaluation runner against Ollama / mock worker.
+- [ ] **AI-7: Release Desk UI**:
   - AI advisory panel on release detail page.
   - `ai_status` banner, acknowledgement control, and competition prototype disclaimer.
 
@@ -77,5 +84,5 @@ Full test suite execution evidence:
 
 ## Next Step
 
-- Proceed with **AI-1**: Implement the isolated worker subprocess (`src/inspector/ai/worker.py`), scrubbed environment execution, and loopback Ollama client with fallback handling.
+- Proceed with **AI-1**: Implement isolated worker subprocess (`src/inspector/ai/worker.py`), scrubbed environment execution, and loopback Ollama client with fallback handling.
 

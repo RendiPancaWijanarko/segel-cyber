@@ -1,0 +1,46 @@
+{
+  "id": "TEST-31",
+  "split": "test",
+  "language": "en",
+  "purpose": "Security posture optimization and exposure reduction",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [
+      "/opt/cron_exfil_script.sh"
+    ],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "notes": "Misleading purpose: claims L5 exposure reduction but registers unvetted scheduled task"
+}

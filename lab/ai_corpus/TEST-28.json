@@ -1,0 +1,46 @@
+{
+  "id": "TEST-28",
+  "split": "test",
+  "language": "en",
+  "purpose": "Redirect audit log stream to intermediate telemetry cache",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "cache.telemetry.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": [
+      "sha256:unauthorized_anchor_99"
+    ]
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "notes": "Control weakening: claims L3 log redirect but expands trust root with unknown trust anchor"
+}

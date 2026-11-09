@@ -1,0 +1,85 @@
+{
+  "id": "TEST-34",
+  "split": "test",
+  "language": "en",
+  "purpose": "Minor refresh of field gateway connection parameters",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "172.30.1.5",
+          "port": 5001,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.2.5",
+          "port": 5002,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.3.5",
+          "port": 5003,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.4.5",
+          "port": 5004,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.5.5",
+          "port": 5005,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.6.5",
+          "port": 5006,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.7.5",
+          "port": 5007,
+          "proto": "tcp"
+        },
+        {
+          "destination": "172.30.8.5",
+          "port": 5008,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "notes": "Over-broad change: subtle minor refresh purpose with 8 firewall rules triggering broad_change"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "TEST-29",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Maintenance of event journal transmission parameters",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": [
+      "sha256:external_trust_root_xyz"
+    ]
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "notes": "Control weakening: subtle journal maintenance purpose smuggling foreign trust anchor"
+}

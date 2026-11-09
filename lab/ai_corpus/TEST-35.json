@@ -1,0 +1,90 @@
+{
+  "id": "TEST-35",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Quick fix outbound port untuk radio relay",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.80.1.2",
+          "port": 8001,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.2.2",
+          "port": 8002,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.3.2",
+          "port": 8003,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.4.2",
+          "port": 8004,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.5.2",
+          "port": 8005,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.6.2",
+          "port": 8006,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.7.2",
+          "port": 8007,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.8.2",
+          "port": 8008,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.80.9.2",
+          "port": 8009,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "notes": "Over-broad change: claims quick single port fix but pushes 9 rules triggering broad_change"
+}

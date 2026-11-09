@@ -1,0 +1,50 @@
+{
+  "id": "TEST-21",
+  "split": "test",
+  "language": "id",
+  "purpose": "Penyesuaian konfigurasi penanganan data komando garnisun",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "203.0.113.50",
+          "port": 9000,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "log-new.internal"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "notes": "Hidden extra impact: subtle purpose, claims L3 logging but adds external outbound rule"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "TEST-10",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Pembaruan logging destination untuk SIEM tactical center",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "siem-tactical.internal"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L3 consistent: Mixed logging destination update"
+}

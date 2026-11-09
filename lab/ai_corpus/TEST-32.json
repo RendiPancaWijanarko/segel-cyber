@@ -1,0 +1,46 @@
+{
+  "id": "TEST-32",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Hardening server pangkalan AD dengan security tuning",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [
+        "vnc_remote"
+      ],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "notes": "Misleading purpose: claims L5 hardening but enables remote desktop vnc service"
+}

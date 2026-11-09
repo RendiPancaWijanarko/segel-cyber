@@ -1,0 +1,47 @@
+{
+  "id": "EX-06",
+  "split": "exemplar",
+  "language": "en",
+  "purpose": "Hardening tactical node by disabling unused telnet and rsh services",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "telnet",
+        "rsh"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "Exemplar 6: English for L5 service hardening"
+}

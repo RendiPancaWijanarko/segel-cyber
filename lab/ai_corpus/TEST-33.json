@@ -1,0 +1,77 @@
+{
+  "id": "TEST-33",
+  "split": "test",
+  "language": "id",
+  "purpose": "Penambahan akun operator radio cadangan kompi",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "rad_op_1",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_2",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_3",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_4",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_5",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_6",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_7",
+        "privilege": "operator"
+      },
+      {
+        "name": "rad_op_8",
+        "privilege": "operator"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "notes": "Over-broad change: claims single operator account but adds 8 accounts triggering broad_change"
+}

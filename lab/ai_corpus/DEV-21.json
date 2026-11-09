@@ -1,0 +1,49 @@
+{
+  "id": "DEV-21",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Routine system update and general parameter synchronization",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "sys_temp",
+        "privilege": "operator"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L6",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "notes": "Vague purpose: L6 generic synchronization purpose with new operator account"
+}

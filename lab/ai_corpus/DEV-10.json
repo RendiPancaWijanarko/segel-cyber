@@ -1,0 +1,50 @@
+{
+  "id": "DEV-10",
+  "split": "dev",
+  "language": "mixed",
+  "purpose": "Konfigurasi outbound firewall rule untuk update antivirus pangkalan",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "192.168.99.10",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L4 consistent: Mixed antivirus update egress rule"
+}

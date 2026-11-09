@@ -1,0 +1,44 @@
+{
+  "id": "TEST-11",
+  "split": "test",
+  "language": "id",
+  "purpose": "Migrasi target pengiriman log peristiwa sistem pertahanan",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "event-log.pertahanan.mil"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L3 consistent: Indonesian event log target migration"
+}

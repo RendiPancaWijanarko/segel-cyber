@@ -1,0 +1,46 @@
+{
+  "id": "TEST-26",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Pembaruan logging destination dan sinkronisasi berkala",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.new.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": [
+      "sha256:rogue_ca_cert_123"
+    ]
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "notes": "Control weakening: claims L3 logging update but injects unauthorized trust anchor"
+}

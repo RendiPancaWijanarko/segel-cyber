@@ -1,0 +1,49 @@
+{
+  "id": "DEV-17",
+  "split": "dev",
+  "language": "mixed",
+  "purpose": "Pendaftaran user teknisi stasiun repeater",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "rep_tech",
+        "privilege": "sudo"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "privilege_escalation",
+  "notes": "Privilege escalation: claims L2 technician user but grants sudo privileges"
+}

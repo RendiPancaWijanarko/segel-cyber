@@ -1,0 +1,50 @@
+{
+  "id": "EX-02",
+  "split": "exemplar",
+  "language": "en",
+  "purpose": "Add outbound firewall egress rule for tactical threat intelligence feed",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "threat-intel.hq.tni.mil",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "Exemplar 2: English for L4 network rule addition"
+}

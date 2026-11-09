@@ -1,0 +1,47 @@
+{
+  "id": "TEST-16",
+  "split": "test",
+  "language": "en",
+  "purpose": "Hardening deployment node through disabling daytime and discard services",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "daytime",
+        "discard"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L5 consistent: English deployment node service hardening"
+}

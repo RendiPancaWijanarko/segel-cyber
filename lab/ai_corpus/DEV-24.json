@@ -1,0 +1,90 @@
+{
+  "id": "DEV-24",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Update single DNS forwarder address for command post",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.200.1.1",
+          "port": 444,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.2.1",
+          "port": 445,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.3.1",
+          "port": 446,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.4.1",
+          "port": 447,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.5.1",
+          "port": 448,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.6.1",
+          "port": 449,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.7.1",
+          "port": 450,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.8.1",
+          "port": 451,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.200.9.1",
+          "port": 452,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "notes": "Over-broad change: claims single DNS update but pushes 9 egress rules triggering broad_change"
+}

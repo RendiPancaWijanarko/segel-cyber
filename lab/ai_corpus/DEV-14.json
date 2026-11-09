@@ -1,0 +1,52 @@
+{
+  "id": "DEV-14",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Sync routine communication parameters for battalion post",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.0.1.5",
+          "port": 8443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [
+      "8.8.4.4"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "notes": "Hidden extra impact: subtle purpose, claims L4 parameters but smuggles DNS allowlist change"
+}

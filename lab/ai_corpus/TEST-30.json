@@ -1,0 +1,46 @@
+{
+  "id": "TEST-30",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Miscellaneous maintenance changes untuk stability perbaikan",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "1.0.0.1"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L6",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "notes": "Vague purpose: L6 miscellaneous stability changes with DNS allowlist modification"
+}

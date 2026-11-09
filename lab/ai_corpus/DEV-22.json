@@ -1,0 +1,46 @@
+{
+  "id": "DEV-22",
+  "split": "dev",
+  "language": "id",
+  "purpose": "Pengerasan sistem pos komando dengan mematikan service tidak aman",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [
+        "httpd"
+      ],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "notes": "Misleading purpose: claims L5 service hardening but enables web server httpd"
+}

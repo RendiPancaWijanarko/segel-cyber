@@ -1,0 +1,44 @@
+{
+  "id": "DEV-07",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Update centralized syslog forwarder destination for garrison node",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.old.local"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog-garrison.corp"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "notes": "L3 consistent: English syslog forwarder destination update"
+}
