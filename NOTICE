@@ -24,8 +24,8 @@ This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates or 
 
 ## 3. Shaders & Visual Effects
 
-### WebGPU / WebGL Procedural Background Shader
-- **Usage**: Implemented directly in JavaScript/WGSL/GLSL in `src/release_desk/templates/base.html` and `src/release_desk/templates/segel.html` (anisotropic caustics / lit rays background effect).
+### WebGPU / TypeGPU Procedural Background Shader
+- **Usage**: Implemented directly in JavaScript/WGSL/GLSL in `src/release_desk/templates/base.html` and `src/release_desk/templates/segel.html` (anisotropic caustics / lit rays background effect). Comments reference "TypeGPU" (see https://github.com/software-mansion/TypeGPU), but no TypeGPU package is imported or loaded at runtime; the shader is hand-written WGSL/WebGL.
 - **Licence**: UNKNOWN - verify (source origin or reference implementation not determinable from local files).
 
 ---
@@ -51,3 +51,20 @@ This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates or 
   - `src/release_desk/static/images/pussiberad-logo.png`
 - **Usage**: Displayed in navigation headers and authentication shells as institutional identification for Indonesian Armed Forces (TNI), Indonesian Army (TNI AD), and Army Cyber Center (Pussiberad).
 - **Licence**: UNKNOWN - verify (public sector / military insignia).
+
+---
+
+## 6. AI Runtime Dependency
+
+### Ollama
+- **Usage**: Local inference server accessed at `http://127.0.0.1:11434` (loopback only). Used as the AI advisory backend in `src/inspector/ai/worker.py` when `ai_enabled=True`. No network access beyond loopback is permitted.
+- **Licence**: UNKNOWN - verify (see https://github.com/ollama/ollama for licence details).
+
+---
+
+## 7. AI Model
+
+### qwen3:4b
+- **Usage**: Language model loaded via the local Ollama server for advisory capability classification (`inspector.ai.worker`). The model is never committed to this repository; weights are downloaded and stored locally by the Ollama daemon.
+- **Digest**: `<to be filled by pipeline at first successful model pull>`
+- **Licence**: Apache-2.0 as reported by the model card; verify at https://huggingface.co/Qwen/Qwen3-4B before redistribution.

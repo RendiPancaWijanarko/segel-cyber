@@ -9,7 +9,6 @@ and prints the final mutation table and score.
 
 from __future__ import annotations
 
-import io
 import os
 import shlex
 import subprocess
@@ -244,12 +243,16 @@ MUTATIONS = [
 ]
 
 
-def run_cmd(cmd: list[str] | str, cwd: str | None = None, env: dict[str, str] | None = None) -> tuple[int, str]:
+def run_cmd(  # noqa: E501
+    cmd: list[str] | str,
+    cwd: str | None = None,
+    env: dict[str, str] | None = None,
+) -> tuple[int, str]:
     full_env = os.environ.copy()
     if env:
         full_env.update(env)
     cmd_args = shlex.split(cmd) if isinstance(cmd, str) else cmd
-    proc = subprocess.run(
+    proc = subprocess.run(  # noqa: S603
         cmd_args,
         cwd=cwd,
         env=full_env,
@@ -324,7 +327,9 @@ def main() -> None:
                 "-q",
                 "--tb=no",
             ]
-            rc_target, out_target = run_cmd(target_test_cmd, cwd=str(worktree_path), env=worktree_env)
+            rc_target, out_target = run_cmd(
+                target_test_cmd, cwd=str(worktree_path), env=worktree_env
+            )
             target_failed = (rc_target != 0)
 
             # Run full AT suite in worktree to detect other failures
@@ -353,7 +358,10 @@ def main() -> None:
             }
             collateral_failures = [f for f in other_fails if f not in known_baseline_fails]
 
-            status_str = "KILLED (Test Failed as Expected)" if target_failed else "SURVIVED (Test Passed despite Mutation!)"
+            if target_failed:
+                status_str = "KILLED (Test Failed as Expected)"
+            else:
+                status_str = "SURVIVED (Test Passed despite Mutation!)"
             print(f"  Result: {status_str}", flush=True)
             if collateral_failures:
                 print(f"  Collateral test failures: {', '.join(collateral_failures)}", flush=True)
@@ -374,7 +382,11 @@ def main() -> None:
     print("\n" + "=" * 80)
     print("PHASE B MUTATION TESTING RESULTS")
     print("=" * 80)
-    print(f"{'AT ID':<8} | {'Mutation (File:Line)':<42} | {'Killed?':<8} | {'Collateral Failures':<25}")
+    header = (
+        f"{'AT ID':<8} | {'Mutation (File:Line)':<42} | "
+        f"{'Killed?':<8} | {'Collateral Failures':<25}"
+    )
+    print(header)
     print("-" * 90)
 
     killed_count = 0

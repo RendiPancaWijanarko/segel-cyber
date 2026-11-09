@@ -2,7 +2,7 @@
 
 **Authoritative References**: PRD v2.0 (Deliverable A), Technical Architecture Specification (TAS / Deliverable B), MVP Development Blueprint (MDB / Deliverable C).  
 **Audit Scope**: Complete independent audit mapping every official P0 Functional Requirement (`FR`), Security Requirement (`SEC`), and Attack Test (`AT`) ID against actual source code and test suite implementations.  
-**Compliance Scope**: Claims of "100% compliant" in legacy docs were identified as synthetic. SEGEL's verified compliance is strictly test-backed (310 passing automated tests) and bounded by the gap analysis detailed below.  
+**Compliance Scope**: Claims of "100% compliant" in legacy docs were identified as synthetic. SEGEL's test-backed coverage is bounded by the gap analysis below (310 automated tests pass as of 2026-11-09; gaps are explicitly listed).  
 **Constraint Followed**: Read-only audit; zero application code modified.
 
 ---

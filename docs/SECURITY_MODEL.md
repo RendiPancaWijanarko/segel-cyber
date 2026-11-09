@@ -58,7 +58,7 @@ All security-critical operations fail closed:
 
 ### Security Invariants & Limitations
 
-Integrity and authenticity guarantees in SEGEL are cryptographic invariants enforced by offline deterministic verification (RFC 8032 Ed25519 DSSE envelopes, RFC 6962 SHA-256 Merkle inclusion proofs, and Pre-Authentication Encoding bindings). These invariants hold strictly within the defined threat model and are verified by the 310-test automated suite. They do not constitute unconditional system guarantees against out-of-scope hardware faults or host environment compromise.
+Integrity and authenticity properties in SEGEL are cryptographic invariants enforced by offline deterministic verification (RFC 8032 Ed25519 DSSE envelopes, RFC 6962 SHA-256 Merkle inclusion proofs, and Pre-Authentication Encoding bindings). These invariants hold within the defined threat model and are covered by the 310-test automated suite (see `docs/TEST_REPORT.md` for counts and limitations). They do not extend to out-of-scope hardware faults, host environment compromise, or requirements listed as `missing` or `partial` in `docs/audit.md`.
 
 ### What SEGEL Does NOT Guarantee
 

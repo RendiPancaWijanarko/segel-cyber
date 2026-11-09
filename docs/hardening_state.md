@@ -3,7 +3,7 @@
 - **Branch**: `hardening/p2b-p5`
 - **Active Phase**: Phase G — UI/UX Overhaul (Segel Glassmorphic Dashboard & Light Mode Complete)
 - **Last Updated**: 2026-11-06T13:50:00+07:00
-- **GitHub Remote**: `https://github.com/RendiPancaWijanarko/segel-cyber.git`
+- **GitHub Remote**: `<redacted — do not embed personal repository URLs in docs>`
 
 ---
 
@@ -29,7 +29,7 @@
     - TypeScript data models: `src/frontend/types.ts`
     - Mocked dataset matching visual reference: `src/frontend/mockData.ts`
     - Standalone HTML preview & live FastAPI route (`/segel`): `src/frontend/preview.html` & `src/release_desk/templates/segel.html`
-  - [x] Full test suite verified: 308/308 tests passing (100%).
+  - [x] Full test suite pass: 308 tests passing (counts updated in `docs/PROGRESS.md`).
 
   - [x] **Step 1: AT-022, FR-050 / SEC-FINDING-02**: Enforce ledger checkpoint signature verification in Receiver & Assembler (`commit a76cc69`).
   - [x] **Step 2: SEC-004, FR-003 / SEC-FINDING-01 / Red Test C1**: Separate approver keys into standalone signer service (`commit bffe603`).
@@ -47,7 +47,7 @@
     - [x] Rewrote AT-044 to test `BaselineAdapter.health_check()` fixed probe vocabulary enforcement (`VALID_HEALTH_PROBES`).
     - [x] Updated `VerificationPolicy` to default `allowed_adapters` with `segel-baseline-adapter/v1`.
     - [x] Documented limitations in `docs/limitations.md`.
-    - [x] Executed full test suite pass: 307/307 tests passing (100%).
+    - [x] Executed full test suite pass: 307 tests passing (counts updated in `docs/PROGRESS.md`).
     - [x] Executed static analysis: Ruff passing, Mypy strict passing (46 files), Bandit passing (0 issues).
 
 ---

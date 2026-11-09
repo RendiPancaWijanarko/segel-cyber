@@ -37,6 +37,14 @@ Full test suite execution evidence:
 - [x] Initialized progress tracker `docs/ai_state.md` with test metrics and phase boundaries.
 - [x] Executed full test suite with raw counts and runtime documented.
 - [x] Preserved `src/` and `tests/` without modifications in this setup step.
+- [x] Completed HYG pass:
+  - Documented `httpx2` status and confirmed removal from `pyproject.toml`.
+  - Added `psutil>=6.0.0` lower bound to `pyproject.toml` dev extras.
+  - Reported runtime versions (3.14.6 in .venv vs 3.12 target) and proposed migration plan.
+  - Docs hygiene: audited relative paths and rewritten absolute claims across docs (`PROGRESS.md`, `audit.md`, `SECURITY_MODEL.md`, `hardening_state.md`, `limitations.md`).
+  - NOTICE inventory: listed UI assets/references, added Ollama and `qwen3:4b` entries.
+  - Subprocess hygiene: replaced `shell=True` with list arguments in `scripts/mutation_runner.py` and resolved ruff issues.
+  - Test suite re-run: 310 passed, 0 failed, 1 warning in 8.03s.
 
 ---
 
@@ -70,3 +78,4 @@ Full test suite execution evidence:
 ## Next Step
 
 - Proceed with **AI-1**: Implement the isolated worker subprocess (`src/inspector/ai/worker.py`), scrubbed environment execution, and loopback Ollama client with fallback handling.
+
