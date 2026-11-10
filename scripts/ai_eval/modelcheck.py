@@ -24,10 +24,13 @@ WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(WORKSPACE_ROOT / "src"))
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
+from inspector.ai.derive import (  # noqa: E402
+    derive_ai_findings,
+    derive_findings,
+)
 from inspector.baseline import BaselineV1  # noqa: E402
 from inspector.policy.expectations import (  # noqa: E402
     classify_purpose_b1,
-    derive_findings,
 )
 from scripts.ai_eval.guard import (  # noqa: E402
     get_corpus_files,
@@ -294,8 +297,8 @@ def run_modelcheck(
         ai_ambiguous = parsed.get("ambiguous") if (valid and parsed) else None
         ai_reason = parsed.get("reason") if (valid and parsed) else None
 
-        # Code derivation for findings
-        ai_findings = derive_findings(ai_class, diff_kinds)
+        # Code derivation for findings via single derivation module
+        ai_findings = derive_ai_findings(ai_class, diff_kinds)
         ai_detected = len(ai_findings) > 0
 
         # Baseline B1

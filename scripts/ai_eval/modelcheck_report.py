@@ -22,8 +22,10 @@ WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(WORKSPACE_ROOT / "src"))
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
-# Use the exact derivation code that modelcheck.py uses (from inspector.policy.expectations)
-from inspector.policy.expectations import derive_findings  # noqa: E402
+# Single derivation module used by both production and evaluation
+from inspector.ai.derive import (  # noqa: E402
+    derive_findings,
+)
 
 
 def calculate_metrics(tp: int, fn: int, fp: int, tn: int) -> dict[str, Any]:
@@ -182,7 +184,7 @@ def generate_reports(
     b1b_lines = [
         "=== BASELINE B1b EVALUATION AND COMPARISON REPORT ===",
         "",
-        "Derivation Code Source: inspector.policy.expectations.derive_findings",
+        "Derivation Code Source: inspector.ai.derive (single derivation module)",
         "(Exact expectation derivation logic imported and used by modelcheck.py)",
         "",
         "--- (a) Baseline B1b Performance on DEV Split ---",
