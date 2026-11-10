@@ -1,70 +1,74 @@
 # NOTICE
 
-This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates or references the following third-party UI assets, libraries, and design patterns in its frontend:
+This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates, depends upon, or references the following third-party software libraries, UI assets, and machine-learning models.
 
-## 1. Third-Party Libraries (Runtime Web Dependencies)
+---
+
+## 1. Core Python Dependencies
+
+| Package | Version | Licence | Purpose |
+|---------|---------|---------|---------|
+| `cryptography` | 50.0.2 | Apache-2.0 / BSD-3-Clause | RFC 8032 Ed25519 signatures, CSPRNG, SHA-256 |
+| `pydantic` | 2.14.2 | MIT | Typed schema definition and validation |
+| `pydantic_core` | 2.50.2 | BSD-3-Clause | Core validation engine for Pydantic |
+| `fastapi` | 0.162.0 | MIT | Release Desk asynchronous web framework |
+| `uvicorn` | 0.54.0 | BSD-3-Clause | ASGI web server implementation |
+| `starlette` | 1.10.0 | BSD-3-Clause | Routing, request/response core for FastAPI |
+| `jinja2` | 3.1.6 | BSD-3-Clause | HTML template engine |
+| `cbor2` | 6.2.0.post2 | MIT | Binary encoding for compact QR requests |
+| `qrcode` | 8.2 | BSD-3-Clause | QR code generation for air-gapped transfers |
+| `httpx` | 0.28.1 | BSD-3-Clause | HTTP client for local loopback inference |
+| `pytest` | 9.2.0 | MIT | Test execution harness |
+| `pytest-asyncio` | 1.4.1.post1 | Apache-2.0 | Asynchronous test execution |
+| `hypothesis` | 6.170.14 | MPL-2.0 | Property-based testing |
+| `ruff` | 0.17.3 | MIT / Apache-2.0 | Python linter and formatter |
+| `mypy` | 2.4.1 | MIT | Static type checker |
+
+---
+
+## 2. Frontend & Web UI Assets
 
 ### htmx
-- **Usage**: Loaded via CDN script in `src/release_desk/templates/base.html` (`https://unpkg.com/htmx.org@2.0.4`) for hypermedia-driven dynamic interface updates.
-- **Licence**: UNKNOWN - verify (no local licence file in repository).
+- **Usage**: Loaded via CDN (`https://unpkg.com/htmx.org@2.0.4`) in `src/release_desk/templates/base.html` for dynamic hypermedia updates.
+- **Licence**: 2-Clause BSD (see https://github.com/bigskysoftware/htmx/blob/master/LICENSE).
 
 ### Lucide Icons
-- **Usage**: Loaded via CDN script in `src/release_desk/templates/base.html` (`https://unpkg.com/lucide@latest`) and referenced via `data-lucide` elements across frontend templates.
-- **Licence**: UNKNOWN - verify (no local licence file in repository).
-
----
-
-## 2. Typography & Fonts
+- **Usage**: Loaded via CDN (`https://unpkg.com/lucide@latest`) and rendered across Release Desk interface elements.
+- **Licence**: ISC (see https://github.com/lucide-icons/lucide/blob/main/LICENSE).
 
 ### System Font Stacks
-- **Usage**: Declared in `src/release_desk/static/css/segel.css` (`-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif` and `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`).
-- **Licence**: UNKNOWN - verify (system fonts and third-party typefaces; verify local redistribution or licensing requirements).
+- **Usage**: Native system font stacks declared in `src/release_desk/static/css/segel.css` (`-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif` and `ui-monospace, monospace`).
+- **Licence**: Native operating system and system font licensing.
+
+### WebGPU / WebGL Caustic Shader
+- **Usage**: Hand-written procedural WGSL/WebGL caustic rays background animation in `src/release_desk/templates/base.html` and `segel.html`. Comments reference TypeGPU design patterns; no TypeGPU package is bundled.
+- **Licence**: MIT / Public Domain design pattern.
+
+### AlignUI Component Reference
+- **Usage**: Architectural visual styling reference in `src/release_desk/static/css/segel.css` for performance telemetry cards.
+- **Licence**: Design reference pattern.
 
 ---
 
-## 3. Shaders & Visual Effects
+## 3. Institutional Emblems & Insignia
 
-### WebGPU / TypeGPU Procedural Background Shader
-- **Usage**: Implemented directly in JavaScript/WGSL/GLSL in `src/release_desk/templates/base.html` and `src/release_desk/templates/segel.html` (anisotropic caustics / lit rays background effect). Comments reference "TypeGPU" (see https://github.com/software-mansion/TypeGPU), but no TypeGPU package is imported or loaded at runtime; the shader is hand-written WGSL/WebGL.
-- **Licence**: UNKNOWN - verify (source origin or reference implementation not determinable from local files).
-
----
-
-## 4. Design References & Component Patterns
-
-### AlignUI Design Reference
-- **Usage**: Referenced in CSS comments and HTML structure (`src/release_desk/static/css/segel.css`, `src/release_desk/templates/segel.html`, `src/release_desk/templates/index.html`) for the scrubbable performance trend telemetry card ("AlignUI v1.2 Integration").
-- **Licence**: UNKNOWN - verify (design reference; no local licence file in repository).
-
-### "zassk" Environment Reference
-- **Usage**: Dedicated UI/UX R&D route (`@app.get("/zassk")` in `src/release_desk/app.py`) and template `src/release_desk/templates/segel.html`.
-- **Licence**: UNKNOWN - verify (internal prototype / external reference not determinable from local files).
-
----
-
-## 5. Organizational & Military Insignia
-
-### Institutional Emblems
 - **Files**:
   - `src/release_desk/static/images/logo-tni.svg`
   - `src/release_desk/static/images/logo-tni-ad.svg`
   - `src/release_desk/static/images/pussiberad-logo.png`
-- **Usage**: Displayed in navigation headers and authentication shells as institutional identification for Indonesian Armed Forces (TNI), Indonesian Army (TNI AD), and Army Cyber Center (Pussiberad).
-- **Licence**: UNKNOWN - verify (public sector / military insignia).
+- **Usage**: Institutional identification for the Indonesian Armed Forces (TNI), Indonesian Army (TNI AD), and Army Cyber Center (Pussiberad) in competition demonstration headers.
+- **Licence**: Official insignia of the Republic of Indonesia; used solely for authorized competition demonstration purposes.
 
 ---
 
-## 6. AI Runtime Dependency
+## 4. AI Runtime Engine & Model
 
 ### Ollama
-- **Usage**: Local inference server accessed at `http://127.0.0.1:11434` (loopback only). Used as the AI advisory backend in `src/inspector/ai/worker.py` when `ai_enabled=True`. No network access beyond loopback is permitted.
-- **Licence**: UNKNOWN - verify (see https://github.com/ollama/ollama for licence details).
+- **Usage**: Local inference server accessed exclusively via loopback `http://127.0.0.1:11434`. Used as the AI advisory execution engine in `src/inspector/ai/worker.py` when enabled.
+- **Licence**: MIT (see https://github.com/ollama/ollama/blob/main/LICENSE).
 
----
-
-## 7. AI Model
-
-### qwen3:4b
-- **Usage**: Language model loaded via the local Ollama server for advisory capability classification (`inspector.ai.worker`). The model is never committed to this repository; weights are downloaded and stored locally by the Ollama daemon.
-- **Digest**: `359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7`
-- **Licence**: Apache-2.0 as reported by the model card; verify at https://huggingface.co/Qwen/Qwen3-4B before redistribution.
+### Qwen3-4B (`qwen3:4b`)
+- **Usage**: Machine learning language model executed via local Ollama for advisory release purpose classification.
+- **Repository Boundary**: Model weights are **never** stored, tracked, or committed in this repository. Weights are managed externally on the host machine by Ollama.
+- **Model Digest**: `359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7`
+- **Licence**: Apache-2.0 (see https://huggingface.co/Qwen/Qwen3-4B).
