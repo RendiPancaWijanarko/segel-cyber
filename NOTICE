@@ -66,5 +66,5 @@ This project (SEGEL - Sistem Edar Gelar Elektronik Lapis-ganda) incorporates or 
 
 ### qwen3:4b
 - **Usage**: Language model loaded via the local Ollama server for advisory capability classification (`inspector.ai.worker`). The model is never committed to this repository; weights are downloaded and stored locally by the Ollama daemon.
-- **Digest**: `<to be filled by pipeline at first successful model pull>`
+- **Digest**: `359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7`
 - **Licence**: Apache-2.0 as reported by the model card; verify at https://huggingface.co/Qwen/Qwen3-4B before redistribution.

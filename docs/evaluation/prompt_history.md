@@ -46,7 +46,7 @@ Between commits `8fccfee` and `7702cdf`, the following ad-hoc scripts were creat
       b1_findings = derive_findings(b1_class, diff)
       print(d["id"], d["language"], d["expected_purpose_class"], d["label"], b1_class, len(b1_findings) > 0, diff, d["purpose"])
   ```
-- **Lifecycle**: Executed once via `.venv/Scripts/python.exe`, verified output, then removed via `Remove-Item scripts/ai_eval/inspect_dev.py`.
+- **Lifecycle**: Executed once via `.venv/Scripts/python.exe`, checked output, then removed via `Remove-Item scripts/ai_eval/inspect_dev.py`.
 
 ### Script 2: Conversation Scratch Script `test_prompt.py`
 - **Location**: `<appDataDir>/brain/<conversation-id>/scratch/test_prompt.py`.

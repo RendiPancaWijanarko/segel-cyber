@@ -19,7 +19,7 @@ where:
 - `<kind>` is the canonical capability kind name from Section 2.
 - `<n>` is a 1-based sequential counter per kind (`1, 2, 3, ...`).
 
-### Ordering Guarantees
+### Ordering Properties
 Instance numbering strictly adheres to stable sort order:
 1. **File Path**: Files are processed in lexicographical order (`sorted(files.keys())`).
 2. **File Position**:

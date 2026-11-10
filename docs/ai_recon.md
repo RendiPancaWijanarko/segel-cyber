@@ -447,7 +447,7 @@ Adding new fields (or an `ai` block) to `InspectPredicate` **WILL NOT BREAK** Re
 - **Decision D1 State**:
   - Approver keys were successfully separated into `StandaloneApproverSigner` (`src/approver/service.py`).
   - However, `author_key`, `builder_key`, `inspector_key`, `ledger_key`, and `witness_key` remain in `DemoKeyBundle` held in web server heap memory (`src/release_desk/app.py:121-185`).
-- **Requirements to Guarantee AI Cannot Access Signing Keys**:
+- **Requirements to Ensure AI Cannot Access Signing Keys**:
   - AI advisory execution must run in an isolated boundary (out-of-process subprocess or isolated HTTP container) with zero key parameters.
   - The AI function signature must accept only sanitized configuration text and return structured JSON findings.
   - `sign_inspect` must only be called after AI output has been schema-validated and merged.
@@ -556,7 +556,7 @@ Absolute local workspace paths containing URI file schemes and OS directory root
 | **A11** Desk displays advisory findings separately | **FALSE** | `src/release_desk/templates/release_detail.html:178` iterates only `deterministic_findings` |
 | **A12** Fixtures build releases through factories | **TRUE** | `tests/adversarial/test_at_NNN.py` uses `build_release_package()` and `SyntheticLab()`; 0 static fixture files |
 | **A13** Place for model name/digest/prompt hash in evidence | **PARTIAL** | `ai_model_id` and `ai_prompt_digest` exist; model weights digest is missing (`src/segel_core/schemas/attestation.py:224-231`) |
-| **A14** Tests run offline with network disabled | **TRUE** | Verified in `tests/unit/test_receiver_offline_isolation.py:47-129`; 310 tests pass with zero network sockets |
+| **A14** Tests run offline with network disabled | **TRUE** | Tested in `tests/unit/test_receiver_offline_isolation.py:47-129`; 310 tests pass with zero network sockets |
 | **A15** Existing suite runs in under 30 seconds | **TRUE** | Full test suite runs in **7.15 seconds** (310 passed) |
 
 ---

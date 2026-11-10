@@ -21,7 +21,7 @@
   - [x] Full transition to accessible, high-contrast Light Mode design system tailored for Indonesian Army (TNI AD) personnel.
   - [x] Complete eradication of emojis and legacy icons across all 7 Jinja2 templates (`base.html`, `index.html`, `new_release.html`, `release_detail.html`, `trust.html`, `ledger.html`, `error.html`).
   - [x] Official Lucide Icons implementation with strict visual specifications: `strokeWidth={2}`, `size={20}` for primary nav / major titles, `size={16}` for inline actions, tables, badges, buttons.
-  - [x] Semantic color coding: Emerald 600 (passed/secure), Amber 600 (warning), Red 600 (critical/blocked), Blue 600 (info), Slate 700 (neutral).
+  - [x] Semantic color coding: Emerald 600 (passed/clean), Amber 600 (warning), Red 600 (critical/blocked), Blue 600 (info), Slate 700 (neutral).
   - [x] Built-in air-gap inline SVG fallback dictionary for offline military networks (NFR-001 airgap compliance).
   - [x] Production-grade recreation of modern glassmorphic analytics dashboard ("Segel"):
     - React TypeScript component: `src/frontend/Dashboard.tsx`

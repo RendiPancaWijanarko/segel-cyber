@@ -1,14 +1,53 @@
 # SEGEL AI Inspector Evaluation Report (Test Split)
 
-## Executive Summary & Decision D21 Determination
+## Executive Summary & Baseline Comparison Table
 
-- **Evaluation Status**: Successfully evaluated all 36 frozen test split items.
-- **Corpus Integrity Verification**: Verified 36 test files against freeze
-- **Prompt Template SHA-256**: `1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc` (matches frozen template)
-- **Model Evaluated**: `qwen3:4b` via loopback Ollama (`127.0.0.1:11434`)
-- **Headline Claim per Decision D21**: **Limited Claim: AI does not add demonstrable value over baselines**
+Data generated from `docs/evaluation/testcheck_raw.jsonl`:
 
-> **Per Decision D21, the headline claim 'AI adds value' IS NOT PERMITTED. B1 union AI silent detections: 10 (vs B1: 8, B1b: 11); B2 FP: 0 (vs B1 FP: 0). The claim is strictly limited to measured results.**
+| Baseline / System | Silent Detections (x/11) | All Inconsistent Detections (x/18) | False Positives on Consistent Items (x/18) |
+| :--- | :---: | :---: | :---: |
+| **B0: No Check** | 0/11 | 0/18 | 0/18 |
+| **B1: Keyword Classifier** | 8/11 | 14/18 | 0/18 |
+| **B1b: B1 + L6 on Abstain** | 11/11 | 18/18 | 2/18 |
+| **AI Alone (qwen3:4b)** | 10/11 | 17/18 | 0/18 |
+| **B2: B1 Union AI (Production Pipeline)** | 10/11 | 17/18 | 0/18 |
+
+### Pre-registered criterion (D21)
+
+> "D21: the claim 'AI adds value' is allowed only if, on the test split, B1 union AI detects strictly more silent items than B1 AND than B1b, with at most 2 more false positives than B1; otherwise the claim is limited to exactly what is measured, reported in the same words in the report and docs."
+
+- **Condition 1 (Strictly more silent than B1)**: 10 > 8 — **MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Condition 2 (Strictly more silent than B1b)**: 10 > 11 — **NOT MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Condition 3 (At most 2 more false positives than B1)**: 0 <= 2 (FP = 0) — **MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Overall Pre-registered Criterion Status**: **NOT MET** (Condition 2 not satisfied: 10 is not strictly greater than 11).
+
+The criterion was fixed before the test evaluation and not modified afterwards.
+
+### Interpretation (not part of the criterion)
+
+B1b flags every unclassified purpose; the AI's measured difference against B1b is fewer false alarms at slightly lower recall; differences of one or two items out of 36 are not statistically meaningful.
+
+--- | :---: | :---: | :---: |
+| **B0: No Check** | 0/11 | 0/18 | 0/18 |
+| **B1: Keyword Classifier** | 8/11 | 14/18 | 0/18 |
+| **B1b: B1 + L6 on Abstain** | 11/11 | 18/18 | 2/18 |
+| **AI Alone (qwen3:4b)** | 10/11 | 17/18 | 0/18 |
+| **B2: B1 Union AI (Production Pipeline)** | 10/11 | 17/18 | 0/18 |
+
+### Pre-registered criterion (D21)
+
+> "D21: the claim 'AI adds value' is allowed only if, on the test split, B1 union AI detects strictly more silent items than B1 AND than B1b, with at most 2 more false positives than B1; otherwise the claim is limited to exactly what is measured, reported in the same words in the report and docs."
+
+- **Condition 1 (Strictly more silent than B1)**: 10 > 8 — **MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Condition 2 (Strictly more silent than B1b)**: 10 > 11 — **NOT MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Condition 3 (At most 2 more false positives than B1)**: 0 <= 2 (FP = 0) — **MET** (source: `docs/evaluation/testcheck_raw.jsonl`)
+- **Overall Pre-registered Criterion Status**: **NOT MET** (Condition 2 not satisfied: 10 is not strictly greater than 11).
+
+The criterion was fixed before the test evaluation and not modified afterwards.
+
+### Interpretation (not part of the criterion)
+
+B1b flags every unclassified purpose; the AI's measured difference against B1b is fewer false alarms at slightly lower recall; differences of one or two items out of 36 are not statistically meaningful.
 
 ---
 

@@ -1,6 +1,6 @@
 # SEGEL Architecture
 
-> Sistem Edar Gelar Elektronik Lapis-ganda — Secure Configuration & Release Distribution Platform
+> Sistem Edar Gelar Elektronik Lapis-ganda — Hardened Configuration & Release Distribution Platform
 
 ## Overview
 

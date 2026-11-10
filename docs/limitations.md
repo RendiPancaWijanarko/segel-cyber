@@ -34,8 +34,8 @@ This document records the architectural boundaries, MVP limitations, and design 
   - Implemented `BaselineAdapter.recover_crash()` with persistent write-ahead journal (`.segel_journal.json`), automatic backup restoration, and staging debris cleanup.
   - Implemented `AuditLogger` writing append-only, SHA-256 hash-chained JSON-lines (`audit.jsonl`).
   - Implemented in-process threading mutual exclusion and atomic filesystem locks (`.deploy.lock`) on `deploy_root`.
-- **Verification & Failure Semantics** (see Section 4 for operational limitations):
-  - Verified by crash-recovery tests (`test_at030_crash_recovery`): simulated abrupt process termination mid-deployment leaves backups intact and enables journaled recovery to clean or restored state within test scenario parameters (subject to host filesystem flush semantics).
+- **Testing & Failure Semantics** (see Section 4 for operational limitations):
+  - Tested by crash-recovery tests (`test_at030_crash_recovery`): simulated abrupt process termination mid-deployment leaves backups intact and enables journaled recovery to clean or restored state within test scenario parameters (subject to host filesystem flush semantics).
   - All deployment and verification events are recorded in local SHA-256 hash-chained JSON-lines (`audit.jsonl`) for tamper evidence.
 
 ---
@@ -62,11 +62,11 @@ This document records the architectural boundaries, MVP limitations, and design 
 ## 6. Headless Browser Screenshot Limitation (AI-7)
 - **Context**: Decision D18 and task specification requested saving a visual screenshot of the Release Detail page (`docs/evaluation/ai_panel.png`) if a browser tool was available.
 - **Limitation**: No headless browser automation framework (such as Playwright, Puppeteer, or Selenium) is installed within the sandboxed Python execution environment, and external package installation is prohibited per repository security rules.
-- **Verification Alternative**: The HTML rendering, AI advisory panel structure, status banners (ok, failed, skipped), variable escaping, absence of confidence percentages, and footer disclaimer are verified by automated unit tests in `tests/unit/test_ai_7_ack_and_manifest.py`.
+- **Testing Alternative**: The HTML rendering, AI advisory panel structure, status banners (ok, failed, skipped), variable escaping, absence of confidence percentages, and footer disclaimer are validated by automated unit tests in `tests/unit/test_ai_7_ack_and_manifest.py`.
 
 ---
 
-## 7. AI Scope Boundaries and Security Guarantees (AI-8)
+## 7. AI Scope Boundaries and Security Properties (AI-8)
 1. **Advisory Role Only**:
    - The AI Inspector (`qwen3:4b`) provides advisory purpose classification (`source="ai"`, `severity="warn"`).
    - Findings derived from AI classification are strictly capped at severity `warn`.
@@ -112,3 +112,17 @@ This document records the architectural boundaries, MVP limitations, and design 
    - Prohibited marketing hype terms ("secure", "guarantee", "verified", "100%", confidence percentages) are excluded from project claims.
    - In SEGEL documentation and specifications, all security statements cite specific named tests or explicit architectural boundaries. References to "verified" in code signatures denote Ed25519 DSSE envelope cryptographic signature checks rather than an assertion of zero systemic flaws.
 
+
+
+---
+
+## 11. Clean-Room Verification Procedure & Limitations (AI-9a)
+1. **Verification Method Applied**:
+   - A fresh repository clone was created in an isolated sibling directory (`../segel-clean`) with a newly initialized virtual environment.
+   - Because external network access is restricted to loopback (`127.0.0.1:11434`) per repository policy, package downloads via pip were prohibited.
+   - Package dependencies were copied into the clean virtual environment from the existing environment's `site-packages`.
+   - Running `pip install -e .` failed offline due to missing isolated build backend resolution (`Cannot import 'hatchling.build'`).
+   - An editable `.pth` reference was written manually into `site-packages` to link the clean clone's `src/` directory.
+   - Full suite execution of `pytest` (422 passed, 1 warning), `ruff check .` (0 errors), `mypy src` (0 errors in 53 source files), and `bandit -r src` (0 issues across 7,556 lines) was successfully completed in this clean clone directory.
+2. **Explicit Limitation**:
+   - A from-scratch dependency resolution and package installation from an external package index was not verified by the agent, as external network access is strictly prohibited.

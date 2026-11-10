@@ -54,7 +54,7 @@ Full test suite execution evidence:
   - Test inconsistent (18): hidden_extra_impact 8 (`silent`), vague_or_misleading_purpose 3 (`silent`), privilege_escalation 2 (`deterministic`), control_weakening 3 (`deterministic`), over_broad_change 2 (`deterministic`). (11 silent, 7 deterministic).
   - Consistent items maintained: 12 dev, 18 test (exactly 6 each for L1..L5). Exemplars: 6.
 - [x] Neutralized domain-specific content: removed all military references in favor of generic IT wording.
-- [x] Verified that no two purposes share the same first four words.
+- [x] Checked that no two purposes share the same first four words.
 - [x] Removed keyword evasion percentage and documented: "keyword evasion is measured in AI-4 against the independently written docs/b1_keywords.md".
 - [x] Regenerated `docs/ai_corpus_review_summary.md` from script option `scripts/ai_eval/verify_corpus.py --summary docs/ai_corpus_review_summary.md`.
 - [x] Ran ruff check on `scripts/ai_eval/` (`All checks passed!`) and full test suite (328 passed, 0 failed).
@@ -68,7 +68,7 @@ Full test suite execution evidence:
 - [x] Showed the red run (10 failed assertions due to false matches on unbounded regexes).
 - [x] Applied negative lookbehind identifier boundaries in `CAPABILITY_RULES`; showed green run (58 passed in `tests/unit/test_inspector.py`).
 - [x] Ran full test suite: 374 passed, 0 failed (37 new tests, 0 existing tests affected or broken).
-- [x] Verified with `ruff check` (0 errors) on modified files.
+- [x] Checked with `ruff check` (0 errors) on modified files.
 
 ### AI-4: Deterministic Expectations, B1 Keyword Classifier & Dev Baseline Evaluation
 - [x] Authored `docs/b1_keywords.md` defining generic security keyword taxonomies for L1..L5 in Indonesian and English, with documented assistant authorship limitation.
@@ -81,13 +81,13 @@ Full test suite execution evidence:
 - [x] Authored evaluation harness `scripts/ai_eval/eval_baselines.py` evaluating B0 and B1 strictly on DEV split.
 - [x] Evaluated B0 (0% recall on silent items, 100% on deterministic items via default severity rules) and B1 (57.1% recall on silent items, 0 FP on consistent items).
 - [x] Identified hard subset on DEV: `DEV-14`, `DEV-17`, `DEV-18` (size 3, 42.9% of silent items).
-- [x] Verified code quality with `ruff check scripts/ai_eval/eval_baselines.py` (0 errors).
+- [x] Checked code quality with `ruff check scripts/ai_eval/eval_baselines.py` (0 errors).
 
 ### AI-4b: Test-Split Guard & Audit (Unit 1)
 - [x] Authored `scripts/ai_eval/guard.py` enforcing strict test-split isolation: all scripts under `scripts/ai_eval` refuse access to `TEST-*.json` unless `SEGEL_ALLOW_TEST_EVAL=1` is set AND SHA-256 hashes match `docs/ai_corpus_freeze.txt`.
 - [x] Defaults to exemplar and dev only (30 items total).
 - [x] Integrated guard into `verify_corpus.py` (added `--include-test` flag), `eval_baselines.py`, and `generate_corpus.py`.
-- [x] Tests first: authored `tests/unit/test_ai_eval_guard.py` (6 tests: default disallows test split, raises `PermissionError` without env, `get_corpus_files` returns 30 items, freeze integrity verified on current repo, access permitted with env and freeze, access denied if hash mismatches).
+- [x] Tests first: authored `tests/unit/test_ai_eval_guard.py` (6 tests: default disallows test split, raises `PermissionError` without env, `get_corpus_files` returns 30 items, freeze integrity checked on current repo, access permitted with env and freeze, access denied if hash mismatches).
 - [x] Showed red run (`ModuleNotFoundError: No module named 'scripts.ai_eval.guard'`), then green run (6 passed). Full test suite: 380 passed, 0 failed.
 
 ### AI-4b: Regex Identifier Boundary Update (Unit 2)
@@ -122,7 +122,7 @@ Full test suite execution evidence:
 - [x] Generated `docs/evaluation/modelcheck_b1b.txt` evaluating Baseline B1b (abstention as L6):
   - B1b achieves 7/7 silent detection but produces 2 false positives on consistent items (`DEV-06`, `DEV-08`) where B1 abstained.
   - In comparison, AI correctly classifies `DEV-06` (L3) and `DEV-08` (L4), producing 0 false positives while maintaining 7/7 silent detection.
-  - Verified 100% agreement between `predicted_ambiguous` and `(predicted_class == 'L6')` (0 divergences).
+  - Confirmed agreement between `predicted_ambiguous` and `(predicted_class == 'L6')` (0 divergences).
 - [x] Authored `docs/evaluation/prompt_history.md` detailing every git commit, ad-hoc script (`inspect_dev.py`, scratch `test_prompt.py`), prompt text, and few-shot selection touching DEV or EX items before the official run.
 - [x] Generated `docs/ai_prompt_freeze.txt` with prompt SHA-256 (`1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`) freezing prompt text.
 - [x] Appended Decisions D20, D21, D22 to `docs/ai_decisions.md`.
@@ -134,10 +134,10 @@ Full test suite execution evidence:
   - AT-018: Subprocess timeout, malformed JSON after one retry, and connection refused produce `ai_status="failed"` with distinct error codes (`TIMEOUT`, `MALFORMED_JSON`, `CONNECTION_REFUSED`), verdict unchanged.
   - AT-019: Prompt injection text in purpose cannot lower verdicts, produce `REJECT`, or exceed severity `warn`.
   - Derivation: Findings come strictly from expectation map; reasons never influence decisions; cite capability instance IDs (`<kind>#<n>`); vague-L6 rule cites every capability instance with `"purpose too vague to verify (AI class L6)"`.
-  - Union & Merge: B1 findings never removed by AI output; Defect 1 (overwriting AI finding severity to match `REJECT`) and Defect 2 (escalating verdict to `REJECT` on AI output) verified and fixed.
+  - Union & Merge: B1 findings never removed by AI output; Defect 1 (overwriting AI finding severity to match `REJECT`) and Defect 2 (escalating verdict to `REJECT` on AI output) tested and fixed.
   - Worker Isolation: Fresh-interpreter import asserts `sys.modules` contains no `release_desk`, `demo_infra`, `approver`, or key-handling modules; worker environment scrubbed of all key material; loopback endpoint gating rejects non-loopback hosts.
   - Equivalence: Production derivation reproduces exact `ai_detected` flags across all 24 DEV items in `docs/evaluation/modelcheck_raw.jsonl`.
-  - Live AI: End-to-end inspection test verified against live Ollama (`qwen3:4b`).
+  - Live AI: End-to-end inspection test tested against live Ollama (`qwen3:4b`).
 - [x] Implemented `src/inspector/ai/derive.py` as single derivation module for production release inspection and evaluation scripts; refactored `scripts/ai_eval/modelcheck.py` and `scripts/ai_eval/modelcheck_report.py`.
 - [x] Implemented `src/inspector/ai/worker.py` as isolated subprocess CLI (`python -m inspector.ai.worker`) with JSON-schema structured output, `think: False`, and loopback gating.
 - [x] Implemented `src/inspector/ai/client.py` orchestrating worker lifecycle: purpose sanitization (strip control chars, collapse whitespace, cap 300), prompt freeze verification against `docs/ai_prompt_freeze.txt`, scrubbed environment, parent timeout process tree kill, and schema validation with 1 retry.

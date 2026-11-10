@@ -81,7 +81,7 @@ The interface employs rigorous, authoritative Indonesian military cyber defense 
   - Confirmation dialogs on destructive actions (e.g. state reset).
 
 ### 2.7 Accessibility, Contrast & Semantics (WCAG 2.2 AA)
-All color pairings have been audited and verified:
+All color pairings have been audited and measured:
 - Primary text `#0F172A` on white card background: **17.8:1** (Exceeds WCAG AAA).
 - Primary text `#0F172A` on canvas substrate `#F2F7F0`: **14.2:1** (Exceeds WCAG AAA).
 - Secondary text `#334155` on card background: **9.6:1** (Exceeds WCAG AAA).

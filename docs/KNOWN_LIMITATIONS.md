@@ -9,7 +9,7 @@ This document provides a technical account of the security boundaries, architect
 ### LIM-001: Offline Revocation Awareness & Epoch Window
 - **PRD v2.0 Reference**: §16 (Trust Management & Revocation Model)
 - **Architectural Reality**: Receivers operate in an air-gapped or offline posture with zero real-time outbound or inbound network access. Consequently, an offline receiver cannot learn of out-of-band key revocations or release holds via real-time CRLs or OCSP stapling.
-- **Enforced Security Guarantee**: Revocations and holds take effect only when a new, signed **Trust Update Package** (advancing the trust root version and epoch) is physically delivered to the receiver.
+- **Enforced Security Boundary**: Revocations and holds take effect only when a new, signed **Trust Update Package** (advancing the trust root version and epoch) is physically delivered to the receiver.
 - **Mitigation & Operational Requirement**: Organizations must enforce bounded epoch lifetimes (e.g., 24-hour or 7-day epochs). If an offline receiver's epoch becomes stale (`receiver_epoch < required_min_epoch`), the receiver strictly fails closed (`EPOCH_STALE`) until updated.
 
 ---
@@ -25,7 +25,7 @@ This document provides a technical account of the security boundaries, architect
 ### LIM-003: Tamper Evidence vs. Absolute Storage Immutability
 - **PRD v2.0 Reference**: §8 (Transparency Ledger & Append-Only Log)
 - **Architectural Reality**: The Transparency Ledger utilizes SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) and SQL triggers preventing `UPDATE` and `DELETE` queries on `ledger_entries` and `checkpoints`. However, SQLite is an application-level library; a host OS administrator or compromised database file owner could alter raw bytes on disk.
-- **Enforced Security Guarantee**: Immutability is **not** claimed through SQLite file properties. Cryptographic tamper evidence is strictly guaranteed through:
+- **Enforced Security Boundary**: Immutability is **not** claimed through SQLite file properties. Cryptographic tamper evidence is enforced through:
   1. RFC 6962 SHA-256 Merkle tree root hashes.
   2. Ledger Signer digital signatures over checkpoints (`size`, `root_hash`).
   3. External Witness cosignatures over Merkle consistency proofs.

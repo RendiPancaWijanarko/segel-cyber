@@ -105,7 +105,7 @@ class ErrorCode(StrEnum):
 | A11 | Desk displays advisory findings separately | FALSE | Only `deterministic_findings` displayed (`src/release_desk/templates/release_detail.html:178`) |
 | A12 | Fixtures build releases via factories | TRUE | Zero static fixture files on disk (`tests/adversarial/test_at_NNN.py:75`) |
 | A13 | Place for model name/digest/prompt hash | PARTIAL | `ai_model_id` and `ai_prompt_digest` exist; model weight digest missing (`src/segel_core/schemas/attestation.py:224`) |
-| A14 | Tests run offline without network | TRUE | Verified in `tests/unit/test_receiver_offline_isolation.py:47` |
+| A14 | Tests run offline without network | TRUE | Tested in `tests/unit/test_receiver_offline_isolation.py:47` |
 | A15 | Existing suite runs in < 30 seconds | TRUE | Entire suite of 310 tests runs in 7.15 seconds |
 
 ### 6. Top 10 Risks & Blockers (Ranked)

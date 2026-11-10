@@ -91,7 +91,7 @@ src/
 | Document | Contents |
 |----------|----------|
 | [Architecture](docs/ARCHITECTURE.md) | System architecture, component zones, data flow |
-| [Security Model](docs/SECURITY_MODEL.md) | Threat model, controls, evidence chain, guarantees |
+| [Security Model](docs/SECURITY_MODEL.md) | Threat model, controls, evidence chain, security boundaries |
 | [Demo Guide](docs/DEMO_GUIDE.md) | Step-by-step instructions for running the demo |
 | [Test Report](docs/TEST_REPORT.md) | All 106 tests with AT-series mapping |
 | [Traceability](docs/TRACEABILITY.md) | PRD requirements → code → test mapping |
