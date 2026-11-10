@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-4b (Unit 3: Documentation Limitations & Decision D19)
+- **Phase**: AI-5 (Model Check on DEV Split)
 - **Branch**: `feature/ai-inspector`
-- **Date**: 2026-11-09
-- **Last Commit**: `9da613b` ("AI-4b: regex identifier boundary update")
+- **Date**: 2026-11-10
+- **Last Commit**: `8fccfee` ("AI-4b: documentation and decision D19")
 
 ---
 
@@ -18,12 +18,12 @@ This document tracks progress, test suite counts, open items, and next steps for
 Full test suite execution evidence:
 - **Command**: `.venv/Scripts/python.exe -m pytest`
 - **Platform**: Windows 10/11 (win32), Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-- **Total Tests**: 383 passed, 0 failed, 0 errors, 1 warning (9.81 seconds)
+- **Total Tests**: 383 passed, 0 failed, 0 errors, 1 warning (8.54 seconds)
 - **Category Counts**:
   - `tests/adversarial/`: 68 passed
   - `tests/gaps/`: 18 passed
   - `tests/integration/`: 6 passed
-  - `tests/unit/`: 291 passed (including 61 in `test_inspector.py`)
+  - `tests/unit/`: 291 passed (including 61 in `test_inspector.py`, 6 in `test_ai_eval_guard.py`)
 - **Warnings**: 1 (`PytestCollectionWarning` on `TestPredicate` in `src/segel_core/schemas/attestation.py:345`)
 
 ---
@@ -103,6 +103,18 @@ Full test suite execution evidence:
   - (c) Dev small-N sample: 7 silent items, 3 hard items; results are indicative.
   - (d) Deterministic-subset items caught by default-severity rules (`warn`/`reject`) regardless of purpose.
 - [x] Appended Decision D19 to `docs/ai_decisions.md`: model-check PASS rule (schema validity >= 95%, false positives <= 2 of 12 consistent DEV items, B1 union AI detects >= 6 of 7 silent DEV items).
+
+### AI-5: Model Check Evaluation on DEV Split
+- [x] Implemented `scripts/ai_eval/modelcheck.py` evaluating `qwen3:4b` via loopback Ollama (`http://127.0.0.1:11434`) on DEV split only.
+- [x] Configured D11 inference parameters: temperature 0, seed 1, num_ctx 2048, num_predict 200, think=false, keep_alive 30m, timeout 30s.
+- [x] Applied JSON-schema constrained structured output + Python validator for `{"purpose_class", "ambiguous", "reason"}`.
+- [x] Code derivation: `derive_findings` produces expectation-mismatch warnings; reason is advisory only.
+- [x] Decision D19 Evaluation Verdict: **PASS**:
+  - (1) Schema validity: 100.0% (24/24) (threshold >= 95%).
+  - (2) False positives on 12 consistent DEV items: 0 / 12 (threshold <= 2).
+  - (3) Silent DEV items detected: B1 alone = 4/7, B1 union AI = 7/7 (threshold >= 6).
+- [x] Performance: Overall accuracy 91.7% (22/24), hard subset accuracy 66.7% (2/3), median warm latency 3.322s, p95 3.759s, 18.28 tok/s.
+- [x] Saved exact evaluation artifacts in `docs/evaluation/`: `modelcheck_summary.txt`, `modelcheck_raw.jsonl`, `modelcheck_prompt.txt` (SHA-256: `1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`), `modelcheck.md`.
 
 
 ---
