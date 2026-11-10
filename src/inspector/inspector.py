@@ -14,11 +14,13 @@ Supported payload type: baseline/v1 (YAML configuration).
 
 from __future__ import annotations
 
+import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
+from inspector.ai.client import run_ai_worker
 from inspector.baseline import (
     BaselineV1,
     diff_capabilities,
@@ -52,6 +54,7 @@ __all__ = [
     "inspect_release",
     "parse_baseline_v1",
     "sign_inspect",
+    "_merge_findings_and_verdict",
 ]
 
 # ── Deterministic capability extraction ──────────────────────────────
@@ -124,19 +127,30 @@ POLICY_RULES_V1 = {
         "severity": "warn",
         "description": "Configuration connects to external systems — verify endpoint",
     },
+    "PRULE-004": {
+        "capability": "privilege_granted",
+        "severity": "reject",
+        "description": (
+            "Elevated privileges granted to account — not allowed in configuration releases"
+        ),
+    },
 }
 
 
 @dataclass
 class InspectionResult:
     """Result of an inspection."""
+
     verdict: str  # PASS, WARN, REJECT
     deterministic_findings: list[InspectFinding]
     ai_findings: list[InspectFinding]
     ai_status: str  # ok, failed, skipped
-    ai_model_id: str
     capabilities: list[dict[str, Any]]
-    policy_version: int
+    policy_version: int = 1
+    ai_error_code: str = ""
+    ai_model_id: str = ""
+    ai_model_digest: str = ""
+    ai_prompt_digest: str = ""
 
 
 def extract_capabilities(
@@ -248,6 +262,44 @@ def evaluate_policy(
     return verdict, findings
 
 
+def _merge_findings_and_verdict(
+    deterministic_verdict: str,
+    ai_findings: list[InspectFinding],
+) -> tuple[str, list[InspectFinding]]:
+    """Merge deterministic verdict with AI advisory findings.
+
+    Rules per PRD v2.0 §7.5 and docs/ai_decisions.md (D4, D5, D7):
+    - AI findings are advisory: their severity is strictly capped at 'warn'.
+    - AI findings are preserved with their original severity (capped at warn),
+      NEVER overwritten to match the deterministic verdict (fixes Defect 1).
+    - AI can only raise verdict from PASS to WARN (fixes Defect 2).
+    - AI can NEVER produce REJECT, escalate to REJECT, or downgrade any verdict.
+    """
+    capped_ai_findings: list[InspectFinding] = []
+    has_ai_warn = False
+
+    for af in ai_findings:
+        sev = af.severity
+        # Strictly cap AI severity at warn
+        if sev == "reject":
+            sev = "warn"
+        if sev == "warn":
+            has_ai_warn = True
+
+        # Copy or update finding with capped severity, preserving other attributes
+        if sev != af.severity:
+            capped_af = af.model_copy(update={"severity": sev})
+        else:
+            capped_af = af.model_copy()
+        capped_ai_findings.append(capped_af)
+
+    verdict = deterministic_verdict
+    if verdict == "PASS" and has_ai_warn:
+        verdict = "WARN"
+
+    return verdict, capped_ai_findings
+
+
 def inspect_release(
     files: dict[str, bytes],
     manifest: Manifest,
@@ -289,43 +341,68 @@ def inspect_release(
     # Step 3: AI advisory (optional, isolated)
     ai_findings: list[InspectFinding] = []
     ai_status = "skipped"
+    ai_error_code = ""
     ai_model_id = ""
+    ai_model_digest = ""
+    ai_prompt_digest = ""
 
-    if ai_enabled:
-        try:
-            ai_findings, ai_model_id = _run_ai_advisory(files, capabilities)
-            ai_status = "ok"
+    ai_cfg_enabled = os.getenv("SEGEL_AI_ENABLED", "0").lower().strip() in {"1", "true", "yes"}
 
-            # SEC-013: AI MUST NOT downgrade a deterministic REJECT
-            if verdict == "REJECT":
-                # Filter out any AI findings that would lower severity
-                for af in ai_findings:
-                    if af.severity != "reject":
-                        af.severity = "reject"  # Force to match deterministic
-            else:
-                # AI can escalate (warn→reject) but not downgrade
-                for af in ai_findings:
-                    if af.severity == "reject" and verdict != "REJECT":
-                        verdict = "REJECT"
-                    elif af.severity == "warn" and verdict == "PASS":
-                        verdict = "WARN"
-        except Exception as e:
-            ai_status = "failed"
-            ai_findings.append(InspectFinding(
+    if ai_enabled and not ai_cfg_enabled:
+        # AI analysis requested but AI subsystem is not enabled in environment config
+        ai_status = "failed"
+        ai_error_code = "AI_DISABLED"
+        ai_findings.append(
+            InspectFinding(
                 capability_id="AI_FAILURE",
-                severity="pass",  # AI failure does not block
+                severity="pass",
                 source="ai",
-                description=f"AI analysis failed: {e}",
-            ))
+                description="AI analysis failed: AI_DISABLED",
+            )
+        )
+    elif ai_cfg_enabled:
+        ai_endpoint = os.getenv("SEGEL_AI_ENDPOINT", "http://127.0.0.1:11434").strip()
+        ai_model = os.getenv("SEGEL_AI_MODEL", "qwen3:4b").strip()
+        timeout_raw = os.getenv("SEGEL_AI_TIMEOUT_S", "30").strip()
+        try:
+            ai_timeout_s = float(timeout_raw)
+        except ValueError:
+            ai_timeout_s = 30.0
+
+        ai_findings, ai_status, ai_error_code, ai_model_id, ai_model_digest, ai_prompt_digest = (
+            run_ai_worker(
+                purpose=purpose or "",
+                capabilities=capabilities,
+                endpoint=ai_endpoint,
+                model=ai_model,
+                timeout_s=ai_timeout_s,
+            )
+        )
+
+        if ai_status == "failed":
+            ai_findings.append(
+                InspectFinding(
+                    capability_id="AI_FAILURE",
+                    severity="pass",
+                    source="ai",
+                    description=f"AI analysis failed: {ai_error_code}",
+                )
+            )
+
+        # Merge deterministic verdict and AI advisory findings per D5
+        verdict, ai_findings = _merge_findings_and_verdict(verdict, ai_findings)
 
     return InspectionResult(
         verdict=verdict,
         deterministic_findings=det_findings,
         ai_findings=ai_findings,
         ai_status=ai_status,
-        ai_model_id=ai_model_id,
         capabilities=capabilities,
         policy_version=policy_version,
+        ai_error_code=ai_error_code,
+        ai_model_id=ai_model_id,
+        ai_model_digest=ai_model_digest,
+        ai_prompt_digest=ai_prompt_digest,
     )
 
 
@@ -367,7 +444,10 @@ def create_inspect_attestation(
         deterministic_findings=result.deterministic_findings,
         ai_findings=result.ai_findings,
         ai_status=result.ai_status,
+        ai_error_code=result.ai_error_code,
         ai_model_id=result.ai_model_id,
+        ai_model_digest=result.ai_model_digest,
+        ai_prompt_digest=result.ai_prompt_digest,
         capabilities=result.capabilities,
     )
 
@@ -404,22 +484,4 @@ def sign_inspect(
         payload=payload,
         signers=[(inspector_key.key_id, inspector_key.private_key)],
     )
-
-
-def _run_ai_advisory(
-    files: dict[str, bytes],
-    capabilities: list[dict[str, Any]],
-) -> tuple[list[InspectFinding], str]:
-    """Run AI advisory analysis (Ollama).
-
-    This is an optional, isolated analysis. The AI has no signing keys
-    and cannot modify verdicts — it can only ADD findings.
-
-    Returns:
-        Tuple of (findings, model_id).
-    """
-    # MVP: AI advisory is optional and may be unavailable
-    # When Ollama is available, this sends the capability summary
-    # for additional analysis. For now, return empty.
-    raise NotImplementedError("AI advisory requires Ollama — skipped for MVP")
 

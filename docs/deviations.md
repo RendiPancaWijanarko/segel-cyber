@@ -121,3 +121,15 @@ This document catalogues every known drift between the specifications (PRD v2.0,
 - **Drift**: Concurrent invocations of `Receiver.verify_and_deploy` on the same unit could race during staging and backup phases.
 - **Governing Decision**: Documented in `docs/audit.md:238`. Deployments are intended for sequential single-operator execution in the MVP.
 - **Impact**: Parallel deployment commands on the same host must be prevented by operational discipline or wrapper scripts.
+
+---
+
+## DEV-13: Inspector Merge Logic Defect Fixes (Severity Preservation and REJECT Prevention)
+
+- **Specification**: PRD v2.0 §7.5, TAS §8.4, and Decision D5 state that AI output is strictly advisory, capped at severity `warn`, and can only raise a verdict from `PASS` to `WARN`. AI findings must never produce `reject` or escalate a verdict to `REJECT`, and AI findings must be preserved in attestation evidence with their original severity without mutation.
+- **Codebase (Pre-AI-6)**: `src/inspector/inspector.py` contained two critical merge defects:
+  1. *Defect 1 (Severity Overwrite)*: When deterministic verdict was `REJECT`, the inspector loop forcibly overwrote every AI finding's severity to `reject` (`if af.severity != "reject": af.severity = "reject"`), distorting AI output evidence.
+  2. *Defect 2 (Verdict Escalation to REJECT)*: If an AI finding carried `reject` severity, the inspector loop escalated the release verdict to `REJECT` (`if af.severity == "reject" and verdict != "REJECT": verdict = "REJECT"`), violating the principle that AI output cannot reject releases.
+- **Drift**: Code permitted AI findings to trigger `REJECT` verdicts and mutated AI finding records.
+- **Governing Decision**: Decisions D4, D5, D7. Corrected in AI-6 via `_merge_findings_and_verdict`: AI findings have their severities strictly capped at `warn` and are stored without mutation; AI findings can only raise `PASS` to `WARN` and can never produce or escalate to `REJECT`.
+- **Impact**: Enforces fail-closed deterministic authority; adversarial model prompt injections cannot deny service by forcing `REJECT`. Authenticated Inspect attestations record accurate AI advisory outputs.

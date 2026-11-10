@@ -127,29 +127,32 @@ Full test suite execution evidence:
 - [x] Generated `docs/ai_prompt_freeze.txt` with prompt SHA-256 (`1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`) freezing prompt text.
 - [x] Appended Decisions D20, D21, D22 to `docs/ai_decisions.md`.
 
+### AI-6: AI Inspector Integration, Worker Isolation, and Merge Logic Fixes
+- [x] Authored comprehensive adversarial and isolation test suite first in `tests/unit/test_ai_inspector.py` using `ScriptedFakeLLM`:
+  - AT-016: Invalid class values or schema outside L1..L6 discarded with `ai_status="failed"` and distinct error code (`INVALID_CLASS`/`INVALID_SCHEMA`), verdict unchanged.
+  - AT-017: Model claim of safety does not downgrade deterministic `REJECT`.
+  - AT-018: Subprocess timeout, malformed JSON after one retry, and connection refused produce `ai_status="failed"` with distinct error codes (`TIMEOUT`, `MALFORMED_JSON`, `CONNECTION_REFUSED`), verdict unchanged.
+  - AT-019: Prompt injection text in purpose cannot lower verdicts, produce `REJECT`, or exceed severity `warn`.
+  - Derivation: Findings come strictly from expectation map; reasons never influence decisions; cite capability instance IDs (`<kind>#<n>`); vague-L6 rule cites every capability instance with `"purpose too vague to verify (AI class L6)"`.
+  - Union & Merge: B1 findings never removed by AI output; Defect 1 (overwriting AI finding severity to match `REJECT`) and Defect 2 (escalating verdict to `REJECT` on AI output) verified and fixed.
+  - Worker Isolation: Fresh-interpreter import asserts `sys.modules` contains no `release_desk`, `demo_infra`, `approver`, or key-handling modules; worker environment scrubbed of all key material; loopback endpoint gating rejects non-loopback hosts.
+  - Equivalence: Production derivation reproduces exact `ai_detected` flags across all 24 DEV items in `docs/evaluation/modelcheck_raw.jsonl`.
+  - Live AI: End-to-end inspection test verified against live Ollama (`qwen3:4b`).
+- [x] Implemented `src/inspector/ai/derive.py` as single derivation module for production release inspection and evaluation scripts; refactored `scripts/ai_eval/modelcheck.py` and `scripts/ai_eval/modelcheck_report.py`.
+- [x] Implemented `src/inspector/ai/worker.py` as isolated subprocess CLI (`python -m inspector.ai.worker`) with JSON-schema structured output, `think: False`, and loopback gating.
+- [x] Implemented `src/inspector/ai/client.py` orchestrating worker lifecycle: purpose sanitization (strip control chars, collapse whitespace, cap 300), prompt freeze verification against `docs/ai_prompt_freeze.txt`, scrubbed environment, parent timeout process tree kill, and schema validation with 1 retry.
+- [x] Added `ai_error_code` and `ai_model_digest` to `InspectPredicate` in `src/segel_core/schemas/attestation.py` and `InspectionResult` in `src/inspector/inspector.py`.
+- [x] Added AI configuration to `src/segel_core/config.py`: `SEGEL_AI_ENABLED` (0), `SEGEL_AI_ENDPOINT` (`http://127.0.0.1:11434`), `SEGEL_AI_MODEL` (`qwen3:4b`), `SEGEL_AI_TIMEOUT_S` (30.0).
+- [x] Fixed merge defects in `src/inspector/inspector.py` via `_merge_findings_and_verdict` and documented in `docs/deviations.md` (DEV-13).
+- [x] Full test suite: 398 passed across all unit, adversarial, gap, and integration tests.
 
 ---
 
 ## Open Items
 
-- [ ] **AI-1: Worker Subprocess & Transport**:
-  - Implement isolated worker (`python -m inspector.ai.worker`).
-  - Scrub environment variables; zero key parameters passed.
-  - Implement synchronous loopback HTTP client to Ollama (`127.0.0.1:11434`) with 30s timeout.
-  - Graceful fallback when Ollama is unavailable (`ai_status="skipped"` or `"failed"`).
-- [ ] **AI-2 (Part 2): Purpose Classification & Expectation Checking Engine**:
-  - Purpose classification L1..L6 with ambiguity flag and Indonesian reason.
-  - Deterministic expectation map and B1 keyword fallback.
-  - Manifest purpose input sanitization (reject control characters, length cap 300).
-- [ ] **AI-4: Predicate Schemas & Merge Logic**:
-  - Add `ai_model_digest` and `ai_error_code` to `InspectPredicate` (flat fields, no version bump).
-  - Fix merge logic defects in `src/inspector/inspector.py` (cap AI severity at `warn`, never escalate to `REJECT`, never overwrite AI findings).
 - [ ] **AI-5: WARN Acknowledgement**:
   - Add `require_warn_acknowledgement` policy flag.
   - Implement and validate `acknowledgement_digest` in `ApprovePredicate`, Ledger, and Receiver.
-- [ ] **AI-6: Corpus Freeze & Evaluation Runner**:
-  - Freeze corpus and record SHA-256 hashes in `docs/ai_corpus_freeze.txt`.
-  - Implement evaluation runner against Ollama / mock worker.
 - [ ] **AI-7: Release Desk UI**:
   - AI advisory panel on release detail page.
   - `ai_status` banner, acknowledgement control, and competition prototype disclaimer.
