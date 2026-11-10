@@ -151,6 +151,8 @@ class InspectionResult:
     ai_model_id: str = ""
     ai_model_digest: str = ""
     ai_prompt_digest: str = ""
+    ai_class: str = ""
+    ai_reason: str = ""
 
 
 def extract_capabilities(
@@ -345,6 +347,8 @@ def inspect_release(
     ai_model_id = ""
     ai_model_digest = ""
     ai_prompt_digest = ""
+    ai_class = ""
+    ai_reason = ""
 
     ai_cfg_enabled = os.getenv("SEGEL_AI_ENABLED", "0").lower().strip() in {"1", "true", "yes"}
 
@@ -369,14 +373,21 @@ def inspect_release(
         except ValueError:
             ai_timeout_s = 30.0
 
-        ai_findings, ai_status, ai_error_code, ai_model_id, ai_model_digest, ai_prompt_digest = (
-            run_ai_worker(
-                purpose=purpose or "",
-                capabilities=capabilities,
-                endpoint=ai_endpoint,
-                model=ai_model,
-                timeout_s=ai_timeout_s,
-            )
+        (
+            ai_findings,
+            ai_status,
+            ai_error_code,
+            ai_model_id,
+            ai_model_digest,
+            ai_prompt_digest,
+            ai_class,
+            ai_reason,
+        ) = run_ai_worker(
+            purpose=purpose or "",
+            capabilities=capabilities,
+            endpoint=ai_endpoint,
+            model=ai_model,
+            timeout_s=ai_timeout_s,
         )
 
         if ai_status == "failed":
@@ -403,6 +414,8 @@ def inspect_release(
         ai_model_id=ai_model_id,
         ai_model_digest=ai_model_digest,
         ai_prompt_digest=ai_prompt_digest,
+        ai_class=ai_class,
+        ai_reason=ai_reason,
     )
 
 
@@ -448,6 +461,8 @@ def create_inspect_attestation(
         ai_model_id=result.ai_model_id,
         ai_model_digest=result.ai_model_digest,
         ai_prompt_digest=result.ai_prompt_digest,
+        ai_class=result.ai_class,
+        ai_reason=result.ai_reason,
         capabilities=result.capabilities,
     )
 

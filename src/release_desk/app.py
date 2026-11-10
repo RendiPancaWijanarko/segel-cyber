@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
@@ -38,11 +39,11 @@ from inspector.inspector import create_inspect_attestation, inspect_release, sig
 from ledger.ledger import TransparencyLedger
 from passport.assembler import build_candidate_passport, build_general_passport
 from promotion.controller import CanaryReceipt, evaluate_promotion
+from segel_core.canonical import compute_acknowledgement_digest
 from segel_core.config import load_config
 from segel_core.schemas.attestation import PromotionCriteria
 from segel_core.schemas.passport import LedgerProof
 from segel_core.schemas.trust import (
-    KeyRecord,
     RoleThreshold,
     TrustRoot,
     TrustSnapshot,
@@ -164,6 +165,7 @@ class DemoState:
             policy_version=1, approval_threshold=2,
             approval_groups={"group-0": 1, "group-1": 1},
             canary_required_count=2, witness_cosignature_count=1,
+            require_warn_acknowledgement=True,
         )
         self.snapshot = TrustSnapshot(epoch=1)
         self.trust_ctx = TrustContext(
@@ -235,6 +237,12 @@ async def create_release(
     """Run the complete release pipeline: build → inspect → approve → record."""
 
     try:
+        if re.search(r"[\x00-\x1f\x7f-\x9f]", purpose):
+            raise HTTPException(
+                status_code=400,
+                detail="Manifest purpose contains forbidden control characters",
+            )
+
         canary_list = [t.strip() for t in canary_targets.split(",") if t.strip()]
         scope_list = [t.strip() for t in general_scope.split(",") if t.strip()]
 
@@ -273,6 +281,15 @@ async def create_release(
         inspect_env = sign_inspect(inspect_stmt, demo._demo_keys.inspector_key)
 
         # Step 8-9: Approve (2-of-3 via standalone signer service per SEC-004)
+        ack_digest = ""
+        warn_ids: list[str] = []
+        if inspection.verdict == "WARN":
+            all_findings = inspection.deterministic_findings + inspection.ai_findings
+            warn_ids = sorted(
+                {f.capability_id for f in all_findings if f.severity.lower() == "warn"}
+            )
+            ack_digest = compute_acknowledgement_digest(warn_ids)
+
         approve_stmt, approve_req = create_approval_payload(
             build_result.manifest, build_result.manifest_digest,
             origin_env, inspect_env, inspection.verdict,
@@ -281,6 +298,7 @@ async def create_release(
                 required_healthy_canary_units=2,
                 required_probes=["file_exists", "config_valid"],
             ),
+            acknowledgement_digest=ack_digest,
         )
 
         responses = demo.approver_signer.sign_approval_request(approve_req, count=2)
@@ -338,6 +356,8 @@ async def create_release(
             "verdict": inspection.verdict,
             "capabilities": len(inspection.capabilities),
             "findings": len(inspection.deterministic_findings),
+            "acknowledgement_digest": ack_digest,
+            "acknowledged_findings": warn_ids,
             "approvals": 2,
             "ledger_index": entry.index,
             "passport_type": "candidate",

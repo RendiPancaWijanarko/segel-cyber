@@ -247,7 +247,7 @@ def run_ai_worker(
     timeout_s: float = 30.0,
     prompt_file: Path | str | None = None,
     freeze_file: Path | str | None = None,
-) -> tuple[list[InspectFinding], str, str, str, str, str]:
+) -> tuple[list[InspectFinding], str, str, str, str, str, str, str]:
     """Execute AI purpose analysis in an isolated worker subprocess.
 
     Args:
@@ -261,13 +261,13 @@ def run_ai_worker(
 
     Returns:
         Tuple of (findings, ai_status, ai_error_code, ai_model_id,
-        ai_model_digest, ai_prompt_digest).
+        ai_model_digest, ai_prompt_digest, ai_class, ai_reason).
     """
     # 1. Loopback endpoint validation
     try:
         validate_endpoint_loopback(endpoint)
     except ValueError:
-        return ([], "failed", "ENDPOINT_NOT_LOOPBACK", model, "", "")
+        return ([], "failed", "ENDPOINT_NOT_LOOPBACK", model, "", "", "", "")
 
     # 2. Verify prompt template against freeze file
     pf = Path(prompt_file) if prompt_file else DEFAULT_PROMPT_FILE
@@ -275,13 +275,13 @@ def run_ai_worker(
 
     freeze_ok, prompt_digest = verify_prompt_freeze(pf, ff)
     if not freeze_ok:
-        return ([], "failed", "PROMPT_FROZEN_MISMATCH", model, "", prompt_digest)
+        return ([], "failed", "PROMPT_FROZEN_MISMATCH", model, "", prompt_digest, "", "")
 
     # 3. Load prompt template
     try:
         system_prompt, user_template = load_prompt_template(pf)
     except Exception:
-        return ([], "failed", "PROMPT_LOAD_ERROR", model, "", prompt_digest)
+        return ([], "failed", "PROMPT_LOAD_ERROR", model, "", prompt_digest, "", "")
 
     # 4. Input builder: sanitise purpose and render prompt
     sanitized = sanitize_purpose(purpose)
@@ -306,28 +306,29 @@ def run_ai_worker(
     for attempt in range(max_attempts):
         worker_res, proc_err = _invoke_worker_subprocess(worker_req, clean_env, timeout_s)
         if proc_err:
-            return ([], "failed", proc_err, model, "", prompt_digest)
+            return ([], "failed", proc_err, model, "", prompt_digest, "", "")
 
         if not worker_res:
-            return ([], "failed", "WORKER_COMMUNICATION_FAILED", model, "", prompt_digest)
+            return ([], "failed", "WORKER_COMMUNICATION_FAILED", model, "", prompt_digest, "", "")
 
         model_digest = str(worker_res.get("model_digest") or "")
 
         if not worker_res.get("success"):
             err_code = str(worker_res.get("error_code") or "WORKER_ERROR")
-            return ([], "failed", err_code, model, model_digest, prompt_digest)
+            return ([], "failed", err_code, model, model_digest, prompt_digest, "", "")
 
         content = str(worker_res.get("content") or "")
         valid, parsed, val_err = validate_ai_response(content)
 
         if valid and parsed:
             purpose_class = str(parsed["purpose_class"])
+            reason = str(parsed.get("reason", ""))
             findings = derive_ai_findings(purpose_class, capabilities)
-            return (findings, "ok", "", model, model_digest, prompt_digest)
+            return (findings, "ok", "", model, model_digest, prompt_digest, purpose_class, reason)
 
         last_err_code = val_err
         # If schema or json was invalid, attempt retry once if attempt < max_attempts - 1
         if attempt < max_attempts - 1:
             continue
 
-    return ([], "failed", last_err_code, model, model_digest, prompt_digest)
+    return ([], "failed", last_err_code, model, model_digest, prompt_digest, "", "")

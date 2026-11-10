@@ -209,18 +209,136 @@
     <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
         <div class="detail-grid">
             <div class="detail-item">
-                <div class="detail-label">AI Advisory</div>
-                <div class="detail-value">
-                    {% if release.inspection %}{{ release.inspection.ai_status }}{% else %}skipped{% endif %}
-                </div>
-            </div>
-            <div class="detail-item">
                 <div class="detail-label">Inspector</div>
                 <div class="detail-value">Deterministic Policy Engine v1</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Deterministic Findings Count</div>
+                <div class="detail-value">{{ release.findings }}</div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- AI Advisory Panel -->
+<div class="card" style="margin-top:16px;">
+    <div class="card-header">
+        <h2>
+            <i data-lucide="sparkles" class="icon-20 text-purple"></i>
+            AI Advisory
+        </h2>
+        {% if release.inspection and release.inspection.ai_status == 'ok' %}
+            <span class="badge badge-purple">
+                <i data-lucide="cpu" class="icon-16 text-purple"></i>
+                ADVISORY ONLY
+            </span>
+        {% elif release.inspection and release.inspection.ai_status == 'failed' %}
+            <span class="badge badge-yellow">
+                <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+                FAILED
+            </span>
+        {% else %}
+            <span class="badge badge-muted">
+                <i data-lucide="info" class="icon-16 text-muted"></i>
+                SKIPPED
+            </span>
+        {% endif %}
+    </div>
+
+    {% if release.inspection and release.inspection.ai_status == 'failed' %}
+    <div class="alert alert-warning" style="margin-bottom:0;">
+        <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+        <div>
+            <strong>AI Advisory Unavailable:</strong> Analysis status is <code>failed</code>{% if release.inspection.ai_error_code %} (error: <code>{{ release.inspection.ai_error_code }}</code>){% endif %}.
+            Release verification proceeded with deterministic rules only; pipeline verdict is unaffected.
+        </div>
+    </div>
+    {% elif release.inspection and release.inspection.ai_status == 'skipped' %}
+    <div class="alert alert-info" style="margin-bottom:0;">
+        <i data-lucide="info" class="icon-16 text-info"></i>
+        <div>
+            <strong>AI Advisory Skipped:</strong> AI analysis is disabled by configuration. Release verification is fully governed by deterministic policy rules.
+        </div>
+    </div>
+    {% elif release.inspection and release.inspection.ai_status == 'ok' %}
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Predicted Purpose Class</div>
+            <div class="detail-value mono" style="font-size:14px; font-weight:700;">
+                {{ release.inspection.ai_class or 'Unclassified' }}
+            </div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Model Identifier</div>
+            <div class="detail-value mono" style="font-size:12px;">
+                {{ release.inspection.ai_model_id or 'qwen3:4b' }}
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;">
+        <div class="detail-label" style="margin-bottom:4px;">Model Advisory Reason</div>
+        <div style="font-size:13px; color:var(--text-secondary); background:var(--segel-sand-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--segel-sand-border); line-height:1.6;">
+            {{ release.inspection.ai_reason or 'No advisory rationale provided.' }}
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+            Note: Advisory text is non-authoritative and does not influence cryptographic eligibility.
+        </div>
+    </div>
+
+    {% if release.inspection.ai_findings %}
+    <div style="margin-top:14px;">
+        <div class="detail-label" style="margin-bottom:6px;">AI-Derived Advisory Findings ({{ release.inspection.ai_findings|length }})</div>
+        {% for af in release.inspection.ai_findings %}
+        <div style="padding:4px 0; font-size:13px; display:flex; align-items:center; gap:8px;">
+            <span class="badge badge-yellow">
+                <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
+                {{ af.severity }}
+            </span>
+            <span class="mono" style="font-size:12px;">{{ af.capability_id }}</span>
+            <span style="color:var(--text-secondary);">{{ af.description }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info" style="margin-bottom:0;">
+        <i data-lucide="info" class="icon-16 text-info"></i>
+        <div>AI advisory analysis was not performed for this release.</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- WARN Acknowledgement Panel -->
+{% if release.verdict == 'WARN' %}
+<div class="card" style="margin-top:16px;">
+    <div class="card-header">
+        <h2>
+            <i data-lucide="check-circle-2" class="icon-20 text-warning"></i>
+            WARN Findings Acknowledgement
+        </h2>
+        <span class="badge badge-yellow">ACKNOWLEDGED</span>
+    </div>
+    <div class="detail-item">
+        <div class="detail-label">Acknowledgement Digest (SHA-256)</div>
+        <div class="detail-value mono" style="font-size:12px; word-break:break-all;">
+            {{ release.acknowledgement_digest or 'None' }}
+        </div>
+    </div>
+    {% if release.acknowledged_findings %}
+    <div style="margin-top:12px;">
+        <div class="detail-label" style="margin-bottom:6px;">Acknowledged Finding IDs</div>
+        {% for fid in release.acknowledged_findings %}
+        <div style="display:flex; align-items:center; gap:8px; padding:3px 0;">
+            <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
+            <span class="mono" style="font-size:12px;">{{ fid }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
 
 <!-- Approval Details -->
 <div class="card">
