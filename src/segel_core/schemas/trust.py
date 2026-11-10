@@ -222,6 +222,10 @@ class VerificationPolicy(BaseModel):
         ge=0,
         description="Minimum number of witness cosignatures on checkpoints",
     )
+    require_warn_acknowledgement: bool = Field(
+        default=False,
+        description="Whether WARN findings require explicit signed acknowledgement digest",
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -237,6 +237,14 @@ class InspectPredicate(BaseModel):
         default="",
         description="SHA-256 digest of the AI prompt template used",
     )
+    ai_class: str = Field(
+        default="",
+        description="Predicted purpose class (L1..L6)",
+    )
+    ai_reason: str = Field(
+        default="",
+        description="Short advisory explanation from the AI model",
+    )
     capabilities: list[dict[str, Any]] = Field(
         default_factory=list,
         description="Capabilities detected in the release payload",

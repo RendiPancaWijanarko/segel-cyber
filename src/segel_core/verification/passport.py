@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
+from segel_core.canonical import compute_acknowledgement_digest
 from segel_core.crypto.dsse import (
     DSSEEnvelope,
     verify_envelope,
@@ -35,6 +36,7 @@ from segel_core.crypto.hashing import (
     verify_inclusion_from_hash,
 )
 from segel_core.errors import (
+    DigestMismatchError,
     EpochStaleError,
     ErrorCode,
     KeyNotAuthorisedError,
@@ -279,6 +281,7 @@ def verify_passport(
         result.eligibility_reasons.append(f"Origin error: {e}")
 
     # ---- Step 3: Verify Inspect stamp ----
+    inspect_predicate_data: dict[str, Any] = {}
     try:
         inspect_env = DSSEEnvelope.from_dict(passport.inspect_envelope)
         inspector_keys = trust_ctx.get_keys_for_role("inspector_signer", at_index=candidate_index)
@@ -294,6 +297,7 @@ def verify_passport(
 
         inspect_payload = json.loads(inspect_result.payload)
         inspect_predicate = inspect_payload.get("predicate", {})
+        inspect_predicate_data = inspect_predicate
         inspect_binding = BindingBlock.model_validate(inspect_predicate.get("binding", {}))
 
         _check_binding(inspect_binding, expected_subject, "inspect")
@@ -360,6 +364,32 @@ def verify_passport(
         group_mins = trust_ctx.get_group_minimums("approver")
         if group_mins:
             _check_group_minimums(counting_keys, trust_ctx, group_mins)
+
+        # Check WARN finding acknowledgement per D8 / PRD FR-026
+        if (
+            trust_ctx.policy
+            and getattr(trust_ctx.policy, "require_warn_acknowledgement", False)
+            and inspect_predicate_data.get("verdict") == "WARN"
+        ):
+                det_findings = inspect_predicate_data.get("deterministic_findings", [])
+                ai_findings = inspect_predicate_data.get("ai_findings", [])
+                warn_ids: list[str] = []
+                for f in det_findings + ai_findings:
+                    if isinstance(f, dict) and f.get("severity", "").lower() == "warn":
+                        cid = f.get("capability_id")
+                        if cid:
+                            warn_ids.append(str(cid))
+                    elif hasattr(f, "severity") and getattr(f, "severity", "").lower() == "warn":
+                        cid = getattr(f, "capability_id", None)
+                        if cid:
+                            warn_ids.append(str(cid))
+                expected_ack = compute_acknowledgement_digest(warn_ids)
+                actual_ack = approve_predicate.get("acknowledgement_digest", "")
+                if not actual_ack or actual_ack != expected_ack:
+                    raise DigestMismatchError(
+                        f"Acknowledgement digest mismatch for WARN release: "
+                        f"got '{actual_ack}', expected '{expected_ack}'"
+                    )
 
         result.approve = StampResult(
             "approve", StampStatus.VALID,

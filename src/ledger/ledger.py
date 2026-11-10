@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from segel_core.canonical import canonical_json
+from segel_core.canonical import canonical_json, compute_acknowledgement_digest
 from segel_core.crypto.dsse import (
     DSSEEnvelope,
     verify_envelope,
@@ -45,6 +45,7 @@ from segel_core.crypto.hashing import (
     sha256_hex,
 )
 from segel_core.errors import (
+    DigestMismatchError,
     ErrorCode,
     ProofInvalidError,
     SegelError,
@@ -540,6 +541,33 @@ def _verify_candidate_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
         or approve_binding.get("subject", {}).get("manifest_sha256") != expected_manifest_sha256
     ):
         raise SubjectMismatchError("Approve binding mismatch with release subject")
+
+    # WARN finding acknowledgement verification per D8 / PRD FR-026
+    policy = getattr(trust_ctx, "policy", None)
+    if (
+        policy
+        and getattr(policy, "require_warn_acknowledgement", False)
+        and inspect_pred.get("verdict") == "WARN"
+    ):
+        det_findings = inspect_pred.get("deterministic_findings", [])
+        ai_findings = inspect_pred.get("ai_findings", [])
+        warn_ids: list[str] = []
+        for f in det_findings + ai_findings:
+            if isinstance(f, dict) and f.get("severity", "").lower() == "warn":
+                cid = f.get("capability_id")
+                if cid:
+                    warn_ids.append(str(cid))
+            elif hasattr(f, "severity") and getattr(f, "severity", "").lower() == "warn":
+                cid = getattr(f, "capability_id", None)
+                if cid:
+                    warn_ids.append(str(cid))
+        expected_ack = compute_acknowledgement_digest(warn_ids)
+        actual_ack = approve_data.get("predicate", {}).get("acknowledgement_digest", "")
+        if not actual_ack or actual_ack != expected_ack:
+            raise DigestMismatchError(
+                f"Acknowledgement digest mismatch for WARN release: "
+                f"got '{actual_ack}', expected '{expected_ack}'"
+            )
 
 
 def _verify_promotion_evidence(payload: dict[str, Any], trust_ctx: Any) -> None:
