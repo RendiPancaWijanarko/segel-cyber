@@ -25,6 +25,7 @@ import threading
 import time
 from pathlib import Path
 from typing import Any
+from unittest import mock
 
 import pytest
 
@@ -149,11 +150,14 @@ class ScriptedFakeLLMHandler(http.server.BaseHTTPRequestHandler):
             "eval_duration": 1000000000,
         }
         body = json.dumps(response_data).encode("utf-8")
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
+            pass
 
 
 class ScriptedFakeLLM:
@@ -643,6 +647,306 @@ class TestLiveAI:
             assert result.ai_status == "ok"
             assert result.ai_model_id == "qwen3:4b"
             assert result.verdict in {"PASS", "WARN"}
+        finally:
+            os.environ.pop("SEGEL_AI_ENABLED", None)
+
+
+# ---------------------------------------------------------------------------
+# AI-9b Acceptance Tests
+# ---------------------------------------------------------------------------
+
+class TestAI9bAcceptance:
+    """Acceptance tests for AI-9b: Validator strictness, Prompt digest, Timeout, and Disabled flag."""
+
+    @pytest.mark.parametrize(
+        ("case_name", "custom_content", "expected_error_code"),
+        [
+            (
+                "extra property",
+                json.dumps({
+                    "purpose_class": "L1",
+                    "ambiguous": False,
+                    "reason": "Valid reason.",
+                    "extra_property": "unexpected_field",
+                }),
+                "INVALID_SCHEMA",
+            ),
+            (
+                "missing key",
+                json.dumps({
+                    "purpose_class": "L1",
+                    "ambiguous": False,
+                }),
+                "INVALID_SCHEMA",
+            ),
+            (
+                "reason of 161 characters",
+                json.dumps({
+                    "purpose_class": "L1",
+                    "ambiguous": False,
+                    "reason": "A" * 161,
+                }),
+                "INVALID_SCHEMA",
+            ),
+            (
+                "ambiguous as string 'false'",
+                json.dumps({
+                    "purpose_class": "L1",
+                    "ambiguous": "false",
+                    "reason": "Valid reason.",
+                }),
+                "INVALID_SCHEMA",
+            ),
+            (
+                "lowercase class 'l1'",
+                json.dumps({
+                    "purpose_class": "l1",
+                    "ambiguous": False,
+                    "reason": "Valid reason.",
+                }),
+                "INVALID_CLASS",
+            ),
+            (
+                "class 'L7'",
+                json.dumps({
+                    "purpose_class": "L7",
+                    "ambiguous": False,
+                    "reason": "Valid reason.",
+                }),
+                "INVALID_CLASS",
+            ),
+            (
+                "empty content",
+                "",
+                "MALFORMED_JSON",
+            ),
+            (
+                "non-object JSON",
+                json.dumps(["L1", False, "Valid reason."]),
+                "INVALID_SCHEMA",
+            ),
+        ],
+    )
+    def test_ai9b_1_validator_strictness(
+        self,
+        case_name: str,
+        custom_content: str,
+        expected_error_code: str,
+    ) -> None:
+        """1. Validator strictness: extra property, missing key, reason of 161 characters,
+        ambiguous as string 'false', lowercase class 'l1', class 'L7', empty content, non-object JSON
+        -> ai_status failed with the right ai_error_code and an unchanged deterministic verdict."""
+        # Clean baseline files -> deterministic verdict is PASS
+        clean_files = {"baseline.json": b'{"dns_allowlist": ["10.0.0.1"]}'}
+        manifest = _make_dummy_manifest(purpose="Pembaruan DNS resolver")
+
+        with ScriptedFakeLLM(custom_content=custom_content) as fake:
+            os.environ["SEGEL_AI_ENABLED"] = "1"
+            os.environ["SEGEL_AI_ENDPOINT"] = fake.endpoint
+            try:
+                res = inspect_release(
+                    files=clean_files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                    ai_enabled=True,
+                )
+                assert res.ai_status == "failed", (
+                    f"[{case_name}] Expected ai_status='failed', got '{res.ai_status}'"
+                )
+                assert res.ai_error_code == expected_error_code, (
+                    f"[{case_name}] Expected ai_error_code='{expected_error_code}', got '{res.ai_error_code}'"
+                )
+                assert res.verdict == "PASS", (
+                    f"[{case_name}] Deterministic PASS verdict must remain unchanged"
+                )
+            finally:
+                os.environ.pop("SEGEL_AI_ENABLED", None)
+                os.environ.pop("SEGEL_AI_ENDPOINT", None)
+
+        # Also test with rejecting baseline -> deterministic verdict is REJECT and unchanged
+        reject_files = {
+            "baseline.json": b'{"accounts": [{"name": "evil_root", "privilege": "root"}]}'
+        }
+        with ScriptedFakeLLM(custom_content=custom_content) as fake:
+            os.environ["SEGEL_AI_ENABLED"] = "1"
+            os.environ["SEGEL_AI_ENDPOINT"] = fake.endpoint
+            try:
+                res_reject = inspect_release(
+                    files=reject_files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                    ai_enabled=True,
+                )
+                assert res_reject.ai_status == "failed"
+                assert res_reject.ai_error_code == expected_error_code
+                assert res_reject.verdict == "REJECT", (
+                    f"[{case_name}] Deterministic REJECT verdict must remain unchanged"
+                )
+            finally:
+                os.environ.pop("SEGEL_AI_ENABLED", None)
+                os.environ.pop("SEGEL_AI_ENDPOINT", None)
+
+    def test_ai9b_2_runtime_prompt_digest(self, tmp_path: Path) -> None:
+        """2. Runtime prompt digest: a tampered copy of the prompt template gives ai_status failed
+        with a distinct code; untouched, ai_prompt_digest equals the SHA-256 in docs/ai_prompt_freeze.txt."""
+        files = {"baseline.json": b'{"dns_allowlist": ["10.0.0.1"]}'}
+        manifest = _make_dummy_manifest(purpose="Pembaruan DNS resolver")
+        freeze_file = WORKSPACE_ROOT / "docs" / "ai_prompt_freeze.txt"
+        prompt_file = WORKSPACE_ROOT / "docs" / "evaluation" / "modelcheck_prompt.txt"
+
+        expected_freeze_sha256 = freeze_file.read_text(encoding="utf-8").strip().splitlines()[0].split()[0].lower()
+
+        with ScriptedFakeLLM() as fake:
+            os.environ["SEGEL_AI_ENABLED"] = "1"
+            os.environ["SEGEL_AI_ENDPOINT"] = fake.endpoint
+            try:
+                # Sub-case A: Untouched prompt template
+                res_untouched = inspect_release(
+                    files=files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                    ai_enabled=True,
+                )
+                assert res_untouched.ai_status == "ok"
+                assert res_untouched.ai_prompt_digest.lower() == expected_freeze_sha256, (
+                    f"Expected prompt digest {expected_freeze_sha256}, got {res_untouched.ai_prompt_digest}"
+                )
+
+                # Sub-case B: Tampered prompt template copy
+                tampered_prompt = tmp_path / "modelcheck_prompt_tampered.txt"
+                tampered_prompt.write_text(
+                    prompt_file.read_text(encoding="utf-8") + "\n# TAMPERED INJECTION LINE",
+                    encoding="utf-8",
+                )
+
+                os.environ["SEGEL_AI_PROMPT_FILE"] = str(tampered_prompt)
+                res_tampered = inspect_release(
+                    files=files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                    ai_enabled=True,
+                    prompt_file=tampered_prompt,
+                )
+                assert res_tampered.ai_status == "failed"
+                assert res_tampered.ai_error_code == "PROMPT_FROZEN_MISMATCH"
+                assert res_tampered.verdict == "PASS"
+            finally:
+                os.environ.pop("SEGEL_AI_ENABLED", None)
+                os.environ.pop("SEGEL_AI_ENDPOINT", None)
+                os.environ.pop("SEGEL_AI_PROMPT_FILE", None)
+
+    def test_ai9b_3_timeout_no_leftover_child_process(self) -> None:
+        """3. Timeout: SEGEL_AI_TIMEOUT_S=1 with a FakeLLM that sleeps 3 s
+        -> ai_status failed, verdict unchanged, no leftover child process."""
+        files = {"baseline.json": b'{"dns_allowlist": ["10.0.0.1"]}'}
+        manifest = _make_dummy_manifest(purpose="Pembaruan DNS resolver")
+
+        spawned_procs: list[subprocess.Popen[Any]] = []
+        orig_popen = subprocess.Popen
+
+        def tracking_popen(*args: Any, **kwargs: Any) -> subprocess.Popen[Any]:
+            proc = orig_popen(*args, **kwargs)
+            spawned_procs.append(proc)
+            return proc
+
+        with ScriptedFakeLLM(delay=3.0) as fake:
+            os.environ["SEGEL_AI_ENABLED"] = "1"
+            os.environ["SEGEL_AI_ENDPOINT"] = fake.endpoint
+            os.environ["SEGEL_AI_TIMEOUT_S"] = "1"
+            try:
+                with mock.patch("subprocess.Popen", side_effect=tracking_popen):
+                    start_t = time.time()
+                    res = inspect_release(
+                        files=files,
+                        manifest=manifest,
+                        manifest_digest="test_digest",
+                        ai_enabled=True,
+                    )
+                    elapsed = time.time() - start_t
+
+                # Timeout must trigger near 1 second, well below 3 seconds
+                assert elapsed < 3.0, f"Execution took {elapsed:.2f}s, expected timeout < 3s"
+                assert res.ai_status == "failed"
+                assert res.ai_error_code == "TIMEOUT"
+                assert res.verdict == "PASS"
+
+                # Verify child process spawned and exited with no leftover processes
+                assert len(spawned_procs) >= 1, "Expected at least 1 child worker process spawned"
+                for proc in spawned_procs:
+                    poll_res = proc.poll()
+                    assert poll_res is not None, (
+                        f"Leftover child process found: PID {proc.pid} is still running!"
+                    )
+            finally:
+                os.environ.pop("SEGEL_AI_ENABLED", None)
+                os.environ.pop("SEGEL_AI_ENDPOINT", None)
+                os.environ.pop("SEGEL_AI_TIMEOUT_S", None)
+
+    def test_ai9b_4_segel_ai_enabled_zero_skipped_and_banner(self) -> None:
+        """4. SEGEL_AI_ENABLED=0 -> ai_status skipped, no subprocess spawned,
+        banner flag present in the template context."""
+        from fastapi.testclient import TestClient
+        from release_desk.app import app, demo
+
+        files = {"baseline.json": b'{"dns_allowlist": ["10.0.0.1"]}'}
+        manifest = _make_dummy_manifest(purpose="Pembaruan DNS resolver")
+
+        os.environ["SEGEL_AI_ENABLED"] = "0"
+        try:
+            with mock.patch("subprocess.Popen") as mock_popen:
+                # Part A: inspect_release with SEGEL_AI_ENABLED=0 (default invocation)
+                res = inspect_release(
+                    files=files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                )
+                assert res.ai_status == "skipped", (
+                    f"Expected ai_status='skipped' when SEGEL_AI_ENABLED=0, got '{res.ai_status}'"
+                )
+                assert res.ai_error_code == ""
+                assert res.verdict == "PASS"
+                assert mock_popen.call_count == 0, (
+                    f"Subprocess was spawned ({mock_popen.call_count} times) despite SEGEL_AI_ENABLED=0"
+                )
+
+                # Also verify when ai_enabled=False explicitly
+                res_false = inspect_release(
+                    files=files,
+                    manifest=manifest,
+                    manifest_digest="test_digest",
+                    ai_enabled=False,
+                )
+                assert res_false.ai_status == "skipped"
+                assert mock_popen.call_count == 0
+
+            # Part B: Banner flag present in template context and rendered HTML
+            client = TestClient(app)
+            demo.reset()
+
+            # Create a release via POST
+            form_data = {
+                "release_id": "REL-AI9B-01",
+                "sequence": "1",
+                "purpose": "Pembaruan DNS resolver offline",
+                "canary_targets": "canary-1,canary-2",
+                "general_scope": "canary-1,canary-2,unit-3",
+            }
+            create_resp = client.post("/release/create", data=form_data)
+            assert create_resp.status_code == 200
+
+            # Inspect release detail page
+            detail_resp = client.get("/release/0")
+            assert detail_resp.status_code == 200
+            html_text = detail_resp.text
+
+            # Banner elements for skipped AI status
+            assert "AI Advisory Skipped" in html_text, (
+                "Expected 'AI Advisory Skipped' banner in template context"
+            )
+            assert "AI analysis is disabled by configuration" in html_text, (
+                "Expected banner explanation in template context"
+            )
+            assert "SKIPPED" in html_text
         finally:
             os.environ.pop("SEGEL_AI_ENABLED", None)
 

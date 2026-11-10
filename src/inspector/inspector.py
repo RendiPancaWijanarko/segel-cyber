@@ -18,6 +18,7 @@ import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from inspector.ai.client import run_ai_worker
@@ -309,6 +310,8 @@ def inspect_release(
     trust_root_version: int = 1,
     policy_version: int = 1,
     ai_enabled: bool = False,
+    prompt_file: Path | str | None = None,
+    freeze_file: Path | str | None = None,
 ) -> InspectionResult:
     """Perform a full inspection of a release.
 
@@ -319,6 +322,8 @@ def inspect_release(
         trust_root_version: Current trust root version.
         policy_version: Current policy version.
         ai_enabled: Whether to attempt AI advisory analysis.
+        prompt_file: Optional path to prompt template file.
+        freeze_file: Optional path to prompt freeze file.
 
     Returns:
         InspectionResult with verdict and findings.
@@ -373,6 +378,9 @@ def inspect_release(
         except ValueError:
             ai_timeout_s = 30.0
 
+        resolved_prompt_file = prompt_file or os.getenv("SEGEL_AI_PROMPT_FILE", "").strip() or None
+        resolved_freeze_file = freeze_file or os.getenv("SEGEL_AI_FREEZE_FILE", "").strip() or None
+
         (
             ai_findings,
             ai_status,
@@ -388,6 +396,8 @@ def inspect_release(
             endpoint=ai_endpoint,
             model=ai_model,
             timeout_s=ai_timeout_s,
+            prompt_file=resolved_prompt_file,
+            freeze_file=resolved_freeze_file,
         )
 
         if ai_status == "failed":

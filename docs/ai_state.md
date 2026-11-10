@@ -158,17 +158,32 @@ Full test suite execution evidence:
 - [x] Documented limitations: Added section 6 in `docs/limitations.md` regarding headless browser screenshot.
 - [x] Resolved deviations: Updated `docs/deviations.md` marking DEV-08 and DEV-09 as resolved in AI-7.
 
+### AI-8: Test-Split Evaluation and Adversarial Injection Suite
+- [x] Test-split evaluation executed strictly once per D21 across all 36 test items; evaluated baselines B0, B1, B1b, AI alone, and B2; results recorded in `docs/evaluation/testcheck_raw.jsonl` and `docs/evaluation/ai_report.md`.
+- [x] Adversarial injection suite: 12 cases evaluated across 4 categories (direct override, persona hijack, context manipulation, obfuscated payload) in `tests/adversarial/test_injection_suite.py` and `scripts/ai_eval/eval_injections.py`; results recorded in `docs/evaluation/injection_results.txt`.
+
+### AI-9a: Claims Audit, Latency Reporting, and Index Documentation
+- [x] Replaced headline with script-generated baseline table and pre-registered criterion (D21) in `docs/evaluation/ai_report.md`.
+- [x] Generated `docs/evaluation/latency.md` detailing per-item latency, TPS, and >30s outliers.
+- [x] Generated `docs/evaluation/README.md` indexing all evaluation artifacts and freeze file hashes.
+- [x] Clean-room install procedure clarified in `docs/limitations.md`.
+- [x] Sweep of marketing hype words and claim boundaries across `docs/`, `README.md`, `NOTICE`.
+
+### AI-9b: Acceptance Tests and Mutation Testing
+- [x] Authored `TestAI9bAcceptance` in `tests/unit/test_ai_inspector.py`:
+  - 1. Validator strictness: 8 cases (extra property, missing key, reason of 161 characters, ambiguous string 'false', lowercase class 'l1', class 'L7', empty content, non-object JSON) produce `ai_status="failed"` with distinct error codes (`INVALID_SCHEMA`, `INVALID_CLASS`, `MALFORMED_JSON`) and unchanged deterministic verdicts (`PASS` and `REJECT`).
+  - 2. Runtime prompt digest: Untouched prompt matches freeze SHA-256 (`1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`); tampered prompt template copy fails with `PROMPT_FROZEN_MISMATCH`.
+  - 3. Timeout enforcement: `SEGEL_AI_TIMEOUT_S=1` against 3.0s sleeping FakeLLM triggers timeout within 1.28s, returns `ai_status="failed"` (`TIMEOUT`), preserves deterministic verdict, and leaves 0 leftover child processes.
+  - 4. Disabled flag: `SEGEL_AI_ENABLED=0` produces `ai_status="skipped"`, spawns 0 worker subprocesses, and renders the `"AI Advisory Skipped"` alert banner in the template context.
+- [x] Showed red run (2 failures: missing `prompt_file` parameter in `inspect_release` and missing `SEGEL_AI_PROMPT_FILE` support).
+- [x] Implemented `prompt_file` and `freeze_file` resolution in `src/inspector/inspector.py:inspect_release`.
+- [x] Showed green run (11/11 passed in `TestAI9bAcceptance`).
+- [x] Executed mutation testing across all 4 acceptance areas in a throw-away git worktree (`../segel-mutate-ai9b`). Full suite: 433 passed, 0 failed.
+
 ---
 
-## Open Items
+## Final Status
 
-- [ ] **AI-8: Final Test-Split Evaluation**:
-  - Run model check against frozen test split items (`lab/ai_corpus/TEST-*.json`).
-  - Report exact counts, confusion matrix, silent detection, false positives, and benchmark against B0, B1, and B1b.
+- All P0 and AI implementation milestones (AI-0 through AI-9b) complete, tested, and mutation-checked.
 
----
-
-## Next Step
-
-- Proceed with **AI-8**: Final test split evaluation run and documentation.
 
