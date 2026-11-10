@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-5b (Model Check Reporting, B1b Baseline, Prompt History & Freeze)
+- **Phase**: AI-7 (Purpose Sanitization, WARN Acknowledgement, and Release Desk UI)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-10
-- **Last Commit**: `7702cdf` ("AI-5: model check")
+- **Last Commit**: in progress
 
 ---
 
@@ -148,18 +148,27 @@ Full test suite execution evidence:
 
 ---
 
+### AI-7: Purpose Sanitization, WARN Acknowledgement, and Release Desk UI
+- [x] Manifest purpose control character rejection: Added Pydantic field validator in `src/segel_core/schemas/manifest.py` rejecting ASCII and Unicode control characters (`[\x00-\x1f\x7f-\x9f]`) at manifest creation. Added HTTP 400 rejection in Release Desk `/release/create`. Defense-in-depth sanitization in `src/builder/builder.py`.
+- [x] Canonical acknowledgement digest: Implemented `compute_acknowledgement_digest()` in `src/segel_core/canonical.py` computing SHA-256 over canonical sorted unique finding IDs. Extended `ApprovalRequest` and `create_approval_payload()` to carry `acknowledgement_digest`.
+- [x] Policy enforcement: Added `require_warn_acknowledgement` (default False, True in demo policy) to `VerificationPolicy`. Ledger gate (`_verify_candidate_evidence`) and Receiver verifier (`verify_passport`) reject empty or mismatching digests with `ErrorCode.DIGEST_MISMATCH` when verdict is WARN.
+- [x] Release Desk UI: Added separate labelled "AI advisory" panel in `release_detail.html` displaying predicted purpose class and advisory reason; status banners for failed and skipped states; no confidence percentages; all variables escaped.
+- [x] WARN acknowledgement UI: Added WARN findings acknowledgement card in `release_detail.html` displaying acknowledgement digest and acknowledged finding IDs.
+- [x] Disclaimer: Added `"Competition prototype for Kartika Cyber Hackathon 2026, not an official product"` to shared layout footer in `src/release_desk/templates/base.html`.
+- [x] Documented limitations: Added section 6 in `docs/limitations.md` regarding headless browser screenshot.
+- [x] Resolved deviations: Updated `docs/deviations.md` marking DEV-08 and DEV-09 as resolved in AI-7.
+
+---
+
 ## Open Items
 
-- [ ] **AI-5: WARN Acknowledgement**:
-  - Add `require_warn_acknowledgement` policy flag.
-  - Implement and validate `acknowledgement_digest` in `ApprovePredicate`, Ledger, and Receiver.
-- [ ] **AI-7: Release Desk UI**:
-  - AI advisory panel on release detail page.
-  - `ai_status` banner, acknowledgement control, and competition prototype disclaimer.
+- [ ] **AI-8: Final Test-Split Evaluation**:
+  - Run model check against frozen test split items (`lab/ai_corpus/TEST-*.json`).
+  - Report exact counts, confusion matrix, silent detection, false positives, and benchmark against B0, B1, and B1b.
 
 ---
 
 ## Next Step
 
-- Proceed with **AI-1**: Implement isolated worker subprocess (`src/inspector/ai/worker.py`), scrubbed environment execution, and loopback Ollama client with fallback handling.
+- Proceed with **AI-8**: Final test split evaluation run and documentation.
 

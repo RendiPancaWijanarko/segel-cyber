@@ -74,23 +74,21 @@ This document catalogues every known drift between the specifications (PRD v2.0,
 
 ---
 
-## DEV-08: Manifest Purpose Control Character Sanitization
+## DEV-08: Manifest Purpose Control Character Sanitization (Resolved in AI-7)
 
 - **Specification**: PRD v2.0 FR-012 and SEC-013 require strict input sanitization of release purpose strings.
-- **Codebase**: `src/segel_core/schemas/manifest.py` limits `purpose` to `max_length=300` but does not reject ASCII control characters (`\x00-\x1f`, `\x7f`).
-- **Drift**: Schema accepts control characters if within the 300-character limit.
+- **Resolution**: `Manifest.purpose` in `src/segel_core/schemas/manifest.py` rejects ASCII and Unicode control characters (`[\x00-\x1f\x7f-\x9f]`) via a Pydantic field validator at creation. Release Desk `/release/create` rejects control characters with HTTP 400. `src/builder/builder.py` strips control characters as defense-in-depth per D16.
 - **Governing Decision**: Decision D16. Reject control characters in manifest purpose at creation; strip them again in the AI input builder; cap length at 300; escape in templates.
 - **Impact**: Prevents prompt injection, escape-sequence smuggling, and log injection attacks.
 
 ---
 
-## DEV-09: WARN Finding Acknowledgement Enforcement
+## DEV-09: WARN Finding Acknowledgement Enforcement (Resolved in AI-7)
 
-- **Specification**: PRD v2.0 FR-035 specifies that WARN findings require explicit acknowledgement signed by approvers before deployment.
-- **Codebase**: `ApprovePredicate.acknowledgement_digest` is defined in `src/segel_core/schemas/attestation.py` with default `""`, but `src/approver/approver.py` does not populate it, and verifiers do not mandate it.
-- **Drift**: WARN acknowledgement digest is optional and unpopulated in existing release flows.
+- **Specification**: PRD v2.0 FR-026, FR-032, and FR-035 specify that WARN findings require explicit acknowledgement signed by approvers before deployment.
+- **Resolution**: Implemented `compute_acknowledgement_digest()` over canonical sorted unique list of WARN finding IDs in `src/segel_core/canonical.py`. `create_approval_payload()` in `src/approver/approver.py` binds `acknowledgement_digest` into `ApprovePredicate`. Verification policy introduces `require_warn_acknowledgement` (default false, true in demo policy). Ledger admission gate (`_verify_candidate_evidence`) and Receiver verifier (`verify_passport`) reject empty or mismatching digests with `ErrorCode.DIGEST_MISMATCH` when Inspect verdict is WARN. Release Desk UI displays acknowledgement status.
 - **Governing Decision**: Decision D8. Desk and approver require acknowledging every WARN finding and signing `acknowledgement_digest`. Policy flag `require_warn_acknowledgement` (default false; true in demo policy) makes Ledger and Receiver check it.
-- **Impact**: Establishes a verifiable chain from advisory findings through human approval to deployment.
+- **Impact**: Establishes a verifiable cryptographic chain from advisory findings through human approval to deployment.
 
 ---
 

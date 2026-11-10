@@ -57,3 +57,10 @@ This document records the architectural boundaries, MVP limitations, and design 
 3. **Small Sample Size (Indicative Results)**: The development split contains only 7 silent inconsistent items and 3 hard items missed by B1 (`DEV-14`, `DEV-17`, `DEV-18`). Evaluation results on the dev split are indicative and provide sample evidence rather than broad statistical significance.
 4. **Deterministic-Subset Coverage**: All deterministic-subset inconsistent items are caught by default-severity rules (`reject` on `privilege_granted`, `warn` on `logging_disabled` or `broad_change`) regardless of the stated release purpose.
 
+---
+
+## 6. Headless Browser Screenshot Limitation (AI-7)
+- **Context**: Decision D18 and task specification requested saving a visual screenshot of the Release Detail page (`docs/evaluation/ai_panel.png`) if a browser tool was available.
+- **Limitation**: No headless browser automation framework (such as Playwright, Puppeteer, or Selenium) is installed within the sandboxed Python execution environment, and external package installation is prohibited per repository security rules.
+- **Verification Alternative**: The HTML rendering, AI advisory panel structure, status banners (ok, failed, skipped), variable escaping, absence of confidence percentages, and footer disclaimer are verified by automated unit tests in `tests/unit/test_ai_7_ack_and_manifest.py`.
+
