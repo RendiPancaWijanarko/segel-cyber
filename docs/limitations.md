@@ -1,128 +1,103 @@
-# SEGEL MVP Limitations & Hardening Architectural Boundaries
+# SEGEL Consolidated Limitations & Architectural Boundaries
 
-This document records the architectural boundaries, MVP limitations, and design decisions codified during the SEGEL hardening pass per Decisions D1, D2, and D3, PRD v2.0, and TAS.
-
----
-
-## 1. Decision D1: Key Separation in Demo Harness
-- **PRD Reference**: `SEC-004`, `FR-003`
-- **Hardening Action**:
-  - Approver private keys were completely removed from the Release Desk process scope and encapsulated in `StandaloneApproverSigner` (`src/approver/service.py`).
-  - Synthetic demo key generation was extracted into an isolated demo infrastructure module (`src/demo_infra/keys.py`).
-  - In `src/release_desk/app.py`, approver signing is delegated exclusively via structured requests (`demo.approver_signer.sign_approval_request()`).
-- **Limitation**:
-  - Remaining synthetic keys (author, builder, inspector, ledger, witness, receiver) in the single-process demo harness (`scripts/demo.py`, `src/release_desk/app.py`) are stored in a private attribute (`self._demo_keys`).
-  - In production deployment, all distinct roles MUST operate in separate physical processes, machines, or HSMs with their own private keys.
+This document records the architectural boundaries, MVP limitations, and operational trade-offs of the SEGEL platform per PRD v2.0, TAS, and decisions D1 through D22.
 
 ---
 
-## 2. Decision D2: Deterministic AI Verification Pipeline
-- **PRD Reference**: §7, §27.2 (AT-016, AT-017, AT-018, AT-019)
-- **Hardening Action**:
-  - SEGEL MVP implements deterministic capability extraction and policy enforcement.
-  - Tests AT-016 through AT-019 are categorized as "validator-level" checks.
-- **Limitation**:
-  - No active external LLM / AI inference daemon is deployed in MVP.
-  - All AI status fields default to `skipped` or `deterministic_only`.
-  - Under no circumstances can AI advisory output downgrade a deterministic `REJECT` verdict, authorize a release, or override human approver quorums.
+## 1. Cryptographic & Security Boundaries
+
+### 1.1 Offline Revocation Awareness & Bounded Epoch Lifetimes
+- **Reference**: PRD v2.0 §16, TAS §8.9
+- **Architectural Reality**: Receivers operate in an air-gapped or offline posture with zero real-time outbound or inbound network access. Offline receivers cannot query real-time CRLs or OCSP endpoints.
+- **Enforced Boundary**: Revocations and security holds take effect only when a new, signed Trust Update Package (TUP) advancing the trust root version and epoch is delivered to the unit.
+- **Operational Requirement**: Deployments must configure bounded epoch lifetimes. If a receiver's epoch becomes stale (`receiver_epoch < min_epoch`), the receiver fails closed (`EPOCH_STALE`) until updated.
+
+### 1.2 Single Builder in MVP (Dual-Builder Reproducibility Deferred)
+- **Reference**: PRD v2.0 §6, FR-011, AT-043
+- **MVP Implementation**: Releases are packaged and provenanced by a single builder entity signing the `application/vnd.segel.origin+json` attestation with an RFC 8032 Ed25519 key.
+- **Security Boundary**: A compromise of the single builder's private key could allow an attacker to sign provenance for an altered bundle. However, author manifest signatures and deterministic inspector capability checks independently detect non-author files or prohibited capabilities.
+- **Roadmap (P1)**: Dual independent builders producing independent provenance attestations with bit-for-bit reproducible build verification.
+
+### 1.3 Cryptographic Tamper Evidence vs. Absolute Storage Immutability
+- **Reference**: PRD v2.0 §8, TAS §8.6
+- **Architectural Reality**: The Transparency Ledger utilizes SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) and database triggers prohibiting `UPDATE` and `DELETE` operations on log tables. However, SQLite operates at the application level; a host administrator or process with direct disk access could alter raw bytes on disk.
+- **Enforced Boundary**: Immutability is enforced cryptographically, not via OS-level storage claims:
+  1. RFC 6962 SHA-256 Merkle tree root hashes.
+  2. Ledger Signer digital signatures over checkpoints (`size`, `root_hash`).
+  3. External Witness cosignatures over Merkle consistency proofs.
+  Any modification of historical entries on disk invalidates subsequent checkpoint signatures and witness consistency proofs (`CHECKPOINT_FORK`).
+
+### 1.4 Single-Process Demonstration Harness Key Separation
+- **Reference**: PRD v2.0 §15, SEC-004, Decision D1
+- **MVP Implementation**: In the competition demonstration harness (`scripts/demo.py`, `src/release_desk/app.py`), approver keys are encapsulated within `StandaloneApproverSigner`, while remaining role keys reside in memory within the demo state bundle for ease of evaluation.
+- **Operational Requirement**: In production, every role (Author, Builder, Inspector, Ledger, Witness, Approver, Receiver) MUST run on separate physical hosts, isolated containers, or dedicated Hardware Security Modules (HSMs), communicating exclusively via signed DSSE envelopes.
+
+### 1.5 Trust Root Transition Chains
+- **Reference**: PRD v2.0 SEC-035, DEV-10
+- **MVP Implementation**: Verifiers validate that `root_version` increases monotonically. Dual-threshold M-of-N transition signature chains between successive trust roots are not evaluated in MVP.
+- **Operational Requirement**: Trust roots are provisioned statically out-of-band in the prototype.
 
 ---
 
-## 3. Decision D3: Crash-Safe Write-Ahead Journal & Audit Log
-- **PRD Reference**: `FR-083`, `FR-086`, `SEC-017`, `AT-029`, `AT-030`
-- **Hardening Action**:
-  - Implemented `BaselineAdapter.recover_crash()` with persistent write-ahead journal (`.segel_journal.json`), automatic backup restoration, and staging debris cleanup.
-  - Implemented `AuditLogger` writing append-only, SHA-256 hash-chained JSON-lines (`audit.jsonl`).
-  - Implemented in-process threading mutual exclusion and atomic filesystem locks (`.deploy.lock`) on `deploy_root`.
-- **Testing & Failure Semantics** (see Section 4 for operational limitations):
-  - Tested by crash-recovery tests (`test_at030_crash_recovery`): simulated abrupt process termination mid-deployment leaves backups intact and enables journaled recovery to clean or restored state within test scenario parameters (subject to host filesystem flush semantics).
-  - All deployment and verification events are recorded in local SHA-256 hash-chained JSON-lines (`audit.jsonl`) for tamper evidence.
+## 2. Adapter & Deployment Lifecycles
+
+### 2.1 Crash-Safe Journal & Host Filesystem Semantics
+- **Reference**: PRD v2.0 FR-083, FR-086, SEC-017, Decision D3
+- **Implementation**: `BaselineAdapter.recover_crash()` uses a persistent write-ahead journal (`.segel_journal.json`), automatic backup restoration, and staging debris cleanup, accompanied by SHA-256 hash-chained JSON-lines audit logs (`audit.jsonl`).
+- **Limitation**: Crash safety and journal recovery depend on underlying host operating system and filesystem flush semantics (`fsync`).
+
+### 2.2 Cross-Platform File Permission Variations (POSIX vs Windows NTFS)
+- **Reference**: PRD v2.0 §10, SEC-025
+- **Implementation**: Deployed files are marked read-only (`0o444`). On POSIX systems, this applies standard UNIX permissions (`-r--r--r--`). On Windows NTFS, this sets the Win32 `FILE_ATTRIBUTE_READONLY` flag.
+- **Handling**: Rollback mechanisms in `BaselineAdapter` handle cross-platform file clearing by resetting `stat.S_IWRITE` prior to atomic unlinking or replacement. Windows ACL inheritance may vary based on parent directory defaults.
+
+### 2.3 Standalone Payload Evaluation vs. Predecessor Diffing
+- **Reference**: PRD v2.0 FR-014, DEV-07
+- **Implementation**: `src/inspector/inspector.py` inspects files present in the current release payload standalone, without loading or diffing against prior sequence manifests.
+- **Boundary**: Extracted capabilities reflect full current release contents rather than delta relative to previous version.
 
 ---
 
-## 4. Priority P1 Requirements Deferred
-1. **Dual Independent Builders (FR-011, AT-043)**:
-   - MVP uses a single builder provenancing the bundle with RFC 8032 Ed25519 signatures.
-   - Dual-builder bit-for-bit reproducibility is deferred to post-MVP P1.
-2. **Fountain Codes & Multi-Frame QR Streaming (AT-036)**:
-   - MVP approver CLI generates compact QR payloads. Multi-frame fountain code transmission is deferred to P1 mobile companion clients.
-3. **Emergency Revocation Push (AT-011)**:
-   - Air-gapped receivers operate offline; revocation packages are physically delivered via Trust Update Packages (TUP).
+## 3. AI Advisory Subsystem Scope & Operational Boundaries
+
+### 3.1 Advisory Role and Severity Cap
+- **Reference**: Decisions D1, D7, D12, D14, PRD v2.0 §7
+- **Implementation**:
+  - The AI Inspector (`qwen3:4b`) provides advisory purpose classification (`source="ai"`, `severity="warn"`).
+  - Findings derived from AI classification are strictly capped at severity `warn`.
+  - The AI subsystem can NEVER emit a `reject` finding, can NEVER escalate an overall release verdict to `REJECT`, and can NEVER lower or suppress a deterministic `REJECT` or `WARN` finding to `PASS`.
+  - The model's natural-language justification is treated as untrusted advisory commentary and is never parsed to drive automated security decisions.
+
+### 3.2 Capability Analysis Scope
+- **Implementation**: The AI Inspector compares declared textual manifest `purpose` strings against extracted capability diffs (e.g., firewall modifications, user additions, dependency bumps).
+- **Boundary**: It does NOT perform binary reverse-engineering, machine-code vulnerability detection, or zero-day malware identification in compiled artifacts.
+
+### 3.3 Key Isolation & Process Sandboxing
+- **Reference**: Decisions D1, D5, D6, D14
+- **Implementation**: The AI worker subprocess executes in a scrubbed environment stripped of all secret, key, token, and credential variables (`build_scrubbed_env`).
+- **Boundary**: The AI model never sees private keys, never holds keys in memory, and never produces digital signatures.
+
+### 3.4 Hardware Profile & Partial CPU Offload
+- **Reference**: Decision D11, AI-8 Evaluation
+- **Measurement**: On the evaluation host, local Ollama `qwen3:4b` inference executes with partial GPU/CPU offload (~66-72% GPU VRAM, ~28-34% CPU system RAM).
+- **Limitation**: In environments without GPU acceleration or under constrained system memory, token generation throughput falls (measured mean throughput: 7.00 tokens/sec), increasing query latency.
+- **Fail-Closed Semantics**: When inference exceeds the timeout threshold (`SEGEL_AI_TIMEOUT_S=30`), the subprocess is terminated, setting `ai_status="failed"` with `ai_error_code="TIMEOUT"`. Deterministic rules and gates remain fully active.
+
+### 3.5 Evaluation Corpus & Methodology Limitations
+- **Reference**: AI-4b, AI-7, AI-8
+- **Single-Purpose Policy**: Corpus labels follow a strict single-purpose policy: a declared change class is expected to touch only its own canonical capability kind.
+- **Common Assistant Authorship**: The evaluation corpus, B1 keyword taxonomy lists, and inspection prompt templates were authored with assistance from the same AI coding assistant.
+- **Sample Size**: The development split contains 36 items (7 silent inconsistent items; 3 hard items missed by B1: `DEV-14`, `DEV-17`, `DEV-18`). Results are indicative of capability rather than broad statistical significance.
+- **Deterministic-Subset Coverage**: All deterministic-subset inconsistent items are caught by default-severity rules (`reject` on `privilege_granted`, `warn` on `logging_disabled` or `broad_change`) regardless of the stated release purpose.
+
+### 3.6 Headless Browser Screenshot Limitation
+- **Reference**: Decision D18, AI-7
+- **Limitation**: No headless browser automation framework (such as Playwright or Selenium) is installed within the sandboxed environment. Visual layout, escaping, AI panel structure, and disclaimers are validated via automated unit test assertions in `tests/unit/test_ai_7_ack_and_manifest.py`.
 
 ---
 
-## 5. AI Purpose Classifier and Evaluation Corpus Limitations (AI-4b)
-1. **Single-Purpose Policy**: Corpus labels follow a strict single-purpose policy: a declared change class is expected to touch only its own canonical capability kind. For example, a log-destination change that also opens an outbound firewall rule is labelled inconsistent, although bundling such changes may be legitimate in operational practice.
-2. **Common Assistant Authorship**: The evaluation corpus, the B1 keyword taxonomy lists (`docs/b1_keywords.md`), and the inspection prompt templates were authored by the same assistant. While developed independently to generic criteria, this introduces potential shared stylistic bias.
-3. **Small Sample Size (Indicative Results)**: The development split contains only 7 silent inconsistent items and 3 hard items missed by B1 (`DEV-14`, `DEV-17`, `DEV-18`). Evaluation results on the dev split are indicative and provide sample evidence rather than broad statistical significance.
-4. **Deterministic-Subset Coverage**: All deterministic-subset inconsistent items are caught by default-severity rules (`reject` on `privilege_granted`, `warn` on `logging_disabled` or `broad_change`) regardless of the stated release purpose.
+## 4. Priority P1 Features Deferred to Post-MVP
 
----
-
-## 6. Headless Browser Screenshot Limitation (AI-7)
-- **Context**: Decision D18 and task specification requested saving a visual screenshot of the Release Detail page (`docs/evaluation/ai_panel.png`) if a browser tool was available.
-- **Limitation**: No headless browser automation framework (such as Playwright, Puppeteer, or Selenium) is installed within the sandboxed Python execution environment, and external package installation is prohibited per repository security rules.
-- **Testing Alternative**: The HTML rendering, AI advisory panel structure, status banners (ok, failed, skipped), variable escaping, absence of confidence percentages, and footer disclaimer are validated by automated unit tests in `tests/unit/test_ai_7_ack_and_manifest.py`.
-
----
-
-## 7. AI Scope Boundaries and Security Properties (AI-8)
-1. **Advisory Role Only**:
-   - The AI Inspector (`qwen3:4b`) provides advisory purpose classification (`source="ai"`, `severity="warn"`).
-   - Findings derived from AI classification are strictly capped at severity `warn`.
-   - The AI component can NEVER emit a `reject` finding, can NEVER escalate the overall release verdict to `REJECT`, and can NEVER lower or downgrade a deterministic `REJECT` or `WARN` finding to `PASS`.
-   - The model's natural-language justification is treated as untrusted advisory commentary and is never parsed to drive automated security decisions.
-2. **Analysis Scope**:
-   - The AI Inspector compares the declared textual manifest `purpose` against extracted capability diffs (e.g., firewall modifications, user additions, dependency bumps).
-   - It does NOT perform binary reverse-engineering, machine-code vulnerability detection, or zero-day malware identification in compiled artifacts.
-3. **Key Isolation**:
-   - The AI worker subprocess executes in a scrubbed environment stripped of all secret, key, token, and credential variables (`build_scrubbed_env`).
-   - The AI model never sees private keys, never holds keys in memory, and never produces digital signatures.
-
----
-
-## 8. Partial CPU Offload & Inference Hardware Profile (AI-8)
-1. **Execution Split**:
-   - Local Ollama `qwen3:4b` inference executes with partial GPU/CPU offload (~72% GPU VRAM, ~28% CPU system RAM on the evaluation host).
-   - In environments without GPU acceleration or under constrained system resources, token generation throughput falls (measured mean throughput: 7.00 tokens/sec), increasing per-item query latency (mean 22.01s, max 289.86s).
-2. **Fail-Closed Timeout Semantics**:
-   - When inference exceeds the parent timeout threshold (e.g. `TEST-27` taking >50s), the subprocess is terminated.
-   - The system sets `ai_status="failed"` with `ai_error_code="TIMEOUT"`.
-   - The overall release inspection fails closed: deterministic findings and gates remain active, and no unauthorized pass is granted.
-
----
-
-## 9. Single-Process Desk Key Bundle in Prototype (AI-8)
-1. **Demo Harness Scope**:
-   - In the competition prototype (`src/release_desk/app.py`, `scripts/demo.py`), while approver signing keys are encapsulated in `StandaloneApproverSigner`, other synthetic role keys (author, builder, inspector, ledger, witness, receiver) reside within the demo state bundle.
-2. **Production Separation Requirement**:
-   - In a production deployment, each role (Builder, Inspector, Ledger, Witness, Receiver) MUST run on separate physical hosts, isolated containers, or dedicated Hardware Security Modules (HSMs), communicating only via signed DSSE envelopes.
-
----
-
-## 10. Evaluation Corpus Constraints & Decision D21 Determination (AI-8)
-1. **Corpus Size**:
-   - The evaluation corpus contains 60 synthetic items (24 dev, 36 test) with Baseline v1 JSON specifications.
-   - Sample size $N=36$ on the test split limits statistical generalizability.
-2. **Decision D21 Result**:
-   - On the frozen test split, B1 union AI detected 10 out of 11 silent mismatch items with 0 false positives.
-   - Baseline B1b detected 11 out of 11 silent items (at the expense of 2 false positives).
-   - Because $10 \ngtr 11$, under Decision D21, the headline claim "AI adds value" is NOT permitted. The claim is strictly limited to measured empirical results.
-3. **Claims Audit Policy**:
-   - Prohibited marketing hype terms ("secure", "guarantee", "verified", "100%", confidence percentages) are excluded from project claims.
-   - In SEGEL documentation and specifications, all security statements cite specific named tests or explicit architectural boundaries. References to "verified" in code signatures denote Ed25519 DSSE envelope cryptographic signature checks rather than an assertion of zero systemic flaws.
-
-
-
----
-
-## 11. Clean-Room Verification Procedure & Limitations (AI-9a)
-1. **Verification Method Applied**:
-   - A fresh repository clone was created in an isolated sibling directory (`../segel-clean`) with a newly initialized virtual environment.
-   - Because external network access is restricted to loopback (`127.0.0.1:11434`) per repository policy, package downloads via pip were prohibited.
-   - Package dependencies were copied into the clean virtual environment from the existing environment's `site-packages`.
-   - Running `pip install -e .` failed offline due to missing isolated build backend resolution (`Cannot import 'hatchling.build'`).
-   - An editable `.pth` reference was written manually into `site-packages` to link the clean clone's `src/` directory.
-   - Full suite execution of `pytest` (422 passed, 1 warning), `ruff check .` (0 errors), `mypy src` (0 errors in 53 source files), and `bandit -r src` (0 issues across 7,556 lines) was successfully completed in this clean clone directory.
-2. **Explicit Limitation**:
-   - A from-scratch dependency resolution and package installation from an external package index was not verified by the agent, as external network access is strictly prohibited.
+1. **Dual Independent Builders (FR-011, AT-043)**: Dual-builder bit-for-bit reproducibility deferred to P1.
+2. **Fountain Codes & Multi-Frame QR Streaming (AT-036)**: Multi-frame animated QR transmission for payloads >2 KB deferred to P1 mobile companion clients.
+3. **Emergency Revocation Push (AT-011)**: Air-gapped receivers operate offline; revocation packages are physically delivered via Trust Update Packages (TUP).

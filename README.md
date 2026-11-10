@@ -1,152 +1,133 @@
 # SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda
 
-**Configuration and Release Distribution Platform with Cryptographic Evidence**
+**Configuration & Release Distribution Platform with Cryptographic Evidence Chain**
 
-> *No Evidence, No Deployment.*
+*Competition prototype for Kartika Cyber Hackathon 2026, not an official product.*
 
-SEGEL ensures that every configuration release deployed to operational units carries independently verifiable security evidence across five stamps:
+---
 
-| Stamp | Question It Answers | Signed By |
-|-------|-------------------|-----------|
-| 🏭 **Origin** | Where did this release come from, and how was it built? | Builder |
-| 🔍 **Inspect** | What does this release change, and does it violate policy? | Inspector |
-| ✅ **Approve** | Have the authorised people approved it? | Approvers (2-of-3) |
-| 📜 **Record** | Is its history verifiable and tamper-evident? | Ledger + Witness |
-| 🧪 **Test** | Did it survive a controlled canary deployment? | Canary Receivers |
+## 1. What SEGEL Is
 
-## Quick Start
+SEGEL (**Sistem Edar Gelar Elektronik Lapis-ganda**) is a prototype configuration release and distribution system designed for air-gapped and edge environments. It enforces that no configuration or software update is deployed to operational units without an unbroken, independently verifiable chain of cryptographic evidence spanning five sequential pipeline stamps:
 
-```bash
-# Install in development mode
+```
+  Origin    →    Inspect    →    Approve    →    Record    →    Test
+  ┌────┐        ┌────────┐      ┌────────┐     ┌──────┐      ┌────┐
+  │ 🏭 │───────▶│  🔍   │─────▶│  ✅   │────▶│  📜 │─────▶│ 🧪 │
+  └────┘        └────────┘      └────────┘     └──────┘      └────┘
+  Builder       Inspector       2-of-3         Merkle log    Canary
+  signs         extracts        approvers      + witness     deploy
+  provenance    capabilities    sign           cosign        + health
+```
+
+1. 🏭 **Origin**: Provenance attesting where the release originated and how it was packaged (Builder).
+2. 🔍 **Inspect**: Capability extraction and policy rules, with optional advisory AI classification (Inspector).
+3. ✅ **Approve**: Multi-party M-of-N threshold approval (default 2-of-3, author excluded) via air-gapped review, with mandatory warning acknowledgement binding (Approvers).
+4. 📜 **Record**: Public tamper-evident append-only Merkle transparency log with signed checkpoints and independent witness cosignatures (Ledger + Witness).
+5. 🧪 **Test**: Pre-committed canary deployment health evaluation and offline receiver verification (Canaries + Receivers).
+
+---
+
+## 2. 10-Minute Quickstart
+
+### Prerequisites
+- **Python Runtime**: Python 3.14.6 tested on Windows (Python 3.12 syntax compatible, but untested in this environment).
+- **Git**
+- **Ollama** (optional, only for live AI advisory classification): installed and running on `http://127.0.0.1:11434` with model `qwen3:4b`.
+
+### Step 1: Clone and Set Up Virtual Environment
+```powershell
+git clone <repo-url> segel-cyber
+cd segel-cyber
+
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+### Step 2: Install Dependencies
+```powershell
 pip install -e ".[dev]"
-
-# Run the full 18-step lifecycle demo
-python scripts/demo.py
-
-# Run all tests (234 tests)
-python -m pytest tests/ -v
-
-# Start the web UI
-uvicorn release_desk.app:app --reload --port 8000
 ```
 
-## End-to-End Lifecycle
-
-The demo demonstrates the complete release lifecycle:
-
-1. Author creates a configuration release
-2. Bundle is validated and manifest is created
-3. Author signs the manifest (separate signer)
-4. Builder produces Origin provenance (SLSA-aligned)
-5. Inspector extracts capabilities and evaluates policy
-6. AI advisory (optional, skipped in MVP)
-7. Inspector Signer issues Inspect attestation
-8. Approvers review payload via QR air-gapped transfer
-9. 2-of-3 approval threshold met (author excluded)
-10. Ledger records candidate with Merkle proof
-11. Candidate deployed to 2 canary units
-12. Canary Receivers generate signed health receipts
-13. Promotion Controller evaluates pre-committed criteria
-14. Ledger records the promotion
-15. General Release Passport assembled
-16. **Offline** Receiver independently verifies and deploys
-17. Receiver generates signed deployment receipt
-18. System rejects forged, modified, unauthorised, and replayed releases
-
-## Architecture
-
-Security-core-first modular monolith:
-
-```
-src/
-├── segel_core/          # Trusted: crypto, schemas, verification
-├── builder/             # Deterministic packaging + Origin provenance
-├── inspector/           # Capability extraction + policy evaluation
-├── approver/            # Air-gapped multi-party approval
-├── ledger/              # Append-only Merkle transparency log
-├── witness/             # Independent checkpoint cosigner
-├── passport/            # Release Passport assembler
-├── promotion/           # Canary evaluation + promotion controller
-├── receiver/            # Offline verification + deployment adapter
-└── release_desk/        # FastAPI web application (untrusted, no keys)
+### Step 3: Run the Test Suite (Zero Network Dependencies)
+All 433 unit, integration, property, and adversarial tests execute without external services or internet access (using an in-process scripted `FakeLLM`):
+```powershell
+pytest
 ```
 
-## Testing
-
-```
-234 tests  ·  0 failures  ·  82.37% coverage
-
-├── 75 × Core Crypto (Ed25519 vectors, DSSE envelopes, Merkle proofs)
-├── 82 × Core Components (Builder, Inspector, Ledger, Receiver)
-├── 28 × Distribution & Control (Approver, Witness, Passport, Promotion, Web UI, CLIs)
-├── 16 × Property-Based (Hypothesis determinism, canonical JSON, Merkle invariants)
-├──  6 × Integration (Full 18-step lifecycle + rejection scenarios)
-└── 25 × Adversarial (AT-001 to AT-045: forged sigs, tampering,
-         missing stamps, replay, self-approval, path traversal,
-         executables, AI override, witness forks, failed canaries)
+### Step 4: Run the Automated 4-Act Demonstration
+Executes all 4 demonstration acts under both deterministic-only (`SEGEL_AI_ENABLED=0`) and AI-advisory (`SEGEL_AI_ENABLED=1`) modes:
+```powershell
+python scripts/run_demo_scenario.py
 ```
 
-## Documentation
-
-| Document | Contents |
-|----------|----------|
-| [Architecture](docs/ARCHITECTURE.md) | System architecture, component zones, data flow |
-| [Security Model](docs/SECURITY_MODEL.md) | Threat model, controls, evidence chain, security boundaries |
-| [Demo Guide](docs/DEMO_GUIDE.md) | Step-by-step instructions for running the demo |
-| [Test Report](docs/TEST_REPORT.md) | All 106 tests with AT-series mapping |
-| [Traceability](docs/TRACEABILITY.md) | PRD requirements → code → test mapping |
-| [Design Decisions](docs/DECISIONS.md) | 10 technical decisions with rationale |
-| [Known Limitations](docs/KNOWN_LIMITATIONS.md) | 14 documented MVP limitations |
-| [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) | 10-phase plan with status |
-| [Progress](docs/PROGRESS.md) | Current development status |
-
-## Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| Python 3.12+ | Implementation language |
-| Ed25519 (RFC 8032) | All signatures |
-| DSSE | Signing envelope format |
-| in-toto Statement v1 | Attestation structure |
-| SHA-256 / RFC 6962 Merkle | Digests and transparency proofs |
-| C2SP tlog-checkpoint | Checkpoint format |
-| FastAPI + Jinja2 + HTMX | Release Desk web UI |
-| Pydantic v2 | Schema validation |
-| SQLite | MVP storage (NOT a security boundary) |
-| Ollama | Optional local AI inference (advisory only) |
-| Docker Compose | Demonstration lab |
-| pytest + Hypothesis | Testing framework |
-
-## Docker Lab
-
-```bash
-docker compose -f lab/compose.yml up --build
-# Open http://localhost:8000
+### Step 5: Launch the Interactive Release Desk UI
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_demo.ps1
 ```
+Open your browser to `http://127.0.0.1:8000`.
 
-Containers: `release-desk` (web), `canary-1`, `canary-2`, `unit-3` (offline receiver).
+---
 
-## CLI Tools
+## 3. The AI Advisory Subsystem
 
-```bash
-segel-receiver verify passport.json --trust-root trust.json --key key.json --deploy-to ./deploy --unit-id unit-3
-segel-approver review qr-request.json --key approver-key.json
-segel-witness cosign --key witness-key.json --checkpoint checkpoint.json
-```
+The AI Inspector component provides natural-language purpose classification to detect discrepancies between declared release intentions and extracted configuration capabilities.
 
-## Security Invariants
+### What the Model Does
+- The model (`qwen3:4b`) reads the declared manifest `purpose` string alongside extracted technical capability diffs (firewall changes, account additions, logging modifications).
+- It classifies the declared purpose into one of six canonical taxonomy classes (`L1`..`L6`) and flags whether the purpose text is ambiguous.
+- The expectation map (`EXPECTATION_MAP`) deterministically derives advisory findings from the predicted class.
 
-- Release Desk **never holds private signing keys**
-- AI has **no signing keys and no deployment permissions**
-- Receiver verification works **offline**
-- All operations **fail closed** — missing evidence blocks the pipeline
-- SQLite triggers are **guard rails**, not immutability (tamper evidence from Merkle proofs)
-- **No custom cryptographic protocols** — Ed25519, DSSE, RFC 6962, SLSA
+### Key Security Properties
+- **Weights Not in Repository**: Model weights are not tracked in git. Weights are managed externally via Ollama (`ollama pull qwen3:4b`).
+- **Loopback Only**: All AI HTTP communications are restricted exclusively to `http://127.0.0.1:11434`. No external API calls or outbound internet connections exist.
+- **Strictly Advisory (Capped at `warn`)**: AI findings are strictly capped at severity `warn`. The AI model can **never** emit a `reject` finding, can **never** reject a release, and can **never** lower or suppress a deterministic `REJECT` or `WARN` finding to `PASS`.
+- **Zero Key Access**: The AI worker subprocess executes in a scrubbed environment stripped of all secret, key, token, and credential variables. The model never holds or sees private keys and never signs evidence.
+- **Runtime Prompt Integrity**: The template prompt is verified against a frozen SHA-256 digest (`docs/ai_prompt_freeze.txt`) at runtime; tampering aborts inference fail-closed (`PROMPT_TAMPERED`).
+- **Honest Evaluation Finding**: In pre-registered evaluation, a deterministic vague-by-default rule (B1b) detects silent purpose inconsistencies without invoking an LLM. The AI's measured empirical difference against B1b is fewer false alarms at slightly lower recall; differences of 1-2 items out of 36 are not statistically meaningful.
 
-## License
+---
 
-MIT
+## 4. Implementation Status Table
 
-## Disclaimer
+| Feature / Subsystem | Status | Description & Test Coverage |
+|---------------------|:------:|-----------------------------|
+| **RFC 8032 Ed25519 Signatures** | **Implemented** | RFC 8032 test vectors passing in `tests/vectors/test_ed25519_vectors.py`. Key ID = `SHA-256(raw_pubkey)`. |
+| **DSSE Envelopes & Canonical JSON** | **Implemented** | PAE encoding and canonical key ordering verified in `tests/unit/test_dsse.py` and `test_canonical.py`. |
+| **in-toto Statement v1 Schemas** | **Implemented** | Origin, Inspect, Approve, Record, Test predicates validated in `tests/unit/test_schemas.py`. |
+| **Deterministic Capability Extraction** | **Implemented** | Regex boundary rules and structured extractor tested in `tests/unit/test_inspector.py`. |
+| **Policy Engine (PRULE-001..004)** | **Implemented** | Deterministic `REJECT` on root privilege escalation tested in `tests/adversarial/test_at004_prohibited_capabilities.py`. |
+| **Air-Gapped Multi-Party Approval** | **Implemented** | 2-of-3 threshold and author self-approval exclusion tested in `tests/adversarial/test_at005_self_approval.py`. |
+| **WARN Acknowledgement Binding** | **Implemented** | `acknowledgement_digest` bound in approve stamp; enforced by Ledger gate and Receiver verifier (`tests/unit/test_ai_7_ack_and_manifest.py`). |
+| **RFC 6962 Transparency Ledger** | **Implemented** | Append-only Merkle log with signed checkpoints tested in `tests/unit/test_ledger.py`. |
+| **Witness Cosigning & Consistency** | **Implemented** | RFC 9162 consistency proof validation tested in `tests/unit/test_witness.py`. |
+| **Candidate & General Passports** | **Implemented** | Evidence bundling and verification tested in `tests/unit/test_passport.py`. |
+| **Offline Receiver & Deployment Adapter** | **Implemented** | 10-step atomic deployment lifecycle, journal recovery, rollback, and read-only permissions tested in `tests/unit/test_receiver.py`. |
+| **Anti-Rollback Sequence Enforcement** | **Implemented** | Monotonic sequence checks tested in `tests/adversarial/test_at002_rollback.py`. |
+| **AI Advisory Subsystem** | **Implemented** | Capped at `warn`, prompt frozen, timeout fail-closed, scrubbed env tested in `tests/unit/test_ai_fake_llm.py` and `test_ai_acceptance.py`. |
+| **Release Desk Web Interface** | **Implemented** | FastAPI dashboard, release detail, AI advisory panel, control char rejection, footer disclaimer. |
+| **Predecessor Manifest Diffing** | **Partial** | Standalone release payload inspection implemented; historical predecessor diffing omitted (DEV-07). |
+| **Trust Root Rollover Chains** | **Partial** | Monotonic `root_version` validation implemented; multi-root transition signature chains deferred (DEV-10). |
+| **Dual Independent Builders** | **Not Implemented** | Single builder in MVP; bit-for-bit reproducible dual-builder verification deferred to P1 (FR-011). |
+| **Fountain Code QR Streaming** | **Not Implemented** | Compact JSON/CBOR QR payloads implemented; multi-frame animated QR streaming deferred to P1 (AT-036). |
+| **Emergency Revocation Push** | **Not Implemented** | Offline receivers require physical Trust Update Packages (TUP); network push deferred to P1 (AT-011). |
 
-SEGEL does not prove software is safe. It provides cryptographically verifiable evidence about origin, inspection, approval, recording, and testing of configuration releases. All demonstration data uses synthetic keys and is not suitable for production use.
+---
+
+## 5. Documentation Map
+
+- [Installation Guide](docs/install.md) — Step-by-step installation, dependencies, Ollama setup, and troubleshooting.
+- [Usage Guide](docs/usage.md) — Operational workflows, CLI commands, web UI, and environment variables.
+- [Architecture & Deviations](docs/architecture.md) — System architecture, component zones, data flows, and specification drift (DEV-01..DEV-10).
+- [Consolidated Limitations](docs/limitations.md) — Security boundaries, operational limitations, and deferred features.
+- [AI Decisions Log](docs/ai_decisions.md) — Pre-registered architectural and design decisions (D1..D22).
+- [AI Evaluation Report](docs/evaluation/ai_report.md) — Empirical baseline evaluation (B0, B1, B1b, AI, B2) on the test split.
+- [Notice](NOTICE) — Third-party software licenses and model attributions.
+- [AI Assistance Disclosure](docs/ai_assistance_disclosure.md) — Transparency disclosure on AI-assisted coding and human oversight.
+
+---
+
+## 6. Disclaimer
+
+*Competition prototype for Kartika Cyber Hackathon 2026, not an official product.*
+SEGEL does not prove software or configuration is free of defect. It provides cryptographically verifiable evidence regarding origin, policy inspection, multi-party approval, ledger transparency, and canary testing. All demonstration keys are synthetic and must not be used in production environments.
