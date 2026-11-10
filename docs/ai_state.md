@@ -6,10 +6,10 @@ This document tracks progress, test suite counts, open items, and next steps for
 
 ## Current Status
 
-- **Phase**: AI-5 (Model Check on DEV Split)
+- **Phase**: AI-5b (Model Check Reporting, B1b Baseline, Prompt History & Freeze)
 - **Branch**: `feature/ai-inspector`
 - **Date**: 2026-11-10
-- **Last Commit**: `8fccfee` ("AI-4b: documentation and decision D19")
+- **Last Commit**: `7702cdf` ("AI-5: model check")
 
 ---
 
@@ -115,6 +115,17 @@ Full test suite execution evidence:
   - (3) Silent DEV items detected: B1 alone = 4/7, B1 union AI = 7/7 (threshold >= 6).
 - [x] Performance: Overall accuracy 91.7% (22/24), hard subset accuracy 66.7% (2/3), median warm latency 3.322s, p95 3.759s, 18.28 tok/s.
 - [x] Saved exact evaluation artifacts in `docs/evaluation/`: `modelcheck_summary.txt`, `modelcheck_raw.jsonl`, `modelcheck_prompt.txt` (SHA-256: `1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`), `modelcheck.md`.
+
+### AI-5b: Model Check Reporting, B1b Baseline, Prompt History and Freeze
+- [x] Implemented `scripts/ai_eval/modelcheck_report.py` reading ONLY `docs/evaluation/modelcheck_raw.jsonl`.
+- [x] Generated `docs/evaluation/modelcheck_table.tsv` with 24 DEV item predictions, classifications, and finding kinds.
+- [x] Generated `docs/evaluation/modelcheck_b1b.txt` evaluating Baseline B1b (abstention as L6):
+  - B1b achieves 7/7 silent detection but produces 2 false positives on consistent items (`DEV-06`, `DEV-08`) where B1 abstained.
+  - In comparison, AI correctly classifies `DEV-06` (L3) and `DEV-08` (L4), producing 0 false positives while maintaining 7/7 silent detection.
+  - Verified 100% agreement between `predicted_ambiguous` and `(predicted_class == 'L6')` (0 divergences).
+- [x] Authored `docs/evaluation/prompt_history.md` detailing every git commit, ad-hoc script (`inspect_dev.py`, scratch `test_prompt.py`), prompt text, and few-shot selection touching DEV or EX items before the official run.
+- [x] Generated `docs/ai_prompt_freeze.txt` with prompt SHA-256 (`1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc`) freezing prompt text.
+- [x] Appended Decisions D20, D21, D22 to `docs/ai_decisions.md`.
 
 
 ---

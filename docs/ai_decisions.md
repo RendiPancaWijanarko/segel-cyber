@@ -24,4 +24,7 @@ D17 Classes: L1 DNS allowlist update (expects dns_allowlist_change); L2 operator
 D18 UI: all other UI work is frozen. Only the AI panel, the ai_status banner, the acknowledgement control, and a "competition prototype, not an official product" disclaimer are allowed.
 D9b: evaluation set stays 60 items (30 consistent, 30 inconsistent; dev 24, test 36) but inconsistent items are rebalanced so that most test AI value (silent mismatches); controls for the deterministic layer are kept.
 D19 Model-check PASS rule: PASS iff (1) schema validity >= 95%, (2) false positives <= 2 of the 12 consistent DEV items, (3) B1 union AI detects at least 6 of the 7 silent DEV items (B1 alone detects 4). "Detected" = at least one expectation-mismatch finding after code derivation.
+D20: AI feature freeze moves to Thursday 12 November 12:00 WIB; the final test-split evaluation (AI-8) runs once on Wednesday 11 November after the pipeline is complete.
+D21: the claim "AI adds value" is allowed only if, on the test split, B1 union AI detects strictly more silent items than B1 AND than B1b, with at most 2 more false positives than B1; otherwise the claim is limited to exactly what is measured, reported in the same words in the report and docs.
+D22: purposes of baselines for reporting are B0, B1, B1b, and B1 union AI.
 
