@@ -58,6 +58,7 @@ markers = [
     "integration: marks integration tests",
     "slow: marks slow tests",
     "gap: marks hardening gap tests (Phase C red tests)",
+    "live_ai: marks live AI tests requiring local Ollama",
 ]
 
 [tool.ruff]
