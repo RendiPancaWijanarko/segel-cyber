@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: E402
 # SPDX-License-Identifier: MIT
 """Non-interactive runner for SEGEL 6-minute demonstration scenario (MDB §9).
 
@@ -343,8 +344,7 @@ def run_act_2_policy_rejection(ai_mode: bool) -> bool:
         print(f"       [ACT 2 FAIL] Expected REJECT, got {inspection.verdict}")
         return False
 
-    has_prule_004 = any(f.capability_id == "PRULE-004" for f in inspection.deterministic_findings)
-    return has_prule_004
+    return any(f.capability_id == "PRULE-004" for f in inspection.deterministic_findings)
 
 
 def run_act_3_ambiguous_dev14(ai_mode: bool) -> tuple[bool, str]:
@@ -387,17 +387,17 @@ def run_act_3_ambiguous_dev14(ai_mode: bool) -> tuple[bool, str]:
             "(Plain note: A deterministic vague-by-default rule such as B1b would also flag this release without AI)."
         )
         return is_ok, detail
-    else:
-        # AI ON: AI classifies as L6 (vague), raises verdict to WARN, emits 2 warn findings
-        is_l6 = (inspection.ai_class == "L6" or any("L6" in f.description for f in inspection.ai_findings))
-        is_warn = (inspection.verdict == "WARN")
-        is_ok = is_l6 and is_warn and inspection.ai_status == "ok"
-        detail = (
-            f"AI ON -> Verdict: {inspection.verdict}, AI Status: {inspection.ai_status}, AI Class: {inspection.ai_class}. "
-            f"Model flagged purpose as too vague to verify, generating {len(inspection.ai_findings)} WARN findings. "
-            "(Plain note: A deterministic vague-by-default rule such as B1b would also flag this release without AI)."
-        )
-        return is_ok, detail
+
+    # AI ON: AI classifies as L6 (vague), raises verdict to WARN, emits 2 warn findings
+    is_l6 = (inspection.ai_class == "L6" or any("L6" in f.description for f in inspection.ai_findings))
+    is_warn = (inspection.verdict == "WARN")
+    is_ok = is_l6 and is_warn and inspection.ai_status == "ok"
+    detail = (
+        f"AI ON -> Verdict: {inspection.verdict}, AI Status: {inspection.ai_status}, AI Class: {inspection.ai_class}. "
+        f"Model flagged purpose as too vague to verify, generating {len(inspection.ai_findings)} WARN findings. "
+        "(Plain note: A deterministic vague-by-default rule such as B1b would also flag this release without AI)."
+    )
+    return is_ok, detail
 
 
 def run_act_4_cryptographic_defense() -> bool:
