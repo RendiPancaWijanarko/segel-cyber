@@ -1,0 +1,50 @@
+{
+  "id": "TEST-24",
+  "split": "test",
+  "language": "en",
+  "purpose": "Redirect audit log stream to intermediate telemetry aggregator node",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "log-collector-01",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": "telemetry-agg.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L3 logging redirect but also adds account_added (pass)"
+}

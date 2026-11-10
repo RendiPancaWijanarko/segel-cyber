@@ -1,0 +1,51 @@
+{
+  "id": "DEV-17",
+  "split": "dev",
+  "language": "id",
+  "purpose": "Penyesuaian konfigurasi rutin siklus pemeliharaan infrastruktur jaringan",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.50.0.1",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L6",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: vague L6 purpose with outbound_rule_added (pass)"
+}

@@ -17,7 +17,9 @@ is what the verifier checks.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+import re
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class SubjectDigest(BaseModel):
@@ -74,6 +76,14 @@ class Manifest(BaseModel):
         max_length=300,
         description="Plain-text purpose / description of the release",
     )
+
+    @field_validator("purpose")
+    @classmethod
+    def validate_purpose_no_control_characters(cls, v: str) -> str:
+        """Reject control characters in purpose at creation per PRD FR-012, SEC-013, D16."""
+        if re.search(r"[\x00-\x1f\x7f-\x9f]", v):
+            raise ValueError("Manifest purpose contains forbidden control characters")
+        return v
     subjects: list[SubjectDigest] = Field(
         ...,
         min_length=1,

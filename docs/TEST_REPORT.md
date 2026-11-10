@@ -33,7 +33,7 @@
 - Deterministic key identity: `key_id = SHA-256(raw_32_byte_public_key)`.
 - Sign and verify round-trip; rejection of wrong key, wrong message, truncated/mutated signatures.
 - Public key base64 import/export with strict canonical validation.
-- Unencrypted seed import (`import_private_key`) for tooling and encrypted PKCS#8/scrypt import/export for secure storage.
+- Unencrypted seed import (`import_private_key`) for tooling and encrypted PKCS#8/scrypt import/export for protected storage.
 
 ### DSSE Envelopes (`tests/unit/crypto/test_dsse.py`) — 22 tests
 - Pre-Authentication Encoding (PAE) against official DSSE specification test vectors.

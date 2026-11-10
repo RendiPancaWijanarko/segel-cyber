@@ -1,0 +1,45 @@
+{
+  "id": "TEST-32",
+  "split": "test",
+  "language": "id",
+  "purpose": "Relokasi penyimpanan jejak rekam operasional node perimeter",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.perimeter.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": false,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging adjustment but disables logging (warn)"
+}

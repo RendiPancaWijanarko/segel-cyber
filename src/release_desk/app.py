@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
@@ -23,25 +24,26 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from approver.approver import (
-    approver_sign,
     collect_approvals,
     create_approval_payload,
 )
+from approver.service import StandaloneApproverSigner
 from builder.builder import build_release_package, sign_manifest, sign_origin
+from demo_infra.keys import generate_demo_bundle
 from inspector.inspector import create_inspect_attestation, inspect_release, sign_inspect
 from ledger.ledger import TransparencyLedger
 from passport.assembler import build_candidate_passport, build_general_passport
 from promotion.controller import CanaryReceipt, evaluate_promotion
+from segel_core.canonical import compute_acknowledgement_digest
 from segel_core.config import load_config
-from segel_core.crypto.ed25519 import KeyPair, export_public_key, generate_keypair
 from segel_core.schemas.attestation import PromotionCriteria
 from segel_core.schemas.passport import LedgerProof
 from segel_core.schemas.trust import (
-    KeyRecord,
     RoleThreshold,
     TrustRoot,
     TrustSnapshot,
@@ -83,7 +85,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="SEGEL Release Desk",
-    description="Secure Configuration & Release Distribution Platform",
+    description="Configuration & Release Distribution Platform with Multi-Party Attestation",
     version="0.1.0-mvp",
     lifespan=lifespan,
 )
@@ -106,9 +108,30 @@ TEMPLATE_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
+# Static assets directory (images, CSS, JS)
+STATIC_DIR = Path(__file__).parent / "static"
+STATIC_DIR.mkdir(exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """Serve the root favicon for all browsers and API clients."""
+    favicon_path = STATIC_DIR / "favicons" / "favicon.ico"
+    if not favicon_path.exists():
+        favicon_path = STATIC_DIR / "favicon.ico"
+    return FileResponse(favicon_path, media_type="image/x-icon")
+
+
+@app.get("/site.webmanifest", include_in_schema=False)
+async def webmanifest() -> FileResponse:
+    """Serve the web app manifest at domain root."""
+    manifest_path = STATIC_DIR / "favicons" / "site.webmanifest"
+    return FileResponse(manifest_path, media_type="application/manifest+json")
+
 
 # ── Synthetic Demo State (MVP) ───────────────────────────────────────
-# In production, keys would be loaded from secure storage.
+# In production, keys would be loaded from an external HSM or isolated key manager.
 # For the MVP demo, we generate synthetic keys at startup.
 
 class DemoState:
@@ -117,40 +140,19 @@ class DemoState:
     def __init__(self) -> None:
         self.reset()
 
+    @property
+    def demo_keys(self) -> Any:
+        return self._demo_keys
+
     def reset(self) -> None:
-        # Generate synthetic keys
-        self.author_key = generate_keypair()
-        self.builder_key = generate_keypair()
-        self.inspector_key = generate_keypair()
-        self.approver_keys = [generate_keypair() for _ in range(3)]
-        self.ledger_key = generate_keypair()
-        self.witness_key = generate_keypair()
-        self.canary_keys = [generate_keypair() for _ in range(2)]
-        self.general_receiver_key = generate_keypair()
+        # Generate synthetic demo keys via external demo infra
+        self._demo_keys = generate_demo_bundle()
+        self.approver_signer = StandaloneApproverSigner()
 
         # Build trust root
-        def kr(kp: KeyPair, role: str, group: str = "default") -> KeyRecord:
-            return KeyRecord(
-                key_id=kp.key_id,
-                public_key_b64=export_public_key(kp.public_key_bytes),
-                role=role, group=group,
-            )
-
         self.trust_root = TrustRoot(
             root_version=1,
-            keys=[
-                kr(self.author_key, "author"),
-                kr(self.builder_key, "builder"),
-                kr(self.inspector_key, "inspector_signer"),
-                kr(self.approver_keys[0], "approver", "group-0"),
-                kr(self.approver_keys[1], "approver", "group-1"),
-                kr(self.approver_keys[2], "approver", "group-0"),
-                kr(self.ledger_key, "ledger"),
-                kr(self.witness_key, "witness"),
-                kr(self.canary_keys[0], "receiver"),
-                kr(self.canary_keys[1], "receiver"),
-                kr(self.general_receiver_key, "receiver"),
-            ],
+            keys=self._demo_keys.make_key_records() + self.approver_signer.get_public_key_records(),
             roles=[
                 RoleThreshold(role="author", threshold=1),
                 RoleThreshold(role="builder", threshold=1),
@@ -167,6 +169,7 @@ class DemoState:
             policy_version=1, approval_threshold=2,
             approval_groups={"group-0": 1, "group-1": 1},
             canary_required_count=2, witness_cosignature_count=1,
+            require_warn_acknowledgement=True,
         )
         self.snapshot = TrustSnapshot(epoch=1)
         self.trust_ctx = TrustContext(
@@ -175,7 +178,7 @@ class DemoState:
 
         # Infrastructure
         self.ledger = TransparencyLedger()
-        self.witness = Witness(self.witness_key)
+        self.witness = Witness(self._demo_keys.witness_key)
 
         # Release tracking
         self.releases: list[dict[str, Any]] = []
@@ -189,12 +192,31 @@ demo = DemoState()
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
+    promoted_count = sum(1 for r in demo.releases if r.get("status") == "PROMOTED")
+    active_statuses = ("CANDIDATE_RECORDED", "CANARY_DEPLOYED")
+    candidate_count = sum(1 for r in demo.releases if r.get("status") in active_statuses)
+    passed_count = sum(1 for r in demo.releases if r.get("verdict") == "PASS")
+    pass_rate = int((passed_count / len(demo.releases)) * 100) if demo.releases else 100
+
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
+            "request": request,
             "releases": demo.releases,
             "ledger_size": demo.ledger.size,
+            "promoted_count": promoted_count,
+            "candidate_count": candidate_count,
+            "pass_rate": pass_rate,
+            "total_keys": len(demo.trust_root.keys),
+            "root_version": demo.trust_root.root_version,
+            "policy_version": demo.policy.policy_version,
+            "epoch": demo.snapshot.epoch,
+            "root_hash": (
+                demo.ledger.root_hash_hex()[:16] + "..."
+                if demo.ledger.size > 0
+                else "empty"
+            ),
         },
     )
 
@@ -220,6 +242,12 @@ async def create_release(
     """Run the complete release pipeline: build → inspect → approve → record."""
 
     try:
+        if re.search(r"[\x00-\x1f\x7f-\x9f]", purpose):
+            raise HTTPException(
+                status_code=400,
+                detail="Manifest purpose contains forbidden control characters",
+            )
+
         canary_list = [t.strip() for t in canary_targets.split(",") if t.strip()]
         scope_list = [t.strip() for t in general_scope.split(",") if t.strip()]
 
@@ -242,10 +270,10 @@ async def create_release(
         )
 
         # Step 3: Author signs manifest
-        manifest_env = sign_manifest(build_result, demo.author_key)
+        manifest_env = sign_manifest(build_result, demo.demo_keys.author_key)
 
         # Step 4: Builder signs origin
-        origin_env = sign_origin(build_result, demo.builder_key)
+        origin_env = sign_origin(build_result, demo.demo_keys.builder_key)
 
         # Step 5-7: Inspect
         inspection = inspect_release(
@@ -255,9 +283,18 @@ async def create_release(
         inspect_stmt = create_inspect_attestation(
             inspection, build_result.manifest, build_result.manifest_digest,
         )
-        inspect_env = sign_inspect(inspect_stmt, demo.inspector_key)
+        inspect_env = sign_inspect(inspect_stmt, demo.demo_keys.inspector_key)
 
-        # Step 8-9: Approve (2-of-3)
+        # Step 8-9: Approve (2-of-3 via standalone signer service per SEC-004)
+        ack_digest = ""
+        warn_ids: list[str] = []
+        if inspection.verdict == "WARN":
+            all_findings = inspection.deterministic_findings + inspection.ai_findings
+            warn_ids = sorted(
+                {f.capability_id for f in all_findings if f.severity.lower() == "warn"}
+            )
+            ack_digest = compute_acknowledgement_digest(warn_ids)
+
         approve_stmt, approve_req = create_approval_payload(
             build_result.manifest, build_result.manifest_digest,
             origin_env, inspect_env, inspection.verdict,
@@ -266,12 +303,10 @@ async def create_release(
                 required_healthy_canary_units=2,
                 required_probes=["file_exists", "config_valid"],
             ),
+            acknowledgement_digest=ack_digest,
         )
 
-        responses = [
-            approver_sign(approve_req, demo.approver_keys[0]),
-            approver_sign(approve_req, demo.approver_keys[1]),
-        ]
+        responses = demo.approver_signer.sign_approval_request(approve_req, count=2)
         approve_env = collect_approvals(approve_stmt, approve_req, responses)
 
         # Step 10: Record in ledger
@@ -282,7 +317,7 @@ async def create_release(
             "manifest_sha256": build_result.manifest_digest,
         }
         entry = demo.ledger.append("candidate_recorded", candidate_event)
-        signed_cp = demo.ledger.sign_checkpoint(demo.ledger_key)
+        signed_cp = demo.ledger.sign_checkpoint(demo.demo_keys.ledger_key)
 
         # Witness cosign
         consistency_proof = None
@@ -296,7 +331,7 @@ async def create_release(
             signed_cp.checkpoint, consistency_proof=consistency_proof,
         )
         demo.ledger.add_witness_cosignature(
-            signed_cp.checkpoint.size, demo.witness_key.key_id, cosig,
+            signed_cp.checkpoint.size, demo.demo_keys.witness_key.key_id, cosig,
         )
 
         # Build candidate passport
@@ -326,6 +361,8 @@ async def create_release(
             "verdict": inspection.verdict,
             "capabilities": len(inspection.capabilities),
             "findings": len(inspection.deterministic_findings),
+            "acknowledgement_digest": ack_digest,
+            "acknowledged_findings": warn_ids,
             "approvals": 2,
             "ledger_index": entry.index,
             "passport_type": "candidate",
@@ -430,6 +467,17 @@ async def trust_view(request: Request) -> HTMLResponse:
     )
 
 
+@app.get("/segel", response_class=HTMLResponse)
+@app.get("/zassk", response_class=HTMLResponse, include_in_schema=False)
+async def segel_analytics_view(request: Request) -> HTMLResponse:
+    """UI/UX Design R&D Environment exclusively serving segel.html."""
+    return templates.TemplateResponse(
+        request=request,
+        name="segel.html",
+        context={"request": request},
+    )
+
+
 @app.post("/release/{idx}/deploy-canary", response_class=HTMLResponse)
 async def deploy_canary(request: Request, idx: int) -> HTMLResponse:
     """Deploy a candidate release to canary units and collect health receipts."""
@@ -448,7 +496,7 @@ async def deploy_canary(request: Request, idx: int) -> HTMLResponse:
         canary_receipt_envelopes = []
 
         for i, (canary_key, unit_id) in enumerate(
-            zip(demo.canary_keys, ["canary-1", "canary-2"], strict=False)
+            zip(demo.demo_keys.canary_keys, ["canary-1", "canary-2"], strict=False)
         ):
             import tempfile
             deploy_dir = Path(tempfile.mkdtemp(prefix=f"segel-canary-{i+1}-"))
@@ -562,7 +610,7 @@ async def promote_release(request: Request, idx: int) -> HTMLResponse:
             "healthy_canary_units": promotion_result.healthy_units,
         }
         promotion_entry = demo.ledger.append("release_promoted", promotion_event)
-        signed_cp2 = demo.ledger.sign_checkpoint(demo.ledger_key)
+        signed_cp2 = demo.ledger.sign_checkpoint(demo.demo_keys.ledger_key)
 
         # Witness cosign
         proof_hex2 = demo.ledger.consistency_proof(
@@ -574,7 +622,7 @@ async def promote_release(request: Request, idx: int) -> HTMLResponse:
             signed_cp2.checkpoint, consistency_proof=consistency_proof,
         )
         demo.ledger.add_witness_cosignature(
-            signed_cp2.checkpoint.size, demo.witness_key.key_id, cosig2,
+            signed_cp2.checkpoint.size, demo.demo_keys.witness_key.key_id, cosig2,
         )
 
         # Build promotion proof

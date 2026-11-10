@@ -158,6 +158,16 @@ class AdapterPolicy(BaseModel):
     )
 
 
+def _default_allowed_adapters() -> list[AdapterPolicy]:
+    return [
+        AdapterPolicy(
+            adapter_id="segel-baseline-adapter/v1",
+            digest="0" * 64,
+            payload_type="baseline/v1",
+        )
+    ]
+
+
 class VerificationPolicy(BaseModel):
     """Signed verification policy.
 
@@ -204,13 +214,17 @@ class VerificationPolicy(BaseModel):
         description="Freshness enforcement: strict (reject stale) or advisory (warn)",
     )
     allowed_adapters: list[AdapterPolicy] = Field(
-        default_factory=list,
+        default_factory=_default_allowed_adapters,
         description="Whitelisted deployment adapters",
     )
     witness_cosignature_count: int = Field(
         default=1,
         ge=0,
         description="Minimum number of witness cosignatures on checkpoints",
+    )
+    require_warn_acknowledgement: bool = Field(
+        default=False,
+        description="Whether WARN findings require explicit signed acknowledgement digest",
     )
 
 

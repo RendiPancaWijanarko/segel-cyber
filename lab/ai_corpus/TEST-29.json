@@ -1,0 +1,47 @@
+{
+  "id": "TEST-29",
+  "split": "test",
+  "language": "en",
+  "purpose": "Fine-tune audit event forwarding configuration for compliance reporting",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "compliance-log.old.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "chargen"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "compliance-log.new.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: misleading L3 purpose (logging) but diff adds service_disabled (extra pass-cap)"
+}

@@ -1,0 +1,56 @@
+{
+  "id": "TEST-25",
+  "split": "test",
+  "language": "id",
+  "purpose": "Pembukaan jalur egress menuju server agregasi data monitoring",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "agg.monitoring.example.com",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "egress-svc-01",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L4 outbound rule but also adds account_added (pass)"
+}

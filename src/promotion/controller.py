@@ -35,6 +35,8 @@ class PromotionResult:
     healthy_units: list[str]
     unhealthy_units: list[str]
     criteria: PromotionCriteria
+    hold_placed: bool = False
+    hold_event: dict[str, Any] | None = None
 
 
 def evaluate_promotion(
@@ -86,14 +88,27 @@ def evaluate_promotion(
             healthy_units=healthy_units,
             unhealthy_units=unhealthy_units,
             criteria=criteria,
+            hold_placed=False,
+            hold_event=None,
         )
+
+    hold_reason = (
+        f"Only {len(healthy_units)} healthy canary units, "
+        f"need {criteria.required_healthy_canary_units}. "
+        f"Unhealthy: {unhealthy_units}"
+    )
     return PromotionResult(
         promoted=False,
-        reason=f"Only {len(healthy_units)} healthy canary units, "
-               f"need {criteria.required_healthy_canary_units}. "
-               f"Unhealthy: {unhealthy_units}",
+        reason=hold_reason,
         healthy_units=healthy_units,
         unhealthy_units=unhealthy_units,
         criteria=criteria,
+        hold_placed=True,
+        hold_event={
+            "action": "hold_placed",
+            "reason": hold_reason,
+            "unhealthy_units": unhealthy_units,
+            "healthy_units": healthy_units,
+        },
     )
 

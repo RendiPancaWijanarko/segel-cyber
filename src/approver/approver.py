@@ -56,6 +56,7 @@ class ApprovalRequest:
     # The actual bytes to sign (canonical JSON of the approval predicate)
     payload_to_sign: bytes
     payload_type: str
+    acknowledgement_digest: str = ""
 
 
 @dataclass
@@ -76,6 +77,7 @@ def create_approval_payload(
     policy_version: int = 1,
     canary_targets: list[str] | None = None,
     promotion_criteria: PromotionCriteria | None = None,
+    acknowledgement_digest: str = "",
 ) -> tuple[dict[str, Any], ApprovalRequest]:
     """Create the approval attestation payload.
 
@@ -118,6 +120,7 @@ def create_approval_payload(
         binding=binding,
         origin_evidence_digest=origin_digest,
         inspect_evidence_digest=inspect_digest,
+        acknowledgement_digest=acknowledgement_digest,
         canary_targets=canary_targets or manifest.canary_targets,
         promotion_criteria=criteria,
     )
@@ -148,6 +151,7 @@ def create_approval_payload(
         promotion_criteria=criteria.model_dump(mode="json"),
         payload_to_sign=payload,
         payload_type="application/vnd.segel.approve+json",
+        acknowledgement_digest=acknowledgement_digest,
     )
 
     return statement_dict, request

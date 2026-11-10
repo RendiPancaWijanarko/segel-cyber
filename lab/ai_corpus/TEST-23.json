@@ -1,0 +1,51 @@
+{
+  "id": "TEST-23",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Penyesuaian konfigurasi penanganan data log sistem node gateway",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "log-a.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "log-b.example.com",
+          "port": 514,
+          "proto": "udp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "log-b.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L3 logging adjust but also adds outbound_rule_added (pass)"
+}

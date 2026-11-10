@@ -40,6 +40,8 @@ from segel_core.schemas.attestation import HealthResult
 from segel_core.schemas.manifest import Manifest
 
 ADAPTER_ID = "segel-baseline-adapter/v1"
+ADAPTER_DIGEST = "0" * 64
+VALID_HEALTH_PROBES = {"file_exists", "config_valid"}
 
 
 def _safe_rmtree(path: Path | str) -> None:
@@ -96,6 +98,7 @@ class BaselineAdapter:
         deploy_root: str | Path,
         staging_root: str | Path | None = None,
         backup_root: str | Path | None = None,
+        adapter_digest: str = ADAPTER_DIGEST,
     ) -> None:
         """Initialise the adapter.
 
@@ -103,6 +106,7 @@ class BaselineAdapter:
             deploy_root: Target directory for configuration files.
             staging_root: Staging area for validation. Defaults to deploy_root/.staging
             backup_root: Backup directory. Defaults to deploy_root/.backup
+            adapter_digest: Pinned digest of this adapter implementation.
         """
         self._deploy_root = Path(deploy_root).resolve()
         self._staging_root = (
@@ -111,6 +115,7 @@ class BaselineAdapter:
         self._backup_root = (
             Path(backup_root).resolve() if backup_root else self._deploy_root / ".backup"
         )
+        self._adapter_digest = adapter_digest
 
         # Validate paths are not overlapping dangerously
         if not str(self._staging_root).startswith(str(self._deploy_root.parent)):
@@ -121,6 +126,10 @@ class BaselineAdapter:
     @property
     def adapter_identity(self) -> str:
         return ADAPTER_ID
+
+    @property
+    def adapter_digest(self) -> str:
+        return self._adapter_digest
 
     def preflight(self, manifest: Manifest) -> None:
         """Step 1: Check preconditions.
@@ -137,6 +146,13 @@ class BaselineAdapter:
 
         # Ensure deploy root exists
         self._deploy_root.mkdir(parents=True, exist_ok=True)
+
+        # Purge any stale staging directories from previous runs/crashes
+        if self._staging_root.exists():
+            _safe_rmtree(self._staging_root)
+        segel_stage = self._deploy_root / ".segel_stage"
+        if segel_stage.exists():
+            _safe_rmtree(segel_stage)
 
     def snapshot(self) -> str:
         """Step 2: Capture current state digest.
@@ -196,6 +212,7 @@ class BaselineAdapter:
             target.write_bytes(content)
             staged.append(subject.path)
 
+        self._write_journal("stage")
         return staged
 
     def backup(self) -> str:
@@ -217,6 +234,7 @@ class BaselineAdapter:
                 else:
                     shutil.copy2(item, dest)
 
+        self._write_journal("backup")
         return str(self._backup_root)
 
     def apply(self, manifest: Manifest) -> None:
@@ -236,6 +254,8 @@ class BaselineAdapter:
             with contextlib.suppress(OSError):
                 dst.chmod(0o444)
 
+        self._write_journal("apply")
+
     def health_check(
         self,
         manifest: Manifest,
@@ -252,6 +272,14 @@ class BaselineAdapter:
         Returns:
             List of health check results.
         """
+        if probes is not None:
+            for p in probes:
+                p_name = p.get("probe", "")
+                if p_name not in VALID_HEALTH_PROBES:
+                    raise AdapterNotAllowedError(
+                        f"Health probe '{p_name}' outside fixed vocabulary {VALID_HEALTH_PROBES}"
+                    )
+
         results = []
 
         for subject in manifest.subjects:
@@ -294,32 +322,84 @@ class BaselineAdapter:
 
         Restores the backup directory to deploy_root.
         """
-        if not self._backup_root.exists():
-            return
+        if self._backup_root.exists():
+            # Remove current files (except hidden dirs)
+            for item in self._deploy_root.iterdir():
+                if item.name.startswith("."):
+                    continue
+                if item.is_dir():
+                    _safe_rmtree(item)
+                else:
+                    _safe_unlink(item)
 
-        # Remove current files (except hidden dirs)
-        for item in self._deploy_root.iterdir():
-            if item.name.startswith("."):
-                continue
-            if item.is_dir():
-                _safe_rmtree(item)
-            else:
-                _safe_unlink(item)
+            # Restore from backup
+            for item in self._backup_root.iterdir():
+                dest = self._deploy_root / item.name
+                if item.is_dir():
+                    shutil.copytree(item, dest)
+                else:
+                    shutil.copy2(item, dest)
 
-        # Restore from backup
-        for item in self._backup_root.iterdir():
-            dest = self._deploy_root / item.name
-            if item.is_dir():
-                shutil.copytree(item, dest)
-            else:
-                shutil.copy2(item, dest)
+        # Remove staging debris if present
+        if self._staging_root.exists():
+            _safe_rmtree(self._staging_root)
+        segel_stage = self._deploy_root / ".segel_stage"
+        if segel_stage.exists():
+            _safe_rmtree(segel_stage)
+
+        # Remove journal
+        journal = self._deploy_root / ".segel_journal.json"
+        if journal.exists():
+            _safe_unlink(journal)
 
     def cleanup(self) -> None:
         """Step 10: Remove staging and backup on success."""
         if self._staging_root.exists():
             _safe_rmtree(self._staging_root)
+        segel_stage = self._deploy_root / ".segel_stage"
+        if segel_stage.exists():
+            _safe_rmtree(segel_stage)
         if self._backup_root.exists():
             _safe_rmtree(self._backup_root)
+        journal = self._deploy_root / ".segel_journal.json"
+        if journal.exists():
+            _safe_unlink(journal)
+
+    def recover_crash(self) -> None:
+        """Recover from an interrupted or crashed deployment.
+
+        Per FR-083 & AT-030:
+        Replays the journal to recover the deployment directory:
+        restores backup if available, purges partial staging debris,
+        and removes journal and lock files.
+        """
+        if self._backup_root.exists():
+            self.rollback()
+            _safe_rmtree(self._backup_root)
+        else:
+            if self._staging_root.exists():
+                _safe_rmtree(self._staging_root)
+            segel_stage = self._deploy_root / ".segel_stage"
+            if segel_stage.exists():
+                _safe_rmtree(segel_stage)
+
+        journal = self._deploy_root / ".segel_journal.json"
+        if journal.exists():
+            _safe_unlink(journal)
+        lock_file = self._deploy_root / ".deploy.lock"
+        if lock_file.exists():
+            _safe_unlink(lock_file)
+
+    def _write_journal(self, step: str) -> None:
+        """Write atomic state transition to the deployment journal."""
+        import json
+        journal_path = self._deploy_root / ".segel_journal.json"
+        journal_data = {
+            "step": step,
+            "backup_exists": self._backup_root.exists(),
+        }
+        with Path(journal_path).open("w", encoding="utf-8") as f:
+            json.dump(journal_data, f)
 
     def _compute_directory_digest(self, directory: Path) -> str:
         """Compute a deterministic digest of a directory's contents."""

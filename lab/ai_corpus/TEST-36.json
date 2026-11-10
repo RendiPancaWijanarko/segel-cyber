@@ -1,0 +1,86 @@
+{
+  "id": "TEST-36",
+  "split": "test",
+  "language": "en",
+  "purpose": "Minor refresh of field gateway connection parameters for branch nodes",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "gw-01.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-02.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-03.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-04.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-05.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-06.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-07.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "gw-08.branch.example.com",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims minor L4 refresh but diff adds 8 outbound rules (broad_change)"
+}

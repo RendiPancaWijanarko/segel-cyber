@@ -1,0 +1,86 @@
+{
+  "id": "DEV-24",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Update single DNS forwarder address for branch office network",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "10.2.0.1",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.2",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.3",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.4",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.5",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.6",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.7",
+          "port": 443,
+          "proto": "tcp"
+        },
+        {
+          "destination": "10.2.0.8",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims single DNS update but pushes 8 entries (broad_change)"
+}

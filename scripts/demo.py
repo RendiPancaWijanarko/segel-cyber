@@ -167,6 +167,7 @@ def setup_lab():
         approval_groups={"group-0": 1, "group-1": 1},
         canary_required_count=2,
         witness_cosignature_count=1,
+        require_warn_acknowledgement=True,
     )
 
     snapshot = TrustSnapshot(epoch=1)

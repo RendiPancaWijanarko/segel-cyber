@@ -1,0 +1,52 @@
+{
+  "id": "DEV-16",
+  "split": "dev",
+  "language": "en",
+  "purpose": "Reduce attack surface by decommissioning unneeded system services",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "echod"
+      ]
+    },
+    "accounts": [
+      {
+        "name": "svc-audit-01",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L5 hardening but also adds account_added (pass)"
+}

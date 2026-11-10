@@ -43,6 +43,18 @@ def build_candidate_passport(
     Returns:
         A ReleasePassport of type "candidate".
     """
+    if signed_checkpoint is not None and isinstance(candidate_proof, LedgerProof):
+        updates_c: dict[str, Any] = {}
+        if not candidate_proof.checkpoint_signature and signed_checkpoint.ledger_signature:
+            updates_c["checkpoint_signature"] = signed_checkpoint.ledger_signature
+        if not candidate_proof.witness_cosignatures and signed_checkpoint.witness_cosignatures:
+            updates_c["witness_cosignatures"] = [
+                w["signature"] if isinstance(w, dict) else str(w)
+                for w in signed_checkpoint.witness_cosignatures
+            ]
+        if updates_c:
+            candidate_proof = candidate_proof.model_copy(update=updates_c)
+
     return ReleasePassport(
         passport_type="candidate",
         manifest_envelope=manifest_envelope.to_dict(),
@@ -84,6 +96,31 @@ def build_general_passport(
     Returns:
         A ReleasePassport of type "general".
     """
+    if signed_checkpoint is not None:
+        if isinstance(candidate_proof, LedgerProof):
+            updates_c: dict[str, Any] = {}
+            if not candidate_proof.checkpoint_signature and signed_checkpoint.ledger_signature:
+                updates_c["checkpoint_signature"] = signed_checkpoint.ledger_signature
+            if not candidate_proof.witness_cosignatures and signed_checkpoint.witness_cosignatures:
+                updates_c["witness_cosignatures"] = [
+                    w["signature"] if isinstance(w, dict) else str(w)
+                    for w in signed_checkpoint.witness_cosignatures
+                ]
+            if updates_c:
+                candidate_proof = candidate_proof.model_copy(update=updates_c)
+
+        if isinstance(promotion_proof, LedgerProof):
+            updates_p: dict[str, Any] = {}
+            if not promotion_proof.checkpoint_signature and signed_checkpoint.ledger_signature:
+                updates_p["checkpoint_signature"] = signed_checkpoint.ledger_signature
+            if not promotion_proof.witness_cosignatures and signed_checkpoint.witness_cosignatures:
+                updates_p["witness_cosignatures"] = [
+                    w["signature"] if isinstance(w, dict) else str(w)
+                    for w in signed_checkpoint.witness_cosignatures
+                ]
+            if updates_p:
+                promotion_proof = promotion_proof.model_copy(update=updates_p)
+
     return ReleasePassport(
         passport_type="general",
         manifest_envelope=manifest_envelope.to_dict(),

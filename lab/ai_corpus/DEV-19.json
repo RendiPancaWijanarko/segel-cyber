@@ -1,0 +1,52 @@
+{
+  "id": "DEV-19",
+  "split": "dev",
+  "language": "mixed",
+  "purpose": "Penerapan konfigurasi keamanan baseline untuk deployment node baru",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "telnetd"
+      ]
+    },
+    "accounts": [
+      {
+        "name": "baseline-mgr-01",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L5 hardening but diff adds account_added (extra pass-severity cap)"
+}

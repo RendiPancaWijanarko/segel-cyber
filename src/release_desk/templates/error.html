@@ -10,7 +10,7 @@
 </div>
 
 <div class="alert alert-error">
-    <span>✕</span>
+    <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
     <div>
         <strong>{{ error_type }}:</strong> {{ error }}
     </div>
@@ -18,7 +18,10 @@
 
 <div class="card">
     <div class="card-header">
-        <h2>Error Details</h2>
+        <h2>
+            <i data-lucide="octagon-alert" class="icon-20 text-danger"></i>
+            Error Details
+        </h2>
     </div>
     <div class="detail-item">
         <div class="detail-label">Error Type</div>
@@ -30,8 +33,8 @@
     </div>
 
     <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
-        <div class="alert alert-info" style="margin-bottom:16px;">
-            <span>ℹ️</span>
+        <div class="alert alert-info" style="margin-bottom:18px;">
+            <i data-lucide="info" class="icon-16 text-info"></i>
             <div>
                 <strong>Fail-closed:</strong> SEGEL operations fail closed.
                 No release can proceed through the pipeline with invalid or missing evidence.
@@ -40,10 +43,15 @@
         </div>
 
         <div style="display:flex; gap:12px;">
-            <a href="/" class="btn btn-secondary">← Dashboard</a>
-            <a href="/release/new" class="btn btn-primary">Try Again</a>
+            <a href="/" class="btn btn-secondary">
+                <i data-lucide="arrow-left" class="icon-16"></i>
+                Dashboard
+            </a>
+            <a href="/release/new" class="btn btn-primary">
+                <i data-lucide="rotate-ccw" class="icon-16"></i>
+                Try Again
+            </a>
         </div>
     </div>
 </div>
 {% endblock %}
-

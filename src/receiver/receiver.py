@@ -15,12 +15,16 @@ The Receiver is the final line of defence — NO EVIDENCE, NO DEPLOYMENT.
 
 from __future__ import annotations
 
+import contextlib
 import json
+import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from receiver.adapter.baseline import BaselineAdapter, DeploymentState
+from receiver.audit import AuditLogger
 from segel_core.canonical import canonical_json
 from segel_core.crypto.dsse import DSSEEnvelope, create_envelope
 from segel_core.crypto.ed25519 import KeyPair, generate_evidence_id
@@ -43,6 +47,17 @@ from segel_core.verification.passport import (
     verify_passport,
 )
 from segel_core.verification.trust import TrustContext
+
+_DEPLOY_LOCKS: dict[str, threading.Lock] = {}
+_DEPLOY_LOCKS_GUARD = threading.Lock()
+
+
+def _get_deploy_lock(path: Path) -> threading.Lock:
+    key = str(path.resolve())
+    with _DEPLOY_LOCKS_GUARD:
+        if key not in _DEPLOY_LOCKS:
+            _DEPLOY_LOCKS[key] = threading.Lock()
+        return _DEPLOY_LOCKS[key]
 
 
 @dataclass
@@ -98,6 +113,7 @@ class Receiver:
         receiver_key: KeyPair,
         deploy_root: str | Path,
         state_dir: str | Path | None = None,
+        audit_dir: str | Path | None = None,
     ) -> None:
         self._state = state
         self._trust_ctx = trust_ctx
@@ -105,6 +121,7 @@ class Receiver:
         self._adapter = BaselineAdapter(deploy_root)
         self._state_dir = Path(state_dir) if state_dir else None
         self._deploy_root = Path(deploy_root)
+        self._audit_logger = AuditLogger(audit_dir) if audit_dir is not None else None
 
     @property
     def unit_id(self) -> str:
@@ -142,77 +159,152 @@ class Receiver:
             receiver_state=self._state.to_dict(),
         )
 
-        # Step 2: Check eligibility
+        manifest = verification.manifest_data
+
+        if self._audit_logger:
+            self._audit_logger.log(
+                "verification_completed",
+                {
+                    "release_id": manifest.release_id if manifest else "unknown",
+                    "sequence": manifest.sequence if manifest else 0,
+                    "eligibility": verification.eligibility.value,
+                    "all_stamps_valid": verification.all_stamps_valid,
+                },
+            )
+
+        # Step 2: Check eligibility and adapter allowlist (FR-081, SEC-015, AT-039)
+        adapter_id = getattr(self._adapter, "adapter_identity", "")
+        adapter_digest = getattr(self._adapter, "adapter_digest", "0" * 64)
+        adapter_allowed = any(
+            p.adapter_id == adapter_id and p.digest == adapter_digest
+            for p in self._trust_ctx.policy.allowed_adapters
+        )
+        if not adapter_allowed:
+            verification.eligibility = EligibilityClass.INELIGIBLE
+            verification.eligibility_reasons.append(
+                f"Deployment adapter '{adapter_id}' ({adapter_digest}) "
+                f"is not in policy allowed_adapters"
+            )
+            if self._audit_logger:
+                self._audit_logger.log(
+                    "adapter_rejected",
+                    {
+                        "adapter_id": adapter_id,
+                        "adapter_digest": adapter_digest,
+                        "reason": "ADAPTER_NOT_ALLOWED",
+                    },
+                )
+            return verification, None
+
         if verification.eligibility not in (
             EligibilityClass.ELIGIBLE_CANARY,
             EligibilityClass.ELIGIBLE_GENERAL,
         ):
             return verification, None
 
-        manifest = verification.manifest_data
         if manifest is None:
             return verification, None
 
-        # Step 3: Deploy using the adapter lifecycle
-        deploy_state = DeploymentState()
+        # Step 3: Deploy using adapter lifecycle with mutual exclusion (FR-086, AT-029)
+        lock = _get_deploy_lock(self._deploy_root)
+        if not lock.acquire(blocking=False):
+            verification.eligibility = EligibilityClass.INELIGIBLE
+            verification.eligibility_reasons.append(
+                "Concurrent deployment in progress on deploy root"
+            )
+            return verification, None
 
+        lock_path = self._deploy_root / ".deploy.lock"
+        fd = None
         try:
-            # 1. Preflight
-            self._adapter.preflight(manifest)
-
-            # 2. Snapshot
-            deploy_state.pre_state_digest = self._adapter.snapshot()
-
-            # 3. Stage
-            deploy_state.staged_files = self._adapter.stage(manifest, files)
-
-            # 5. Backup
-            deploy_state.backup_path = self._adapter.backup()
-
-            # 6. Apply
-            self._adapter.apply(manifest)
-
-            # 7. Health check
-            deploy_state.health_results = self._adapter.health_check(manifest)
-
-            # Evaluate health
-            all_healthy = all(hr.passed for hr in deploy_state.health_results)
-
-            if all_healthy:
-                # 8. Commit
-                deploy_state.post_state_digest = self._adapter.commit()
-                deploy_state.overall_result = "healthy"
-                deploy_state.committed = True
-
-                # 10. Cleanup
-                self._adapter.cleanup()
-
-                # Update state
-                self._state.highest_sequence[manifest.release_id] = manifest.sequence
-                self._state.state_version += 1
-                self._save_state()
-            else:
-                # 9. Rollback
-                self._adapter.rollback()
-                deploy_state.overall_result = "unhealthy"
-
-        except Exception:
-            # Rollback on any error
             try:
-                self._adapter.rollback()
+                self._deploy_root.mkdir(parents=True, exist_ok=True)
+                fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            except (FileExistsError, OSError):
+                verification.eligibility = EligibilityClass.INELIGIBLE
+                verification.eligibility_reasons.append(
+                    "Concurrent deployment in progress on deploy root"
+                )
+                return verification, None
+
+            deploy_state = DeploymentState()
+
+            try:
+                # 1. Preflight
+                self._adapter.preflight(manifest)
+
+                # 2. Snapshot
+                deploy_state.pre_state_digest = self._adapter.snapshot()
+
+                # 3. Stage
+                deploy_state.staged_files = self._adapter.stage(manifest, files)
+
+                # 5. Backup
+                deploy_state.backup_path = self._adapter.backup()
+
+                # 6. Apply
+                self._adapter.apply(manifest)
+
+                # 7. Health check
+                deploy_state.health_results = self._adapter.health_check(manifest)
+
+                # Evaluate health
+                all_healthy = all(hr.passed for hr in deploy_state.health_results)
+
+                if all_healthy:
+                    # 8. Commit
+                    deploy_state.post_state_digest = self._adapter.commit()
+                    deploy_state.overall_result = "healthy"
+                    deploy_state.committed = True
+
+                    # 10. Cleanup
+                    self._adapter.cleanup()
+
+                    # Update state
+                    self._state.highest_sequence[manifest.release_id] = manifest.sequence
+                    self._state.state_version += 1
+                    self._save_state()
+                else:
+                    # 9. Rollback
+                    self._adapter.rollback()
+                    deploy_state.overall_result = "unhealthy"
+
             except Exception:
-                # If rollback also fails, enter recovery mode
-                self._state.recovery_mode = True
-                self._save_state()
-            deploy_state.overall_result = "error"
+                # Rollback on any error
+                try:
+                    self._adapter.rollback()
+                except Exception:
+                    # If rollback also fails, enter recovery mode
+                    self._state.recovery_mode = True
+                    self._save_state()
+                deploy_state.overall_result = "error"
 
-        # Step 4: Generate signed deployment receipt
-        receipt_envelope = self._create_receipt(
-            manifest=manifest,
-            deploy_state=deploy_state,
-        )
+            # Step 4: Generate signed deployment receipt
+            receipt_envelope = self._create_receipt(
+                manifest=manifest,
+                deploy_state=deploy_state,
+            )
 
-        return verification, receipt_envelope
+            if self._audit_logger and manifest:
+                self._audit_logger.log(
+                    "deployment_completed",
+                    {
+                        "release_id": manifest.release_id,
+                        "sequence": manifest.sequence,
+                        "overall_result": deploy_state.overall_result,
+                        "committed": deploy_state.committed,
+                    },
+                )
+
+            return verification, receipt_envelope
+
+        finally:
+            if fd is not None:
+                with contextlib.suppress(OSError):
+                    os.close(fd)
+                with contextlib.suppress(OSError):
+                    lock_path.unlink()
+            lock.release()
 
     def _create_receipt(
         self,

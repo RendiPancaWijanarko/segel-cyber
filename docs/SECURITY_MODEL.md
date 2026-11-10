@@ -56,6 +56,10 @@ All security-critical operations fail closed:
 - **State corruption** → `StateCorruptError` → receiver enters recovery mode
 - **AI failure** → `ai_status = "failed"` recorded; deterministic verdict unchanged
 
+### Security Invariants & Limitations
+
+Integrity and authenticity properties in SEGEL are cryptographic invariants enforced by offline deterministic verification (RFC 8032 Ed25519 DSSE envelopes, RFC 6962 SHA-256 Merkle inclusion proofs, and Pre-Authentication Encoding bindings). These invariants hold within the defined threat model and are covered by the 310-test automated suite (see `docs/TEST_REPORT.md` for counts and limitations). They do not extend to out-of-scope hardware faults, host environment compromise, or requirements listed as `missing` or `partial` in `docs/audit.md`.
+
 ### What SEGEL Does NOT Guarantee
 
 1. **SEGEL does not prove software is safe.** It proves that specific evidence exists and has not been tampered with.

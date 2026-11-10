@@ -1,0 +1,47 @@
+{
+  "id": "TEST-34",
+  "split": "test",
+  "language": "mixed",
+  "purpose": "Maintenance of event journal transmission parameter untuk sistem audit",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "journal.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": [
+      "sha256:ddeeff445566"
+    ]
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging config but also adds trust_anchor_added (warn)"
+}

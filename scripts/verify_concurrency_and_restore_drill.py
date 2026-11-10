@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import concurrent.futures
 import multiprocessing
-import os
 import sqlite3
 import sys
 import tempfile

@@ -1,0 +1,51 @@
+{
+  "id": "EX-02",
+  "split": "exemplar",
+  "language": "en",
+  "purpose": "Add outbound firewall egress rule for telemetry aggregation endpoint",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": [
+        {
+          "destination": "metrics.internal.example.com",
+          "port": 443,
+          "proto": "tcp"
+        }
+      ]
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L4",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "mismatch_kind": "none",
+  "notes": "Exemplar 2: English L4 outbound network rule addition"
+}

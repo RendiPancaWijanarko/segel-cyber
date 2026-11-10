@@ -1,0 +1,2 @@
+1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc  docs/evaluation/modelcheck_prompt.txt
+From now on the prompt text is read-only. Any change needs a new decision and a note in docs/limitations.md.

@@ -1,0 +1,50 @@
+{
+  "id": "TEST-26",
+  "split": "test",
+  "language": "en",
+  "purpose": "Remove deprecated services to reduce system attack surface",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "10.90.0.53"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": [
+        "chargen",
+        "discard"
+      ]
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L5",
+  "label": "inconsistent",
+  "inconsistency_class": "hidden_extra_impact",
+  "mismatch_kind": "silent",
+  "notes": "Silent: claims L5 hardening but also adds dns_allowlist_change (pass)"
+}

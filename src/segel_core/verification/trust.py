@@ -7,14 +7,19 @@ epoch and version monotonicity enforcement per PRD v2.0 §16.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from typing import Any
 
+from segel_core.crypto.dsse import DSSEEnvelope, verify_envelope
 from segel_core.crypto.ed25519 import PublicKeyInfo, import_public_key
 from segel_core.errors import (
     EpochStaleError,
+    ErrorCode,
     KeyNotAuthorisedError,
     KeyRevokedError,
     PolicyDowngradeError,
+    SegelError,
     SignatureError,
 )
 from segel_core.schemas.trust import (
@@ -80,23 +85,24 @@ class TrustContext:
             for held in self.snapshot.held_releases:
                 self._held_releases.add((held.release_id, held.sequence))
 
-    def get_keys_for_role(self, role: str) -> list[PublicKeyInfo]:
-        """Get all active (non-revoked) public keys for a role.
+    def get_keys_for_role(self, role: str, at_index: int | None = None) -> list[PublicKeyInfo]:
+        """Get all active public keys for a role.
 
         Args:
             role: The role name (e.g., 'approver', 'builder').
+            at_index: Optional ledger index to enforce index-ordered revocation per SEC-012.
 
         Returns:
-            List of PublicKeyInfo for active keys in this role.
+            List of PublicKeyInfo for keys in this role.
         """
         result = []
         for key_rec in self._keys_by_role.get(role, []):
-            if key_rec.key_id in self._revoked_key_ids:
-                continue
             if key_rec.status != "active":
                 continue
             if key_rec.algorithm != "ed25519":
                 continue  # SEC-039: reject unknown algorithms
+            if at_index is not None and self.is_key_revoked_at_index(key_rec.key_id, at_index):
+                continue
             pk = self._public_keys_cache.get(key_rec.key_id)
             if pk is not None:
                 result.append(pk)
@@ -156,6 +162,10 @@ class TrustContext:
         """Get the KeyRecord for a given key_id if known."""
         return self._keys_by_id.get(key_id)
 
+    def get_public_key(self, key_id: str) -> PublicKeyInfo | None:
+        """Get the PublicKeyInfo for a given key_id if loaded."""
+        return self._public_keys_cache.get(key_id)
+
     def check_key_authorised(self, key_id: str, role: str) -> PublicKeyInfo:
         """Verify a key is authorised for a role and not revoked.
 
@@ -193,6 +203,58 @@ class TrustContext:
                 f"Key {key_id[:16]}... could not be loaded",
             )
         return pk
+
+    def apply_trust_update(self, tup: dict[str, Any]) -> None:
+        """Verify and apply a Trust Update Package (TUP).
+
+        Per FR-066, SEC-013, SEC-035:
+        - Cryptographic envelope verification against active root keyholders.
+        - Anti-rollback protection: target_epoch must be > current epoch.
+        - Atomic update of root, policy, snapshot, and rebuilt indices.
+        """
+        env_dict = tup.get("envelope", tup)
+        envelope = DSSEEnvelope.from_dict(env_dict)
+
+        # 1. Signature verification
+        authorised_keys = [
+            pk for pk in self._public_keys_cache.values()
+            if not self.is_key_revoked(pk.key_id)
+        ]
+
+        v_res = verify_envelope(
+            envelope,
+            authorised_keys,
+            expected_payload_type="https://segel.dev/trust-update/v1",
+        )
+
+        if not v_res.valid_key_ids:
+            for s in envelope.signatures:
+                if s.keyid in self._keys_by_id:
+                    raise SignatureError("TUP signature verification failed")
+            raise KeyNotAuthorisedError("TUP signed by untrusted or unauthorised key")
+
+        # 2. Parse payload and anti-rollback check
+        payload_bytes = envelope.get_payload_bytes()
+        payload = json.loads(payload_bytes)
+
+        target_epoch = payload.get("target_epoch", 0)
+        current_epoch = self.snapshot.epoch if self.snapshot else 1
+
+        if target_epoch <= current_epoch:
+            raise SegelError(
+                ErrorCode.EPOCH_STALE,
+                f"TUP target_epoch {target_epoch} <= current epoch {current_epoch} (anti-rollback)",
+            )
+
+        # 3. Apply updates
+        if "root" in payload:
+            self.root = TrustRoot.model_validate(payload["root"])
+        if "policy" in payload:
+            self.policy = VerificationPolicy.model_validate(payload["policy"])
+        if "snapshot" in payload:
+            self.snapshot = TrustSnapshot.model_validate(payload["snapshot"])
+
+        self._rebuild_indices()
 
 
 def check_version_monotonicity(

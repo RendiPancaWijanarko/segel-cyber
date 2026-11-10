@@ -1,0 +1,43 @@
+VERDICT: PASS
+D19 Decision Rule: PASSED
+  (1) Schema validity >= 95%: 100.0% (24/24) -> True
+  (2) False positives on 12 consistent items <= 2: 0/12 -> True
+  (3) B1 union AI detects >= 6 of 7 silent items: 7/7 (B1 alone: 4/7) -> True
+
+Prompt File: modelcheck_prompt.txt
+Prompt SHA-256: 1d4d6da9a11d5586af8111697fd591890bc6bf4d09970dc19a8fbb611226defc
+
+=== PERFORMANCE METRICS ===
+Total DEV Items: 24
+Overall Purpose Accuracy: 91.7% (22/24)
+Hard Subset (3 items: ['DEV-14', 'DEV-17', 'DEV-18']) Accuracy: 66.7% (2/3)
+
+--- Accuracy by Class ---
+  L1: 80.0% (4/5)
+  L2: 100.0% (5/5)
+  L3: 100.0% (4/4)
+  L4: 75.0% (3/4)
+  L5: 100.0% (4/4)
+  L6: 100.0% (2/2)
+
+--- Accuracy by Language ---
+  id   : 90.0% (9/10)
+  en   : 90.9% (10/11)
+  mixed: 100.0% (3/3)
+
+=== SILENT DEV ITEMS DETECTION (Total 7) ===
+B1 alone detected:     4/7
+AI alone detected:     7/7
+B1 union AI detected:  7/7
+
+=== CONSISTENT ITEMS FALSE POSITIVES (Total 12) ===
+False Positives Count: 0/12
+  (None: 0 false positives)
+
+=== TIMING & HARDWARE ===
+Warm Latency (Median): 3.322s
+Warm Latency (p95):    3.759s
+Tokens per Second:     18.28
+RAM Status:            skipped (psutil not installed)
+Ollama ps Status:      NAME        ID              SIZE      PROCESSOR          CONTEXT    RUNNER      UNTIL               
+qwen3:4b    359d7dd4bcda    3.2 GB    28%/72% CPU/GPU    2048       llamacpp    29 minutes from now

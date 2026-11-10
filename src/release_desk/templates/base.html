@@ -1,419 +1,1054 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SEGEL Release Desk{% endblock %}</title>
+    <title>{% block title %}SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda{% endblock %}</title>
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/x-icon" href="/static/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+    <link rel="manifest" href="/static/favicons/site.webmanifest">
+    <meta name="theme-color" content="#2D6A4F">
+    <meta name="apple-mobile-web-app-title" content="SEGEL">
+    <meta name="application-name" content="SEGEL">
+
+    <!-- HTMX for reactive hypermedia actions -->
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <!-- Lucide Icons official bundle -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Official SEGEL Design System Stylesheet -->
+    <link rel="stylesheet" href="/static/css/segel.css">
+
     <style>
+        /* ── Unified SEGEL Design System Tokens & Base Overrides ── */
         :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --border: #30363d;
-            --text: #e6edf3;
-            --text-muted: #8b949e;
-            --accent: #58a6ff;
-            --green: #3fb950;
-            --yellow: #d29922;
-            --red: #f85149;
-            --purple: #bc8cff;
-            --cyan: #39d353;
+            --segel-canvas-bg: #F2F7F0;
+            --segel-card-solid: #FFFFFF;
+            --segel-navy: #0F172A;
+            --segel-slate-muted: #64748B;
+            --segel-slate-light: #94A3B8;
+
+            /* 60% Dominant (Canvas & Sage) */
+            --segel-sage-soft: #B8D2AD;
+            --segel-sage-deep: #7A9E6B;
+            --segel-primary: #3B7A32;
+            --segel-primary-hover: #24531E;
+
+            /* 30% Secondary (Warm Sand & Bronze) */
+            --segel-sand-gold: #D1BD99;
+            --segel-sand-amber: #C7B08A;
+            --segel-sand-border: #E8DFD0;
+            --segel-sand-subtle: #F7F4EC;
+
+            /* 10% Accent */
+            --segel-mint-flare: #EBFCF2;
+            --segel-mint-active: #10B981;
+            --segel-lavender: #D9CFED;
+
+            /* Semantic Feedback */
+            --green: #15803D;
+            --green-bg: #EBFCF2;
+            --green-border: #B8D2AD;
+            --yellow: #B45309;
+            --yellow-bg: #FEF3C7;
+            --yellow-border: #D1BD99;
+            --red: #B91C1C;
+            --red-bg: #FEF2F2;
+            --red-border: #FECACA;
+            --blue: #3B7A32;
+            --blue-bg: #F2F7F0;
+            --blue-border: #B8D2AD;
+
+            /* Elevation */
+            --segel-card-shadow: 0 12px 32px -4px rgba(60, 90, 55, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+            --segel-card-radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--segel-canvas-bg);
+            color: var(--segel-navy);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
-        /* ── Header ──────────────────────────────────────────── */
-        header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* ── WebGPU Shader Ambient Canvas ── */
+        .segel-shader-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        header .inner {
+        /* ── Main Canvas Viewport (Spacious & Balanced Matching /zassk) ── */
+        .segel-canvas {
+            width: 100%;
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 24px 32px 40px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            position: relative;
+            z-index: 10;
+            box-sizing: border-box;
+            flex: 1 0 auto;
+        }
+
+        /* ── Design System Custom Scrollbar ── */
+        .segel-custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(122, 158, 107, 0.45) rgba(232, 223, 208, 0.25);
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(232, 223, 208, 0.25);
+            border-radius: 9999px;
+            margin: 4px 0;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(122, 158, 107, 0.45);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: background 0.18s ease;
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 122, 50, 0.75);
+        }
+        .segel-custom-scrollbar::-webkit-scrollbar-thumb:active {
+            background: var(--segel-primary);
+        }
+
+        /* ── Security Demo Banner ── */
+        .segel-security-banner {
+            width: 100%;
+            position: relative;
+            z-index: 20;
+            background: rgba(254, 243, 199, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(209, 189, 153, 0.6);
+            color: #92400E;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 6px 16px;
             display: flex;
             align-items: center;
-            gap: 24px;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.3px;
         }
 
-        .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.5px;
+        /* ── Floating Header & Navigation Dock ── */
+        .segel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 0 0 4px 0;
+            margin-bottom: 2px;
+            position: relative;
+            z-index: 30;
         }
 
-        .logo .seal { color: var(--accent); }
-
-        nav { display: flex; gap: 16px; }
-        nav a {
-            color: var(--text-muted);
-            font-size: 14px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: background 0.15s;
+        .segel-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 9999px;
+            padding: 6px 18px 6px 10px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+            text-decoration: none;
+            color: var(--segel-navy);
+            transition: all 0.2s ease;
         }
-        nav a:hover {
-            color: var(--text);
-            background: var(--border);
+        .segel-brand-pill:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
             text-decoration: none;
         }
-        nav a.active {
-            color: var(--text);
-            background: var(--border);
+
+        .segel-brand-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
-        .badge {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
-            text-transform: uppercase;
+        .segel-brand-text {
+            font-size: 15px;
+            font-weight: 800;
             letter-spacing: 0.5px;
+            color: var(--segel-navy);
         }
-        .badge-green { background: rgba(63,185,80,0.2); color: var(--green); }
-        .badge-yellow { background: rgba(210,153,34,0.2); color: var(--yellow); }
-        .badge-red { background: rgba(248,81,73,0.2); color: var(--red); }
-        .badge-blue { background: rgba(88,166,255,0.2); color: var(--accent); }
-        .badge-purple { background: rgba(188,140,255,0.2); color: var(--purple); }
-        .badge-muted { background: rgba(139,148,158,0.15); color: var(--text-muted); }
 
-        /* ── Cards ────────────────────────────────────────────── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 16px;
+        .segel-dock {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 9999px;
+            padding: 5px;
+            box-shadow: 0 8px 24px -2px rgba(15, 23, 42, 0.06);
+            gap: 6px;
+        }
+
+        .segel-dock-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            text-decoration: none;
+            color: #4B5565;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: inherit;
+        }
+
+        .segel-dock-btn.inactive {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+        }
+        .segel-dock-btn.inactive:hover {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--segel-navy);
+            transform: scale(1.05);
+            text-decoration: none;
+        }
+
+        .segel-dock-btn.active {
+            background: var(--segel-primary);
+            color: #FFFFFF;
+            padding: 8px 18px;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(59, 122, 50, 0.28);
+            text-decoration: none;
+        }
+
+        .segel-header-utilities {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .segel-header-logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1.2px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            overflow: hidden;
+        }
+
+        .segel-header-insignia {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ── Unified Cards & Containers ── */
+        .card, .segel-card {
+            background: var(--segel-card-solid);
+            border: 1px solid rgba(122, 158, 107, 0.2);
+            border-radius: var(--segel-card-radius);
+            box-shadow: var(--segel-card-shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .card:hover, .segel-card:hover {
+            box-shadow: 0 16px 40px -6px rgba(60, 90, 55, 0.12);
+            border-color: rgba(122, 158, 107, 0.35);
         }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--segel-sand-border);
         }
 
         .card-header h2 {
-            font-size: 16px;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--segel-navy);
+            letter-spacing: -0.3px;
         }
 
-        /* ── Stamp Pipeline ──────────────────────────────────── */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--segel-navy);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: var(--segel-slate-muted);
+            margin-top: 4px;
+        }
+
+        /* ── Unified Buttons ── */
+        .btn, .segel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-family: inherit;
+            line-height: 1.2;
+        }
+        .btn:hover, .segel-btn:hover { text-decoration: none; transform: translateY(-1px); }
+
+        .btn-primary, .segel-btn-primary {
+            background: var(--segel-primary);
+            color: #FFFFFF;
+            border-color: var(--segel-primary);
+            box-shadow: 0 4px 12px rgba(59, 122, 50, 0.25);
+        }
+        .btn-primary:hover, .segel-btn-primary:hover {
+            background: var(--segel-primary-hover);
+            border-color: var(--segel-primary-hover);
+            box-shadow: 0 6px 16px rgba(59, 122, 50, 0.35);
+        }
+
+        .btn-secondary, .segel-btn-secondary {
+            background: #FFFFFF;
+            color: var(--segel-navy);
+            border-color: var(--segel-sand-border);
+        }
+        .btn-secondary:hover, .segel-btn-secondary:hover {
+            background: var(--segel-sand-subtle);
+            border-color: var(--segel-sand-gold);
+        }
+
+        .btn-danger, .segel-btn-danger {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border-color: #FECACA;
+        }
+        .btn-danger:hover, .segel-btn-danger:hover {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        /* ── Badges ── */
+        .badge, .segel-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            line-height: 1.4;
+        }
+        .badge-green, .segel-badge-green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+        .badge-yellow, .segel-badge-yellow { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+        .badge-red, .segel-badge-red { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+        .badge-blue, .segel-badge-blue { background: #F1F7F0; color: var(--segel-primary); border-color: var(--segel-sage-soft); }
+        .badge-neutral, .segel-badge-neutral { background: var(--segel-sand-subtle); color: var(--segel-slate-muted); border-color: var(--segel-sand-border); }
+
+        /* ── Tables ── */
+        table, .segel-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13.5px;
+        }
+        th, td {
+            padding: 13px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--segel-sand-border);
+            vertical-align: middle;
+        }
+        th {
+            font-weight: 700;
+            color: var(--segel-slate-muted);
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            background: #F8FAF7;
+            border-top: 1px solid var(--segel-sand-border);
+        }
+        th:first-child { border-top-left-radius: 10px; }
+        th:last-child { border-top-right-radius: 10px; }
+        tr:hover td { background: #F6F9F5; }
+
+        /* ── Forms ── */
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--segel-navy);
+            margin-bottom: 6px;
+        }
+        .form-hint {
+            font-size: 12px;
+            color: var(--segel-slate-muted);
+            margin-top: 6px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--segel-sand-border);
+            border-radius: 10px;
+            color: var(--segel-navy);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--segel-primary);
+            box-shadow: 0 0 0 3px rgba(59, 122, 50, 0.15);
+        }
+
+        /* ── 5-Stamp Pipeline Components ── */
         .stamp-pipeline {
             display: flex;
-            gap: 4px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .stamp {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            background: var(--surface);
-        }
-
-        .stamp-valid { border-color: var(--green); color: var(--green); }
-        .stamp-invalid { border-color: var(--red); color: var(--red); }
-        .stamp-pending { border-color: var(--text-muted); color: var(--text-muted); }
-        .stamp-warn { border-color: var(--yellow); color: var(--yellow); }
-
-        .stamp-arrow {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .stamp-icon { font-size: 14px; }
-
-        /* ── Table ────────────────────────────────────────────── */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th, td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        tr:hover { background: rgba(88,166,255,0.04); }
-
-        /* ── Forms ────────────────────────────────────────────── */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text);
-        }
-
-        .form-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text);
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
-        }
-
-        textarea { resize: vertical; min-height: 80px; }
-
-        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: background 0.15s;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        .btn-primary:hover { background: #4c9aed; }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-        }
-        .btn-secondary:hover { background: var(--border); }
-
-        .btn-danger {
-            background: rgba(248,81,73,0.15);
-            color: var(--red);
-            border-color: var(--red);
-        }
-        .btn-danger:hover { background: rgba(248,81,73,0.25); }
-
-        /* ── Section Headers ─────────────────────────────────── */
-        .page-header {
-            padding: 24px 0;
-        }
-
-        .page-header h1 {
-            font-size: 24px;
+            border-radius: 10px;
+            font-size: 12px;
             font-weight: 700;
+            border: 1px solid var(--segel-sand-border);
+            background: #FFFFFF;
+            color: var(--segel-navy);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+            transition: all 0.15s ease;
         }
-
-        .page-header p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        /* ── Detail Grid ─────────────────────────────────────── */
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        @media (max-width: 768px) {
-            .detail-grid { grid-template-columns: 1fr; }
-        }
-
-        .detail-item {
-            padding: 12px 16px;
-            border-left: 3px solid var(--border);
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .detail-value {
-            font-size: 14px;
-            font-family: 'SFMono-Regular', Consolas, monospace;
-        }
-
-        /* ── Mono ─────────────────────────────────────────────── */
-        code, .mono {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-            font-size: 13px;
-        }
-
-        .hash {
-            color: var(--text-muted);
-            font-size: 12px;
-            font-family: 'SFMono-Regular', Consolas, monospace;
-        }
-
-        /* ── Alerts ───────────────────────────────────────────── */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .alert-success {
-            background: rgba(63,185,80,0.1);
-            border: 1px solid rgba(63,185,80,0.3);
+        .stamp-valid {
+            border-color: var(--green-border);
+            background: var(--green-bg);
             color: var(--green);
         }
-
-        .alert-warning {
-            background: rgba(210,153,34,0.1);
-            border: 1px solid rgba(210,153,34,0.3);
+        .stamp-warn {
+            border-color: var(--yellow-border);
+            background: var(--yellow-bg);
             color: var(--yellow);
         }
-
-        .alert-error {
-            background: rgba(248,81,73,0.1);
-            border: 1px solid rgba(248,81,73,0.3);
+        .stamp-invalid {
+            border-color: var(--red-border);
+            background: var(--red-bg);
             color: var(--red);
         }
-
-        .alert-info {
-            background: rgba(88,166,255,0.1);
-            border: 1px solid rgba(88,166,255,0.3);
-            color: var(--accent);
+        .stamp-pending {
+            border-color: var(--segel-sand-border);
+            background: var(--segel-sand-subtle);
+            color: var(--segel-slate-muted);
+        }
+        .stamp-arrow {
+            display: inline-flex;
+            align-items: center;
+            color: var(--segel-slate-muted);
         }
 
-        /* ── Footer ───────────────────────────────────────────── */
+        /* ── Detail Grid ── */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .detail-item {
+            background: #F9FBF8;
+            border: 1px solid var(--segel-sand-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .detail-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--segel-slate-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--segel-navy);
+        }
+
+        /* ── Alerts ── */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            line-height: 1.5;
+        }
+        .alert-info { background: #F1F7F0; border-color: var(--segel-sage-soft); color: #1E3A2B; }
+        .alert-success { background: var(--green-bg); border-color: var(--green-border); color: #065F46; }
+        .alert-warning { background: var(--yellow-bg); border-color: var(--yellow-border); color: #92400E; }
+        .alert-danger { background: var(--red-bg); border-color: var(--red-border); color: #991B1B; }
+
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+
+        /* ── Footer ── */
         footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border, rgba(122, 158, 107, 0.2));
             padding: 24px 0;
-            margin-top: 48px;
-            border-top: 1px solid var(--border);
             text-align: center;
-            color: var(--text-muted);
-            font-size: 12px;
+            font-size: 13px;
+            color: var(--text-secondary, #475569);
+            position: relative;
+            z-index: 10;
         }
+        footer strong { color: var(--text, var(--segel-navy)); }
 
-        /* ── Loading indicator ────────────────────────────────── */
-        .htmx-indicator {
-            display: none;
-        }
-        .htmx-request .htmx-indicator,
-        .htmx-request.htmx-indicator {
-            display: inline-block;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            display: inline-block;
-        }
-
-        /* ── Security Banner ──────────────────────────────────── */
-        .security-banner {
-            background: rgba(210,153,34,0.1);
-            border: 1px solid rgba(210,153,34,0.3);
-            padding: 8px 16px;
-            font-size: 12px;
-            color: var(--yellow);
-            text-align: center;
+        @media (max-width: 900px) {
+            .segel-header { flex-wrap: wrap; gap: 14px; }
+            .segel-dock { order: 3; width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <div class="security-banner">
-        ⚠️ MVP DEMO MODE — Synthetic keys generated at startup. Not for production use.
-        Release Desk never holds private signing keys (SEC-004).
+
+    <!-- WebGPU / WebGL Shader Background Canvas -->
+    <canvas id="webgpuShaderCanvas" class="segel-shader-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
+
+    <!-- Security Operational Demo Mode Banner -->
+    <div class="segel-security-banner">
+        <i data-lucide="triangle-alert" style="width: 15px; height: 15px;"></i>
+        <span>
+            <strong>MODE DEMO OPERASIONAL MVP:</strong> Kunci kriptografis sintetis diinisialisasi saat boot. Release Desk tidak pernah menyimpan kunci privat penandatanganan (SEC-004).
+        </span>
     </div>
 
-    <header>
-        <div class="container inner">
-            <div class="logo"><span class="seal">⬡</span> SEGEL</div>
-            <nav>
-                <a href="/" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
-                <a href="/release/new" {% if active_page == 'new' %}class="active"{% endif %}>New Release</a>
-                <a href="/ledger" {% if active_page == 'ledger' %}class="active"{% endif %}>Ledger</a>
-                <a href="/trust" {% if active_page == 'trust' %}class="active"{% endif %}>Trust Root</a>
+    <!-- Main Application Viewport (Unified Canvas) -->
+    <div class="segel-canvas">
+        <header class="segel-header">
+            <!-- Brand Pill: PUSSIBERAD -->
+            <a href="/" class="segel-brand-pill" title="PUSSIBERAD — Pusat Siber dan Sandi TNI AD">
+                <img src="/static/images/pussiberad-logo.png" onerror="this.src='/static/images/pussiberad-logo.png'" alt="PUSSIBERAD Logo" class="segel-brand-logo">
+                <span class="segel-brand-text">PUSSIBERAD</span>
+            </a>
+
+            <!-- Center Segmented Floating Dock -->
+            <nav class="segel-dock" id="navDock" aria-label="Navigasi Utama SEGEL">
+                <!-- 1. Dashboard -->
+                <a href="/" class="segel-dock-btn {% if active_page == 'dashboard' or not active_page %}active{% else %}inactive{% endif %}" title="Dashboard">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+                    </svg>
+                    {% if active_page == 'dashboard' or not active_page %}<span>Dashboard</span>{% endif %}
+                </a>
+
+                <!-- 2. New Release -->
+                <a href="/release/new" class="segel-dock-btn {% if active_page == 'new' %}active{% else %}inactive{% endif %}" title="New Release">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
+                    </svg>
+                    {% if active_page == 'new' %}<span>New Release</span>{% endif %}
+                </a>
+
+                <!-- 3. Ledger -->
+                <a href="/ledger" class="segel-dock-btn {% if active_page == 'ledger' %}active{% else %}inactive{% endif %}" title="Ledger">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                    </svg>
+                    {% if active_page == 'ledger' %}<span>Ledger</span>{% endif %}
+                </a>
+
+                <!-- 4. Trust Root -->
+                <a href="/trust" class="segel-dock-btn {% if active_page == 'trust' %}active{% else %}inactive{% endif %}" title="Trust Root">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                    </svg>
+                    {% if active_page == 'trust' %}<span>Trust Root</span>{% endif %}
+                </a>
             </nav>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-                <span class="badge badge-blue">v0.1.0-mvp</span>
+
+            <!-- Right Utilities: TNI & TNI AD Insignia Badges -->
+            <div class="segel-header-utilities">
+                <div class="segel-header-logo-badge" title="Tentara Nasional Indonesia (TNI)" role="img" aria-label="Logo TNI">
+                    <img src="/static/images/logo-tni.svg" alt="Logo TNI" class="segel-header-insignia">
+                </div>
+                <div class="segel-header-logo-badge" title="TNI Angkatan Darat (TNI AD)" role="img" aria-label="Logo TNI AD">
+                    <img src="/static/images/logo-tni-ad.svg" alt="Logo TNI AD" class="segel-header-insignia">
+                </div>
+                <span class="badge badge-blue" style="font-size:11px; padding:6px 12px; font-weight:700;">
+                    v0.1.0-mvp
+                </span>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="container">
+        <!-- Main Content -->
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
-            SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda<br>
+            <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda<br>
             <em>NO EVIDENCE, NO DEPLOYMENT</em> · 5-Stamp Verification Pipeline<br>
-            Origin · Inspect · Approve · Record · Test
+            <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-secondary, #475569);">
+                <span>Origin</span> · <span>Inspect</span> · <span>Approve</span> · <span>Record</span> · <span>Test</span>
+            </span>
+            <div style="margin-top:8px; font-size:12px; color:var(--text-muted, #64748b);">
+                Competition prototype for Kartika Cyber Hackathon 2026, not an official product
+            </div>
         </div>
     </footer>
+
+    <!-- Dual-Engine Background Shader Script (WebGPU + WebGL Fallback) -->
+    <script>
+        // ── 8. WebGPU Anisotropic Lit Rays Shader Background (with WebGL Fallback) ──
+        (function initShaderBackground() {
+            const canvas = document.getElementById('webgpuShaderCanvas');
+            if (!canvas) return;
+
+            const WGSL_SHADER = `
+struct Uniforms {
+  resolution: vec2f,
+  time: f32,
+  pad: f32,
+};
+
+@group(0) @binding(0) var<uniform> u: Uniforms;
+
+struct VertexOutput {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+};
+
+@vertex
+fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
+  var pos = array<vec2f, 3>(
+    vec2f(-1.0, -1.0),
+    vec2f( 3.0, -1.0),
+    vec2f(-1.0,  3.0)
+  );
+  var out: VertexOutput;
+  let p = pos[vertexIndex];
+  out.position = vec4f(p, 0.0, 1.0);
+  out.uv = (p + vec2f(1.0, 1.0)) * 0.5;
+  out.uv.y = 1.0 - out.uv.y;
+  return out;
+}
+
+@fragment
+fn fs_main(in: VertexOutput) -> @location(0) vec4f {
+  let uv = in.uv;
+  let aspect = vec2f(u.resolution.x / u.resolution.y, 1.0);
+  
+  // Origin: Upper-left corner
+  let origin = vec2f(-0.06, -0.06);
+  let p = (uv - origin) * aspect;
+  let r = length(p);
+  let theta = atan2(p.y, p.x);
+
+  // Smooth, subtle fluid silk fold distortion with increased, graceful movement
+  let fold = sin(r * 9.0 - theta * 3.2 + u.time * 0.52) * 0.075 
+           + cos(r * 18.0 + theta * 4.8 - u.time * 0.35) * 0.032;
+  let warpedTheta = theta + fold;
+
+  // Multi-frequency angular ray generation
+  var rays = 0.0;
+  rays += (sin(warpedTheta * 14.0) * 0.5 + 0.5) * 0.44;
+  rays += (sin(warpedTheta * 30.0 + 1.2) * 0.5 + 0.5) * 0.28;
+  rays += (sin(warpedTheta * 62.0 + 2.5) * 0.5 + 0.5) * 0.18;
+  rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
+  rays = pow(rays, 1.8) * 1.6;
+
+  // Soft caustics crest with subtle outward propagation
+  var crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0 - u.time * 0.55);
+  crest = smoothstep(-0.35, 0.65, crest);
+
+  // Radial and angular envelopes
+  let radialFalloff = smoothstep(0.04, 0.38, r) * smoothstep(1.7, 0.52, r);
+  let angularMask = smoothstep(0.02, 0.42, theta) * smoothstep(1.38, 0.88, theta);
+
+  let rayIntensity = rays * crest * radialFalloff * angularMask;
+  let ambientSheen = crest * radialFalloff * angularMask * 0.26;
+
+  // --- Light Mode Triadic Color Composition ---
+  let c_canvas     = vec3f(0.948, 0.970, 0.942); // Clean military white-sage (#F2F7F0)
+  let c_sage_soft  = vec3f(0.720, 0.825, 0.680); // TNI AD Sage Green (60%)
+  let c_sage_deep  = vec3f(0.480, 0.620, 0.420); // Tactical Midtone
+  let c_sand_gold  = vec3f(0.820, 0.740, 0.600); // Warm Sand / Bronze (30%)
+  let c_mint_flare = vec3f(0.920, 0.990, 0.950); // Luminous Mint Glow (10%)
+  let c_lavender   = vec3f(0.850, 0.810, 0.930); // Triadic Iridescent Accent
+
+  // 1. Blend ambient sage over the bright canvas base
+  var color = mix(c_canvas, c_sage_soft, clamp(ambientSheen * 1.8, 0.0, 0.85));
+
+  // 2. Add tactical sand/bronze warmth into the flowing folds
+  color = mix(color, c_sand_gold, clamp(rayIntensity * 1.2, 0.0, 0.75));
+
+  // 3. Modulate deeper sage ripples for depth
+  let rippleShadow = pow(clamp(rayIntensity * (1.0 - crest * 0.5), 0.0, 1.0), 2.2);
+  color = mix(color, c_sage_deep, rippleShadow * 0.35);
+
+  // 4. Highlight crests with luminous mint and iridescent violet
+  let specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
+  let highlight = mix(c_mint_flare, c_lavender, sin(u.time * 0.85 + r * 4.0) * 0.5 + 0.5);
+  color = mix(color, highlight, specularPeak * 0.65);
+
+  return vec4f(color, 1.0);
+}
+`;
+
+            const GLSL_VS = `
+attribute vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}
+`;
+
+            const GLSL_FS = `
+precision highp float;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution;
+  uv.y = 1.0 - uv.y;
+  vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
+  
+  vec2 origin = vec2(-0.06, -0.06);
+  vec2 p = (uv - origin) * aspect;
+  float r = length(p);
+  float theta = atan(p.y, p.x);
+
+  float fold = sin(r * 9.0 - theta * 3.2 + u_time * 0.52) * 0.075 
+             + cos(r * 18.0 + theta * 4.8 - u_time * 0.35) * 0.032;
+  float warpedTheta = theta + fold;
+
+  float rays = 0.0;
+  rays += (sin(warpedTheta * 14.0) * 0.5 + 0.5) * 0.44;
+  rays += (sin(warpedTheta * 30.0 + 1.2) * 0.5 + 0.5) * 0.28;
+  rays += (sin(warpedTheta * 62.0 + 2.5) * 0.5 + 0.5) * 0.18;
+  rays += (sin(warpedTheta * 110.0 + 4.0) * 0.5 + 0.5) * 0.10;
+  rays = pow(rays, 1.8) * 1.6;
+
+  float crest = sin(r * 7.5 - warpedTheta * 6.5 + fold * 4.0 - u_time * 0.55);
+  crest = smoothstep(-0.35, 0.65, crest);
+
+  float radialFalloff = smoothstep(0.04, 0.38, r) * smoothstep(1.7, 0.52, r);
+  float angularMask = smoothstep(0.02, 0.42, theta) * smoothstep(1.38, 0.88, theta);
+
+  float rayIntensity = rays * crest * radialFalloff * angularMask;
+  float ambientSheen = crest * radialFalloff * angularMask * 0.26;
+
+  vec3 c_canvas     = vec3(0.948, 0.970, 0.942);
+  vec3 c_sage_soft  = vec3(0.720, 0.825, 0.680);
+  vec3 c_sage_deep  = vec3(0.480, 0.620, 0.420);
+  vec3 c_sand_gold  = vec3(0.820, 0.740, 0.600);
+  vec3 c_mint_flare = vec3(0.920, 0.990, 0.950);
+  vec3 c_lavender   = vec3(0.850, 0.810, 0.930);
+
+  vec3 color = mix(c_canvas, c_sage_soft, clamp(ambientSheen * 1.8, 0.0, 0.85));
+  color = mix(color, c_sand_gold, clamp(rayIntensity * 1.2, 0.0, 0.75));
+
+  float rippleShadow = pow(clamp(rayIntensity * (1.0 - crest * 0.5), 0.0, 1.0), 2.2);
+  color = mix(color, c_sage_deep, rippleShadow * 0.35);
+
+  float specularPeak = pow(clamp(rayIntensity * crest, 0.0, 1.0), 3.0);
+  vec3 highlight = mix(c_mint_flare, c_lavender, sin(u_time * 0.85 + r * 4.0) * 0.5 + 0.5);
+  color = mix(color, highlight, specularPeak * 0.65);
+
+  gl_FragColor = vec4(color, 1.0);
+}
+`;
+
+            function runWebGLFallback() {
+                const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                if (!gl) return;
+
+                function compile(type, src) {
+                    const s = gl.createShader(type);
+                    gl.shaderSource(s, src);
+                    gl.compileShader(s);
+                    return s;
+                }
+
+                const vs = compile(gl.VERTEX_SHADER, GLSL_VS);
+                const fs = compile(gl.FRAGMENT_SHADER, GLSL_FS);
+                const prog = gl.createProgram();
+                gl.attachShader(prog, vs);
+                gl.attachShader(prog, fs);
+                gl.linkProgram(prog);
+                gl.useProgram(prog);
+
+                const buf = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+
+                const posAttr = gl.getAttribLocation(prog, 'position');
+                gl.enableVertexAttribArray(posAttr);
+                gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+
+                const resLoc = gl.getUniformLocation(prog, 'u_resolution');
+                const timeLoc = gl.getUniformLocation(prog, 'u_time');
+
+                function resize() {
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    const w = Math.floor(window.innerWidth * dpr);
+                    const h = Math.floor(window.innerHeight * dpr);
+                    if (canvas.width !== w || canvas.height !== h) {
+                        canvas.width = w;
+                        canvas.height = h;
+                    }
+                    gl.viewport(0, 0, w, h);
+                }
+
+                window.addEventListener('resize', resize);
+                resize();
+
+                const t0 = performance.now();
+                function loop(now) {
+                    const time = (now - t0) * 0.001;
+                    gl.uniform2f(resLoc, canvas.width, canvas.height);
+                    gl.uniform1f(timeLoc, time);
+                    gl.drawArrays(gl.TRIANGLES, 0, 3);
+                    requestAnimationFrame(loop);
+                }
+                requestAnimationFrame(loop);
+            }
+
+            async function runWebGPU() {
+                if (!navigator.gpu) {
+                    runWebGLFallback();
+                    return;
+                }
+                try {
+                    const adapter = await navigator.gpu.requestAdapter();
+                    if (!adapter) {
+                        runWebGLFallback();
+                        return;
+                    }
+                    const device = await adapter.requestDevice();
+                    const ctx = canvas.getContext('webgpu');
+                    if (!ctx) {
+                        runWebGLFallback();
+                        return;
+                    }
+                    const format = navigator.gpu.getPreferredCanvasFormat();
+                    ctx.configure({
+                        device,
+                        format,
+                        alphaMode: 'premultiplied'
+                    });
+
+                    const shaderModule = device.createShaderModule({
+                        label: 'Anisotropic Caustic Rays WGSL',
+                        code: WGSL_SHADER
+                    });
+
+                    const uniformBuffer = device.createBuffer({
+                        size: 16,
+                        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    });
+
+                    const bgl = device.createBindGroupLayout({
+                        entries: [{
+                            binding: 0,
+                            visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+                            buffer: { type: 'uniform' }
+                        }]
+                    });
+
+                    const bg = device.createBindGroup({
+                        layout: bgl,
+                        entries: [{
+                            binding: 0,
+                            resource: { buffer: uniformBuffer }
+                        }]
+                    });
+
+                    const pipeline = device.createRenderPipeline({
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [bgl] }),
+                        vertex: { module: shaderModule, entryPoint: 'vs_main' },
+                        fragment: {
+                            module: shaderModule,
+                            entryPoint: 'fs_main',
+                            targets: [{ format }]
+                        },
+                        primitive: { topology: 'triangle-list' }
+                    });
+
+                    const uniformData = new Float32Array(4);
+
+                    function resize() {
+                        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                        const w = Math.max(1, Math.floor(window.innerWidth * dpr));
+                        const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+                        if (canvas.width !== w || canvas.height !== h) {
+                            canvas.width = w;
+                            canvas.height = h;
+                        }
+                    }
+
+                    window.addEventListener('resize', resize);
+                    resize();
+
+                    const t0 = performance.now();
+                    function loop(now) {
+                        const time = (now - t0) * 0.001;
+                        uniformData[0] = canvas.width;
+                        uniformData[1] = canvas.height;
+                        uniformData[2] = time;
+                        uniformData[3] = 0;
+
+                        device.queue.writeBuffer(uniformBuffer, 0, uniformData.buffer);
+
+                        const enc = device.createCommandEncoder();
+                        const pass = enc.beginRenderPass({
+                            colorAttachments: [{
+                                view: ctx.getCurrentTexture().createView(),
+                                clearValue: { r: 0.948, g: 0.970, b: 0.942, a: 1.0 },
+                                loadOp: 'clear',
+                                storeOp: 'store'
+                            }]
+                        });
+                        pass.setPipeline(pipeline);
+                        pass.setBindGroup(0, bg);
+                        pass.draw(3, 1, 0, 0);
+                        pass.end();
+
+                        device.queue.submit([enc.finish()]);
+                        requestAnimationFrame(loop);
+                    }
+                    requestAnimationFrame(loop);
+                } catch (e) {
+                    console.warn('WebGPU init failed, using WebGL fallback:', e);
+                    runWebGLFallback();
+                }
+            }
+
+            runWebGPU();
+        })();
+    </script>
+
+    <!-- Lucide Icons Rendering with Offline Air-Gap SVG Fallback -->
+    <script>
+        const LUCIDE_ICONS_SVG = {
+            'shield': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+            'shield-check': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+            'shield-alert': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+            'activity': '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+            'plus-circle': '<circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>',
+            'database': '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+            'key-round': '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>',
+            'factory': '<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>',
+            'search-check': '<path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+            'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>',
+            'flask-conical': '<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>',
+            'package': '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+            'arrow-right': '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+            'triangle-alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+            'check-circle-2': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+            'info': '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+            'plus': '<path d="M5 12h14"/><path d="M12 5v14"/>',
+            'rotate-ccw': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+            'file-text': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'
+        };
+
+        function renderLucideIcons() {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                try {
+                    window.lucide.createIcons({ attrs: { 'stroke-width': 2 } });
+                    return;
+                } catch (e) {}
+            }
+            document.querySelectorAll('[data-lucide]').forEach(function(el) {
+                const name = el.getAttribute('data-lucide');
+                const innerSvg = LUCIDE_ICONS_SVG[name];
+                if (!innerSvg) return;
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke-width', '2');
+                svg.setAttribute('stroke-linecap', 'round');
+                svg.setAttribute('stroke-linejoin', 'round');
+                el.classList.forEach(function(cls) { svg.classList.add(cls); });
+                svg.innerHTML = innerSvg;
+                el.replaceWith(svg);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', renderLucideIcons);
+        if (document.readyState !== 'loading') renderLucideIcons();
+    </script>
 </body>
 </html>
-

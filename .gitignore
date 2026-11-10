@@ -48,4 +48,10 @@ lab/corpus/generated/
 *.tmp
 *.bak
 *.log
+.worktree_temp/
+
+# Node / Frontend
+node_modules/
+.npm/
+package-lock.json
 

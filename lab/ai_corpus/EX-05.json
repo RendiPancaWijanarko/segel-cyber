@@ -1,0 +1,45 @@
+{
+  "id": "EX-05",
+  "split": "exemplar",
+  "language": "id",
+  "purpose": "Pengalihan tujuan log audit gateway wilayah ke server terpusat",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "syslog.datacenter.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L3",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "mismatch_kind": "none",
+  "notes": "Exemplar 5: Indonesian L3 non-weakening syslog redirect"
+}

@@ -1,0 +1,50 @@
+{
+  "id": "EX-01",
+  "split": "exemplar",
+  "language": "id",
+  "purpose": "Pembaruan alamat server resolusi nama domain kantor cabang",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "10.10.1.1"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [
+      "10.10.1.1",
+      "10.10.1.53"
+    ],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L1",
+  "label": "consistent",
+  "inconsistency_class": null,
+  "mismatch_kind": "none",
+  "notes": "Exemplar 1: Indonesian L1 DNS allowlist update"
+}

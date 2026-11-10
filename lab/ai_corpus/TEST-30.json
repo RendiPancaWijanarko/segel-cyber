@@ -1,0 +1,50 @@
+{
+  "id": "TEST-30",
+  "split": "test",
+  "language": "id",
+  "purpose": "Reorganisasi direktori akses identitas pengguna sistem monitoring",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "sysmon-lead-01",
+        "privilege": "sudo"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "privilege_escalation",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 account add but grants sudo privilege (reject)"
+}

@@ -7,19 +7,17 @@ Tests capability extraction, policy evaluation, and inspect attestation.
 import pytest
 
 from inspector.inspector import (
-    extract_capabilities,
-    evaluate_policy,
-    inspect_release,
     create_inspect_attestation,
+    evaluate_policy,
+    extract_capabilities,
+    inspect_release,
     sign_inspect,
-    CAPABILITY_RULES,
-    POLICY_RULES_V1,
 )
-from segel_core.crypto.ed25519 import generate_keypair
+from segel_core.canonical import canonical_json
 from segel_core.crypto.dsse import verify_envelope
+from segel_core.crypto.ed25519 import generate_keypair
 from segel_core.crypto.hashing import sha256_hex
 from segel_core.schemas.manifest import Manifest, SubjectDigest
-from segel_core.canonical import canonical_json
 
 
 def _make_manifest(release_id="TEST-1", sequence=1):
@@ -209,4 +207,90 @@ class TestInspectAttestation:
             expected_payload_type="application/vnd.segel.inspect+json",
         )
         assert inspector_key.key_id in vr.valid_key_ids
+
+
+class TestRegexIdentifierBoundaries:
+    """Test regex pattern identifier boundaries and false-match prevention (AI-2b)."""
+
+    @pytest.mark.parametrize(
+        ("content", "false_word"),
+        [
+            (b"import: true\n", "import:"),
+            (b"support: 24x7\n", "support:"),
+            (b"report: /var/log/report.txt\n", "report:"),
+            (b"pseudo: false\n", "pseudo:"),
+            (b"oauth: v2\n", "oauth:"),
+            (b"nameserver: 1.1.1.1\n", "nameserver:"),
+            (b"csrftoken: abcdef123456\n", "csrftoken:"),
+            (b"author: devsecops\n", "author:"),
+            (b"antiforgerytoken: xyz\n", "antiforgerytoken:"),
+            (b"teleport: disabled\n", "teleport:"),
+            (b"webserver: nginx\n", "webserver:"),
+            (b"desudo: true\n", "desudo:"),
+        ],
+    )
+    def test_false_match_produces_no_capabilities(self, content: bytes, false_word: str) -> None:
+        """Assert that words embedding regex substrings do not produce capabilities."""
+        caps = extract_capabilities({"config.yaml": content})
+        assert len(caps) == 0, f"Expected 0 capabilities for '{false_word}', got: {caps}"
+
+    def test_combined_false_matches_produce_no_capabilities(self) -> None:
+        """Assert that a configuration with multiple common false-match keywords produces nothing."""
+        content = (
+            b"# System configuration\n"
+            b"import: standard\n"
+            b"support: helpdesk@internal\n"
+            b"report: weekly\n"
+            b"pseudo: none\n"
+            b"oauth: internal_sso\n"
+            b"nameserver: 10.0.0.53\n"
+            b"csrftoken: csrf_token_val\n"
+            b"author: release_engineer\n"
+        )
+        caps = extract_capabilities({"config/settings.yaml": content})
+        assert len(caps) == 0, f"Expected 0 capabilities for false matches, got: {caps}"
+
+    @pytest.mark.parametrize(
+        ("content", "expected_cap"),
+        [
+            # network_listen
+            (b"port: 8080\n", "network_listen"),
+            (b"port = 8080\n", "network_listen"),
+            (b"  port: 443\n", "network_listen"),
+            (b"app_port: 8080\n", "network_listen"),
+            (b"listen_port: 22\n", "network_listen"),
+            (b"ssh-port: 22\n", "network_listen"),
+            (b"http.port: 80\n", "network_listen"),
+            (b"server: localhost\n", "network_listen"),
+            (b"listen: 0.0.0.0\n", "network_listen"),
+            (b"bind_address: 127.0.0.1\n", "network_listen"),
+            # file_write
+            (b"log_file: /var/log/app.log\n", "file_write"),
+            (b"output_path: /tmp/out\n", "file_write"),
+            (b"write_dir: /tmp/write\n", "file_write"),
+            (b"data_dir: /var/data\n", "file_write"),
+            # external_connect
+            (b"upstream: http://backend:8080\n", "external_connect"),
+            (b"remote_host: egress.domain.local\n", "external_connect"),
+            (b"proxy: http://proxy:3128\n", "external_connect"),
+            (b"api_url: https://api.internal\n", "external_connect"),
+            # credential_reference
+            (b"auth: basic\n", "credential_reference"),
+            (b"token: eyJhbGciOi...\n", "credential_reference"),
+            (b"password: mysecret\n", "credential_reference"),
+            (b"secret: s3cr3t\n", "credential_reference"),
+            (b"api_key: key-999\n", "credential_reference"),
+            # privilege_escalation
+            (b"sudo: ALL=(ALL)\n", "privilege_escalation"),
+            (b"app_sudo: false\n", "privilege_escalation"),
+            (b"run_as_root: true\n", "privilege_escalation"),
+            (b"privileged: yes\n", "privilege_escalation"),
+        ],
+    )
+    def test_intended_positive_controls_detected(self, content: bytes, expected_cap: str) -> None:
+        """Assert that intended positive keywords with boundaries are correctly detected."""
+        caps = extract_capabilities({"config.yaml": content})
+        cap_ids = {c["capability_id"] for c in caps}
+        assert expected_cap in cap_ids, f"Expected '{expected_cap}' in {cap_ids} for content {content!r}"
+
 

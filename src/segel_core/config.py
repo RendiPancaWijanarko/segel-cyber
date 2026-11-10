@@ -32,6 +32,10 @@ class SegelConfig:
     unit_role: str
     ollama_host: str
     ollama_model: str
+    ai_enabled: bool = False
+    ai_endpoint: str = "http://127.0.0.1:11434"
+    ai_model: str = "qwen3:4b"
+    ai_timeout_s: float = 30.0
 
     def is_demo(self) -> bool:
         return self.mode == "demo"
@@ -131,6 +135,16 @@ def load_config(env_file: Path | str | None = None, auto_load_dotenv: bool = Fal
     ollama_host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").strip()
     ollama_model = os.getenv("OLLAMA_MODEL", "llama3:8b").strip()
 
+    ai_enabled_raw = os.getenv("SEGEL_AI_ENABLED", "0").lower().strip()
+    ai_enabled = ai_enabled_raw in {"1", "true", "yes"}
+    ai_endpoint = os.getenv("SEGEL_AI_ENDPOINT", "http://127.0.0.1:11434").strip()
+    ai_model = os.getenv("SEGEL_AI_MODEL", "qwen3:4b").strip()
+    timeout_raw = os.getenv("SEGEL_AI_TIMEOUT_S", "30").strip()
+    try:
+        ai_timeout_s = float(timeout_raw)
+    except ValueError:
+        ai_timeout_s = 30.0
+
     return SegelConfig(
         mode=mode,
         log_level=log_level,
@@ -144,4 +158,8 @@ def load_config(env_file: Path | str | None = None, auto_load_dotenv: bool = Fal
         unit_role=unit_role,
         ollama_host=ollama_host,
         ollama_model=ollama_model,
+        ai_enabled=ai_enabled,
+        ai_endpoint=ai_endpoint,
+        ai_model=ai_model,
+        ai_timeout_s=ai_timeout_s,
     )

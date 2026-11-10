@@ -221,13 +221,29 @@ class InspectPredicate(BaseModel):
         pattern=r"^(ok|failed|skipped)$",
         description="Status of AI analysis: ok, failed, or skipped",
     )
+    ai_error_code: str = Field(
+        default="",
+        description="Error code if AI analysis failed",
+    )
     ai_model_id: str = Field(
         default="",
         description="Identifier of the AI model used, if any",
     )
+    ai_model_digest: str = Field(
+        default="",
+        description="Digest of the AI model from Ollama tags",
+    )
     ai_prompt_digest: str = Field(
         default="",
         description="SHA-256 digest of the AI prompt template used",
+    )
+    ai_class: str = Field(
+        default="",
+        description="Predicted purpose class (L1..L6)",
+    )
+    ai_reason: str = Field(
+        default="",
+        description="Short advisory explanation from the AI model",
     )
     capabilities: list[dict[str, Any]] = Field(
         default_factory=list,

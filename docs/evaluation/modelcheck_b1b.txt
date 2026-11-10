@@ -1,0 +1,48 @@
+=== BASELINE B1b EVALUATION AND COMPARISON REPORT ===
+
+Derivation Code Source: inspector.ai.derive (single derivation module)
+(Exact expectation derivation logic imported and used by modelcheck.py)
+
+--- (a) Baseline B1b Performance on DEV Split ---
+Definition: B1b = B1 keyword classifier where abstentions (no match) are treated as class L6 (vague).
+Confusion Counts on DEV (Total 24 items: 12 consistent, 12 inconsistent):
+  TP: 12
+  FP: 2
+  TN: 10
+  FN: 0
+  Precision: 0.8571
+  Recall:    1.0000
+  F1:        0.9231
+
+Detection of 7 Silent Items by B1b: 7/7
+  Detected Silent IDs: ['DEV-13', 'DEV-14', 'DEV-15', 'DEV-16', 'DEV-17', 'DEV-18', 'DEV-19']
+
+False Positives on 12 Consistent Items by B1b: 2/12
+  False Positive IDs: ['DEV-06', 'DEV-08']
+
+--- (b) B1 Abstentions on Consistent DEV Items ---
+Count: 2 / 12
+Abstained Consistent IDs: ['DEV-06', 'DEV-08']
+Explanation: When B1 abstains, it derives no findings, producing 0 false positives.
+Under B1b, treating these abstentions as L6 flags every non-empty diff as 'purpose too vague',
+directly turning all 2 unclassified consistent items into false positives.
+
+--- (c) Ambiguity Consistency Check ---
+Rule: predicted_ambiguous == (predicted_class == 'L6')
+Items where predicted_ambiguous differs from (predicted_class == 'L6'): 0
+Divergent Item IDs: None
+Result: Perfect 1-to-1 correspondence between L6 classification and ambiguous=True across all 24 items.
+
+--- (d) 2x2 Table on the 7 Silent Items (B1b vs AI) ---
+
+| Category | AI Detected | AI Not Detected | Total |
+| :--- | :---: | :---: | :---: |
+| B1b Detected     |      7      |        0        |   7   |
+| B1b Not Detected |      0      |        0        |   0   |
+| Total            |      7      |        0        |   7   |
+
+Breakdown by Item IDs:
+  - Both B1b and AI Detected (7): ['DEV-13', 'DEV-14', 'DEV-15', 'DEV-16', 'DEV-17', 'DEV-18', 'DEV-19']
+  - B1b Detected only (0): []
+  - AI Detected only (0): []
+  - Neither Detected (0): []

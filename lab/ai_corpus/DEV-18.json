@@ -1,0 +1,50 @@
+{
+  "id": "DEV-18",
+  "split": "dev",
+  "language": "en",
+  "purpose": "General system update and routine parameter refresh for branch nodes",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "maint-operator-02",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L6",
+  "label": "inconsistent",
+  "inconsistency_class": "vague_or_misleading_purpose",
+  "mismatch_kind": "silent",
+  "notes": "Silent: vague L6 English with account_added (pass)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "TEST-33",
+  "split": "test",
+  "language": "en",
+  "purpose": "Forward audit log stream to new compliance aggregation endpoint",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "log-old.compliance.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [],
+    "logging": {
+      "enabled": true,
+      "destination": "log-new.compliance.example.com"
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": [
+      "sha256:aabbcc112233"
+    ]
+  },
+  "expected_purpose_class": "L3",
+  "label": "inconsistent",
+  "inconsistency_class": "control_weakening",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L3 logging redirect but also adds trust_anchor_added (warn)"
+}

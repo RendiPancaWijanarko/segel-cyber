@@ -8,7 +8,7 @@
 |------|--------|---------|
 | Core Library | ✅ Complete | Crypto, schemas, verification, errors |
 | Components | ✅ Complete | All 12 components implemented |
-| Tests | ✅ 232 passing | Unit, integration, adversarial, property, web UI, CLIs (82.56% coverage) |
+| Tests | ✅ 310 passing | Unit, integration, adversarial, gaps, property, web UI, CLIs — see `docs/TEST_REPORT.md` |
 | Web UI | ✅ Complete | 6 templates, FastAPI routes, canary deploy & promotion |
 | Documentation | ✅ Complete | 9 documents (Architecture, Security, Test Report, Limitations, etc.) |
 | Demo | ✅ Complete | 18-step lifecycle script + 5 rejection scenarios |
@@ -54,7 +54,7 @@
 | CLI — Approver | `approver/cli.py` | ~104 | Approval device CLI |
 | CLI — Witness | `witness/cli.py` | ~119 | Witness cosigning CLI |
 
-### Tests (232 Passing, 82.56% Coverage)
+### Tests (310 Passing Suite)
 
 | Test File | Tests | Category |
 |-----------|-------|----------|
@@ -64,15 +64,26 @@
 | `tests/unit/test_builder.py` | 22 | Packaging, determinism, path validation |
 | `tests/unit/test_inspector.py` | 21 | Capability extraction, policy engine, AI fail-safe |
 | `tests/unit/test_ledger.py` | 25 | SQLite ledger, Merkle inclusion, checkpoints |
-| `tests/unit/test_receiver.py` | 14 | Offline verification, 10-step lifecycle, rollback |
+| `tests/unit/test_receiver.py` | 16 | Offline verification, 10-step lifecycle, rollback |
+| `tests/unit/test_receiver_offline_isolation.py` | 2 | Offline network isolation & socket blocking |
+| `tests/unit/test_receiver_p0_hardening.py` | 11 | P0 crash recovery, rollback, and locking |
+| `tests/unit/test_schemas_coverage.py` | 22 | Schema validation and edge cases |
 | `tests/unit/test_approver.py` | 4 | Approval payload, QR request/response, envelopes |
 | `tests/unit/test_witness.py` | 6 | Checkpoint cosigning, fork rejection, consistency |
 | `tests/unit/test_passport_and_promotion.py` | 5 | Passport builder, canary promotion evaluation |
-| `tests/unit/test_release_desk.py` | 7 | Web UI routes, canary deployment, promotion |
+| `tests/unit/test_release_desk.py` | 11 | Web UI routes, canary deployment, promotion |
 | `tests/unit/test_clis.py` | 6 | Receiver, approver, and witness CLI commands |
+| `tests/unit/test_config.py` | 6 | Configuration loading and validation |
+| `tests/unit/test_ledger_concurrency.py` | 3 | Concurrency and locking |
 | `tests/unit/test_properties.py` | 16 | Hypothesis property-based testing |
 | `tests/integration/test_lifecycle.py` | 6 | End-to-end 18-step lifecycle + rejections |
 | `tests/adversarial/test_adversarial.py` | 25 | Security attack vector test matrix (AT-series) |
+| `tests/adversarial/test_at_NNN.py` | 43 | Extended adversarial test suite (AT-001..AT-045) |
+| `tests/gaps/test_c1_sec004.py` | 3 | Phase C red test — SEC-004 key separation |
+| `tests/gaps/test_c2_fr051.py` | 4 | Phase C red test — FR-051 ledger gate |
+| `tests/gaps/test_c3_sec017.py` | 4 | Phase C red test — SEC-017 audit log |
+| `tests/gaps/test_c4_fr066.py` | 4 | Phase C red test — FR-066 TUP verification |
+| `tests/gaps/test_c5_at030_crash.py` | 3 | Phase C red test — AT-030 crash recovery |
 
 ### Documentation
 
@@ -90,4 +101,4 @@
 
 ## Known Issues
 
-None. All 232 tests pass. 100% test pass rate with 82.56% code coverage. All components and workflows are integrated, testable, and demonstrable.
+310 tests pass across unit, integration, adversarial, and gaps suites as of 2026-11-09. Operational boundaries and deferred P1 items are documented in `docs/limitations.md` and `docs/deviations.md`.

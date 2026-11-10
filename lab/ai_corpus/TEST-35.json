@@ -1,0 +1,87 @@
+{
+  "id": "TEST-35",
+  "split": "test",
+  "language": "id",
+  "purpose": "Penyelarasan berkala identitas personel pengelola jaringan cabang",
+  "previous_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "radio-op-01",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "candidate_baseline": {
+    "firewall": {
+      "outbound_allowed": []
+    },
+    "dns_allowlist": [],
+    "services": {
+      "enabled": [],
+      "disabled": []
+    },
+    "accounts": [
+      {
+        "name": "radio-op-01",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-02",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-03",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-04",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-05",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-06",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-07",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-08",
+        "privilege": "standard"
+      },
+      {
+        "name": "radio-op-09",
+        "privilege": "standard"
+      }
+    ],
+    "logging": {
+      "enabled": true,
+      "destination": ""
+    },
+    "scheduled_tasks": [],
+    "trust_anchors": []
+  },
+  "expected_purpose_class": "L2",
+  "label": "inconsistent",
+  "inconsistency_class": "over_broad_change",
+  "mismatch_kind": "deterministic",
+  "notes": "Deterministic: claims L2 single account add but adds 8 accounts (broad_change, >=8)"
+}
