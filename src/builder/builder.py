@@ -15,6 +15,7 @@ Per SEC-017:
 from __future__ import annotations
 
 import io
+import re
 import tarfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -121,11 +122,12 @@ def build_release_package(
             size=len(content),
         ))
 
-    # Build manifest
+    # Build manifest (sanitize control characters per D16 defense-in-depth)
+    clean_purpose = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", purpose) if purpose else purpose
     manifest = Manifest(
         release_id=release_id,
         sequence=sequence,
-        purpose=purpose,
+        purpose=clean_purpose,
         subjects=subjects,
         canary_targets=canary_targets or [],
         general_scope=general_scope or [],
