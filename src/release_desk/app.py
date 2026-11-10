@@ -140,6 +140,10 @@ class DemoState:
     def __init__(self) -> None:
         self.reset()
 
+    @property
+    def demo_keys(self) -> Any:
+        return self._demo_keys
+
     def reset(self) -> None:
         # Generate synthetic demo keys via external demo infra
         self._demo_keys = generate_demo_bundle()
@@ -189,7 +193,8 @@ demo = DemoState()
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
     promoted_count = sum(1 for r in demo.releases if r.get("status") == "PROMOTED")
-    candidate_count = sum(1 for r in demo.releases if r.get("status") in ("CANDIDATE_RECORDED", "CANARY_DEPLOYED"))
+    active_statuses = ("CANDIDATE_RECORDED", "CANARY_DEPLOYED")
+    candidate_count = sum(1 for r in demo.releases if r.get("status") in active_statuses)
     passed_count = sum(1 for r in demo.releases if r.get("verdict") == "PASS")
     pass_rate = int((passed_count / len(demo.releases)) * 100) if demo.releases else 100
 
@@ -265,10 +270,10 @@ async def create_release(
         )
 
         # Step 3: Author signs manifest
-        manifest_env = sign_manifest(build_result, demo._demo_keys.author_key)
+        manifest_env = sign_manifest(build_result, demo.demo_keys.author_key)
 
         # Step 4: Builder signs origin
-        origin_env = sign_origin(build_result, demo._demo_keys.builder_key)
+        origin_env = sign_origin(build_result, demo.demo_keys.builder_key)
 
         # Step 5-7: Inspect
         inspection = inspect_release(
@@ -278,7 +283,7 @@ async def create_release(
         inspect_stmt = create_inspect_attestation(
             inspection, build_result.manifest, build_result.manifest_digest,
         )
-        inspect_env = sign_inspect(inspect_stmt, demo._demo_keys.inspector_key)
+        inspect_env = sign_inspect(inspect_stmt, demo.demo_keys.inspector_key)
 
         # Step 8-9: Approve (2-of-3 via standalone signer service per SEC-004)
         ack_digest = ""
@@ -312,7 +317,7 @@ async def create_release(
             "manifest_sha256": build_result.manifest_digest,
         }
         entry = demo.ledger.append("candidate_recorded", candidate_event)
-        signed_cp = demo.ledger.sign_checkpoint(demo._demo_keys.ledger_key)
+        signed_cp = demo.ledger.sign_checkpoint(demo.demo_keys.ledger_key)
 
         # Witness cosign
         consistency_proof = None
@@ -326,7 +331,7 @@ async def create_release(
             signed_cp.checkpoint, consistency_proof=consistency_proof,
         )
         demo.ledger.add_witness_cosignature(
-            signed_cp.checkpoint.size, demo._demo_keys.witness_key.key_id, cosig,
+            signed_cp.checkpoint.size, demo.demo_keys.witness_key.key_id, cosig,
         )
 
         # Build candidate passport
@@ -491,7 +496,7 @@ async def deploy_canary(request: Request, idx: int) -> HTMLResponse:
         canary_receipt_envelopes = []
 
         for i, (canary_key, unit_id) in enumerate(
-            zip(demo._demo_keys.canary_keys, ["canary-1", "canary-2"], strict=False)
+            zip(demo.demo_keys.canary_keys, ["canary-1", "canary-2"], strict=False)
         ):
             import tempfile
             deploy_dir = Path(tempfile.mkdtemp(prefix=f"segel-canary-{i+1}-"))
@@ -605,7 +610,7 @@ async def promote_release(request: Request, idx: int) -> HTMLResponse:
             "healthy_canary_units": promotion_result.healthy_units,
         }
         promotion_entry = demo.ledger.append("release_promoted", promotion_event)
-        signed_cp2 = demo.ledger.sign_checkpoint(demo._demo_keys.ledger_key)
+        signed_cp2 = demo.ledger.sign_checkpoint(demo.demo_keys.ledger_key)
 
         # Witness cosign
         proof_hex2 = demo.ledger.consistency_proof(
@@ -617,7 +622,7 @@ async def promote_release(request: Request, idx: int) -> HTMLResponse:
             signed_cp2.checkpoint, consistency_proof=consistency_proof,
         )
         demo.ledger.add_witness_cosignature(
-            signed_cp2.checkpoint.size, demo._demo_keys.witness_key.key_id, cosig2,
+            signed_cp2.checkpoint.size, demo.demo_keys.witness_key.key_id, cosig2,
         )
 
         # Build promotion proof

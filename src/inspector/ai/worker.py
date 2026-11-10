@@ -73,7 +73,7 @@ def _fetch_model_digest(endpoint: str, model: str, timeout_s: float) -> tuple[st
     """Query /api/tags to get the model digest."""
     try:
         tags_req = urllib.request.Request(f"{endpoint}/api/tags", method="GET")  # noqa: S310
-        with urllib.request.urlopen(tags_req, timeout=timeout_s) as resp:  # noqa: S310
+        with urllib.request.urlopen(tags_req, timeout=timeout_s) as resp:  # noqa: S310 # nosec B310
             tags_data = json.loads(resp.read().decode("utf-8"))
             models = tags_data.get("models", [])
             for m in models:
@@ -178,7 +178,7 @@ def main() -> int:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=timeout_s) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout_s) as resp:  # noqa: S310 # nosec B310
             data = json.loads(resp.read().decode("utf-8"))
             msg = data.get("message", {})
             content = msg.get("content", "")

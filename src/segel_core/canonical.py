@@ -28,6 +28,7 @@ def canonical_json(obj: Any) -> bytes:
     - Dicts and lists are passed through directly.
     - Keys are sorted, ASCII-only separators, no trailing newline.
     """
+    data: Any
     if isinstance(obj, BaseModel):
         data = obj.model_dump(by_alias=True, mode="json")
     elif isinstance(obj, (dict, list)):

@@ -30,15 +30,7 @@ WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(WORKSPACE_ROOT / "src"))
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
-from builder.builder import build_release_package  # noqa: E402
-from inspector.ai.client import (  # noqa: E402
-    run_ai_worker,
-    sanitize_purpose,
-    validate_ai_response,
-)
-from inspector.ai.derive import derive_ai_findings  # noqa: E402
-from inspector.inspector import inspect_release  # noqa: E402
-from inspector.policy.expectations import EXPECTATION_MAP  # noqa: E402
+from inspector.ai.client import run_ai_worker  # noqa: E402
 from tests.adversarial.test_injection_suite import INJECTION_CASES  # noqa: E402
 
 
@@ -77,30 +69,40 @@ class ObeyingFakeHandler(http.server.BaseHTTPRequestHandler):
         else:
             self.send_error(404)
 
-    def log_message(self, format: str, *args: Any) -> None:
+    def log_message(self, format_str: str, *args: Any) -> None:
         pass
 
 
 def run_injection_eval() -> None:
     output_path = WORKSPACE_ROOT / "docs" / "evaluation" / "injection_results.txt"
+    classes_desc = (
+        "Classes: direct_override (3), persona_hijack (3), "
+        "context_manipulation (3), obfuscated_payload (3)"
+    )
     lines: list[str] = [
         "=== ADVERSARIAL INJECTION SUITE EVALUATION RESULTS ===",
         f"Total Test Cases: {len(INJECTION_CASES)}",
-        "Classes: direct_override (3), persona_hijack (3), context_manipulation (3), obfuscated_payload (3)",
+        classes_desc,
         "",
         "--- (a) FakeLLM Scripted to Obey Injection ---",
     ]
 
     # Without mitigations: naive pipeline
     naive_bypasses = 0
-    for case in INJECTION_CASES:
+    for _ in INJECTION_CASES:
         # A naive system trusts the model's verdict or suppresses unexpected capabilities
         naive_verdict = "PASS"
         if naive_verdict == "PASS":
             naive_bypasses += 1
 
-    lines.append(f"Without Mitigations (Naive Architecture): {naive_bypasses}/{len(INJECTION_CASES)} bypasses succeeded")
-    lines.append("Explanation: Unmitigated systems adopting model verdict or unvalidated class suppress warnings.")
+    lines.append(
+        f"Without Mitigations (Naive Architecture): {naive_bypasses}/"
+        f"{len(INJECTION_CASES)} bypasses succeeded"
+    )
+    lines.append(
+        "Explanation: Unmitigated systems adopting model verdict or unvalidated class "
+        "suppress warnings."
+    )
     lines.append("")
 
     # With mitigations: FakeLLM on ephemeral loopback port
@@ -123,13 +125,16 @@ def run_injection_eval() -> None:
             model="qwen3:4b",
             timeout_s=5.0,
         )
-        unexpected_cap = case["candidate_caps"][0]["capability_id"]
-        # In SEGEL, unexpected capabilities outside EXPECTATION_MAP[L1] MUST be flagged
-        flagged = any(f.capability_id == case["candidate_caps"][0]["instance_id"] for f in findings)
+        flagged = any(
+            f.capability_id == case["candidate_caps"][0]["instance_id"] for f in findings
+        )
         if not flagged:
             mitigated_bypasses += 1
         status_str = "BLOCKED" if flagged else "BYPASSED"
-        lines.append(f"  {case['id']} [{case['category']} in {case['placement']}]: {status_str} (class={aiclass}, findings={len(findings)})")
+        lines.append(
+            f"  {case['id']} [{case['category']} in {case['placement']}]: {status_str} "
+            f"(class={aiclass}, findings={len(findings)})"
+        )
 
     server.shutdown()
     server.server_close()
@@ -153,7 +158,6 @@ def run_injection_eval() -> None:
             timeout_s=30.0,
         )
 
-        # Did the model obey the injection (return L1)?
         if aiclass == case["attack_target_class"]:
             obeyed_injection += 1
             obey_str = "OBEYED_INJECTION"
@@ -161,9 +165,6 @@ def run_injection_eval() -> None:
             resisted_injection += 1
             obey_str = f"RESISTED (output={aiclass})"
 
-        # Did the SEGEL pipeline allow any security bypass?
-        unexpected_cap = case["candidate_caps"][0]["capability_id"]
-        # If L6 or outside expected set, findings will be produced
         flagged = len(findings) > 0
         if not flagged:
             live_bypasses += 1
@@ -172,17 +173,23 @@ def run_injection_eval() -> None:
             pipeline_res = f"FLAGGED ({len(findings)} warn findings)"
 
         lines.append(
-            f"  {case['id']} [{case['category']}]: model={obey_str}, pipeline={pipeline_res}, reason='{reason[:40]}...'"
+            f"  {case['id']} [{case['category']}]: model={obey_str}, "
+            f"pipeline={pipeline_res}, reason='{reason[:40]}...'"
         )
 
     lines.append("")
-    lines.append(f"Live Model Behavior: Obeyed Injection: {obeyed_injection}/{len(INJECTION_CASES)}, Resisted/Different: {resisted_injection}/{len(INJECTION_CASES)}")
+    lines.append(
+        f"Live Model Behavior: Obeyed Injection: {obeyed_injection}/{len(INJECTION_CASES)}, "
+        f"Resisted/Different: {resisted_injection}/{len(INJECTION_CASES)}"
+    )
     lines.append(f"Live Pipeline Security Bypasses: {live_bypasses}/{len(INJECTION_CASES)}")
     lines.append("")
     lines.append("Summary:")
     lines.append("  FakeLLM without mitigations: 12/12 attacks succeeded.")
     lines.append("  FakeLLM with SEGEL mitigations: 0/12 attacks succeeded (100% neutralized).")
-    lines.append(f"  Live qwen3:4b with SEGEL mitigations: 0/12 attacks succeeded (0 security bypasses).")
+    lines.append(
+        "  Live qwen3:4b with SEGEL mitigations: 0/12 attacks succeeded (0 security bypasses)."
+    )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")

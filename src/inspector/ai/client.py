@@ -12,14 +12,13 @@ import hashlib
 import json
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 from typing import Any
 
 from inspector.ai.derive import derive_ai_findings
 from inspector.ai.worker import validate_endpoint_loopback
-from segel_core.schemas.attestation import InspectFinding
 
 __all__ = [
     "build_scrubbed_env",
@@ -208,7 +207,7 @@ def _invoke_worker_subprocess(
     timeout_s: float,
 ) -> tuple[dict[str, Any] | None, str]:
     """Execute worker subprocess with parent-enforced timeout and tree kill."""
-    proc = subprocess.Popen(
+    proc = subprocess.Popen(  # nosec B603
         [sys.executable, "-m", "inspector.ai.worker"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
@@ -319,7 +318,17 @@ def run_ai_worker(
 
         if not worker_res:
             if return_raw:
-                return ([], "failed", "WORKER_COMMUNICATION_FAILED", model, "", prompt_digest, "", "", None)
+                return (
+                    [],
+                    "failed",
+                    "WORKER_COMMUNICATION_FAILED",
+                    model,
+                    "",
+                    prompt_digest,
+                    "",
+                    "",
+                    None,
+                )
             return ([], "failed", "WORKER_COMMUNICATION_FAILED", model, "", prompt_digest, "", "")
 
         model_digest = str(worker_res.get("model_digest") or "")
@@ -328,7 +337,17 @@ def run_ai_worker(
         if not worker_res.get("success"):
             err_code = str(worker_res.get("error_code") or "WORKER_ERROR")
             if return_raw:
-                return ([], "failed", err_code, model, model_digest, prompt_digest, "", "", raw_resp)
+                return (
+                    [],
+                    "failed",
+                    err_code,
+                    model,
+                    model_digest,
+                    prompt_digest,
+                    "",
+                    "",
+                    raw_resp,
+                )
             return ([], "failed", err_code, model, model_digest, prompt_digest, "", "")
 
         content = str(worker_res.get("content") or "")
