@@ -85,7 +85,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="SEGEL Release Desk",
-    description="Secure Configuration & Release Distribution Platform",
+    description="Configuration & Release Distribution Platform with Multi-Party Attestation",
     version="0.1.0-mvp",
     lifespan=lifespan,
 )
@@ -131,7 +131,7 @@ async def webmanifest() -> FileResponse:
 
 
 # ── Synthetic Demo State (MVP) ───────────────────────────────────────
-# In production, keys would be loaded from secure storage.
+# In production, keys would be loaded from an external HSM or isolated key manager.
 # For the MVP demo, we generate synthetic keys at startup.
 
 class DemoState:

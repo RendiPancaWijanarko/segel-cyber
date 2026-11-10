@@ -64,3 +64,51 @@ This document records the architectural boundaries, MVP limitations, and design 
 - **Limitation**: No headless browser automation framework (such as Playwright, Puppeteer, or Selenium) is installed within the sandboxed Python execution environment, and external package installation is prohibited per repository security rules.
 - **Verification Alternative**: The HTML rendering, AI advisory panel structure, status banners (ok, failed, skipped), variable escaping, absence of confidence percentages, and footer disclaimer are verified by automated unit tests in `tests/unit/test_ai_7_ack_and_manifest.py`.
 
+---
+
+## 7. AI Scope Boundaries and Security Guarantees (AI-8)
+1. **Advisory Role Only**:
+   - The AI Inspector (`qwen3:4b`) provides advisory purpose classification (`source="ai"`, `severity="warn"`).
+   - Findings derived from AI classification are strictly capped at severity `warn`.
+   - The AI component can NEVER emit a `reject` finding, can NEVER escalate the overall release verdict to `REJECT`, and can NEVER lower or downgrade a deterministic `REJECT` or `WARN` finding to `PASS`.
+   - The model's natural-language justification is treated as untrusted advisory commentary and is never parsed to drive automated security decisions.
+2. **Analysis Scope**:
+   - The AI Inspector compares the declared textual manifest `purpose` against extracted capability diffs (e.g., firewall modifications, user additions, dependency bumps).
+   - It does NOT perform binary reverse-engineering, machine-code vulnerability detection, or zero-day malware identification in compiled artifacts.
+3. **Key Isolation**:
+   - The AI worker subprocess executes in a scrubbed environment stripped of all secret, key, token, and credential variables (`build_scrubbed_env`).
+   - The AI model never sees private keys, never holds keys in memory, and never produces digital signatures.
+
+---
+
+## 8. Partial CPU Offload & Inference Hardware Profile (AI-8)
+1. **Execution Split**:
+   - Local Ollama `qwen3:4b` inference executes with partial GPU/CPU offload (~72% GPU VRAM, ~28% CPU system RAM on the evaluation host).
+   - In environments without GPU acceleration or under constrained system resources, token generation throughput falls (measured mean throughput: 7.00 tokens/sec), increasing per-item query latency (mean 22.01s, max 289.86s).
+2. **Fail-Closed Timeout Semantics**:
+   - When inference exceeds the parent timeout threshold (e.g. `TEST-27` taking >50s), the subprocess is terminated.
+   - The system sets `ai_status="failed"` with `ai_error_code="TIMEOUT"`.
+   - The overall release inspection fails closed: deterministic findings and gates remain active, and no unauthorized pass is granted.
+
+---
+
+## 9. Single-Process Desk Key Bundle in Prototype (AI-8)
+1. **Demo Harness Scope**:
+   - In the competition prototype (`src/release_desk/app.py`, `scripts/demo.py`), while approver signing keys are encapsulated in `StandaloneApproverSigner`, other synthetic role keys (author, builder, inspector, ledger, witness, receiver) reside within the demo state bundle.
+2. **Production Separation Requirement**:
+   - In a production deployment, each role (Builder, Inspector, Ledger, Witness, Receiver) MUST run on separate physical hosts, isolated containers, or dedicated Hardware Security Modules (HSMs), communicating only via signed DSSE envelopes.
+
+---
+
+## 10. Evaluation Corpus Constraints & Decision D21 Determination (AI-8)
+1. **Corpus Size**:
+   - The evaluation corpus contains 60 synthetic items (24 dev, 36 test) with Baseline v1 JSON specifications.
+   - Sample size $N=36$ on the test split limits statistical generalizability.
+2. **Decision D21 Result**:
+   - On the frozen test split, B1 union AI detected 10 out of 11 silent mismatch items with 0 false positives.
+   - Baseline B1b detected 11 out of 11 silent items (at the expense of 2 false positives).
+   - Because $10 \ngtr 11$, under Decision D21, the headline claim "AI adds value" is NOT permitted. The claim is strictly limited to measured empirical results.
+3. **Claims Audit Policy**:
+   - Prohibited marketing hype terms ("secure", "guarantee", "verified", "100%", confidence percentages) are excluded from project claims.
+   - In SEGEL documentation and specifications, all security statements cite specific named tests or explicit architectural boundaries. References to "verified" in code signatures denote Ed25519 DSSE envelope cryptographic signature checks rather than an assertion of zero systemic flaws.
+

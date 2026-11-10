@@ -1,6 +1,6 @@
 # SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda
 
-**Secure Configuration and Release Distribution Platform**
+**Configuration and Release Distribution Platform with Cryptographic Evidence**
 
 > *No Evidence, No Deployment.*
 
