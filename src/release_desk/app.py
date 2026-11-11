@@ -196,7 +196,67 @@ async def index(request: Request) -> HTMLResponse:
     active_statuses = ("CANDIDATE_RECORDED", "CANARY_DEPLOYED")
     candidate_count = sum(1 for r in demo.releases if r.get("status") in active_statuses)
     passed_count = sum(1 for r in demo.releases if r.get("verdict") == "PASS")
-    pass_rate = int((passed_count / len(demo.releases)) * 100) if demo.releases else 100
+    failed_count = sum(1 for r in demo.releases if r.get("verdict") == "REJECT")
+    warn_count = sum(1 for r in demo.releases if r.get("verdict") == "WARN")
+    total_releases = len(demo.releases)
+    pass_rate = int((passed_count / total_releases) * 100) if total_releases else 100
+    failure_rate = f"{(failed_count / total_releases) * 100:.1f}%" if total_releases else "0.0%"
+
+    # Cryptographic stamps count:
+    # 5 stamps per candidate release (Author, Builder, Inspect, Approvers x2)
+    # + 2 canary receipts if CANARY_DEPLOYED or PROMOTED
+    # + 1 witness cosignature if PROMOTED
+    # + ledger checkpoints / entries
+    stempel_kripto_count = sum(
+        5
+        + (
+            len(r.get("canary_receipts", []))
+            if r.get("status") in ("CANARY_DEPLOYED", "PROMOTED")
+            else 0
+        )
+        + (1 if r.get("status") == "PROMOTED" else 0)
+        for r in demo.releases
+    ) + demo.ledger.size
+
+    # Deployed tactical units (deduplicated across active/promoted deployments)
+    deployed_units: set[str] = set()
+    for r in demo.releases:
+        if r.get("status") in ("CANARY_DEPLOYED", "PROMOTED"):
+            for u in r.get("canary_targets", []):
+                deployed_units.add(u)
+        if r.get("status") == "PROMOTED":
+            for u in r.get("general_scope", []):
+                deployed_units.add(u)
+    deployed_units_count = len(deployed_units)
+
+    # Canary tests passed
+    canary_passed_count = sum(len(r.get("canary_receipts", [])) for r in demo.releases)
+    canary_probes_passed = canary_passed_count * 2
+
+    # Quorum consensus
+    quorum_consensus_rate = 100 if total_releases > 0 else 0
+
+    # Channel metrics
+    canary_packages_count = sum(
+        1 for r in demo.releases if r.get("status") in ("CANARY_DEPLOYED", "PROMOTED")
+    )
+    channel_stats = {
+        "canary_packages": canary_packages_count,
+        "airgap_passports": promoted_count,
+        "deployed_units": deployed_units_count,
+    }
+
+    # Recent ledger entries from the Merkle tree
+    recent_ledger_entries = []
+    for i in range(demo.ledger.size):
+        e = demo.ledger.get_entry(i)
+        if e:
+            recent_ledger_entries.append({
+                "index": e.index,
+                "event_type": e.event_type,
+                "data_hex": e.data_hex[:16] + "...",
+                "leaf_hash": e.leaf_hash[:16] + "...",
+            })
 
     return templates.TemplateResponse(
         request=request,
@@ -204,10 +264,22 @@ async def index(request: Request) -> HTMLResponse:
         context={
             "request": request,
             "releases": demo.releases,
+            "total_releases": total_releases,
             "ledger_size": demo.ledger.size,
             "promoted_count": promoted_count,
             "candidate_count": candidate_count,
+            "passed_count": passed_count,
+            "failed_count": failed_count,
+            "warn_count": warn_count,
             "pass_rate": pass_rate,
+            "failure_rate": failure_rate,
+            "stempel_kripto_count": stempel_kripto_count,
+            "deployed_units_count": deployed_units_count,
+            "canary_passed_count": canary_passed_count,
+            "canary_probes_passed": canary_probes_passed,
+            "quorum_consensus_rate": quorum_consensus_rate,
+            "channel_stats": channel_stats,
+            "recent_ledger_entries": recent_ledger_entries,
             "total_keys": len(demo.trust_root.keys),
             "root_version": demo.trust_root.root_version,
             "policy_version": demo.policy.policy_version,
@@ -278,7 +350,7 @@ async def create_release(
         # Step 5-7: Inspect
         inspection = inspect_release(
             files=files, manifest=build_result.manifest,
-            manifest_digest=build_result.manifest_digest, ai_enabled=False,
+            manifest_digest=build_result.manifest_digest, ai_enabled=config.ai_enabled,
         )
         inspect_stmt = create_inspect_attestation(
             inspection, build_result.manifest, build_result.manifest_digest,

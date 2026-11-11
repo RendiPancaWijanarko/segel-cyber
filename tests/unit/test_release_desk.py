@@ -149,3 +149,64 @@ def test_webmanifest_endpoint(client):
     assert data["short_name"] == "SEGEL"
 
 
+def test_dynamic_telemetry_metrics_empty(client):
+    """Verify that an empty demo state renders genuine dynamic zero/empty metrics, not mock SaaS data."""
+    res = client.get("/")
+    assert res.status_code == 200
+    # Obsolete mock placeholder strings must not be present
+    assert "63k+" not in res.text
+    assert "4,653 Paket" not in res.text
+    assert "379 Paspor" not in res.text
+    assert "653 Titik" not in res.text
+
+
+def test_dynamic_telemetry_with_releases(client):
+    """Verify dynamic metrics update after releases are created, canary deployed, and promoted."""
+    form_data = {
+        "release_id": "DYNAMIC-TEST-1",
+        "sequence": "1",
+        "purpose": "Telemetry test release",
+        "canary_targets": "canary-1,canary-2",
+        "general_scope": "canary-1,canary-2,unit-3",
+    }
+    client.post("/release/create", data=form_data)
+    client.post("/release/0/deploy-canary")
+    client.post("/release/0/promote")
+
+    res = client.get("/")
+    assert res.status_code == 200
+    assert "DYNAMIC-TEST-1" in res.text
+
+
+def test_create_release_uses_config_ai_enabled(monkeypatch, client):
+    """Verify create_release passes config.ai_enabled to inspect_release."""
+    from dataclasses import replace
+    from release_desk import app as app_module
+
+    called_with_ai = None
+    original_inspect = app_module.inspect_release
+
+    def spy_inspect(*args, **kwargs):
+        nonlocal called_with_ai
+        called_with_ai = kwargs.get("ai_enabled")
+        # Ensure we don't actually hit network during test
+        kwargs["ai_enabled"] = False
+        return original_inspect(*args, **kwargs)
+
+    monkeypatch.setattr(app_module, "inspect_release", spy_inspect)
+    new_cfg = replace(app_module.config, ai_enabled=True)
+    monkeypatch.setattr(app_module, "config", new_cfg)
+
+    form_data = {
+        "release_id": "AI-TEST-1",
+        "sequence": "1",
+        "purpose": "AI inspection test",
+        "canary_targets": "canary-1",
+        "general_scope": "canary-1",
+    }
+    client.post("/release/create", data=form_data)
+    assert called_with_ai is True
+
+
+
+

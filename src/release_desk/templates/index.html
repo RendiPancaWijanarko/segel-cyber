@@ -87,19 +87,19 @@
                     </a>
                 </div>
                 <div class="segel-tp-body">
-                    <div class="segel-metric-big">63k+</div>
+                    <div class="segel-metric-big">{% if stempel_kripto_count > 0 %}{{ stempel_kripto_count }}{% else %}0{% endif %}</div>
                     <!-- Mini Bar Histogram (10 bars on lower shelf) -->
                     <div class="segel-mini-barchart" title="Aktivitas Stempel Sah Kripto">
-                        <div class="segel-mini-bar" style="height: 8px; background-color: #B8D2AD;"></div>
-                        <div class="segel-mini-bar" style="height: 14px; background-color: #B8D2AD;"></div>
-                        <div class="segel-mini-bar" style="height: 11px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 18px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 14px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 22px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 19px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 25px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 21px; background-color: #3B7A32;"></div>
-                        <div class="segel-mini-bar" style="height: 28px; background-color: #3B7A32;"></div>
+                        <div class="segel-mini-bar" style="height: {{ 8 if stempel_kripto_count > 0 else 4 }}px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: {{ 14 if stempel_kripto_count > 0 else 4 }}px; background-color: #B8D2AD;"></div>
+                        <div class="segel-mini-bar" style="height: {{ 11 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 18 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 14 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 22 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 19 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 25 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 21 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
+                        <div class="segel-mini-bar" style="height: {{ 28 if stempel_kripto_count > 0 else 4 }}px; background-color: {{ '#3B7A32' if stempel_kripto_count > 0 else '#B8D2AD' }};"></div>
                     </div>
                 </div>
             </div>
@@ -114,19 +114,15 @@
                 <div class="segel-au-header">
                     <span class="segel-card-title">Satuan Tergelar</span>
                     <div class="segel-au-split-labels">
-                        <span>75%</span>
+                        <span>{{ deployed_units_count }} Unit</span>
                         <span class="segel-au-sep">|</span>
-                        <span>25%</span>
-                        <span class="segel-au-sep">|</span>
-                        <span>10%</span>
+                        <span>{{ channel_stats.airgap_passports }} Paspor</span>
                     </div>
                 </div>
                 <div class="segel-au-body">
-                    <div class="segel-metric-big">150</div>
-                    <div class="segel-split-bar" title="Distribusi Gelar: Tempur 75%, Bantuan 25%, Cadangan 10%">
-                        <div class="segel-split-seg-1" title="Satuan Tempur (75%)"></div>
-                        <div class="segel-split-seg-2" title="Satuan Bantuan Tempur (25%)"></div>
-                        <div class="segel-split-seg-3" title="Satuan Cadangan (10%)"></div>
+                    <div class="segel-metric-big">{{ deployed_units_count }}</div>
+                    <div class="segel-split-bar" title="Distribusi Gelar: {{ deployed_units_count }} Satuan Tergelar">
+                        <div class="segel-split-seg-1" style="width: {{ 100 if deployed_units_count > 0 else 0 }}%;" title="Satuan Aktif ({{ deployed_units_count }})"></div>
                     </div>
                 </div>
             </div>
@@ -150,9 +146,9 @@
                     </a>
                 </div>
                 <div class="segel-cr-body">
-                    <div class="segel-metric-big" style="margin: 2px 0 4px 0;">100%</div>
+                    <div class="segel-metric-big" style="margin: 2px 0 4px 0;">{{ quorum_consensus_rate }}%</div>
                     <!-- 32 micro vertical tick bars -->
-                    <div class="segel-dense-ticks-32" id="conversionTicks" title="Konsensus Kuorum Otoritas (2/2 Kuorum Sah)"></div>
+                    <div class="segel-dense-ticks-32" id="conversionTicks" title="Konsensus Kuorum Otoritas ({{ '2/2 Kuorum Sah' if quorum_consensus_rate > 0 else 'Menunggu Pengajuan Rilis' }})"></div>
                 </div>
             </div>
         </div>
@@ -165,10 +161,10 @@
             <div class="segel-et-inner">
                 <div class="segel-et-header">
                     <span class="segel-card-title">Uji Paspor Selesai</span>
-                    <span class="badge badge-green" style="font-size: 10px; padding: 2px 7px;">310 Lolos</span>
+                    <span class="badge badge-green" style="font-size: 10px; padding: 2px 7px;">{{ canary_probes_passed }} Lolos</span>
                 </div>
                 <div class="segel-et-body">
-                    <div class="segel-et-val">80</div>
+                    <div class="segel-et-val">{{ canary_passed_count }}</div>
                     <!-- 4-Row x 12-Column Dot Matrix Grid -->
                     <div class="segel-et-matrix" id="endedTaskMatrix" role="img" aria-label="Uji Paspor Selesai Matriks"></div>
                 </div>
@@ -200,8 +196,8 @@
             <!-- Left Metric Column -->
             <div class="segel-revenue-side-metric">
                 <div>
-                    <div class="segel-revenue-amount">{{ releases|length * 124 + 1116 }} Log</div>
-                    <div class="segel-revenue-sub">Aktivitas 15 Hari Terakhir</div>
+                    <div class="segel-revenue-amount">{{ ledger_size }} Log</div>
+                    <div class="segel-revenue-sub">Append-Only Merkle Tree</div>
                 </div>
                 <div class="segel-y-markers">
                     <span>100%</span>
@@ -238,7 +234,7 @@
                 </svg>
 
                 <!-- Floating Tooltip Pill -->
-                <div class="segel-floating-tooltip" id="chartTooltip">Log 45</div>
+                <div class="segel-floating-tooltip" id="chartTooltip">Log {{ ledger_size }}</div>
             </div>
         </div>
 
@@ -247,10 +243,10 @@
             <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 4px 6px 4px; font-size: 11.5px; flex-wrap: wrap; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <span class="badge badge-green" style="font-size: 9.5px; padding: 2px 7px;">Jendela Audit Kuorum</span>
-                    <span style="color: #475569; font-weight: 500;">Batch Log 07–11: <strong>100% Konsensus</strong> · 0 Temuan Tamper</span>
+                    <span style="color: #475569; font-weight: 500;">Buku Besar: <strong>{{ ledger_size }} Entri Tercatat</strong> · 0 Temuan Tamper</span>
                 </div>
                 <div style="color: #64748B; font-weight: 600;">
-                    Throughput Rata-rata: <span style="color: var(--segel-primary);">1.8 ms</span> / Stempel
+                    Verifikasi Luring: <span style="color: var(--segel-primary);">Otonom</span> / Satuan
                 </div>
             </div>
 
@@ -299,12 +295,12 @@
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">4,653 Paket</div>
-                            <span class="badge badge-green" style="font-size: 9px; padding: 1px 6px;">Kuorum 2/2 Sah</span>
+                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">{{ channel_stats.canary_packages }} Paket</div>
+                            <span class="badge badge-green" style="font-size: 9px; padding: 1px 6px;">{{ 'Kuorum Sah' if releases else 'Siap Gelar' }}</span>
                         </div>
                     </div>
                     <div style="width: 100%; height: 6px; background: rgba(184, 210, 173, 0.25); border-radius: 9999px; overflow: hidden;">
-                        <div style="width: 68%; height: 100%; background: linear-gradient(90deg, #3B7A32, #7A9E6B); border-radius: 9999px;"></div>
+                        <div style="width: {{ 100 if channel_stats.canary_packages > 0 else 0 }}%; height: 100%; background: linear-gradient(90deg, #3B7A32, #7A9E6B); border-radius: 9999px;"></div>
                     </div>
                 </div>
 
@@ -321,12 +317,12 @@
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">379 Paspor</div>
+                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">{{ channel_stats.airgap_passports }} Paspor</div>
                             <span class="badge badge-blue" style="font-size: 9px; padding: 1px 6px;">100% Luring</span>
                         </div>
                     </div>
                     <div style="width: 100%; height: 6px; background: rgba(217, 207, 237, 0.3); border-radius: 9999px; overflow: hidden;">
-                        <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #8B5CF6, #7C3AED); border-radius: 9999px;"></div>
+                        <div style="width: {{ 100 if channel_stats.airgap_passports > 0 else 0 }}%; height: 100%; background: linear-gradient(90deg, #8B5CF6, #7C3AED); border-radius: 9999px;"></div>
                     </div>
                 </div>
 
@@ -343,12 +339,12 @@
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">653 Titik</div>
+                            <div style="font-size: 13.5px; font-weight: 700; color: var(--segel-navy);">{{ channel_stats.deployed_units }} Titik</div>
                             <span class="badge badge-green" style="font-size: 9px; padding: 1px 6px;">Tanda Terima Sah</span>
                         </div>
                     </div>
                     <div style="width: 100%; height: 6px; background: rgba(247, 244, 236, 0.8); border: 1px solid var(--segel-sand-border); border-radius: 9999px; overflow: hidden;">
-                        <div style="width: 86%; height: 100%; background: linear-gradient(90deg, #D1BD99, #C7B08A); border-radius: 9999px;"></div>
+                        <div style="width: {{ 100 if channel_stats.deployed_units > 0 else 0 }}%; height: 100%; background: linear-gradient(90deg, #D1BD99, #C7B08A); border-radius: 9999px;"></div>
                     </div>
                 </div>
             </div>
@@ -356,7 +352,7 @@
 
         <!-- Operational Health Summary Strip -->
         <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--segel-sand-border); display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: #64748B;">
-            <span>Cakupan Armada: <strong style="color: var(--segel-navy);">150 Satuan</strong></span>
+            <span>Cakupan Armada: <strong style="color: var(--segel-navy);">{{ channel_stats.deployed_units }} Satuan</strong></span>
             <span>Kepatuhan: <strong style="color: var(--segel-primary);">100% Deterministik</strong></span>
         </div>
     </div>
@@ -524,44 +520,6 @@
                 </div>
             </div>
 
-            <!-- Stempel Asal -->
-            <div class="segel-trans-item">
-                <div class="segel-trans-left">
-                    <div class="segel-trans-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="segel-trans-symbol">Stempel Asal</div>
-                        <div class="segel-trans-company">Author & Builder DSSE</div>
-                    </div>
-                </div>
-                <div class="segel-trans-right">
-                    <div class="segel-trans-amount">Ed25519</div>
-                    <div class="segel-trans-date">Valid</div>
-                </div>
-            </div>
-
-            <!-- Stempel Periksa -->
-            <div class="segel-trans-item">
-                <div class="segel-trans-left">
-                    <div class="segel-trans-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B7A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="segel-trans-symbol">Stempel Periksa</div>
-                        <div class="segel-trans-company">Evaluasi Kebijakan Otonom</div>
-                    </div>
-                </div>
-                <div class="segel-trans-right">
-                    <div class="segel-trans-amount">PASS</div>
-                    <div class="segel-trans-date">Deterministik</div>
-                </div>
-            </div>
-
             <!-- Akar Kepercayaan -->
             <div class="segel-trans-item">
                 <div class="segel-trans-left">
@@ -581,8 +539,26 @@
                 </div>
             </div>
 
-            <!-- Dynamic Appended Ledger Checkpoints -->
-            {% if releases %}
+            <!-- Dynamic Appended Ledger Checkpoints / Entries -->
+            {% if recent_ledger_entries %}
+            {% for entry in recent_ledger_entries %}
+            <div class="segel-trans-item" style="border-top: 1px dashed rgba(209, 189, 153, 0.45); padding-top: 10px;">
+                <div class="segel-trans-left">
+                    <div class="segel-trans-icon" style="background: rgba(184, 210, 173, 0.25);">
+                        <i data-lucide="shield-check" class="icon-16" style="color: var(--segel-primary);"></i>
+                    </div>
+                    <div>
+                        <div class="segel-trans-symbol">{{ entry.event_type }}</div>
+                        <div class="segel-trans-company">Index #{{ entry.index }} · Leaf: {{ entry.leaf_hash }}</div>
+                    </div>
+                </div>
+                <div class="segel-trans-right">
+                    <div class="segel-trans-amount" style="font-size: 11px; font-family: ui-monospace, monospace;">#{{ entry.index }}</div>
+                    <div class="segel-trans-date" style="color: var(--segel-primary);">Tercatat</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% elif releases %}
             {% for rel in releases %}
             <div class="segel-trans-item" style="border-top: 1px dashed rgba(209, 189, 153, 0.45); padding-top: 10px;">
                 <div class="segel-trans-left">
@@ -600,6 +576,10 @@
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <div style="text-align: center; padding: 24px 8px; color: var(--segel-slate-muted); font-size: 12px;">
+                <p>Buku besar siap mencatat entri stempel rilis operasional.</p>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -691,8 +671,8 @@
                 <span class="segel-tab-label">Eksekusi Rilis</span>
             </div>
             <div class="segel-tab-val-group">
-                <span class="segel-tab-big-val">320</span>
-                <span class="segel-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs bulan lalu</span>
+                <span class="segel-tab-big-val">{{ total_releases }}</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">{{ total_releases }}</strong> rilis tercatat</span>
             </div>
         </button>
 
@@ -709,8 +689,8 @@
                 <span class="segel-tab-label">Gagal Verifikasi</span>
             </div>
             <div class="segel-tab-val-group">
-                <span class="segel-tab-big-val">28</span>
-                <span class="segel-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs bulan lalu</span>
+                <span class="segel-tab-big-val">{{ failed_count }}</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">{{ failed_count }}</strong> rilis ditolak</span>
             </div>
         </button>
 
@@ -727,8 +707,8 @@
                 <span class="segel-tab-label">Tingkat Kegagalan</span>
             </div>
             <div class="segel-tab-val-group">
-                <span class="segel-tab-big-val">2.4%</span>
-                <span class="segel-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs bulan lalu</span>
+                <span class="segel-tab-big-val">{{ failure_rate }}</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">{{ pass_rate }}%</strong> lolos deterministik</span>
             </div>
         </button>
 
@@ -742,11 +722,11 @@
                         <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
                     </svg>
                 </span>
-                <span class="segel-tab-label">Waktu Hemat</span>
+                <span class="segel-tab-label">Kunci Otoritas</span>
             </div>
             <div class="segel-tab-val-group">
-                <span class="segel-tab-big-val">18.4 jam</span>
-                <span class="segel-tab-sub"><strong style="color:#0F172A;">-1.1%</strong> vs bulan lalu</span>
+                <span class="segel-tab-big-val">{{ total_keys }}</span>
+                <span class="segel-tab-sub"><strong style="color:#0F172A;">Epoch {{ epoch }}</strong> terpasang</span>
             </div>
         </button>
     </div>
@@ -851,9 +831,11 @@
     (function setupConversionTicks() {
         const container = document.getElementById('conversionTicks');
         if (!container) return;
+        const quorumRate = Number("{{ quorum_consensus_rate }}") || 0;
+        const filledTicks = Math.round((quorumRate / 100) * 32);
         for (let i = 0; i < 32; i++) {
             const tick = document.createElement('div');
-            tick.className = `segel-tick-bar-32 ${i < 24 ? 'filled' : 'unfilled'}`;
+            tick.className = `segel-tick-bar-32 ${i < filledTicks ? 'filled' : 'unfilled'}`;
             container.appendChild(tick);
         }
     })();
@@ -863,13 +845,10 @@
         const matrixEl = document.getElementById('endedTaskMatrix');
         if (!matrixEl) return;
 
-        const activeIndices = {
-            0: [9, 10, 11],
-            1: [8, 9, 10],
-            2: [6, 7],
-            3: [4, 5]
-        };
+        const canaryPassed = Number("{{ canary_passed_count }}") || 0;
+        const activeCount = Math.min(48, canaryPassed * 6); // 6 active dots per verified canary
 
+        let dotIdx = 0;
         for (let r = 0; r < 4; r++) {
             const rowEl = document.createElement('div');
             rowEl.className = 'segel-et-matrix-row';
@@ -877,10 +856,11 @@
                 const cell = document.createElement('div');
                 cell.className = 'segel-et-cell';
                 const pip = document.createElement('div');
-                const isActive = activeIndices[r]?.includes(c);
+                const isActive = dotIdx < activeCount;
                 pip.className = `segel-et-dot-pip ${isActive ? 'active' : 'inactive'}`;
                 cell.appendChild(pip);
                 rowEl.appendChild(cell);
+                dotIdx++;
             }
             matrixEl.appendChild(rowEl);
         }
@@ -1173,54 +1153,59 @@
         const ROW_COUNT = 14;
         const DEFAULT_COLUMN = 20;
 
+        const totalRel = Number("{{ total_releases }}") || 0;
+        const failedRel = Number("{{ failed_count }}") || 0;
+        const passRate = Number("{{ pass_rate }}") || 100;
+        const totalKeys = Number("{{ total_keys }}") || 7;
+
         const METRICS = {
             'prod-executions': {
                 label: 'Eksekusi Rilis',
                 selectLabel: 'Eksekusi Rilis',
-                summaryValue: '320',
-                change: '+5%',
+                summaryValue: `${totalRel}`,
+                change: `${totalRel} rilis`,
                 seed: 0,
-                scale: 1,
-                ticks: [400, 300, 200, 100],
+                scale: totalRel > 0 ? 1 : 0.2,
+                ticks: [Math.max(10, totalRel * 2), Math.max(5, totalRel), 2, 1],
                 precision: 0,
                 suffix: '',
-                selectedValue: 320
+                selectedValue: totalRel
             },
             'failed-executions': {
                 label: 'Gagal Verifikasi',
                 selectLabel: 'Gagal Verifikasi',
-                summaryValue: '28',
-                change: '-4.8%',
+                summaryValue: `${failedRel}`,
+                change: `${failedRel} ditolak`,
                 seed: 1.45,
-                scale: 0.74,
-                ticks: [100, 75, 50, 25],
+                scale: failedRel > 0 ? 0.74 : 0.1,
+                ticks: [Math.max(10, failedRel * 2), 5, 2, 1],
                 precision: 0,
                 suffix: '',
-                selectedValue: 28
+                selectedValue: failedRel
             },
             'failure-rate': {
                 label: 'Tingkat Kegagalan',
                 selectLabel: 'Tingkat Kegagalan',
-                summaryValue: '2.4%',
-                change: '+0.3%',
+                summaryValue: '{{ failure_rate }}',
+                change: `${passRate}% lolos`,
                 seed: 2.6,
-                scale: 0.65,
-                ticks: [20, 15, 10, 5],
-                precision: 2,
+                scale: (100 - passRate) > 0 ? 0.65 : 0.05,
+                ticks: [100, 75, 50, 25],
+                precision: 1,
                 suffix: '%',
-                selectedValue: 2.4
+                selectedValue: (100 - passRate)
             },
             'time-saved': {
-                label: 'Waktu Hemat',
-                selectLabel: 'Waktu Hemat',
-                summaryValue: '18.4 jam',
-                change: '-1.1%',
+                label: 'Kunci Otoritas',
+                selectLabel: 'Kunci Otoritas',
+                summaryValue: `${totalKeys}`,
+                change: 'Epoch {{ epoch }}',
                 seed: 3.85,
                 scale: 0.88,
-                ticks: [24, 18, 12, 6],
-                precision: 1,
-                suffix: ' jam',
-                selectedValue: 18.4
+                ticks: [totalKeys * 2, totalKeys, 4, 2],
+                precision: 0,
+                suffix: ' kunci',
+                selectedValue: totalKeys
             }
         };
 
