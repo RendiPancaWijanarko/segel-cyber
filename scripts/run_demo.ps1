@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Starts the SEGEL Release Desk Web Application.
 .DESCRIPTION
