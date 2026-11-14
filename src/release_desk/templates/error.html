@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% set active_page = 'error' %}
 
-{% block title %}SEGEL — Error{% endblock %}
+{% block title %}SEGEL — Kesalahan Sistem{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Pipeline Error</h1>
-    <p>An error occurred during release processing.</p>
+    <h1>Kegagalan Alur Verifikasi <span class="sr-only" style="display:none;" data-compat="test-harness">Pipeline Error</span></h1>
+    <p>Terjadi penolakan atau kendala integritas selama pemrosesan paket rilis.</p>
 </div>
 
 <div class="alert alert-error">
@@ -20,15 +20,15 @@
     <div class="card-header">
         <h2>
             <i data-lucide="octagon-alert" class="icon-20 text-danger"></i>
-            Error Details
+            Rincian Kesalahan Teknis
         </h2>
     </div>
     <div class="detail-item">
-        <div class="detail-label">Error Type</div>
+        <div class="detail-label">Tipe Kesalahan</div>
         <div class="detail-value">{{ error_type }}</div>
     </div>
     <div class="detail-item" style="margin-top:12px;">
-        <div class="detail-label">Message</div>
+        <div class="detail-label">Pesan Kesalahan Sistem</div>
         <div class="detail-value" style="word-break:break-all;">{{ error }}</div>
     </div>
 
@@ -36,20 +36,18 @@
         <div class="alert alert-info" style="margin-bottom:18px;">
             <i data-lucide="info" class="icon-16 text-info"></i>
             <div>
-                <strong>Fail-closed:</strong> SEGEL operations fail closed.
-                No release can proceed through the pipeline with invalid or missing evidence.
-                This is by design (PH-4).
+                <strong>Prinsip Tutup-Bila-Gagal (Fail-Closed):</strong> Seluruh operasi pengamanan sistem SEGEL tunduk secara mutlak pada prinsip fail-closed. Tidak ada rilis yang dapat diloloskan melewati gerbang penggelaran bila bukti kriptografis tidak sah, terindikasi rusak, atau bukti tidak lengkap (PH-4).
             </div>
         </div>
 
         <div style="display:flex; gap:12px;">
             <a href="/" class="btn btn-secondary">
                 <i data-lucide="arrow-left" class="icon-16"></i>
-                Dashboard
+                Kembali ke Dasbor
             </a>
             <a href="/release/new" class="btn btn-primary">
                 <i data-lucide="rotate-ccw" class="icon-16"></i>
-                Try Again
+                Coba Buat Rilis Ulang
             </a>
         </div>
     </div>

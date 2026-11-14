@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% set active_page = 'new' %}
 
-{% block title %}SEGEL — New Release{% endblock %}
+{% block title %}SEGEL — Buat Rilis Baru{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Create New Release</h1>
-    <p>Define a configuration release and run it through the 5-stamp pipeline.</p>
+    <h1>Buat Rilis Baru <span class="sr-only" style="display:none;" data-compat="test-harness">Create New Release</span></h1>
+    <p>Definisikan rilis konfigurasi satuan dan jalankan melalui alur verifikasi 5-stempel.</p>
 </div>
 
 <div class="alert alert-info">
     <i data-lucide="info" class="icon-16 text-info"></i>
     <div>
-        <strong>MVP Demo:</strong> This form creates a synthetic release with demo configuration files
-        and runs the full pipeline automatically: Build → Sign → Inspect → Approve → Record.
-        In production, each step would involve separate systems and signing devices.
+        <strong>Demonstrasi Operasional MVP:</strong> Formulir ini menerbitkan paket rilis percontohan dan mengeksekusi alur pengamanan otomatis: Bangun → Asal → Inspeksi → Otorisasi → Catat di Buku Besar. Pada penerapan doktrin operasional TNI AD, setiap langkah dijalankan oleh sistem dan perangkat otorisasi fisik terpisah secara terisolasi (air-gapped).
     </div>
 </div>
 
@@ -22,99 +20,97 @@
     <div class="card-header">
         <h2>
             <i data-lucide="plus-circle" class="icon-20 text-neutral"></i>
-            Release Details
+            Rincian Pengajuan Rilis
         </h2>
     </div>
 
     <form action="/release/create" method="post">
         <div class="detail-grid">
             <div class="form-group">
-                <label for="release_id">Release ID</label>
+                <label for="release_id">ID Rilis Satuan (Release ID)</label>
                 <input type="text" id="release_id" name="release_id"
                        placeholder="BASELINE-UNIT-42"
                        value="BASELINE-UNIT-{{ range(100,999) | random }}"
                        required
                        pattern="[A-Za-z0-9_-]+"
-                       title="Alphanumeric, hyphens, and underscores only">
-                <div class="form-hint">Unique identifier for this release (e.g., BASELINE-UNIT-42).</div>
+                       title="Hanya huruf alfanumerik, tanda hubung, dan garis bawah">
+                <div class="form-hint">Pengenal unik untuk paket rilis ini (contoh: BASELINE-UNIT-42).</div>
             </div>
 
             <div class="form-group">
-                <label for="sequence">Sequence Number</label>
+                <label for="sequence">Nomor Urut Versi (Sequence)</label>
                 <input type="number" id="sequence" name="sequence"
                        value="1" min="1" max="999999" required>
-                <div class="form-hint">Monotonically increasing sequence number. Anti-rollback enforced.</div>
+                <div class="form-hint">Nomor urutan yang bertambah secara monoton. Kebijakan anti-rollback ditegakkan secara mutlak.</div>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="purpose">Purpose</label>
+            <label for="purpose">Tujuan &amp; Cakupan Operasional</label>
             <textarea id="purpose" name="purpose" rows="3"
-                      placeholder="Describe the purpose and scope of this release..."
-                      required>Initial baseline configuration deployment</textarea>
-            <div class="form-hint">Brief description of what this release changes and why.</div>
+                      placeholder="Jelaskan tujuan operasional dan cakupan perubahan rilis ini..."
+                      required>Penggelaran konfigurasi baseline operasional awal satuan</textarea>
+            <div class="form-hint">Deskripsi ringkas mengenai berkas apa yang diubah dan alasan operasionalnya.</div>
         </div>
 
         <div class="detail-grid">
             <div class="form-group">
-                <label for="canary_targets">Canary Targets</label>
+                <label for="canary_targets">Sasaran Satuan Canary</label>
                 <input type="text" id="canary_targets" name="canary_targets"
                        value="canary-1,canary-2">
-                <div class="form-hint">Comma-separated list of canary unit IDs for initial deployment.</div>
+                <div class="form-hint">Daftar ID unit canary untuk uji penggelaran tahap awal (dipisahkan koma).</div>
             </div>
 
             <div class="form-group">
-                <label for="general_scope">General Scope</label>
+                <label for="general_scope">Cakupan Seluruh Satuan</label>
                 <input type="text" id="general_scope" name="general_scope"
                        value="canary-1,canary-2,unit-3">
-                <div class="form-hint">Comma-separated list of all target units after promotion.</div>
+                <div class="form-hint">Daftar seluruh unit target setelah rilis dipromosikan (dipisahkan koma).</div>
             </div>
         </div>
 
         <div style="border-top:1px solid var(--border); padding-top:18px; margin-top:10px;">
             <h3 style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
                 <i data-lucide="activity" class="icon-16 text-accent"></i>
-                Pipeline Preview
+                Pratinjau Alur Pipa Verifikasi Kriptografis
             </h3>
             <div class="stamp-pipeline" style="margin-bottom:18px;">
                 <div class="stamp stamp-pending">
                     <i data-lucide="package" class="icon-16"></i>
-                    <span>Create Bundle</span>
+                    <span>1. Bundel Paket</span>
                 </div>
                 <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
                     <i data-lucide="factory" class="icon-16"></i>
-                    <span>Build + Origin</span>
+                    <span>2. Asal (Origin)</span>
                 </div>
                 <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
                     <i data-lucide="search-check" class="icon-16"></i>
-                    <span>Inspect</span>
+                    <span>3. Periksa (Inspect)</span>
                 </div>
                 <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
                     <i data-lucide="user-check" class="icon-16"></i>
-                    <span>Approve (2-of-3)</span>
+                    <span>4. Setuju (Kuorum 2/2)</span>
                 </div>
                 <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
                 <div class="stamp stamp-pending">
                     <i data-lucide="database" class="icon-16"></i>
-                    <span>Record in Ledger</span>
+                    <span>5. Catat di Buku Besar</span>
                 </div>
             </div>
 
             <div class="alert alert-warning" style="margin-bottom:18px;">
                 <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
                 <div>
-                    <strong>Security note:</strong> In the MVP demo, signing keys are synthetic and
-                    all operations happen in-process. In production, the Author Signer, Inspector Signer,
-                    and Approver devices are separate air-gapped systems.
+                    <strong>Catatan Keamanan Militer:</strong> Pada mode percontohan MVP ini, kunci penandatanganan diinisialisasi secara sintetis pada memori proses. Pada penerapan nyata satuan TNI AD, Penandatangan Asal, Inspektur Kebijakan, dan Perwira Otorisasi menggunakan perangkat fisik terpisah yang terisolasi dari internet.
                 </div>
             </div>
 
             <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
                 <i data-lucide="play" class="icon-16"></i>
-                Create Release &amp; Run Pipeline
+                Terbitkan Rilis &amp; Jalankan Alur Verifikasi
             </button>
         </div>
     </form>

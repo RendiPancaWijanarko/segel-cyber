@@ -1374,29 +1374,29 @@
             <!-- Center Segmented Floating Dock: Official SEGEL Navs -->
             <nav class="segel-dock" id="navDock">
                 <!-- 1. Dashboard: ACTIVE with LayoutDashboard icon -->
-                <button class="segel-dock-btn active" data-tab="dashboard" title="Dashboard">
+                <button class="segel-dock-btn active" data-tab="dashboard" title="Beranda Dasbor">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
                     </svg>
-                    <span>Dashboard</span>
+                    <span>Dasbor</span>
                 </button>
 
                 <!-- 2. New Release: PlusCircle icon -->
-                <button class="segel-dock-btn inactive" data-tab="new-release" title="New Release">
+                <button class="segel-dock-btn inactive" data-tab="new-release" title="Buat Rilis Baru">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
                     </svg>
                 </button>
 
                 <!-- 3. Ledger: Database icon -->
-                <button class="segel-dock-btn inactive" data-tab="ledger" title="Ledger">
+                <button class="segel-dock-btn inactive" data-tab="ledger" title="Buku Besar Transparansi">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
                     </svg>
                 </button>
 
                 <!-- 4. Trust Root: KeyRound icon -->
-                <button class="segel-dock-btn inactive" data-tab="trust-root" title="Trust Root">
+                <button class="segel-dock-btn inactive" data-tab="trust-root" title="Akar Kepercayaan Kriptografis">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
                     </svg>
@@ -1915,11 +1915,11 @@
                     </div>
                 </div>
                 <div class="segel-select-wrapper">
-                    <select id="metricSelect" class="segel-metric-select" aria-label="Chart metric">
-                        <option value="prod-executions" selected>Executions</option>
-                        <option value="failed-executions">Failed executions</option>
-                        <option value="failure-rate">Failure rate</option>
-                        <option value="time-saved">Time saved</option>
+                    <select id="metricSelect" class="segel-metric-select" aria-label="Pilih Metrik">
+                        <option value="prod-executions" selected>Eksekusi Rilis</option>
+                        <option value="failed-executions">Gagal Verifikasi</option>
+                        <option value="failure-rate">Tingkat Kegagalan</option>
+                        <option value="time-saved">Kunci Otoritas</option>
                     </select>
                 </div>
             </div>
@@ -1947,12 +1947,12 @@
 
                         <!-- Floating Date & Value Tooltip Card -->
                         <div class="segel-scrubber-card-tooltip" id="scrubberCardTooltip" style="display: none;">
-                            <div class="segel-scrubber-card-date" id="scrubberCardDate">Apr 30, 2026</div>
+                            <div class="segel-scrubber-card-date" id="scrubberCardDate">30 Apr 2026</div>
                             <div class="segel-scrubber-card-val" id="scrubberCardVal">320</div>
                         </div>
 
                         <!-- Short Date Bottom Tag -->
-                        <div class="segel-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">Apr 30</div>
+                        <div class="segel-scrubber-date-badge" id="scrubberDateBadge" style="display: none;">30 Apr</div>
                     </div>
                 </div>
 
@@ -1962,14 +1962,14 @@
                     <span>Feb</span>
                     <span>Mar</span>
                     <span>Apr</span>
-                    <span>May</span>
+                    <span>Mei</span>
                     <span>Jun</span>
                     <span>Jul</span>
-                    <span>Aug</span>
+                    <span>Agu</span>
                     <span>Sep</span>
-                    <span>Oct</span>
+                    <span>Okt</span>
                     <span>Nov</span>
-                    <span>Dec</span>
+                    <span>Des</span>
                 </div>
             </div>
 
@@ -1983,11 +1983,11 @@
                                 <path d="m9 12 2 2 4-4"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                             </svg>
                         </span>
-                        <span class="segel-tab-label">Prod. executions</span>
+                        <span class="segel-tab-label">Eksekusi Rilis</span>
                     </div>
                     <div class="segel-tab-val-group">
                         <span class="segel-tab-big-val">320</span>
-                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs last month</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+5%</strong> vs bulan lalu</span>
                     </div>
                 </button>
 
@@ -2001,11 +2001,11 @@
                                 <path d="m15 9-6 6"/><path d="m9 9 6 6"/><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                             </svg>
                         </span>
-                        <span class="segel-tab-label">Failed executions</span>
+                        <span class="segel-tab-label">Gagal Verifikasi</span>
                     </div>
                     <div class="segel-tab-val-group">
                         <span class="segel-tab-big-val">28</span>
-                        <span class="segel-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs last month</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">-4.8%</strong> vs bulan lalu</span>
                     </div>
                 </button>
 
@@ -2019,11 +2019,11 @@
                                 <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
                             </svg>
                         </span>
-                        <span class="segel-tab-label">Failure rate</span>
+                        <span class="segel-tab-label">Tingkat Kegagalan</span>
                     </div>
                     <div class="segel-tab-val-group">
                         <span class="segel-tab-big-val">2.4%</span>
-                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs last month</span>
+                        <span class="segel-tab-sub"><strong style="color:#0F172A;">+0.3%</strong> vs bulan lalu</span>
                     </div>
                 </button>
 
@@ -2037,7 +2037,7 @@
                                 <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
                             </svg>
                         </span>
-                        <span class="segel-tab-label">Time saved</span>
+                        <span class="segel-tab-label">Kunci Otoritas</span>
                     </div>
                     <div class="segel-tab-val-group">
                         <span class="segel-tab-big-val">18.4 hrs</span>
@@ -2318,8 +2318,8 @@
                     selectedValue: 320
                 },
                 'failed-executions': {
-                    label: 'Failed executions',
-                    selectLabel: 'Failed executions',
+                    label: 'Gagal Verifikasi',
+                    selectLabel: 'Gagal Verifikasi',
                     summaryValue: '28',
                     change: '-4.8%',
                     seed: 1.45,
@@ -2330,8 +2330,8 @@
                     selectedValue: 28
                 },
                 'failure-rate': {
-                    label: 'Failure rate',
-                    selectLabel: 'Failure rate',
+                    label: 'Tingkat Kegagalan',
+                    selectLabel: 'Tingkat Kegagalan',
                     summaryValue: '2.4%',
                     change: '+0.3%',
                     seed: 2.6,
@@ -2342,8 +2342,8 @@
                     selectedValue: 2.4
                 },
                 'time-saved': {
-                    label: 'Time saved',
-                    selectLabel: 'Time saved',
+                    label: 'Kunci Otoritas',
+                    selectLabel: 'Kunci Otoritas',
                     summaryValue: '18.4 hrs',
                     change: '-1.1%',
                     seed: 3.85,

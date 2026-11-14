@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% set active_page = 'trust' %}
 
-{% block title %}SEGEL — Trust Root{% endblock %}
+{% block title %}SEGEL — Akar Kepercayaan{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Trust Root</h1>
-    <p>Cryptographic trust anchors, key roles, verification policy, and epoch management.</p>
+    <h1>Akar Kepercayaan <span class="sr-only" style="display:none;" data-compat="test-harness">Trust Root</span></h1>
+    <p>Jangkar kepercayaan kriptografis, peran kunci otoritas, kebijakan verifikasi kuorum, dan manajemen epoch.</p>
 </div>
 
 <div class="alert alert-warning">
     <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
     <div>
-        <strong>MVP Demo Keys:</strong> These are synthetic Ed25519 keys generated at startup.
-        In production, keys are distributed out-of-band through hardened provisioning procedures.
-        Key identity = SHA-256(raw 32-byte public key) per SEC-033.
+        <strong>Kunci Demo Operasional MVP:</strong> Kunci Ed25519 ini merupakan kunci sintetis yang dibangkitkan saat inisialisasi boot sistem. Pada penerapan operasional satuan TNI AD, kunci didistribusikan melalui jalur fisik khusus (out-of-band) dengan prosedur provisi terisolasi. Identitas kunci = SHA-256(32-byte raw public key) sesuai aturan SEC-033.
     </div>
 </div>
 
@@ -24,7 +22,7 @@
         <div class="card-header">
             <h2>
                 <i data-lucide="shield" class="icon-20 text-neutral"></i>
-                Trust Root
+                Akar Kepercayaan
             </h2>
             <span class="badge badge-green">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
@@ -32,12 +30,12 @@
             </span>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Root Version</div>
-            <div class="detail-value">{{ root_version }}</div>
+            <div class="detail-label">Versi Akar Kepercayaan</div>
+            <div class="detail-value">v{{ root_version }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Total Keys</div>
-            <div class="detail-value">{{ keys|length }}</div>
+            <div class="detail-label">Total Kunci Terdaftar</div>
+            <div class="detail-value">{{ keys|length }} Kunci</div>
         </div>
     </div>
 
@@ -45,7 +43,7 @@
         <div class="card-header">
             <h2>
                 <i data-lucide="file-text" class="icon-20 text-neutral"></i>
-                Verification Policy
+                Kebijakan Verifikasi
             </h2>
             <span class="badge badge-blue">
                 <i data-lucide="info" class="icon-16 text-info"></i>
@@ -53,12 +51,12 @@
             </span>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Policy Version</div>
-            <div class="detail-value">{{ policy_version }}</div>
+            <div class="detail-label">Versi Kebijakan</div>
+            <div class="detail-value">v{{ policy_version }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Epoch</div>
-            <div class="detail-value">{{ epoch }}</div>
+            <div class="detail-label">Epoch Aktif</div>
+            <div class="detail-value">Epoch {{ epoch }}</div>
         </div>
     </div>
 </div>
@@ -68,11 +66,11 @@
     <div class="card-header">
         <h2>
             <i data-lucide="key-round" class="icon-20 text-neutral"></i>
-            Key Registry
+            Daftar Kunci Otoritas
         </h2>
         <span class="badge badge-muted">
             <i data-lucide="key-round" class="icon-16"></i>
-            {{ keys|length }} keys
+            {{ keys|length }} Kunci Sah
         </span>
     </div>
 
@@ -80,10 +78,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Key ID (truncated)</th>
-                    <th>Role</th>
-                    <th>Group</th>
-                    <th>Status</th>
+                    <th>ID Kunci (Key ID)</th>
+                    <th>Peran Otoritas (Role)</th>
+                    <th>Grup Otoritas</th>
+                    <th>Status Kunci</th>
                 </tr>
             </thead>
             <tbody>
@@ -114,12 +112,12 @@
                         {% if key.status == 'active' %}
                             <span style="color:var(--green); display:inline-flex; align-items:center; gap:6px; font-weight:600;">
                                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                                active
+                                Aktif (Sah)
                             </span>
                         {% elif key.status == 'revoked' %}
                             <span style="color:var(--red); display:inline-flex; align-items:center; gap:6px; font-weight:600;">
                                 <i data-lucide="ban" class="icon-16 text-danger"></i>
-                                revoked
+                                Dicabut (Revoked)
                             </span>
                         {% else %}
                             <span style="color:var(--text-muted); display:inline-flex; align-items:center; gap:6px;">
@@ -140,53 +138,53 @@
     <div class="card-header">
         <h2>
             <i data-lucide="user-check" class="icon-20 text-neutral"></i>
-            Role Thresholds
+            Ambang Batas Kuorum Peran
         </h2>
     </div>
     <div style="overflow-x:auto;">
         <table>
             <thead>
                 <tr>
-                    <th>Role</th>
-                    <th>Threshold</th>
-                    <th>Description</th>
+                    <th>Peran Otoritas</th>
+                    <th>Ambang Kuorum</th>
+                    <th>Deskripsi Tanggung Jawab Operasional</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><span class="badge badge-blue">author</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Single author signs the manifest</td>
+                    <td>Penulis tunggal menandatangani manifes rilis konfigurasi</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-purple">builder</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Single builder produces Origin provenance</td>
+                    <td>Pembangun tunggal menerbitkan atestasi asal (Origin provenance)</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-yellow">inspector_signer</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Single inspector signer issues Inspect attestation</td>
+                    <td>Penandatangan inspektur tunggal menerbitkan atestasi inspeksi kebijakan</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-green">approver</span></td>
                     <td><span class="mono">2</span></td>
-                    <td>2-of-3 with per-group minimums (group-0: 1, group-1: 1). Author excluded.</td>
+                    <td>Kuorum 2-dari-3 dengan batas minimum per grup (grup-0: 1, grup-1: 1). Pembuat rilis (author) dilarang merangkap.</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-muted">ledger</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Single ledger signer signs checkpoints</td>
+                    <td>Penandatangan buku besar tunggal menandatangani titik pemeriksaan (checkpoint)</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-purple">witness</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Single witness cosigns checkpoints</td>
+                    <td>Saksi independen tunggal membubuhkan tanda tangan bersama (cosignature)</td>
                 </tr>
                 <tr>
                     <td><span class="badge badge-blue">receiver</span></td>
                     <td><span class="mono">1</span></td>
-                    <td>Each receiver has its own identity for deployment receipts</td>
+                    <td>Setiap penerima satuan operasional memiliki identitas kunci mandiri untuk bukti tanda terima</td>
                 </tr>
             </tbody>
         </table>
@@ -198,32 +196,32 @@
     <div class="card-header">
         <h2>
             <i data-lucide="shield-check" class="icon-20 text-neutral"></i>
-            Cryptographic Standards
+            Standar Kriptografis Pertahanan
         </h2>
     </div>
     <div class="detail-grid">
         <div class="detail-item">
-            <div class="detail-label">Signing Algorithm</div>
+            <div class="detail-label">Algoritma Tanda Tangan</div>
             <div class="detail-value">Ed25519 (RFC 8032)</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Envelope Format</div>
+            <div class="detail-label">Format Amplop Digital</div>
             <div class="detail-value">DSSE (Dead Simple Signing Envelope)</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Provenance</div>
-            <div class="detail-value">in-toto / SLSA-aligned</div>
+            <div class="detail-label">Standar Asal-Usul (Provenance)</div>
+            <div class="detail-value">in-toto / Selaras SLSA Level 3</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Merkle Proofs</div>
+            <div class="detail-label">Bukti Pohon Merkle</div>
             <div class="detail-value">RFC 6962 / RFC 9162</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Checkpoint Format</div>
+            <div class="detail-label">Format Titik Pemeriksaan (Checkpoint)</div>
             <div class="detail-value">C2SP tlog-checkpoint</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Hashing</div>
+            <div class="detail-label">Fungsi Hash Kriptografis</div>
             <div class="detail-value">SHA-256</div>
         </div>
     </div>

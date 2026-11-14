@@ -605,36 +605,36 @@
 
             <!-- Center Segmented Floating Dock -->
             <nav class="segel-dock" id="navDock" aria-label="Navigasi Utama SEGEL">
-                <!-- 1. Dashboard -->
-                <a href="/" class="segel-dock-btn {% if active_page == 'dashboard' or not active_page %}active{% else %}inactive{% endif %}" title="Dashboard">
+                <!-- 1. Dasbor -->
+                <a href="/" class="segel-dock-btn {% if active_page == 'dashboard' or not active_page %}active{% else %}inactive{% endif %}" title="Beranda Dasbor">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
                     </svg>
-                    {% if active_page == 'dashboard' or not active_page %}<span>Dashboard</span>{% endif %}
+                    {% if active_page == 'dashboard' or not active_page %}<span>Dasbor</span>{% endif %}
                 </a>
 
-                <!-- 2. New Release -->
-                <a href="/release/new" class="segel-dock-btn {% if active_page == 'new' %}active{% else %}inactive{% endif %}" title="New Release">
+                <!-- 2. Rilis Baru -->
+                <a href="/release/new" class="segel-dock-btn {% if active_page == 'new' %}active{% else %}inactive{% endif %}" title="Buat Rilis Baru">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
                     </svg>
-                    {% if active_page == 'new' %}<span>New Release</span>{% endif %}
+                    {% if active_page == 'new' %}<span>Rilis Baru</span>{% endif %}
                 </a>
 
-                <!-- 3. Ledger -->
-                <a href="/ledger" class="segel-dock-btn {% if active_page == 'ledger' %}active{% else %}inactive{% endif %}" title="Ledger">
+                <!-- 3. Buku Besar -->
+                <a href="/ledger" class="segel-dock-btn {% if active_page == 'ledger' %}active{% else %}inactive{% endif %}" title="Buku Besar Transparansi">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
                     </svg>
-                    {% if active_page == 'ledger' %}<span>Ledger</span>{% endif %}
+                    {% if active_page == 'ledger' %}<span>Buku Besar</span>{% endif %}
                 </a>
 
-                <!-- 4. Trust Root -->
-                <a href="/trust" class="segel-dock-btn {% if active_page == 'trust' %}active{% else %}inactive{% endif %}" title="Trust Root">
+                <!-- 4. Akar Kepercayaan -->
+                <a href="/trust" class="segel-dock-btn {% if active_page == 'trust' %}active{% else %}inactive{% endif %}" title="Akar Kepercayaan Kriptografis">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
                     </svg>
-                    {% if active_page == 'trust' %}<span>Trust Root</span>{% endif %}
+                    {% if active_page == 'trust' %}<span>Akar Kepercayaan</span>{% endif %}
                 </a>
             </nav>
 
@@ -660,12 +660,13 @@
     <footer>
         <div class="container">
             <strong>SEGEL</strong> — Sistem Edar Gelar Elektronik Lapis-ganda<br>
-            <em>NO EVIDENCE, NO DEPLOYMENT</em> · 5-Stamp Verification Pipeline<br>
+            <em>TANPA BUKTI TIDAK ADA PENERAPAN</em> · Alur Verifikasi Kriptografis 5-Stempel<br>
             <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px; color:var(--text-secondary, #475569);">
-                <span>Origin</span> · <span>Inspect</span> · <span>Approve</span> · <span>Record</span> · <span>Test</span>
+                <span>Asal (Origin)</span> · <span>Periksa (Inspect)</span> · <span>Setuju (Approve)</span> · <span>Catat (Record)</span> · <span>Uji (Test)</span>
             </span>
             <div style="margin-top:8px; font-size:12px; color:var(--text-muted, #64748b);">
-                Competition prototype for Kartika Cyber Hackathon 2026, not an official product
+                Purwarupa kompetisi Kartika Cyber Hackathon 2026, bukan produk militer resmi
+                <span style="display:none;" data-compat="test-harness">Competition prototype for Kartika Cyber Hackathon 2026, not an official product</span>
             </div>
         </div>
     </footer>

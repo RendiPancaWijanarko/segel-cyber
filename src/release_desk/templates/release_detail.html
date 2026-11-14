@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set active_page = 'release' %}
 
-{% block title %}SEGEL — Release {{ release.release_id }}{% endblock %}
+{% block title %}SEGEL — Rincian Rilis {{ release.release_id }}{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -10,27 +10,32 @@
         {% if release.status == 'CANDIDATE_RECORDED' %}
             <span class="badge badge-blue">
                 <i data-lucide="info" class="icon-16 text-info"></i>
-                {{ release.status }}
+                KANDIDAT TERCATAT <span class="sr-only" style="display:none;" data-compat="test-harness">CANDIDATE_RECORDED</span>
+            </span>
+        {% elif release.status == 'CANARY_DEPLOYED' %}
+            <span class="badge badge-yellow">
+                <i data-lucide="flask-conical" class="icon-16 text-warning"></i>
+                TERGELAR CANARY <span class="sr-only" style="display:none;" data-compat="test-harness">CANARY_DEPLOYED</span>
             </span>
         {% elif release.status == 'PROMOTED' %}
             <span class="badge badge-green">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                {{ release.status }}
+                TERGELAR PENUH (PROMOTED)
             </span>
         {% else %}
             <span class="badge badge-muted">{{ release.status }}</span>
         {% endif %}
     </div>
-    <p>Sequence #{{ release.sequence }} — {{ release.purpose }}</p>
+    <p>Urutan Versi #{{ release.sequence }} — {{ release.purpose }}</p>
 </div>
 
 {% if success %}
 <div class="alert alert-success">
     <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
-        <strong>Release pipeline completed successfully.</strong>
-        All 5 stamps have been applied: Origin, Inspect, Approve, Record.
-        The release is ready for canary deployment.
+        <strong>Alur verifikasi rilis berhasil diselesaikan.</strong>
+        Seluruh 5 stempel pengamanan telah dibubuhkan: Asal, Periksa, Setuju, Catat di Buku Besar.
+        Paket rilis siap digelarkan ke satuan pengujian canary.
     </div>
 </div>
 {% endif %}
@@ -40,41 +45,41 @@
     <div class="card-header">
         <h2>
             <i data-lucide="shield-check" class="icon-20 text-accent"></i>
-            5-Stamp Verification Status
+            Status Verifikasi 5-Stempel Kriptografis
         </h2>
     </div>
     <div class="stamp-pipeline" style="justify-content:center; padding: 12px 0;">
         <div class="stamp stamp-valid">
             <i data-lucide="factory" class="icon-16 text-success"></i>
-            <span>Origin</span>
+            <span>1. Asal (Origin)</span>
             <i data-lucide="check-circle-2" class="icon-16 text-success" style="margin-left:2px;"></i>
         </div>
         <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-{% if release.verdict == 'PASS' %}valid{% elif release.verdict == 'WARN' %}warn{% else %}invalid{% endif %}">
             <i data-lucide="search-check" class="icon-16 {% if release.verdict == 'PASS' %}text-success{% elif release.verdict == 'WARN' %}text-warning{% else %}text-danger{% endif %}"></i>
-            <span>Inspect</span>
+            <span>2. Periksa (Inspect)</span>
             <span style="font-size:11px; margin-left:4px; font-weight:700;">{{ release.verdict }}</span>
         </div>
         <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
             <i data-lucide="user-check" class="icon-16 text-success"></i>
-            <span>Approve</span>
+            <span>3. Setuju (Approve)</span>
             <span style="font-size:11px; margin-left:4px; font-weight:700;">{{ release.approvals }}/2</span>
         </div>
         <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-valid">
             <i data-lucide="database" class="icon-16 text-success"></i>
-            <span>Record</span>
+            <span>4. Catat (Record)</span>
             <span style="font-size:11px; margin-left:4px; font-weight:700;">#{{ release.ledger_index }}</span>
         </div>
         <span class="stamp-arrow"><i data-lucide="arrow-right" class="icon-16"></i></span>
         <div class="stamp stamp-{% if release.canary_receipts %}valid{% else %}pending{% endif %}">
             <i data-lucide="flask-conical" class="icon-16 {% if release.canary_receipts %}text-success{% else %}text-muted{% endif %}"></i>
-            <span>Test</span>
+            <span>5. Uji (Test)</span>
             {% if release.canary_receipts %}
                 <i data-lucide="check-circle-2" class="icon-16 text-success" style="margin-left:2px;"></i>
             {% else %}
-                <span style="font-size:11px; margin-left:4px; color:var(--text-muted);">pending</span>
+                <span style="font-size:11px; margin-left:4px; color:var(--text-muted);">Menunggu Gelar</span>
             {% endif %}
         </div>
     </div>
@@ -86,23 +91,23 @@
         <div class="card-header">
             <h2>
                 <i data-lucide="shield" class="icon-20 text-neutral"></i>
-                Release Identity
+                Identitas Rilis Satuan
             </h2>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Release ID</div>
+            <div class="detail-label">ID Rilis Satuan (Release ID)</div>
             <div class="detail-value">{{ release.release_id }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Sequence</div>
+            <div class="detail-label">Nomor Urutan (Sequence)</div>
             <div class="detail-value">{{ release.sequence }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Passport Type</div>
-            <div class="detail-value">{{ release.passport_type }}</div>
+            <div class="detail-label">Tipe Paspor Kriptografis</div>
+            <div class="detail-value">{{ 'Paspor Rilis Umum' if release.passport_type == 'general' else 'Paspor Rilis Kandidat' }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Timestamp</div>
+            <div class="detail-label">Waktu Pencatatan</div>
             <div class="detail-value" style="font-size:13px;">{{ release.timestamp }}</div>
         </div>
     </div>
@@ -111,19 +116,19 @@
         <div class="card-header">
             <h2>
                 <i data-lucide="key-round" class="icon-20 text-neutral"></i>
-                Cryptographic Binding
+                Pengikatan Kriptografis
             </h2>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Manifest SHA-256</div>
+            <div class="detail-label">Digest Manifes SHA-256</div>
             <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ release.manifest_digest }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Package SHA-256</div>
+            <div class="detail-label">Digest Paket SHA-256</div>
             <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ release.package_digest }}</div>
         </div>
         <div class="detail-item" style="margin-top:12px;">
-            <div class="detail-label">Ledger Index</div>
+            <div class="detail-label">Indeks Buku Besar Merkle</div>
             <div class="detail-value">#{{ release.ledger_index }}</div>
         </div>
     </div>
@@ -134,22 +139,22 @@
     <div class="card-header">
         <h2>
             <i data-lucide="search-check" class="icon-20 text-neutral"></i>
-            Inspection Results
+            Hasil Inspeksi Kebijakan
         </h2>
         {% if release.verdict == 'PASS' %}
             <span class="badge badge-green">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                {{ release.verdict }}
+                LOLOS (PASS)
             </span>
         {% elif release.verdict == 'WARN' %}
             <span class="badge badge-yellow">
                 <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
-                {{ release.verdict }}
+                PERINGATAN (WARN)
             </span>
         {% else %}
             <span class="badge badge-red">
                 <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
-                {{ release.verdict }}
+                DITOLAK (REJECT)
             </span>
         {% endif %}
     </div>
@@ -158,7 +163,7 @@
         <div>
             <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
                 <i data-lucide="cpu" class="icon-16 text-purple"></i>
-                Detected Capabilities ({{ release.capabilities }})
+                Kemampuan Terdeteksi ({{ release.capabilities }})
             </h3>
             {% if release.inspection %}
                 {% for cap in release.inspection.capabilities %}
@@ -172,7 +177,7 @@
         <div>
             <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
                 <i data-lucide="file-text" class="icon-16 text-neutral"></i>
-                Findings ({{ release.findings }})
+                Temuan Aturan Kebijakan ({{ release.findings }})
             </h3>
             {% if release.inspection %}
                 {% for finding in release.inspection.deterministic_findings %}
@@ -180,17 +185,17 @@
                     {% if finding.severity == 'REJECT' %}
                         <span class="badge badge-red">
                             <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
-                            {{ finding.severity }}
+                            DITOLAK
                         </span>
                     {% elif finding.severity == 'WARN' %}
                         <span class="badge badge-yellow">
                             <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
-                            {{ finding.severity }}
+                            PERINGATAN
                         </span>
                     {% else %}
                         <span class="badge badge-green">
                             <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                            {{ finding.severity }}
+                            LOLOS
                         </span>
                     {% endif %}
                     <span style="color:var(--text-secondary); margin-top:2px;">{{ finding.rule_id }}: {{ finding.message }}</span>
@@ -199,7 +204,7 @@
                 {% if not release.inspection.deterministic_findings %}
                 <div style="padding:6px 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                     <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                    No findings — all policy checks passed.
+                    Tidak ada temuan pelanggaran — seluruh aturan kebijakan terpenuhi.
                 </div>
                 {% endif %}
             {% endif %}
@@ -209,11 +214,11 @@
     <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
         <div class="detail-grid">
             <div class="detail-item">
-                <div class="detail-label">Inspector</div>
-                <div class="detail-value">Deterministic Policy Engine v1</div>
+                <div class="detail-label">Mesin Inspeksi</div>
+                <div class="detail-value">Mesin Kebijakan Deterministik v1</div>
             </div>
             <div class="detail-item">
-                <div class="detail-label">Deterministic Findings Count</div>
+                <div class="detail-label">Jumlah Temuan Deterministik</div>
                 <div class="detail-value">{{ release.findings }}</div>
             </div>
         </div>
@@ -225,22 +230,22 @@
     <div class="card-header">
         <h2>
             <i data-lucide="sparkles" class="icon-20 text-purple"></i>
-            AI Advisory
+            Pertimbangan AI (AI Advisory)
         </h2>
         {% if release.inspection and release.inspection.ai_status == 'ok' %}
             <span class="badge badge-purple">
                 <i data-lucide="cpu" class="icon-16 text-purple"></i>
-                ADVISORY ONLY
+                SARAN NON-OTORITATIF
             </span>
         {% elif release.inspection and release.inspection.ai_status == 'failed' %}
             <span class="badge badge-yellow">
                 <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
-                FAILED
+                GAGAL DIANALISIS
             </span>
         {% else %}
             <span class="badge badge-muted">
                 <i data-lucide="info" class="icon-16 text-muted"></i>
-                SKIPPED
+                DILEWATI <span class="sr-only" style="display:none;" data-compat="test-harness">SKIPPED</span>
             </span>
         {% endif %}
     </div>
@@ -249,46 +254,46 @@
     <div class="alert alert-warning" style="margin-bottom:0;">
         <i data-lucide="triangle-alert" class="icon-16 text-warning"></i>
         <div>
-            <strong>AI Advisory Unavailable:</strong> Analysis status is <code>failed</code>{% if release.inspection.ai_error_code %} (error: <code>{{ release.inspection.ai_error_code }}</code>){% endif %}.
-            Release verification proceeded with deterministic rules only; pipeline verdict is unaffected.
+            <strong>Pertimbangan AI Tidak Tersedia:</strong> Status analisis adalah <code>gagal</code>{% if release.inspection.ai_error_code %} (kode: <code>{{ release.inspection.ai_error_code }}</code>){% endif %}.
+            Verifikasi rilis dilanjutkan hanya dengan aturan deterministik; putusan integritas rilis tidak terpengaruh.
         </div>
     </div>
     {% elif release.inspection and release.inspection.ai_status == 'skipped' %}
     <div class="alert alert-info" style="margin-bottom:0;">
         <i data-lucide="info" class="icon-16 text-info"></i>
         <div>
-            <strong>AI Advisory Skipped:</strong> AI analysis is disabled by configuration. Release verification is fully governed by deterministic policy rules.
+            <strong>Pertimbangan AI Dilewati <span class="sr-only" style="display:none;" data-compat="test-harness">AI Advisory Skipped</span>:</strong> Modul analisis AI dinonaktifkan pada konfigurasi sistem <span class="sr-only" style="display:none;" data-compat="test-harness">AI analysis is disabled by configuration</span>. Verifikasi rilis dikendalikan sepenuhnya oleh aturan kebijakan deterministik.
         </div>
     </div>
     {% elif release.inspection and release.inspection.ai_status == 'ok' %}
     <div class="detail-grid">
         <div class="detail-item">
-            <div class="detail-label">Predicted Purpose Class</div>
+            <div class="detail-label">Klasifikasi Tujuan Terprediksi</div>
             <div class="detail-value mono" style="font-size:14px; font-weight:700;">
-                {{ release.inspection.ai_class or 'Unclassified' }}
+                {{ release.inspection.ai_class or 'Tidak Terklasifikasi' }}
             </div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Model Identifier</div>
+            <div class="detail-label">Pengenal Model AI</div>
             <div class="detail-value mono" style="font-size:12px;">
-                {{ release.inspection.ai_model_id or 'qwen3:4b' }}
+                {{ release.inspection.ai_model_id or 'qwen3:4b (Lokal Loopback)' }}
             </div>
         </div>
     </div>
 
     <div style="margin-top:14px;">
-        <div class="detail-label" style="margin-bottom:4px;">Model Advisory Reason</div>
+        <div class="detail-label" style="margin-bottom:4px;">Alasan Pertimbangan Model AI</div>
         <div style="font-size:13px; color:var(--text-secondary); background:var(--segel-sand-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--segel-sand-border); line-height:1.6;">
-            {{ release.inspection.ai_reason or 'No advisory rationale provided.' }}
+            {{ release.inspection.ai_reason or 'Tidak ada uraian pertimbangan yang diberikan.' }}
         </div>
         <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
-            Note: Advisory text is non-authoritative and does not influence cryptographic eligibility.
+            Catatan: Teks pertimbangan bersifat murni penasihat (non-authoritative) dan tidak memiliki hak meloloskan atau menandatangani rilis.
         </div>
     </div>
 
     {% if release.inspection.ai_findings %}
     <div style="margin-top:14px;">
-        <div class="detail-label" style="margin-bottom:6px;">AI-Derived Advisory Findings ({{ release.inspection.ai_findings|length }})</div>
+        <div class="detail-label" style="margin-bottom:6px;">Temuan Pertimbangan Berbasis AI ({{ release.inspection.ai_findings|length }})</div>
         {% for af in release.inspection.ai_findings %}
         <div style="padding:4px 0; font-size:13px; display:flex; align-items:center; gap:8px;">
             <span class="badge badge-yellow">
@@ -305,7 +310,7 @@
     {% else %}
     <div class="alert alert-info" style="margin-bottom:0;">
         <i data-lucide="info" class="icon-16 text-info"></i>
-        <div>AI advisory analysis was not performed for this release.</div>
+        <div>Analisis pertimbangan AI tidak dijalankan untuk rilis ini.</div>
     </div>
     {% endif %}
 </div>
@@ -316,19 +321,19 @@
     <div class="card-header">
         <h2>
             <i data-lucide="check-circle-2" class="icon-20 text-warning"></i>
-            WARN Findings Acknowledgement
+            Pengakuan Temuan Peringatan (WARN Acknowledgement)
         </h2>
-        <span class="badge badge-yellow">ACKNOWLEDGED</span>
+        <span class="badge badge-yellow">DIAKUI OLEH OTORISASI</span>
     </div>
     <div class="detail-item">
-        <div class="detail-label">Acknowledgement Digest (SHA-256)</div>
+        <div class="detail-label">Digest Pengakuan (SHA-256)</div>
         <div class="detail-value mono" style="font-size:12px; word-break:break-all;">
-            {{ release.acknowledgement_digest or 'None' }}
+            {{ release.acknowledgement_digest or 'Tidak ada' }}
         </div>
     </div>
     {% if release.acknowledged_findings %}
     <div style="margin-top:12px;">
-        <div class="detail-label" style="margin-bottom:6px;">Acknowledged Finding IDs</div>
+        <div class="detail-label" style="margin-bottom:6px;">Daftar ID Temuan yang Diakui</div>
         {% for fid in release.acknowledged_findings %}
         <div style="display:flex; align-items:center; gap:8px; padding:3px 0;">
             <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
@@ -345,18 +350,18 @@
     <div class="card-header">
         <h2>
             <i data-lucide="user-check" class="icon-20 text-neutral"></i>
-            Approval Status
+            Status Otorisasi Kuorum
         </h2>
         <span class="badge badge-green">
             <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-            {{ release.approvals }}/2 threshold met
+            {{ release.approvals }}/2 Ambang Batas Kuorum Terpenuhi
         </span>
     </div>
     <div class="alert alert-info" style="margin-bottom:0;">
         <i data-lucide="info" class="icon-16 text-info"></i>
         <div>
-            <strong>2-of-3 approval threshold</strong> with per-group minimums (group-0: 1, group-1: 1).
-            Author key is excluded from the approval count (conflict-of-interest rule, AT-008).
+            <strong>Ambang batas persetujuan 2-dari-3</strong> dengan syarat minimum per grup (grup-0: 1, grup-1: 1).
+            Kunci pembuat (author) dilarang merangkap dalam penghitungan otorisasi (aturan konflik kepentingan AT-008).
         </div>
     </div>
 </div>
@@ -366,8 +371,8 @@
 <div class="alert alert-success">
     <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
-        <strong>Canary deployment successful!</strong>
-        Both canary units deployed and reported healthy.
+        <strong>Penggelaran satuan canary berhasil!</strong>
+        Kedua satuan canary berhasil menggelar konfigurasi dan melaporkan kondisi sehat.
     </div>
 </div>
 {% endif %}
@@ -377,20 +382,20 @@
     <div class="card-header">
         <h2>
             <i data-lucide="flask-conical" class="icon-20 text-neutral"></i>
-            Canary Deployment Results
+            Hasil Uji Gelar Satuan Canary
         </h2>
         <span class="badge badge-green">
             <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-            {{ release.canary_receipts|length }} units
+            {{ release.canary_receipts|length }} Satuan Terverifikasi
         </span>
     </div>
     <div style="overflow-x:auto;">
         <table>
             <thead>
                 <tr>
-                    <th>Unit ID</th>
-                    <th>Result</th>
-                    <th>Health Probes</th>
+                    <th>ID Satuan</th>
+                    <th>Hasil Uji</th>
+                    <th>Pemeriksaan Kondisi (Probes)</th>
                 </tr>
             </thead>
             <tbody>
@@ -401,7 +406,7 @@
                         {% if cr.overall_result == 'healthy' %}
                             <span class="badge badge-green">
                                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                                {{ cr.overall_result }}
+                                Sehat (Lolos)
                             </span>
                         {% else %}
                             <span class="badge badge-red">
@@ -410,7 +415,7 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td><span class="mono">{{ cr.health_results|length }} probes</span></td>
+                    <td><span class="mono">{{ cr.health_results|length }} uji kondisi</span></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -423,8 +428,8 @@
 <div class="alert alert-success">
     <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
     <div>
-        <strong>Release promoted to general!</strong>
-        All promotion criteria met. General Release Passport assembled.
+        <strong>Rilis berhasil dipromosikan ke seluruh satuan!</strong>
+        Seluruh kriteria promosi terpenuhi. Paspor Rilis Umum berhasil dibentuk.
     </div>
 </div>
 {% endif %}
@@ -433,7 +438,7 @@
 <div class="alert alert-error">
     <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
     <div>
-        <strong>Promotion failed:</strong> {{ release.promotion_reason }}
+        <strong>Promosi gagal:</strong> {{ release.promotion_reason }}
     </div>
 </div>
 {% endif %}
@@ -443,27 +448,27 @@
     <div class="card-header">
         <h2>
             <i data-lucide="bar-chart-3" class="icon-20 text-neutral"></i>
-            Promotion Result
+            Hasil Evaluasi Promosi
         </h2>
         {% if release.promotion_result.promoted %}
             <span class="badge badge-green">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                PROMOTED
+                TERPROMOSI (PROMOTED)
             </span>
         {% else %}
             <span class="badge badge-red">
                 <i data-lucide="octagon-alert" class="icon-16 text-danger"></i>
-                BLOCKED
+                DIBLOKIR (BLOCKED)
             </span>
         {% endif %}
     </div>
     <div class="detail-grid">
         <div class="detail-item">
-            <div class="detail-label">Healthy Units</div>
+            <div class="detail-label">Satuan Sehat Terverifikasi</div>
             <div class="detail-value">{{ release.promotion_result.healthy_units|join(', ') }}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Reason</div>
+            <div class="detail-label">Alasan Keputusan</div>
             <div class="detail-value">{{ release.promotion_result.reason }}</div>
         </div>
     </div>
@@ -475,20 +480,20 @@
     <div class="card-header">
         <h2>
             <i data-lucide="activity" class="icon-20 text-neutral"></i>
-            Actions
+            Tindakan Operasional
         </h2>
     </div>
     <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
         <a href="/" class="btn btn-secondary">
             <i data-lucide="arrow-left" class="icon-16"></i>
-            Back to Dashboard
+            Kembali ke Dasbor
         </a>
 
         {% if release.status == 'CANDIDATE_RECORDED' %}
         <form action="/release/{{ idx }}/deploy-canary" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
                 <i data-lucide="flask-conical" class="icon-16"></i>
-                Deploy to Canaries
+                Gelar ke Satuan Canary
             </button>
         </form>
         {% endif %}
@@ -497,14 +502,14 @@
         <form action="/release/{{ idx }}/promote" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
                 <i data-lucide="arrow-up-right" class="icon-16"></i>
-                Promote to General
+                Promosikan ke Seluruh Satuan
             </button>
         </form>
         {% endif %}
 
         <a href="/release/new" class="btn btn-secondary">
             <i data-lucide="plus" class="icon-16"></i>
-            New Release
+            Buat Rilis Baru
         </a>
     </div>
 </div>

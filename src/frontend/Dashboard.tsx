@@ -202,10 +202,10 @@ export const Dashboard: React.FC<SegelDashboardProps> = ({
   const chartSvgRef = useRef<SVGSVGElement | null>(null);
 
   const dockItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/' },
-    { id: 'new-release', label: 'New Release', icon: 'PlusCircle', href: '/release/new' },
-    { id: 'ledger', label: 'Ledger', icon: 'Database', href: '/ledger' },
-    { id: 'trust-root', label: 'Trust Root', icon: 'KeyRound', href: '/trust' },
+    { id: 'dashboard', label: 'Dasbor', icon: 'LayoutDashboard', href: '/' },
+    { id: 'new-release', label: 'Rilis Baru', icon: 'PlusCircle', href: '/release/new' },
+    { id: 'ledger', label: 'Buku Besar', icon: 'Database', href: '/ledger' },
+    { id: 'trust-root', label: 'Akar Kepercayaan', icon: 'KeyRound', href: '/trust' },
   ];
 
   const handleDockClick = (tabId: string) => {

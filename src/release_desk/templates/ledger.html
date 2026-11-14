@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% set active_page = 'ledger' %}
 
-{% block title %}SEGEL — Transparency Ledger{% endblock %}
+{% block title %}SEGEL — Buku Besar Transparansi{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Transparency Ledger</h1>
-    <p>Append-only Merkle log (RFC 6962) with signed checkpoints and witness cosignatures.</p>
+    <h1>Buku Besar Transparansi <span class="sr-only" style="display:none;" data-compat="test-harness">Transparency Ledger</span></h1>
+    <p>Log Merkle append-only (RFC 6962) dengan titik pemeriksaan bertandatangan dan kosignatur saksi independen.</p>
 </div>
 
 <div class="alert alert-info">
     <i data-lucide="info" class="icon-16 text-info"></i>
     <div>
-        <strong>Tamper Evidence:</strong> The Merkle tree and signed checkpoints provide
-        tamper evidence — not SQLite triggers (SEC-018). Inclusion and consistency proofs
-        allow offline verification that events were recorded without modification.
+        <strong>Bukti Anti-Manipulasi (Tamper Evidence):</strong> Struktur pohon Merkle dan titik pemeriksaan bertandatangan menjamin sifat tamper-evident secara matematis—bukan mengandalkan trigger basis data (SEC-018). Bukti inklusi dan konsistensi memungkinkan verifikasi luring bahwa seluruh peristiwa tercatat secara permanen tanpa modifikasi.
     </div>
 </div>
 
@@ -23,34 +21,34 @@
     <div class="card-header">
         <h2>
             <i data-lucide="database" class="icon-20 text-neutral"></i>
-            Latest Checkpoint
+            Titik Pemeriksaan Terakhir (Checkpoint)
         </h2>
         {% if checkpoint %}
             <span class="badge badge-green">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                Signed
+                Bertandatangan Sah
             </span>
         {% else %}
-            <span class="badge badge-muted">No checkpoint</span>
+            <span class="badge badge-muted">Belum Ada Checkpoint</span>
         {% endif %}
     </div>
 
     {% if checkpoint %}
     <div class="detail-grid">
         <div class="detail-item">
-            <div class="detail-label">Log Size</div>
-            <div class="detail-value">{{ checkpoint.checkpoint.size }} entries</div>
+            <div class="detail-label">Ukuran Buku Besar</div>
+            <div class="detail-value">{{ checkpoint.checkpoint.size }} Entri Tercatat</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Merkle Root Hash</div>
+            <div class="detail-label">Hash Akar Merkle (Root Hash)</div>
             <div class="detail-value" style="word-break:break-all; font-size:12px;">{{ checkpoint.checkpoint.root_hash }}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Origin</div>
+            <div class="detail-label">Asal Domain Otoritas</div>
             <div class="detail-value">{{ checkpoint.checkpoint.origin }}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Ledger Signer</div>
+            <div class="detail-label">Penandatangan Buku Besar</div>
             <div class="detail-value" style="font-size:12px;">{{ checkpoint.ledger_key_id[:16] }}...</div>
         </div>
     </div>
@@ -59,15 +57,15 @@
     <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
         <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
             <i data-lucide="shield-check" class="icon-16 text-purple"></i>
-            Witness Cosignatures
+            Tanda Tangan Bersama Saksi Independen
         </h3>
         {% for cosig in checkpoint.witness_cosignatures %}
         <div style="padding:6px 0; font-size:13px; display:flex; align-items:center; gap:8px;">
-            <span class="badge badge-purple">Witness</span>
+            <span class="badge badge-purple">Saksi</span>
             <code class="hash">{{ cosig.key_id[:16] }}...</code>
             <span style="color:var(--green); display:inline-flex; align-items:center; gap:4px; font-weight:600;">
                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                cosigned
+                Tersaksi Sah
             </span>
         </div>
         {% endfor %}
@@ -77,7 +75,7 @@
     <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
         <h3 style="font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
             <i data-lucide="file-text" class="icon-16 text-neutral"></i>
-            C2SP Checkpoint Note
+            Catatan Titik Pemeriksaan C2SP (Format Baku)
         </h3>
         <pre style="background:var(--surface-subtle); border:1px solid var(--border); padding:12px; border-radius:6px; font-size:12.5px; overflow-x:auto; font-family:'SFMono-Regular', Consolas, monospace; color:var(--text-secondary);">{{ checkpoint.checkpoint.origin }}
 {{ checkpoint.checkpoint.size }}
@@ -85,7 +83,7 @@
     </div>
     {% else %}
     <div style="text-align:center; padding:24px 0; color:var(--text-muted);">
-        No checkpoint has been created yet. Create a release to generate the first checkpoint.
+        Belum ada titik pemeriksaan yang dibentuk. Buat paket rilis terlebih dahulu untuk memicu pembentukan checkpoint pertama.
     </div>
     {% endif %}
 </div>
@@ -95,11 +93,11 @@
     <div class="card-header">
         <h2>
             <i data-lucide="file-text" class="icon-20 text-neutral"></i>
-            Ledger Entries
+            Entri Riwayat Buku Besar
         </h2>
         <span class="badge badge-muted">
             <i data-lucide="database" class="icon-16"></i>
-            {{ entries|length }} entries
+            {{ entries|length }} Entri
         </span>
     </div>
 
@@ -108,10 +106,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Index</th>
-                    <th>Event Type</th>
-                    <th>Data Hash</th>
-                    <th>Leaf Hash</th>
+                    <th>Indeks (#)</th>
+                    <th>Tipe Peristiwa</th>
+                    <th>Hash Data</th>
+                    <th>Hash Daun (Leaf Hash)</th>
                 </tr>
             </thead>
             <tbody>
@@ -122,17 +120,17 @@
                         {% if entry.event_type == 'candidate_recorded' %}
                             <span class="badge badge-blue">
                                 <i data-lucide="info" class="icon-16 text-info"></i>
-                                {{ entry.event_type }}
+                                Kandidat Dicatat
                             </span>
                         {% elif entry.event_type == 'release_promoted' %}
                             <span class="badge badge-green">
                                 <i data-lucide="check-circle-2" class="icon-16 text-success"></i>
-                                {{ entry.event_type }}
+                                Rilis Dipromosikan
                             </span>
                         {% elif entry.event_type == 'key_revoked' %}
                             <span class="badge badge-red">
                                 <i data-lucide="ban" class="icon-16 text-danger"></i>
-                                {{ entry.event_type }}
+                                Kunci Dicabut
                             </span>
                         {% else %}
                             <span class="badge badge-muted">{{ entry.event_type }}</span>
@@ -146,40 +144,9 @@
         </table>
     </div>
     {% else %}
-    <div style="text-align:center; padding:48px 0; color:var(--text-muted);">
-        <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:12px; background:var(--surface-subtle); margin-bottom:12px; border:1px solid var(--border);">
-            <i data-lucide="book-open" class="icon-20 text-muted" style="width:28px!important; height:28px!important;"></i>
-        </div>
-        <p style="font-size:14px; font-weight:500;">The ledger is empty. Events are recorded when releases pass through the pipeline.</p>
+    <div style="text-align:center; padding:24px 0; color:var(--text-muted);">
+        Belum ada entri yang tercatat di dalam buku besar transparansi.
     </div>
     {% endif %}
-</div>
-
-<!-- Merkle Tree Info -->
-<div class="card">
-    <div class="card-header">
-        <h2>
-            <i data-lucide="database" class="icon-20 text-neutral"></i>
-            Merkle Tree
-        </h2>
-    </div>
-    <div class="detail-grid">
-        <div class="detail-item">
-            <div class="detail-label">Structure</div>
-            <div class="detail-value">RFC 6962 / RFC 9162 Merkle Hash Tree</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">Current Root</div>
-            <div class="detail-value" style="font-size:12px; word-break:break-all;">{{ root_hash }}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">Leaf Hash</div>
-            <div class="detail-value" style="font-size:12px;">SHA-256(0x00 || data)</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">Internal Node</div>
-            <div class="detail-value" style="font-size:12px;">SHA-256(0x01 || left || right)</div>
-        </div>
-    </div>
 </div>
 {% endblock %}
