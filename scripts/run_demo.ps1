@@ -42,10 +42,19 @@ Write-Host "Press Ctrl+C to stop the Release Desk web application." -ForegroundC
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Locate python executable in current virtual environment
-$pythonExe = Join-Path $PSScriptRoot "..\" ".venv" "Scripts" "python.exe"
+# Ensure src/ is in PYTHONPATH for clean module resolution
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$srcPath = Join-Path $repoRoot "src"
+if ($env:PYTHONPATH) {
+    $env:PYTHONPATH = "$srcPath;" + $env:PYTHONPATH
+} else {
+    $env:PYTHONPATH = "$srcPath"
+}
+
+# Locate python executable in current virtual environment (compatible with PS 5.1 and PS Core)
+$pythonExe = Join-Path $repoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $pythonExe)) {
     $pythonExe = "python"
 }
 
-& $pythonExe -m uvicorn release_desk.app:app --host $HostAddress --port $Port
+& $pythonExe -m uvicorn release_desk.app:app --app-dir "$srcPath" --host $HostAddress --port $Port

@@ -29,8 +29,9 @@
 Open PowerShell in the project root directory:
 
 ```powershell
-# Navigate to project root
-cd "segel-cyber"
+# Pastikan terminal berada di direktori root proyek segel-cyber:
+# (Jika prompt terminal Anda sudah menampilkan folder segel-cyber, lewati baris cd)
+# cd "segel-cyber"
 
 # Verify Python version
 python --version
@@ -92,14 +93,14 @@ powershell -File scripts/demo_ai_preflight.ps1
 - Warm-up latency reported (< 2500 ms) and loaded in memory (`keep_alive 30m`).
 
 ### 3.2 Step 2: Launch the Release Desk Web Service
-Launch the FastAPI Release Desk service:
+Launch the FastAPI Release Desk service using the automated startup script:
 
 ```powershell
-# Launch with AI enabled
-powershell -File scripts/run_demo.ps1 -AiEnabled 1
+# Jalankan dengan AI diaktifkan (Ollama loopback)
+powershell -ExecutionPolicy Bypass -File scripts/run_demo.ps1 -AiEnabled 1
 
-# Or launch directly via uvicorn
-uvicorn release_desk.app:app --host 127.0.0.1 --port 8000 --reload
+# Atau jalankan langsung via Python virtual environment (dengan flag --app-dir src)
+.\.venv\Scripts\python.exe -m uvicorn release_desk.app:app --app-dir src --host 127.0.0.1 --port 8000 --reload
 ```
 
 **Console Output**:
@@ -109,7 +110,7 @@ INFO: Storage configuration: data_dir=lab\data, state_dir=lab\data\state, keys_d
 INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
-Open your browser to: **`http://127.0.0.1:8000`**.
+Buka peramban ke alamat: **`http://127.0.0.1:8000`**.
 
 ---
 
@@ -267,7 +268,8 @@ If port 8000 is occupied:
 Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue | Select-Object OwningProcess
 
 # Or launch Release Desk on an alternate port
-uvicorn release_desk.app:app --host 127.0.0.1 --port 8080
+powershell -ExecutionPolicy Bypass -File scripts/run_demo.ps1 -Port 8080
+# Or: .\.venv\Scripts\python.exe -m uvicorn release_desk.app:app --app-dir src --host 127.0.0.1 --port 8080
 ```
 
 ### 8.2 Ollama Inference Unreachable / Model Missing
