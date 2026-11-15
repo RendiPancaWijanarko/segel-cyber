@@ -55,3 +55,6 @@ node_modules/
 .npm/
 package-lock.json
 
+# Local Agent Workspace
+.agents/
+
