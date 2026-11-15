@@ -563,6 +563,8 @@ async def create_release(
             "signed_cp": signed_cp,
             "timestamp": datetime.now(UTC).isoformat(),
         }
+        idx = len(demo.releases)
+        release_info["idx"] = idx
         demo.releases.append(release_info)
         demo.current_release = release_info
 
@@ -571,6 +573,7 @@ async def create_release(
             name="release_detail.html",
             context={
                 "release": release_info,
+                "idx": idx,
                 "success": True,
             },
         )
@@ -864,6 +867,22 @@ async def promote_release(request: Request, idx: int) -> HTMLResponse:
                 "error_type": type(e).__name__,
             },
         )
+
+
+@app.post("/release/deploy-canary", response_class=HTMLResponse)
+@app.post("/release//deploy-canary", response_class=HTMLResponse)
+async def deploy_canary_fallback(request: Request) -> HTMLResponse:
+    if not demo.releases:
+        raise HTTPException(404, "Release not found")
+    return await deploy_canary(request, len(demo.releases) - 1)
+
+
+@app.post("/release/promote", response_class=HTMLResponse)
+@app.post("/release//promote", response_class=HTMLResponse)
+async def promote_release_fallback(request: Request) -> HTMLResponse:
+    if not demo.releases:
+        raise HTTPException(404, "Release not found")
+    return await promote_release(request, len(demo.releases) - 1)
 
 
 @app.post("/reset")

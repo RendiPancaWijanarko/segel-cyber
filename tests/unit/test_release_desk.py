@@ -216,5 +216,43 @@ def test_autopilot_page(client):
     assert "Autopilot" in res.text or "Demonstrasi Otomatis" in res.text
 
 
+def test_create_release_renders_valid_canary_and_promote_action(client):
+    """Verify created release page renders valid non-empty indices for canary and promote forms."""
+    form_data = {
+        "release_id": "FORM-TEST-1",
+        "sequence": "1",
+        "purpose": "Form action test",
+        "canary_targets": "canary-1,canary-2",
+        "general_scope": "canary-1,canary-2,unit-3",
+    }
+    create_res = client.post("/release/create", data=form_data)
+    assert create_res.status_code == 200
+    assert "/release//deploy-canary" not in create_res.text
+    assert "/release/0/deploy-canary" in create_res.text
+
+
+def test_fallback_double_slash_canary_and_promote(client):
+    """Verify fallback routes handle empty or double-slash index gracefully."""
+    form_data = {
+        "release_id": "FALLBACK-TEST-1",
+        "sequence": "1",
+        "purpose": "Fallback route test",
+        "canary_targets": "canary-1,canary-2",
+        "general_scope": "canary-1,canary-2,unit-3",
+    }
+    client.post("/release/create", data=form_data)
+
+    # Fallback deploy-canary
+    canary_res = client.post("/release//deploy-canary")
+    assert canary_res.status_code == 200
+    assert "CANARY_DEPLOYED" in canary_res.text
+
+    # Fallback promote
+    promote_res = client.post("/release//promote")
+    assert promote_res.status_code == 200
+    assert "PROMOTED" in promote_res.text
+
+
+
 
 

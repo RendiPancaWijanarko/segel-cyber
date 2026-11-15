@@ -489,8 +489,9 @@
             Kembali ke Dasbor
         </a>
 
+        {% set release_idx = idx if idx is not none and idx != '' else (release.idx if (release.idx is defined and release.idx is not none) else 0) %}
         {% if release.status == 'CANDIDATE_RECORDED' %}
-        <form action="/release/{{ idx }}/deploy-canary" method="post" style="display:inline;">
+        <form action="/release/{{ release_idx }}/deploy-canary" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
                 <i data-lucide="flask-conical" class="icon-16"></i>
                 Gelar ke Satuan Canary
@@ -499,7 +500,7 @@
         {% endif %}
 
         {% if release.status == 'CANARY_DEPLOYED' %}
-        <form action="/release/{{ idx }}/promote" method="post" style="display:inline;">
+        <form action="/release/{{ release_idx }}/promote" method="post" style="display:inline;">
             <button type="submit" class="btn btn-primary">
                 <i data-lucide="arrow-up-right" class="icon-16"></i>
                 Promosikan ke Seluruh Satuan
