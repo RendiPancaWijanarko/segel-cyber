@@ -74,6 +74,14 @@ if (-not $serverRunning) {
     Write-Host "[OK] Server Release Desk telah berjalan pada port $Port." -ForegroundColor Green
 }
 
+# Reset state demo agar bersih dari awal (0 stempel, 0 rilis)
+try {
+    Invoke-RestMethod -Uri "http://127.0.0.1:$Port/reset" -Method Post -TimeoutSec 2 | Out-Null
+    Write-Host "[OK] Status demo berhasil di-reset ke kondisi awal (0 rilis, buku besar bersih)." -ForegroundColor Green
+} catch {
+    Write-Warning "Gagal menghubungi endpoint reset."
+}
+
 # 3. Luncurkan Peramban dalam Mode Aplikasi Bersih (App Mode / Fullscreen)
 Write-Host ""
 Write-Host "[*] Meluncurkan Demonstrasi Otomatis pada peramban..." -ForegroundColor Cyan

@@ -6,7 +6,14 @@
 (function() {
   'use strict';
 
-  // Inject Styles for Virtual Cursor, Ripple, Floating Terminal, and Toast
+  // Clear demo automation session if requested via URL
+  if (window.location.search.includes('reset=1')) {
+    sessionStorage.removeItem('segel_auto_active');
+    sessionStorage.removeItem('segel_auto_step');
+    fetch('/reset', { method: 'POST' }).catch(() => {});
+  }
+
+  // Inject Styles for Virtual Cursor, Ripple, and Floating Terminal
   const style = document.createElement('style');
   style.id = 'segel-autopilot-style';
   style.textContent = `
@@ -14,33 +21,33 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       pointer-events: none;
       z-index: 999999;
       display: none;
       transform: translate3d(200px, 200px, 0);
-      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
-      transition: transform 0.05s ease-out;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
+      transition: transform 0.04s ease-out;
     }
 
     .segel-click-ripple {
       position: fixed;
-      width: 44px;
-      height: 44px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(197, 168, 105, 0.85) 0%, rgba(59, 122, 50, 0) 70%);
-      border: 2px solid #C5A869;
+      background: rgba(30, 41, 59, 0.15);
+      border: 1.5px solid rgba(30, 41, 59, 0.3);
       pointer-events: none;
       z-index: 999998;
-      transform: translate(-50%, -50%) scale(0.2);
+      transform: translate(-50%, -50%) scale(0.3);
       opacity: 1;
-      animation: segelRippleAnim 0.55s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+      animation: segelRippleAnim 0.35s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
     }
 
     @keyframes segelRippleAnim {
-      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+      0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0.7; }
+      100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
     }
 
     /* Floating Tactical Terminal Overlay */
@@ -99,43 +106,15 @@
     .segel-term-pass { color: #4ADE80; font-weight: 700; }
     .segel-term-warn { color: #FBBF24; font-weight: 700; }
     .segel-term-accent { color: #C5A869; font-weight: 700; }
-
-    /* Tactical Toast Indicator */
-    #segel-auto-toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid #3B7A32;
-      border-left: 4px solid #C5A869;
-      color: #FFF;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      z-index: 999995;
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .segel-auto-highlight {
-      outline: 3px solid #C5A869 !important;
-      outline-offset: 3px !important;
-      box-shadow: 0 0 20px rgba(197, 168, 105, 0.5) !important;
-      transition: all 0.3s ease !important;
-    }
   `;
   document.head.appendChild(style);
 
-  // Inject Cursor HTML
+  // Inject Realistic Windows OS Style Cursor
   const cursor = document.createElement('div');
   cursor.id = 'segel-auto-cursor';
   cursor.innerHTML = `
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 3L19 12L12 14L8 21L5 3Z" fill="#C5A869" stroke="#1A3D16" stroke-width="2" stroke-linejoin="round"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 2L17.5 13.5L10.5 15.2L7 22L4 2Z" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.8" stroke-linejoin="round"/>
     </svg>
   `;
   document.body.appendChild(cursor);
@@ -153,19 +132,6 @@
     <div class="segel-term-body" id="segel-term-body"></div>
   `;
   document.body.appendChild(terminal);
-
-  // Inject Toast HTML
-  const toast = document.createElement('div');
-  toast.id = 'segel-auto-toast';
-  document.body.appendChild(toast);
-
-  function showToast(msg, durationMs = 3000) {
-    toast.innerText = msg;
-    toast.style.display = 'flex';
-    if (durationMs > 0) {
-      setTimeout(() => { toast.style.display = 'none'; }, durationMs);
-    }
-  }
 
   // Smooth Cursor Movement
   function moveCursor(targetX, targetY, durationMs = 800, onDone = null) {
@@ -205,8 +171,6 @@
       const targetX = rect.left + rect.width / 2;
       const targetY = rect.top + rect.height / 2;
       moveCursor(targetX, targetY, durationMs, () => {
-        elem.classList.add('segel-auto-highlight');
-        setTimeout(() => elem.classList.remove('segel-auto-highlight'), 1200);
         if (onDone) onDone();
       });
     }, 150);
@@ -336,8 +300,6 @@
     const step = parseInt(sessionStorage.getItem('segel_auto_step') || '1', 10);
     const path = window.location.pathname;
 
-    showToast(`DEMO OTOMATIS AKTIF — TAHAP ${step}/6 (Tekan Spasi untuk Jeda)`, 0);
-
     // STEP 1 & 2: ON DASHBOARD (/)
     if (path === '/' && step === 1) {
       showTerminalProofs(() => {
@@ -466,10 +428,9 @@
         moveCursorToElement('.stamp-warn, .card', 1000, () => {
           setTimeout(() => {
             // Finish demo
-            sessionStorage.setItem('segel_auto_active', 'false');
+            sessionStorage.removeItem('segel_auto_active');
             sessionStorage.removeItem('segel_auto_step');
             cursor.style.display = 'none';
-            showToast('DEMONSTRASI OTOMATIS SELESAI DENGAN SUKSES [100% TERVERIFIKASI]', 6000);
           }, 3000);
         });
       }, 1000);
@@ -492,7 +453,6 @@
         fetch('/reset', { method: 'POST' }).catch(() => {});
         sessionStorage.setItem('segel_auto_active', 'true');
         sessionStorage.setItem('segel_auto_step', '1');
-        showToast('MEMULAI DEMONSTRASI OTOMATIS...');
         if (window.location.pathname !== '/') {
           window.location.href = '/';
         } else {
@@ -503,15 +463,13 @@
         sessionStorage.setItem('segel_auto_active', 'false');
         cursor.style.display = 'none';
         terminal.style.display = 'none';
-        showToast('DEMO DIJEDA (Tekan Spasi untuk Melanjutkan)');
       }
     } else if (e.code === 'Escape') {
       // Stop and reset
-      sessionStorage.setItem('segel_auto_active', 'false');
+      sessionStorage.removeItem('segel_auto_active');
       sessionStorage.removeItem('segel_auto_step');
       cursor.style.display = 'none';
       terminal.style.display = 'none';
-      showToast('DEMO DIHENTIKAN');
     }
   });
 
