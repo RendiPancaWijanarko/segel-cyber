@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>PANDUAN INSTALASI & PENGGUNAAN LOKAL — SEGEL CYBER TNI AD</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 14mm 14mm;
+      @bottom-right {
+        content: "Halaman " counter(page);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 8pt;
+        color: #64748B;
+        font-weight: 600;
+      }
+      @bottom-left {
+        content: "SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda | PUSSIBERAD";
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 7.5pt;
+        color: #94A3B8;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+      line-height: 1.48;
+      color: #1E293B;
+      background-color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Page Breaks */
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .no-break {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Cover Page */
+    .cover-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 260mm;
+      padding: 0;
+      text-align: center;
+    }
+
+    .cover-header {
+      border-bottom: 3px double #24531E;
+      padding-bottom: 4mm;
+    }
+
+    .institution-sup {
+      font-size: 11pt;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #1A3D16;
+      text-transform: uppercase;
+      margin-bottom: 1.5mm;
+    }
+
+    .competition-sub {
+      font-size: 9.5pt;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #C5A869;
+      text-transform: uppercase;
+    }
+
+    .cover-body {
+      margin-top: 4mm;
+      margin-bottom: 4mm;
+    }
+
+    .logo-emblem-container {
+      display: inline-block;
+      width: 38mm;
+      height: 38mm;
+      margin: 0 auto 5mm auto;
+    }
+
+    .logo-emblem-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .doc-main-title {
+      font-size: 23pt;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      color: #1A3D16;
+      margin: 0 0 2mm 0;
+      text-transform: uppercase;
+    }
+
+    .doc-acronym {
+      font-size: 13pt;
+      font-weight: 800;
+      color: #C5A869;
+      letter-spacing: 0.8px;
+      margin-bottom: 4mm;
+    }
+
+    .doc-subtitle {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #0F172A;
+      max-width: 165mm;
+      margin: 0 auto 4mm auto;
+      line-height: 1.35;
+    }
+
+    .doc-scope-desc {
+      font-size: 8.8pt;
+      color: #475569;
+      max-width: 155mm;
+      margin: 0 auto 6mm auto;
+      line-height: 1.45;
+    }
+
+    .cover-meta-table {
+      width: 100%;
+      max-width: 160mm;
+      margin: 0 auto;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      text-align: left;
+    }
+
+    .cover-meta-table td {
+      padding: 1.8mm 2.5mm;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .cover-meta-table td.label {
+      font-weight: 700;
+      color: #1A3D16;
+      width: 34%;
+    }
+
+    .cover-footer {
+      border-top: 1px solid #CBD5E1;
+      padding-top: 3.5mm;
+      font-size: 8pt;
+      color: #64748B;
+    }
+
+    /* Standard Content Layout */
+    h1, h2, h3, h4 {
+      color: #1A3D16;
+      font-weight: 800;
+      margin-top: 4mm;
+      margin-bottom: 2mm;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    h1 {
+      font-size: 13.5pt;
+      border-bottom: 2px solid #24531E;
+      padding-bottom: 1.2mm;
+      margin-top: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    h2 {
+      font-size: 11pt;
+      border-left: 3.5px solid #C5A869;
+      padding-left: 2mm;
+      margin-top: 3.5mm;
+    }
+
+    h3 {
+      font-size: 9.8pt;
+      color: #0F172A;
+      margin-top: 3mm;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 2mm;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 2.2mm;
+      padding-left: 4.5mm;
+    }
+
+    li {
+      margin-bottom: 1mm;
+    }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2mm 0 3mm 0;
+      font-size: 8.2pt;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    table.data-table th, table.data-table td {
+      border: 1px solid #CBD5E1;
+      padding: 1.6mm 2.2mm;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    table.data-table th {
+      background-color: #F1F5F9;
+      color: #1A3D16;
+      font-weight: 700;
+      border-bottom: 2px solid #24531E;
+    }
+
+    table.data-table tr:nth-child(even) {
+      background-color: #F8FAFC;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-left: 3.5px solid #24531E;
+      background-color: #F8FAF7;
+      padding: 2.5mm 3.5mm;
+      margin: 2.5mm 0 3mm 0;
+      border-radius: 0 3px 3px 0;
+      font-size: 8.5pt;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #1A3D16;
+      margin-bottom: 0.8mm;
+      display: flex;
+      align-items: center;
+      gap: 1.5mm;
+      text-transform: uppercase;
+      font-size: 8.2pt;
+      letter-spacing: 0.4px;
+    }
+
+    .callout.warning {
+      border-left-color: #D97706;
+      background-color: #FFFBEB;
+    }
+    .callout.warning .callout-title {
+      color: #B45309;
+    }
+
+    .callout.security {
+      border-left-color: #2563EB;
+      background-color: #EFF6FF;
+    }
+    .callout.security .callout-title {
+      color: #1D4ED8;
+    }
+
+    /* Code & Command Blocks */
+    pre.code-block {
+      background-color: #0B1120;
+      color: #E2E8F0;
+      padding: 2.5mm 3mm;
+      border-radius: 3px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 7.6pt;
+      line-height: 1.4;
+      margin: 2mm 0 2.5mm 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #1E293B;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    code.inline-code {
+      background-color: #F1F5F9;
+      color: #0F172A;
+      padding: 0.3mm 1.2mm;
+      border-radius: 2.5px;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 8pt;
+      border: 1px solid #E2E8F0;
+    }
+
+    /* Pipeline Diagram */
+    .pipeline-diagram {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5mm;
+      margin: 3mm 0;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-top: 2.5px solid #24531E;
+      border-radius: 3px;
+      padding: 2mm 1.5mm;
+      text-align: center;
+    }
+
+    .pipeline-step .step-num {
+      font-size: 7pt;
+      font-weight: 700;
+      color: #C5A869;
+      text-transform: uppercase;
+    }
+
+    .pipeline-step .step-title {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #1A3D16;
+      margin: 0.8mm 0;
+    }
+
+    .pipeline-step .step-actor {
+      font-size: 7pt;
+      color: #64748B;
+    }
+
+    /* Table of Contents */
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 2mm 0;
+      border-bottom: 1px dotted #CBD5E1;
+      font-size: 8.8pt;
+    }
+    .toc-title {
+      font-weight: 600;
+      color: #1E293B;
+    }
+    .toc-page {
+      font-weight: 700;
+      color: #1A3D16;
+    }
+
+    .header-rule {
+      height: 1px;
+      background: linear-gradient(to right, #24531E, #C5A869, #E2E8F0);
+      margin-bottom: 3.5mm;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HALAMAN 1: SAMPUL RESMI ==================== -->
+  <div class="cover-container page-break">
+    <div class="cover-header">
+      <div class="institution-sup">PUSAT SIBER ANGKATAN DARAT &bull; PUSSIBERAD</div>
+      <div class="competition-sub">KARTIKA CYBER HACKATHON 2026 &mdash; PERINGATAN HARI JUANG KARTIKA</div>
+    </div>
+
+    <div class="cover-body">
+      <!-- Minimalist Vector Emblem -->
+      <div class="logo-emblem-container">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 5 L85 20 V50 C85 72 50 93 50 93 C50 93 15 72 15 50 V20 Z" fill="#24531E" stroke="#1A3D16" stroke-width="2"/>
+          <circle cx="50" cy="46" r="28" fill="#F8FAFC" stroke="#C5A869" stroke-width="3"/>
+          <circle cx="50" cy="46" r="23" stroke="#24531E" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <circle cx="50" cy="35" r="4.5" fill="#C5A869"/>
+          <circle cx="38" cy="52" r="3.5" fill="#24531E"/>
+          <circle cx="62" cy="52" r="3.5" fill="#24531E"/>
+          <line x1="50" y1="39.5" x2="38" y2="48.5" stroke="#1A3D16" stroke-width="2"/>
+          <line x1="50" y1="39.5" x2="62" y2="48.5" stroke="#1A3D16" stroke-width="2"/>
+          <path d="M44 58 H56 V67 H44 Z" fill="#C5A869"/>
+          <path d="M46 58 V54 C46 51.8 47.8 50 50 50 C52.2 50 54 51.8 54 54 V58" stroke="#C5A869" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="doc-main-title">PANDUAN OPERASIONAL & INSTALASI LOKAL</div>
+      <div class="doc-acronym">PLATFORM SEGEL CYBER TNI AD</div>
+      <div class="doc-subtitle">Sistem Edar Gelar Elektronik Lapis-ganda: Gerbang Rilis Kriptografis Rantai Pasok Terisolasi (Air-Gapped) & Penasihat Kecerdasan Buatan (AI)</div>
+      
+      <div class="doc-scope-desc">
+        Pedoman teknis komprehensif bagi personel satuan siber dan pengembang dalam melakukan penyiapan lingkungan, eksekusi dependensi, verifikasi kriptografis, inferensi model AI lokal, serta pengoperasian Meja Rilis (Release Desk) secara mandiri di fasilitas pangkalan maupun satuan operasi terdepan.
+      </div>
+
+      <table class="cover-meta-table">
+        <tr>
+          <td class="label">Kategori Lomba</td>
+          <td><strong>Dukungan Teknologi</strong> (Tooling & Framework Otomasi Pengamanan Siber Satuan)</td>
+        </tr>
+        <tr>
+          <td class="label">Tema Hackathon</td>
+          <td>Pemanfaatan AI untuk Mendukung Pengamanan IT/OT TNI AD</td>
+        </tr>
+        <tr>
+          <td class="label">Penyelenggara</td>
+          <td>Pusat Siber Angkatan Darat (PUSSIBERAD) &times; CODEPOLITAN</td>
+        </tr>
+        <tr>
+          <td class="label">Klasifikasi Dokumen</td>
+          <td>Dokumentasi Teknis Purwarupa Kompetisi Resmi (v1.0)</td>
+        </tr>
+        <tr>
+          <td class="label">Status Verifikasi Uji</td>
+          <td><strong>436 / 436 Uji Lolos</strong> (Unit, Integrasi, Properti, & Adversarial)</td>
+        </tr>
+        <tr>
+          <td class="label">Kerahasiaan Kunci</td>
+          <td>Kunci Demonstrasi Sintetis &bull; Model AI Tanpa Akses Kunci Privat</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="cover-footer">
+      Dokumen ini diterbitkan dalam rangka Kartika Cyber Hackathon 2026 &bull; Seluruh hak cipta kode dan inovasi dilindungi sesuai ketentuan Rulebook dan Syarat & Ketentuan Penyelenggara.
+    </div>
+  </div>
+
+  <!-- ==================== HALAMAN 2: DAFTAR ISI ==================== -->
+  <div class="page-break">
+    <h1>DAFTAR ISI</h1>
+    <div class="header-rule"></div>
+
+    <div style="margin-top: 5mm;">
+      <div class="toc-item"><span class="toc-title">BAB I. RINGKASAN EKSEKUTIF & KONSEP DOKTRIN OPERASIONAL</span><span class="toc-page">Halaman 3</span></div>
+      <div class="toc-item"><span class="toc-title">BAB II. KESESUAIAN KARYA & ATRIBUSI RESMI KOMPETISI</span><span class="toc-page">Halaman 4</span></div>
+      <div class="toc-item"><span class="toc-title">BAB III. PERSYARATAN PERANGKAT KERAS & LINGKUNGAN SISTEM</span><span class="toc-page">Halaman 5</span></div>
+      <div class="toc-item"><span class="toc-title">BAB IV. PANDUAN INSTALASI LANGKAH-DEMI-LANGKAH (ZERO-NETWORK)</span><span class="toc-page">Halaman 6</span></div>
+      <div class="toc-item"><span class="toc-title">BAB V. PENYIAPAN & INFERENSI SUBSISTEM AI LOKAL (OLLAMA QWEN3:4B)</span><span class="toc-page">Halaman 7</span></div>
+      <div class="toc-item"><span class="toc-title">BAB VI. VERIFIKASI KESIAPAN SISTEM VIA SUITE PENGUJIAN OTOMATIS</span><span class="toc-page">Halaman 8</span></div>
+      <div class="toc-item"><span class="toc-title">BAB VII. PANDUAN PENGOPERASIAN ANTARMUKA MEJA RILIS (RELEASE DESK)</span><span class="toc-page">Halaman 9</span></div>
+      <div class="toc-item"><span class="toc-title">BAB VIII. ALUR KERJA SIMULASI OPERASIONAL LAPANGAN (4 BABAK)</span><span class="toc-page">Halaman 10</span></div>
+      <div class="toc-item"><span class="toc-title">BAB IX. PANDUAN PEMECAHAN MASALAH (TROUBLESHOOTING)</span><span class="toc-page">Halaman 11</span></div>
+      <div class="toc-item"><span class="toc-title">BAB X. PROSEDUR PENGHENTIAN SISTEM & PEMULIHAN LINGKUNGAN</span><span class="toc-page">Halaman 11</span></div>
+    </div>
+
+    <div class="callout security" style="margin-top: 12mm;">
+      <div class="callout-title">PETUNJUK KEAMANAN DAN KEPATUHAN PANGKALAN</div>
+      Sistem SEGEL dirancang untuk beroperasi di lingkungan terisolasi penuh (<em>air-gapped</em>). Selama pengoperasian lokal, sistem tidak memerlukan sambungan internet keluar. Seluruh komunikasi kecerdasan buatan dibatasi secara tegas pada antarmuka loopback <code>127.0.0.1:11434</code>. Kunci privat kriptografis sintetis yang disertakan pada direktori pengujian hanya diperuntukkan bagi keperluan demonstrasi dan dilarang digunakan pada instalasi produksi militer.
+    </div>
+
+    <div class="callout warning" style="margin-top: 4mm;">
+      <div class="callout-title">PRINSIP PERTAHANAN LAPIS-GANDA (DEFENSE-IN-DEPTH)</div>
+      Setiap perubahan konfigurasi IT/OT wajib melalui pengesahan M-dari-N perwira komando. Model kecerdasan buatan (AI) hanya bersifat penasihat (<em>advisory</em>) dan dibatasi maksimal pada tingkat peringatan (<code>warn</code>). AI tidak pernah menandatangani rilis dan tidak dapat membatalkan aturan kebijakan deterministik.
+    </div>
+  </div>
+
+  <!-- ==================== HALAMAN 3: BAB I ==================== -->
+  <div class="page-break">
+    <h1>BAB I. RINGKASAN EKSEKUTIF & KONSEP DOKTRIN OPERASIONAL</h1>
+    <div class="header-rule"></div>
+
+    <h2>1.1 Latar Belakang Kebutuhan Pertahanan Siber TNI AD</h2>
+    <p>
+      Satuan operasional TNI Angkatan Darat mengelola infrastruktur komando dan kendali kritis, sistem telekomunikasi taktis, stasiun radar, serta aset Operational Technology (OT) di medan operasi terdepan. Ancaman siber modern terhadap rantai pasok perangkat lunak (<em>software supply-chain attacks</em>)—seperti penyisipan pintu belakang (backdoor), manipulasi skrip pembaruan firmware, dan eskalasi hak akses ilegal—dapat melumpuhkan sistem pertahanan negara apabila pembaruan digelar tanpa validasi yang ketat.
+    </p>
+    <p>
+      <strong>SEGEL (Sistem Edar Gelar Elektronik Lapis-ganda)</strong> hadir sebagai solusi gerbang pengamanan rilis independen yang menjamin doktrin operasional:
+    </p>
+
+    <div class="callout" style="text-align: center; font-size: 10.5pt; padding: 3mm;">
+      <strong style="color: #1A3D16; letter-spacing: 0.8px;">&ldquo;NO EVIDENCE, NO DEPLOYMENT&rdquo;</strong><br>
+      <span style="font-size: 8pt; color: #475569;">(Tidak ada artefak atau konfigurasi yang dapat digelar ke stasiun kerja operasional satuan tanpa rantai bukti kriptografis yang utuh dan terverifikasi secara matematis)</span>
+    </div>
+
+    <h2>1.2 Rantai 5 Stempel Kriptografis Berantai</h2>
+    <p>
+      SEGEL menegakkan lima gerbang verifikasi berurutan sebelum suatu paket konfigurasi memperoleh status promosi paspor umum (<em>General Passport</em>) untuk disebarkan ke unit penerima lapangan:
+    </p>
+
+    <div class="pipeline-diagram">
+      <div class="pipeline-step">
+        <div class="step-num">Stempel 1</div>
+        <div class="step-title">ASAL-USUL</div>
+        <div class="step-actor">Builder (Pabrik)</div>
+        <p style="font-size: 6.8pt; margin: 1mm 0 0 0; color: #475569;">Atestasi sumber kode, integritas biner, identitas pembangun.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">Stempel 2</div>
+        <div class="step-title">INSPEKSI</div>
+        <div class="step-actor">Inspector + AI</div>
+        <p style="font-size: 6.8pt; margin: 1mm 0 0 0; color: #475569;">Ekstraksi kapabilitas, audit kebijakan, klasifikasi niat rilis.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">Stempel 3</div>
+        <div class="step-title">PERSETUJUAN</div>
+        <div class="step-actor">Komando (2-of-3)</div>
+        <p style="font-size: 6.8pt; margin: 1mm 0 0 0; color: #475569;">Persetujuan multi-pihak air-gapped, pengikatan pengakuan.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">Stempel 4</div>
+        <div class="step-title">PENCATATAN</div>
+        <div class="step-actor">Buku Transparansi</div>
+        <p style="font-size: 6.8pt; margin: 1mm 0 0 0; color: #475569;">Pohon Merkle RFC 6962 & tanda tangan saksi independen.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">Stempel 5</div>
+        <div class="step-title">PENGUJIAN</div>
+        <div class="step-actor">Kanari & Penerima</div>
+        <p style="font-size: 6.8pt; margin: 1mm 0 0 0; color: #475569;">Uji kesehatan kanari, anti-rollback, gelar atomik 10-langkah.</p>
+      </div>
+    </div>
+
+    <h2>1.3 Karakteristik Keamanan Terdepan</h2>
+    <ul>
+      <li><strong>Kriptografi Standar Terbuka (Non-Custom)</strong>: Menggunakan RFC 8032 Ed25519 dan SHA-256 melalui pustaka standar PyCA Cryptography tanpa algoritma ciptaan sendiri.</li>
+      <li><strong>Prinsip Fail-Closed</strong>: Setiap ketidakcocokan tanda tangan, anomali hash, kegagalan kebijakan, atau timeout sistem menghasilkan penolakan mutlak seketika tanpa perubahan status sistem.</li>
+      <li><strong>Model AI Penasihat Terisolasi</strong>: Model AI hanya berhak memberikan advis tingkat keparahan <code>warn</code>, tidak memiliki akses ke kunci privat, dan diverifikasi integritas prompt-nya menggunakan pembekuan hash SHA-256.</li>
+      <li><strong>Kemandirian Lingkungan Terputus</strong>: Unit penerima di pos terdepan dapat melakukan verifikasi penuh tanpa koneksi ke server pusat.</li>
+    </ul>
+  </div>
+
+  <!-- ==================== HALAMAN 4: BAB II ==================== -->
+  <div class="page-break">
+    <h1>BAB II. KESESUAIAN KARYA & ATRIBUSI RESMI KOMPETISI</h1>
+    <div class="header-rule"></div>
+
+    <h2>2.1 Pemenuhan Syarat & Ketentuan (T&C) Pasal 5</h2>
+    <p>
+      Berdasarkan dokumen <em>Syarat dan Ketentuan Kartika Cyber Hackathon 2026</em> yang diterbitkan oleh PUSSIBERAD dan CODEPOLITAN, karya ini memenuhi seluruh kriteria legalitas dan ruang lingkup:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 22%;">Pasal T&C</th>
+          <th style="width: 38%;">Ketentuan Kompetisi</th>
+          <th style="width: 40%;">Implementasi & Kepatuhan Karya SEGEL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pasal 5.1 & 5.2</strong><br>(Kategori & Ruang Lingkup)</td>
+          <td>Kategori <em>Dukungan Teknologi</em>: Tooling / platform yang mendukung operasi siber satuan, termasuk yang memanfaatkan AI untuk pengamanan IT/OT.</td>
+          <td>SEGEL diimplementasikan sebagai gerbang rilis kriptografis dan framework deployment berkeamanan tinggi yang melindungi transmisi konfigurasi pada sistem IT markas dan OT satuan TNI AD.</td>
+        </tr>
+        <tr>
+          <td><strong>Pasal 5.3</strong><br>(Keaslian Karya)</td>
+          <td>Karya asli yang dikerjakan selama periode program. Deklarasi jelas wajib dicantumkan jika ada karya dasar terdahulu.</td>
+          <td><strong>Deklarasi Orisinalitas</strong>: Seluruh arsitektur, kode backend, mesin kebijakan, antarmuka, dan rangkaian pengujian dibangun secara orisinal dari awal selama periode kompetisi, berbasis standar terbuka (RFC 8032, RFC 6962, RFC 9162, in-toto v1.0).</td>
+        </tr>
+        <tr>
+          <td><strong>Pasal 5.4</strong><br>(Atribusi Lisensi)</td>
+          <td>Library, framework, model AI, dan tools pihak ketiga berlisensi legal diperbolehkan dengan mencantumkan atribusi sesuai.</td>
+          <td>Atribusi lengkap dicantumkan pada berkas <code>NOTICE</code> dan <code>README.md</code>, mencakup PyCA Cryptography, FastAPI, Pydantic, Ollama, serta model bahasa Qwen3-4B.</td>
+        </tr>
+        <tr>
+          <td><strong>Pasal 5.5</strong><br>(Larangan Konten)</td>
+          <td>Karya dilarang memuat malware aktif merusak, pelanggaran HKI, SARA, atau data pribadi tanpa izin.</td>
+          <td>Karya bebas sepenuhnya dari malware, skrip destruktif, data pribadi, atau pelanggaran HKI. Menggunakan kunci uji sintetis dan konfigurasi berdomain contoh RFC 2606.</td>
+        </tr>
+        <tr>
+          <td><strong>Pasal 14.3</strong><br>(Hak Adopsi Militer)</td>
+          <td>PUSSIBERAD berhak mengadopsi pendekatan teknis karya untuk pengamanan Infrastruktur Informasi Vital (IIV) TNI AD.</td>
+          <td>Tim pengembang menyatakan kesiapan penuh untuk transfer pengetahuan dan mendukung pengadopsian SEGEL pada satuan jajaran TNI AD.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2.2 Atribusi Pustaka dan Perangkat Lunak Pihak Ketiga</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Komponen</th>
+          <th>Versi</th>
+          <th>Lisensi</th>
+          <th>Peran dalam Sistem SEGEL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>cryptography (PyCA)</strong></td>
+          <td>50.0.2</td>
+          <td>Apache-2.0 / BSD</td>
+          <td>Primitif kriptografi: tanda tangan Ed25519 RFC 8032, CSPRNG, hash SHA-256.</td>
+        </tr>
+        <tr>
+          <td><strong>FastAPI & Uvicorn</strong></td>
+          <td>0.162.0 / 0.54.0</td>
+          <td>MIT / BSD-3</td>
+          <td>Server web asinkronus dan router REST untuk antarmuka Meja Rilis.</td>
+        </tr>
+        <tr>
+          <td><strong>Pydantic</strong></td>
+          <td>2.14.2</td>
+          <td>MIT</td>
+          <td>Validasi skema predikat in-toto, penegakan tipe data ketat, dan parsing payload.</td>
+        </tr>
+        <tr>
+          <td><strong>cbor2 & qrcode</strong></td>
+          <td>6.2.0 / 8.2</td>
+          <td>MIT / BSD-3</td>
+          <td>Serialisasi muatan biner ringkas untuk transfer data fisik berpemisah udara (air-gap).</td>
+        </tr>
+        <tr>
+          <td><strong>pytest & hypothesis</strong></td>
+          <td>9.2.0 / 6.170.14</td>
+          <td>MIT / MPL-2.0</td>
+          <td>Kerangka kerja pengujian otomatis, uji berbasis properti, dan uji ketahanan adversarial.</td>
+        </tr>
+        <tr>
+          <td><strong>Ollama & Qwen3-4B</strong></td>
+          <td>Local / 4B</td>
+          <td>MIT / Apache-2.0</td>
+          <td>Mesin inferensi dan model bahasa terbuka untuk klasifikasi niat rilis penasihat siber.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== HALAMAN 5: BAB III ==================== -->
+  <div class="page-break">
+    <h1>BAB III. PERSYARATAN PERANGKAT KERAS & LINGKUNGAN SISTEM</h1>
+    <div class="header-rule"></div>
+
+    <h2>3.1 Spesifikasi Perangkat Keras yang Disarankan</h2>
+    <p>
+      Untuk menjalankan SEGEL beserta subsistem inferensi AI lokal secara optimal pada stasiun kerja pengembang atau server pangkalan, spesifikasi berikut direkomendasikan:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 28%;">Komponen</th>
+          <th style="width: 36%;">Kebutuhan Minimum</th>
+          <th style="width: 36%;">Rekomendasi Operasional Satuan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Prosesor (CPU)</strong></td>
+          <td>4-Core x86_64 (Intel Core i5 Gen 8 / AMD Ryzen 3)</td>
+          <td>8-Core x86_64 dengan instruksi AVX2/AVX-512</td>
+        </tr>
+        <tr>
+          <td><strong>Memori Kerja (RAM)</strong></td>
+          <td>8 GB DDR4 (Mode Deterministik AI-Off)</td>
+          <td>16 GB DDR4/DDR5 (Mode Penuh dengan LLM Ollama)</td>
+        </tr>
+        <tr>
+          <td><strong>Ruang Penyimpanan (Disk)</strong></td>
+          <td>2 GB ruang kosong untuk sistem & dependensi</td>
+          <td>10 GB SSD NVMe (termasuk penyimpanan bobot model AI)</td>
+        </tr>
+        <tr>
+          <td><strong>Akselerator Grafis (GPU)</strong></td>
+          <td>Tidak diwajibkan (CPU inference didukung penuh)</td>
+          <td>NVIDIA GPU dengan 6 GB+ VRAM untuk latensi sub-detik</td>
+        </tr>
+        <tr>
+          <td><strong>Konektivitas Jaringan</strong></td>
+          <td>Koneksi loopback internal (127.0.0.1) saja</td>
+          <td>Air-Gapped / Terisolasi penuh dari jaringan publik</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3.2 Persyaratan Perangkat Lunak</h2>
+    <ol>
+      <li>
+        <strong>Sistem Operasi</strong>:
+        Microsoft Windows 10/11 (64-bit) dengan Windows PowerShell 5.1 atau PowerShell 7+, atau distribusi Linux (Ubuntu 22.04 LTS / Debian 12 / Rocky Linux 9).
+      </li>
+      <li>
+        <strong>Runtime Python</strong>:
+        Python versi <strong>3.14.6</strong> (terverifikasi penuh pada stasiun kerja pengembangan) atau Python 3.12+ (kompatibel secara sintaks).
+      </li>
+      <li>
+        <strong>Git CLI</strong>:
+        Untuk manajemen versi kode sumber dan pelacakan riwayat komit.
+      </li>
+      <li>
+        <strong>Peramban Web Modern</strong>:
+        Microsoft Edge, Google Chrome, atau Mozilla Firefox untuk mengakses antarmuka grafis Meja Rilis (Release Desk).
+      </li>
+      <li>
+        <strong>Ollama Runtime (Opsional untuk AI Aktif)</strong>:
+        Layanan Ollama lokal untuk mengeksekusi model sumber terbuka <code>qwen3:4b</code>.
+      </li>
+    </ol>
+
+    <div class="callout security">
+      <div class="callout-title">JAMINAN ISOLASI SISTEM</div>
+      Seluruh rangkaian pengujian (436 uji) dan operasi dasar gerbang rilis SEGEL dapat berjalan 100% tanpa internet. Jika Ollama tidak diinstal atau dinonaktifkan, SEGEL secara otomatis beralih ke mode deterministik (Rule B1b) tanpa penurunan standar keamanan pengujian.
+    </div>
+  </div>
+
+  <!-- ==================== HALAMAN 6: BAB IV ==================== -->
+  <div class="page-break">
+    <h1>BAB IV. PANDUAN INSTALASI LANGKAH-DEMI-LANGKAH</h1>
+    <div class="header-rule"></div>
+
+    <h2>4.1 Langkah 1: Klon Repositori Kode Sumber</h2>
+    <p>Buka terminal PowerShell dan navigasikan ke direktori kerja yang diinginkan:</p>
+    <pre class="code-block">git clone &lt;url-repositori-segel&gt; segel-cyber
+cd segel-cyber</pre>
+
+    <h2>4.2 Langkah 2: Pembuatan Virtual Environment Python</h2>
+    <p>
+      Pastikan versi Python terdeteksi dengan benar, kemudian buat virtual environment terisolasi:
+    </p>
+    <pre class="code-block"># Memeriksa versi runtime Python
+python --version
+# Output terverifikasi: Python 3.14.6
+
+# Membuat virtual environment terisolasi pada direktori .venv
+python -m venv .venv</pre>
+
+    <h2>4.3 Langkah 3: Aktivasi Virtual Environment</h2>
+    <p>Aktifkan virtual environment pada sesi PowerShell Anda:</p>
+    <pre class="code-block"># Mengaktifkan sesi virtual environment Windows
+.\.venv\Scripts\Activate.ps1
+
+# Catatan: Jika muncul kendala kebijakan eksekusi skrip, jalankan:
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</pre>
+    <p>Tanda <code>(.venv)</code> akan muncul di awal baris perintah terminal yang menandakan isolasi telah aktif.</p>
+
+    <h2>4.4 Langkah 4: Instalasi Dependensi Pengembang (Local Editable)</h2>
+    <p>
+      Lakukan instalasi paket SEGEL bersama seluruh dependensi pengujian dan pengembangannya:
+    </p>
+    <pre class="code-block">pip install -e ".[dev]"</pre>
+    <p>
+      Perintah di atas akan membaca konfigurasi <code>pyproject.toml</code> dan memasang seluruh dependensi resmi (cryptography, fastapi, pydantic, jinja2, pillow, qrcode, uvicorn, hypothesis, pytest, bandit, ruff, mypy).
+    </p>
+
+    <h2>4.5 Langkah 5: Verifikasi Integritas Prompt & Repositori</h2>
+    <p>
+      Sistem SEGEL memvalidasi bahwa templat prompt inferensi AI tidak mengalami penyusupan melalui verifikasi hash SHA-256 terhadap berkas pembekuan <code>docs/ai_prompt_freeze.txt</code>:
+    </p>
+    <pre class="code-block">python -c "from src.inspector.ai.prompt import verify_prompt_integrity; print('Integritas OK' if verify_prompt_integrity() else 'TERKOMPROMISI')"</pre>
+    <p>Jika integritas terjamin, terminal akan menampilkan konfirmasi <code>Integritas OK</code>.</p>
+  </div>
+
+  <!-- ==================== HALAMAN 7: BAB V ==================== -->
+  <div class="page-break">
+    <h1>BAB V. PENYIAPAN & INFERENSI SUBSISTEM AI LOKAL</h1>
+    <div class="header-rule"></div>
+
+    <h2>5.1 Arsitektur Penasihat AI (Qwen3-4B via Ollama Loopback)</h2>
+    <p>
+      Subsistem AI pada SEGEL dirancang dengan batasan keamanan ketat:
+    </p>
+    <ul>
+      <li><strong>Isolasi Loopback</strong>: Inferensi hanya diarahkan ke <code>http://127.0.0.1:11434</code>. Tidak ada lalu lintas ke jaringan eksternal.</li>
+      <li><strong>Tanpa Penyimpanan Kunci (Zero Key Exposure)</strong>: Pekerja inferensi dieksekusi dalam subproses steril tanpa variabel lingkungan kredensial.</li>
+      <li><strong>Pemberian Peringatan Tertinggi (Capped at Warn)</strong>: AI tidak memiliki hak eksekutif untuk menolak atau meloloskan rilis secara sepihak.</li>
+    </ul>
+
+    <h2>5.2 Langkah Penyiapan Ollama & Penarikan Model</h2>
+    <ol>
+      <li>
+        <strong>Unduh dan Pasang Ollama</strong>:<br>
+        Pasang aplikasi Ollama untuk Windows. Pastikan layanan berjalan di latar belakang (ikon baki sistem aktif).
+      </li>
+      <li>
+        <strong>Tarik Bobot Model Terbuka Qwen3-4B</strong>:
+        <pre class="code-block">ollama pull qwen3:4b</pre>
+        <em>Catatan: Ukuran bobot model sekitar 2.6 GB. Bobot disimpan secara lokal pada mesin host dan tidak dimasukkan ke dalam repositori kode git.</em>
+      </li>
+      <li>
+        <strong>Uji Kesiapan Model melalui Skrip Pra-Terbang (Preflight Script)</strong>:
+        <pre class="code-block">powershell -ExecutionPolicy Bypass -File scripts/demo_ai_preflight.ps1</pre>
+        Skrip akan mengirimkan permintaan pemanasan (<em>warm-up request</em>) dengan parameter <code>keep_alive 30m</code>, memverifikasi keterisian memori GPU/RAM via <code>ollama ps</code>, serta mencetak latensi inferensi dalam milidetik.
+      </li>
+    </ol>
+
+    <h2>5.3 Pengaturan Variabel Lingkungan Kontrol</h2>
+    <p>
+      Perilaku subsistem AI dapat dikendalikan melalui variabel lingkungan sistem:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Variabel Lingkungan</th>
+          <th>Nilai Baku</th>
+          <th>Deskripsi Fungsi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>SEGEL_AI_ENABLED</code></td>
+          <td><code>1</code> (atau <code>0</code>)</td>
+          <td>Mengaktifkan (1) atau menonaktifkan (0) inferensi AI penasihat. Jika 0, sistem beralih ke aturan deterministik B1b.</td>
+        </tr>
+        <tr>
+          <td><code>SEGEL_AI_HOST</code></td>
+          <td><code>http://127.0.0.1:11434</code></td>
+          <td>Alamat antarmuka loopback Ollama lokal.</td>
+        </tr>
+        <tr>
+          <td><code>SEGEL_AI_TIMEOUT_SECONDS</code></td>
+          <td><code>3.0</code></td>
+          <td>Batas waktu tunggu inferensi. Jika melampaui, sistem gagal aman (fail-closed) memunculkan peringatan timeout.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== HALAMAN 8: BAB VI ==================== -->
+  <div class="page-break">
+    <h1>BAB VI. VERIFIKASI KESIAPAN SISTEM VIA SUITE PENGUJIAN OTOMATIS</h1>
+    <div class="header-rule"></div>
+
+    <h2>6.1 Eksekusi Pengujian Penuh (436 Uji Tanpa Ketergantungan Jaringan)</h2>
+    <p>
+      Untuk membuktikan kesiapan operasional sistem, jalankan seluruh rangkaian pengujian unit, integrasi, berbasis properti, dan adversarial menggunakan simulator inferensi <code>FakeLLM</code> deterministik bawaan:
+    </p>
+    <pre class="code-block">.\.venv\Scripts\python -m pytest</pre>
+
+    <p><strong>Bukti Eksekusi Suite Pengujian Terverifikasi:</strong></p>
+    <pre class="code-block">============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\...\segel-cyber | collected 436 items
+
+tests\adversarial\test_adversarial.py .........................          [  5%]
+tests\adversarial\test_at_NNN.py ....................................... [ 14%]
+tests\adversarial\test_injection_suite.py ...                            [ 16%]
+tests\gaps\test_c1_sec004.py ... tests\gaps\test_c2_fr051.py ....        [ 17%]
+tests\gaps\test_c3_sec017.py .... tests\gaps\test_c4_fr066.py ....       [ 19%]
+tests\gaps\test_c5_at030_crash.py ... tests\integration\*.py ......      [ 21%]
+tests\unit\crypto\test_dsse.py ......................                    [ 26%]
+tests\unit\crypto\test_ed25519.py ....................                   [ 31%]
+tests\unit\crypto\test_merkle.py .................................       [ 38%]
+tests\unit\test_ai_7_ack_and_manifest.py .....................           [ 43%]
+tests\unit\test_ai_eval_guard.py ...... tests\unit\test_ai_*.py ........ [ 51%]
+tests\unit\test_approver.py .... tests\unit\test_builder.py ............ [ 61%]
+tests\unit\test_clis.py ...... tests\unit\test_config.py ......          [ 63%]
+tests\unit\test_inspector.py ........................................... [ 75%]
+tests\unit\test_ledger.py .........................                      [ 85%]
+tests\unit\test_passport_and_promotion.py .....                          [ 87%]
+tests\unit\test_properties.py ................                           [ 91%]
+tests\unit\test_receiver.py ................                             [ 94%]
+tests\unit\test_receiver_offline_isolation.py ..                         [ 95%]
+tests\unit\test_release_desk.py ..............                           [ 98%]
+tests\unit\test_witness.py ......                                        [100%]
+
+================== 436 passed, 1 warning in 78.50s (0:01:18) ==================</pre>
+
+    <h2>6.2 Uji Skenario Demonstrasi Otomatis Non-Interaktif (4 Babak)</h2>
+    <p>
+      Jalankan skrip skenario demonstrasi 4 babak untuk memvalidasi alur kerja rilis pada mode AI aktif dan mode deterministik:
+    </p>
+    <pre class="code-block">python scripts/run_demo_scenario.py</pre>
+    <p>
+      Skrip akan menguji Babak 1 (Rilis Normal), Babak 2 (Penolakan Kebijakan PRULE-001), Babak 3 (Peringatan Maksud Ambigu & Pengikatan Pengakuan), serta Babak 4 (Gelar Penerima Terisolasi) dengan hasil seluruh babak berstatus <strong>PASS</strong>.
+    </p>
+  </div>
+
+  <!-- ==================== HALAMAN 9: BAB VII ==================== -->
+  <div class="page-break">
+    <h1>BAB VII. PANDUAN PENGOPERASIAN ANTARMUKA MEJA RILIS</h1>
+    <div class="header-rule"></div>
+
+    <h2>7.1 Memulai Server Antarmuka Grafis (Release Desk)</h2>
+    <p>
+      Luncurkan server antarmuka Meja Rilis menggunakan skrip peluncur resmi:
+    </p>
+    <pre class="code-block"># Meluncurkan Meja Rilis dengan konfigurasi AI aktif bawaan
+powershell -ExecutionPolicy Bypass -File scripts/run_demo.ps1
+
+# Atau meluncurkan langsung melalui server Uvicorn:
+uvicorn src.release_desk.app:app --host 127.0.0.1 --port 8000 --reload</pre>
+
+    <p>
+      Buka peramban web dan navigasikan ke alamat lokal: <br>
+      <strong style="font-size: 10.5pt; color: #1A3D16;">http://127.0.0.1:8000</strong>
+    </p>
+
+    <h2>7.2 Struktur & Fitur Utama Antarmuka</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Komponen UI</th>
+          <th style="width: 35%;">Elemen Tampilan</th>
+          <th style="width: 40%;">Fungsi Operasional bagi Personel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Kop Markas & Status</strong></td>
+          <td>Insignia PUSSIBERAD, lambang TNI AD, status aktif AI Ollama.</td>
+          <td>Identifikasi resmi, status koneksi loopback, dan penanda mode operasi aktif.</td>
+        </tr>
+        <tr>
+          <td><strong>Kartu Telemetri Kriptografis</strong></td>
+          <td>Metrik integritas Ed25519, ukuran pohon Merkle, latensi inferensi AI dinamis.</td>
+          <td>Memberikan visibilitas instan atas keandalan primitif kriptografis dan kesehatan layanan backend.</td>
+        </tr>
+        <tr>
+          <td><strong>Daftar Rilis Konfigurasi</strong></td>
+          <td>Tabel rilis operasional dengan indikator 5 stempel, versi, dan status paspor.</td>
+          <td>Pemantauan status progres artefak rilis dari tahap pembuatan hingga persetujuan akhir komando.</td>
+        </tr>
+        <tr>
+          <td><strong>Panel Detail Paket Rilis</strong></td>
+          <td>Inspeksi berkas payload, hash SHA-256 berkas, dan rincian kapabilitas teknis.</td>
+          <td>Personel analis dapat memeriksa perubahan firewall, akun pengguna, atau skrip konfigurasi secara rinci.</td>
+        </tr>
+        <tr>
+          <td><strong>Panel Penasihat AI</strong></td>
+          <td>Klasifikasi niat rilis (L1-L6), evaluasi ambiguitas, dan daftar temuan peringatan.</td>
+          <td>Menyajikan analisis cerdas apakah deklarasi manifest selaras dengan perubahan teknis aktual tanpa memegang hak veto.</td>
+        </tr>
+        <tr>
+          <td><strong>Simulator Penerima Terisolasi</strong></td>
+          <td>Simulasi terminal node penerima pos depan, verifikasi tanda tangan, dan tombol gelar atomik.</td>
+          <td>Memungkinkan demonstrasi penggelaran aman di stasiun kerja satuan tanpa membutuhkan perangkat keras fisik terpisah.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-title">Dukungan Bahasa Indonesia Penuh</div>
+      Seluruh teks label, status, tombol, notifikasi sistem, dan pesan kesalahan telah diterjemahkan ke dalam Bahasa Indonesia yang baku dan komunikatif sesuai konteks operasional militer matra darat.
+    </div>
+  </div>
+
+  <!-- ==================== HALAMAN 10: BAB VIII ==================== -->
+  <div class="page-break">
+    <h1>BAB VIII. ALUR KERJA SIMULASI OPERASIONAL LAPANGAN</h1>
+    <div class="header-rule"></div>
+
+    <h2>8.1 Babak 1: Rilis Standar Bersih (Pembaruan Firewall Pangkalan)</h2>
+    <ol>
+      <li><strong>Pembuatan Paket (Pabrik)</strong>: Paket konfigurasi firewall pangkalan ditandatangani menggunakan kunci pembangun yang sah.</li>
+      <li><strong>Inspeksi Kebijakan</strong>: Mesin inspeksi mengekstraksi aturan port firewall dan memvalidasi terhadap aturan keamanan. Hasil inspeksi: <strong>LULUS (PASS)</strong>.</li>
+      <li><strong>Persetujuan Komando</strong>: 2 dari 3 perwira komando menandatangani persetujuan secara terpisah.</li>
+      <li><strong>Pencatatan Buku Transparansi</strong>: Atestasi dicatat ke dalam pohon Merkle; saksi menerbitkan tanda tangan bersama.</li>
+      <li><strong>Promosi Paspor</strong>: Paket rilis resmi dipromosikan ke status <em>General Passport</em> dan siap digelarkan.</li>
+    </ol>
+
+    <h2>8.2 Babak 2: Penolakan Keras Eskalasi Hak Istimewa (Kebijakan PRULE-001)</h2>
+    <ol>
+      <li><strong>Skenario Serangan</strong>: Paket konfigurasi ilegal mencoba menyisipkan perintah eskalasi hak istimewa (root privileges / penambahan akun sudo gelap).</li>
+      <li><strong>Deteksi Gerbang Inspeksi</strong>: Kebijakan deterministik <code>PRULE-001</code> secara tegas mendeteksi pelanggaran batas hak akses.</li>
+      <li><strong>Respon Sistem</strong>: Penerbitan status <strong>TOLAK (REJECT)</strong> seketika. Rilis dibekukan dan tidak dapat dilanjutkan ke meja persetujuan komando.</li>
+    </ol>
+
+    <h2>8.3 Babak 3: Peringatan AI & Pengikatan Pengakuan (Warning Acknowledgement)</h2>
+    <ol>
+      <li><strong>Skenario Ketidaksesuaian Intensi</strong>: Manifest rilis mengklaim tujuan perbaikan kosmetik biasa, namun muatan teknis mengandung perubahan rute jaringan taktis.</li>
+      <li><strong>Deteksi Penasihat AI</strong>: Model bahasa Qwen3-4B mendeteksi ketidaksesuaian intensi dan menerbitkan temuan <strong>PERINGATAN (WARN)</strong> kategori L6.</li>
+      <li><strong>Kewajiban Pengakuan Kriptografis</strong>: Komando tidak dapat menandatangani persetujuan tanpa menyertakan <code>acknowledgement_digest</code> yang mengikat tanda tangan komando dengan teks peringatan AI secara eksplisit.</li>
+    </ol>
+
+    <h2>8.4 Babak 4: Penerimaan Terisolasi & Gelar Atomik 10-Langkah</h2>
+    <ol>
+      <li><strong>Verifikasi Paspor Mandiri</strong>: Node penerima pos depan memvalidasi tanda tangan 5 stempel dan bukti konsistensi Merkle secara offline.</li>
+      <li><strong>Pencegahan Rollback</strong>: Sistem memeriksa nomor urut rilis monotonik untuk menggagalkan upaya serangan pemunduran versi (rollback attack).</li>
+      <li><strong>Eksekusi Gelar Atomik</strong>: Penerapan konfigurasi dilakukan melalui tahapan persiapan, pencatatan jurnal pemulihan, penggantian berkas atomik, verifikasi integritas, hingga penuntasan rilis.</li>
+    </ol>
+  </div>
+
+  <!-- ==================== HALAMAN 11: BAB IX & X ==================== -->
+  <div>
+    <h1>BAB IX. PANDUAN PEMECAHAN MASALAH (TROUBLESHOOTING)</h1>
+    <div class="header-rule"></div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 28%;">Pesan / Gejala</th>
+          <th style="width: 34%;">Penyebab Masalah</th>
+          <th style="width: 38%;">Solusi Penanganan Teknis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ExecutionPolicy Restricted</code></td>
+          <td>Kebijakan eksekusi PowerShell melarang skrip tanpa tanda tangan.</td>
+          <td>Jalankan dengan bypass:<br><code>powershell -ExecutionPolicy Bypass -File &lt;skrip&gt;</code></td>
+        </tr>
+        <tr>
+          <td><code>OLLAMA_UNREACHABLE</code></td>
+          <td>Layanan Ollama belum aktif atau model belum diunduh.</td>
+          <td>Jalankan Ollama, eksekusi <code>ollama pull qwen3:4b</code>, dan jalankan <code>demo_ai_preflight.ps1</code>.</td>
+        </tr>
+        <tr>
+          <td><code>Port 8000 already in use</code></td>
+          <td>Port TCP 8000 terpakai oleh proses lain.</td>
+          <td>Hentikan proses lama atau gunakan port lain:<br><code>uvicorn src.release_desk.app:app --port 8080</code></td>
+        </tr>
+        <tr>
+          <td><code>PROMPT_TAMPERED</code></td>
+          <td>Templat prompt AI termodifikasi dari digest beku.</td>
+          <td>Kembalikan berkas prompt ke versi komit git resmi.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 style="margin-top: 5mm;">BAB X. PROSEDUR PENGHENTIAN & PEMULIHAN LINGKUNGAN</h1>
+    <div class="header-rule"></div>
+
+    <h2>10.1 Prosedur Penghentian Layanan (Graceful Shutdown)</h2>
+    <p>
+      Pada jendela terminal yang menjalankan Meja Rilis (Uvicorn), tekan kombinasi tombol <code>Ctrl + C</code> untuk menghentikan server secara tertib dan menunggu pembersihan koneksi asinkronus.
+    </p>
+
+    <h2>10.2 Deaktivasi Virtual Environment</h2>
+    <p>Kembalikan lingkungan baris perintah ke konfigurasi bawaan sistem dengan perintah:</p>
+    <pre class="code-block">deactivate</pre>
+
+    <h2>10.3 Pembersihan Berkas Pementasan Sementara (Opsional)</h2>
+    <pre class="code-block"># Menghapus berkas cache pengujian Python
+Remove-Item -Recurse -Force .pytest_cache -ErrorAction SilentlyContinue</pre>
+
+    <div class="callout warning" style="margin-top: 3.5mm;">
+      <div class="callout-title">PENUTUP & KONFIRMASI KESIAPAN SUBMISI</div>
+      Dokumen ini telah disesuaikan secara utuh dengan standar dokumentasi teknis Kartika Cyber Hackathon 2026. Platform SEGEL siap didemonstrasikan di hadapan Dewan Juri baik secara daring maupun luring pada Babak Final di Jakarta.
+    </div>
+  </div>
+
+</body>
+</html>
