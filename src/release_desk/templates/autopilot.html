@@ -7,18 +7,13 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <style>
     :root {
-      --bg-dark: #0B1120;
-      --bg-card: #111827;
-      --border-color: #1E293B;
-      --tactical-green: #24531E;
-      --tactical-green-light: #3B7A32;
-      --accent-gold: #C5A869;
-      --accent-gold-light: #D1BD99;
-      --accent-red: #DC2626;
-      --accent-yellow: #D97706;
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --text-dim: #64748B;
+      --segel-canvas-bg: #F2F7F0;
+      --segel-primary: #3B7A32;
+      --segel-primary-hover: #24531E;
+      --segel-sand-gold: #D1BD99;
+      --segel-accent-gold: #C5A869;
+      --segel-navy: #0F172A;
+      --segel-slate-muted: #64748B;
     }
 
     * {
@@ -29,77 +24,87 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
+      background-color: var(--segel-canvas-bg);
+      color: var(--segel-navy);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
+      position: relative;
     }
 
     /* ============================================================== */
-    /* VIRTUAL CURSOR & CLICK RIPPLE                                 */
+    /* REAL APPLICATION IFRAME                                        */
+    /* ============================================================== */
+    #real-app-frame {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      z-index: 10;
+      background: var(--segel-canvas-bg);
+    }
+
+    /* ============================================================== */
+    /* VIRTUAL CURSOR & CLICK RIPPLE (Floating over frame)            */
     /* ============================================================== */
     #virtual-cursor {
       position: fixed;
       top: 0;
       left: 0;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       pointer-events: none;
       z-index: 99999;
-      transition: transform 0.05s ease-out;
       display: block;
       transform: translate3d(200px, 200px, 0);
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
     }
 
     #virtual-cursor svg {
-      width: 24px;
-      height: 24px;
-      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+      width: 26px;
+      height: 26px;
     }
 
     .click-ripple {
       position: fixed;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(197, 168, 105, 0.8) 0%, rgba(36, 83, 30, 0) 70%);
-      border: 2px solid var(--accent-gold);
+      background: radial-gradient(circle, rgba(197, 168, 105, 0.85) 0%, rgba(59, 122, 50, 0) 70%);
+      border: 2.5px solid var(--segel-accent-gold);
       pointer-events: none;
       z-index: 99998;
       transform: translate(-50%, -50%) scale(0.2);
       opacity: 1;
-      animation: rippleEffect 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+      animation: rippleAnim 0.55s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
     }
 
-    @keyframes rippleEffect {
-      0% {
-        transform: translate(-50%, -50%) scale(0.2);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -50%) scale(2.2);
-        opacity: 0;
-      }
+    @keyframes rippleAnim {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
     }
 
     /* ============================================================== */
-    /* PROMPTER & CONTROLLER HUD (Top Bar)                           */
+    /* PROMPTER & HUD CONTROLLER (Floating Top Bar)                  */
     /* ============================================================== */
     #autopilot-hud {
-      background: rgba(15, 23, 42, 0.95);
-      border-bottom: 2px solid var(--tactical-green);
-      backdrop-filter: blur(10px);
-      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.94);
+      border-bottom: 2px solid var(--segel-primary);
+      backdrop-filter: blur(12px);
+      padding: 10px 24px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      z-index: 9000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      z-index: 90000;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
       transition: transform 0.3s ease;
+      color: #FFF;
     }
 
     #autopilot-hud.hidden {
@@ -119,7 +124,7 @@
     }
 
     .hud-badge {
-      background: var(--tactical-green);
+      background: var(--segel-primary);
       color: #FFF;
       font-size: 11px;
       font-weight: 800;
@@ -127,13 +132,13 @@
       border-radius: 4px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      border: 1px solid var(--accent-gold);
+      border: 1px solid var(--segel-accent-gold);
     }
 
     .hud-title {
       font-size: 14px;
       font-weight: 700;
-      color: var(--accent-gold);
+      color: var(--segel-sand-gold);
     }
 
     .hud-timer {
@@ -142,7 +147,7 @@
       font-weight: 800;
       color: #38BDF8;
       background: #020617;
-      padding: 4px 12px;
+      padding: 4px 14px;
       border-radius: 4px;
       border: 1px solid #1E293B;
     }
@@ -162,33 +167,30 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
       transition: all 0.2s;
     }
 
     .btn-hud:hover {
       background: #334155;
-      border-color: var(--accent-gold);
+      border-color: var(--segel-accent-gold);
       color: #FFF;
     }
 
     .btn-hud.btn-primary {
-      background: var(--tactical-green);
-      border-color: var(--accent-gold);
+      background: var(--segel-primary);
+      border-color: var(--segel-accent-gold);
       color: #FFF;
     }
 
     .btn-hud.btn-primary:hover {
-      background: var(--tactical-green-light);
+      background: var(--segel-primary-hover);
     }
 
     /* Prompter Box */
     .hud-prompter-box {
       background: #020617;
       border: 1px solid #1E293B;
-      border-left: 4px solid var(--accent-gold);
+      border-left: 4px solid var(--segel-accent-gold);
       padding: 10px 14px;
       border-radius: 4px;
       display: flex;
@@ -199,7 +201,7 @@
     .prompter-label {
       font-size: 10px;
       font-weight: 800;
-      color: var(--accent-gold);
+      color: var(--segel-accent-gold);
       text-transform: uppercase;
       letter-spacing: 0.8px;
       display: flex;
@@ -207,22 +209,15 @@
     }
 
     .prompter-text {
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.45;
       color: #FFF;
       font-weight: 600;
     }
 
-    .prompter-text .highlight {
-      color: #FDE047;
-      background: rgba(202, 138, 4, 0.2);
-      padding: 0 4px;
-      border-radius: 2px;
-    }
-
     .prompter-next {
       font-size: 11px;
-      color: var(--text-dim);
+      color: var(--segel-slate-muted);
       font-style: italic;
     }
 
@@ -237,24 +232,23 @@
     .hud-progress-bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(to right, var(--tactical-green), var(--accent-gold));
+      background: linear-gradient(to right, var(--segel-primary), var(--segel-accent-gold));
       transition: width 0.2s linear;
     }
 
-    /* Toggle bar pill */
     #hud-toggle-pill {
       position: fixed;
       top: 0;
-      right: 20px;
-      background: var(--tactical-green);
+      right: 24px;
+      background: var(--segel-primary);
       color: #FFF;
-      padding: 3px 12px;
-      font-size: 10px;
+      padding: 4px 14px;
+      font-size: 11px;
       font-weight: 800;
       border-radius: 0 0 6px 6px;
       cursor: pointer;
-      z-index: 9001;
-      border: 1px solid var(--accent-gold);
+      z-index: 90001;
+      border: 1px solid var(--segel-accent-gold);
       border-top: none;
       display: none;
     }
@@ -263,7 +257,7 @@
     #countdown-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(11, 17, 32, 0.92);
+      background: rgba(11, 17, 32, 0.94);
       z-index: 99990;
       display: none;
       flex-direction: column;
@@ -273,96 +267,74 @@
     }
 
     #countdown-number {
-      font-size: 120px;
+      font-size: 130px;
       font-weight: 900;
-      color: var(--accent-gold);
+      color: var(--segel-accent-gold);
       font-family: ui-monospace, monospace;
-      animation: pulseCount 1s infinite;
-    }
-
-    @keyframes pulseCount {
-      0% { transform: scale(0.8); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 1; }
-      100% { transform: scale(1.0); opacity: 0.8; }
     }
 
     #countdown-message {
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 800;
       color: #FFF;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
     /* ============================================================== */
-    /* MAIN VIEWPORT (Where the automated demo renders)              */
+    /* SLIDE OVERLAY (Segmen 1, Segmen 2, Segmen 6)                  */
     /* ============================================================== */
-    #demo-viewport {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-      background: #0B1120;
-    }
-
-    .demo-view {
+    #view-slides {
       position: absolute;
       inset: 0;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.5s ease;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .demo-view.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* ============================================================== */
-    /* VIEW 1: EXECUTIVE SLIDES                                      */
-    /* ============================================================== */
-    .slide-wrapper {
-      flex: 1;
+      background: var(--segel-canvas-bg);
+      z-index: 50;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 40px;
-      background: radial-gradient(circle at center, #1E293B 0%, #0B1120 100%);
       text-align: center;
+      transition: opacity 0.5s ease;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #view-slides.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
     .slide-badge {
-      background: rgba(36, 83, 30, 0.4);
-      color: var(--accent-gold);
-      border: 1px solid var(--accent-gold);
-      padding: 6px 16px;
+      background: #FFFFFF;
+      color: var(--segel-primary);
+      border: 1.5px solid var(--segel-primary);
+      padding: 6px 18px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(59, 122, 50, 0.12);
     }
 
     .slide-title {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: 900;
-      color: #FFF;
+      color: var(--segel-primary-hover);
       margin-bottom: 12px;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .slide-subtitle {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--accent-gold);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--segel-navy);
       max-width: 900px;
-      line-height: 1.4;
+      line-height: 1.45;
       margin-bottom: 30px;
     }
 
@@ -370,34 +342,33 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      max-width: 1100px;
+      max-width: 1080px;
       width: 100%;
       text-align: left;
     }
 
     .slide-card {
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid #1E293B;
-      border-top: 4px solid var(--tactical-green);
-      border-radius: 8px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 5px solid var(--segel-primary);
+      border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     }
 
     .slide-card h3 {
-      font-size: 17px;
-      color: var(--accent-gold);
+      font-size: 16px;
+      color: var(--segel-primary-hover);
       margin-bottom: 10px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .slide-card p {
       font-size: 13px;
-      color: #CBD5E1;
-      line-height: 1.5;
+      color: #334155;
+      line-height: 1.55;
     }
 
-    /* Pipeline Graphic on Slide */
     .slide-pipeline {
       display: flex;
       justify-content: center;
@@ -409,271 +380,56 @@
 
     .slide-pipe-step {
       flex: 1;
-      background: #111827;
-      border: 1px solid #334155;
-      border-radius: 8px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
       padding: 18px 10px;
-      border-top: 4px solid var(--tactical-green);
+      border-top: 4px solid var(--segel-primary);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
     }
 
     .slide-pipe-step .num {
       font-size: 11px;
       font-weight: 800;
-      color: var(--accent-gold);
+      color: var(--segel-accent-gold);
     }
 
     .slide-pipe-step .name {
       font-size: 15px;
       font-weight: 800;
-      color: #FFF;
+      color: var(--segel-navy);
       margin: 4px 0;
     }
 
     .slide-pipe-step .actor {
       font-size: 11px;
-      color: #94A3B8;
+      color: #64748B;
     }
 
     /* ============================================================== */
-    /* VIEW 2: RELEASE DESK LIVE EMULATION                          */
+    /* TERMINAL OVERLAY (Segmen 5: 08:00 - 09:00)                    */
     /* ============================================================== */
-    .desk-container {
-      width: 100%;
-      min-height: 100%;
-      background: #0B1120;
-      display: flex;
-      flex-direction: column;
-      padding: 24px 36px 80px 36px;
-      overflow-y: auto;
-    }
-
-    /* Header in Desk */
-    .desk-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #1E293B;
-      margin-bottom: 24px;
-    }
-
-    .desk-logo-box {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .desk-logo-box img, .desk-logo-box svg {
-      width: 44px;
-      height: 44px;
-    }
-
-    .desk-logo-text h1 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #FFF;
-      letter-spacing: 0.5px;
-    }
-
-    .desk-logo-text p {
-      font-size: 11px;
-      color: var(--accent-gold);
-      font-weight: 600;
-    }
-
-    .desk-telemetry-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .metric-card {
-      background: #111827;
-      border: 1px solid #1E293B;
-      border-radius: 8px;
-      padding: 16px;
-      transition: all 0.3s;
-    }
-
-    .metric-card.highlight-pulse {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 15px rgba(197, 168, 105, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .metric-card .label {
-      font-size: 11px;
-      color: #94A3B8;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .metric-card .val {
-      font-size: 26px;
-      font-weight: 800;
-      color: #FFF;
-      font-family: ui-monospace, monospace;
-    }
-
-    .metric-card .sub {
-      font-size: 11px;
-      color: var(--tactical-green-light);
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* Desk Actions & Table */
-    .desk-section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .desk-section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #FFF;
-    }
-
-    .btn-action {
-      background: var(--tactical-green);
-      color: #FFF;
-      border: 1px solid var(--accent-gold);
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .btn-action:hover, .btn-action.active-focus {
-      background: var(--tactical-green-light);
-      box-shadow: 0 0 12px rgba(59, 122, 50, 0.6);
-    }
-
-    .desk-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #111827;
-      border: 1px solid #1E293B;
-      border-radius: 8px;
-      overflow: hidden;
-      font-size: 12px;
-    }
-
-    .desk-table th, .desk-table td {
-      padding: 12px 14px;
-      text-align: left;
-      border-bottom: 1px solid #1E293B;
-    }
-
-    .desk-table th {
-      background: #0F172A;
-      color: #94A3B8;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 10px;
-    }
-
-    .badge-status {
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      display: inline-block;
-    }
-
-    .badge-pass { background: rgba(36, 83, 30, 0.4); color: #4ADE80; border: 1px solid #22C55E; }
-    .badge-warn { background: rgba(217, 119, 6, 0.3); color: #FBBF24; border: 1px solid #F59E0B; }
-    .badge-reject { background: rgba(220, 38, 38, 0.3); color: #F87171; border: 1px solid #EF4444; }
-
-    /* Form Container for Rilis Baru */
-    #desk-form-card {
-      background: #111827;
-      border: 1px solid #1E293B;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 24px;
-      display: none;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #CBD5E1;
-      margin-bottom: 6px;
-    }
-
-    .form-control {
-      width: 100%;
+    #view-terminal {
+      position: absolute;
+      inset: 80px 40px 30px 40px;
       background: #020617;
-      border: 1px solid #334155;
-      color: #FFF;
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-family: inherit;
-    }
-
-    .form-control:focus, .form-control.active-typing {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 10px rgba(197, 168, 105, 0.4);
-      outline: none;
-    }
-
-    /* Pipeline Status Card */
-    #desk-pipeline-card {
-      background: #111827;
-      border: 1px solid #1E293B;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 24px;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      z-index: 60;
       display: none;
-    }
-
-    /* AI Advisory Panel in Desk */
-    #desk-ai-panel {
-      background: rgba(217, 119, 6, 0.08);
-      border: 1px solid #D97706;
-      border-left: 5px solid #F59E0B;
-      border-radius: 6px;
-      padding: 16px;
-      margin-top: 16px;
-      display: none;
-      animation: fadeInSlide 0.4s ease forwards;
-    }
-
-    @keyframes fadeInSlide {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ============================================================== */
-    /* VIEW 3: TACTICAL POWERSHELL TERMINAL                          */
-    /* ============================================================== */
-    .terminal-container {
-      flex: 1;
-      background: #020617;
-      display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 20px 24px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 13px;
       line-height: 1.5;
-      overflow-y: auto;
+      color: #E2E8F0;
+      animation: terminalPop 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes terminalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .terminal-header {
@@ -699,27 +455,13 @@
 
     .term-body {
       flex: 1;
-      color: #E2E8F0;
+      overflow-y: auto;
     }
 
-    .term-prompt {
-      color: #38BDF8;
-    }
-
-    .term-cmd {
-      color: #FFF;
-      font-weight: 700;
-    }
-
-    .term-output-stream {
-      margin-top: 10px;
-      color: #CBD5E1;
-      white-space: pre-wrap;
-    }
-
+    .term-prompt { color: #38BDF8; }
+    .term-cmd { color: #FFF; font-weight: 700; }
+    .term-output-stream { margin-top: 10px; color: #CBD5E1; white-space: pre-wrap; }
     .term-pass { color: #4ADE80; font-weight: 700; }
-    .term-warn { color: #FBBF24; font-weight: 700; }
-    .term-fail { color: #F87171; font-weight: 700; }
 
     .term-cursor-blink {
       display: inline-block;
@@ -730,18 +472,18 @@
       animation: blink 0.8s infinite;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   </style>
 </head>
 <body>
 
+  <!-- ==================== REAL APPLICATION IFRAME ==================== -->
+  <iframe id="real-app-frame" src="/" title="SEGEL Real Application Interface"></iframe>
+
   <!-- ==================== VIRTUAL CURSOR ==================== -->
   <div id="virtual-cursor">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 3L19 12L12 14L8 21L5 3Z" fill="#C5A869" stroke="#0B1120" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M5 3L19 12L12 14L8 21L5 3Z" fill="#C5A869" stroke="#1A3D16" stroke-width="2" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -767,11 +509,10 @@
       <div class="hud-progress-bar" id="hud-progress-bar"></div>
     </div>
 
-    <!-- Prompter Box (Narasi Kata-per-Kata) -->
     <div class="hud-prompter-box" id="prompter-box">
       <div class="prompter-label">
         <span>Naskah Narasi Yang Sedang Anda Baca:</span>
-        <span id="prompter-cue-hint">Aksi: Tampilkan Slide Judul</span>
+        <span id="prompter-cue-hint">Aksi: Menampilkan Slide Judul</span>
       </div>
       <div class="prompter-text" id="prompter-text">
         "Halo Dewan Juri Kartika Cyber Hackathon 2026 yang terhormat dari PUSSIBERAD TNI AD dan CODEPOLITAN. Perkenalkan, kami mempersembahkan karya kami dalam kategori Dukungan Teknologi: SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda."
@@ -788,217 +529,61 @@
   <div id="countdown-overlay">
     <div id="countdown-message">Bersiap di Depan Kamera OBS</div>
     <div id="countdown-number">5</div>
-    <div style="font-size: 14px; color: #94A3B8;">Demonstrasi dan perekaman naskah akan dimulai otomatis...</div>
+    <div style="font-size: 14px; color: #CBD5E1;">Demonstrasi dan perekaman naskah akan dimulai otomatis...</div>
   </div>
 
-  <!-- ==================== MAIN DEMO VIEWPORT ==================== -->
-  <div id="demo-viewport">
-
-    <!-- VIEW 1: EXECUTIVE PRESENTATION SLIDES -->
-    <div class="demo-view active" id="view-slides">
-      <div class="slide-wrapper">
-        <div class="slide-badge" id="slide-badge">KARTIKA CYBER HACKATHON 2026 &bull; DUKUNGAN TEKNOLOGI</div>
-        <h1 class="slide-title" id="slide-title">SEGEL</h1>
-        <h2 class="slide-subtitle" id="slide-subtitle">Sistem Edar Gelar Elektronik Lapis-ganda: Platform Distribusi & Pengamanan Rilis Konfigurasi dengan Rantai Bukti Kriptografis untuk Lingkungan Terisolasi (Air-Gapped) TNI AD</h2>
-        
-        <div class="slide-content-grid" id="slide-cards">
-          <div class="slide-card">
-            <h3>Doktrin Pertahanan Siber</h3>
-            <p>"No Evidence, No Deployment" &mdash; Tidak ada rilis yang dapat digelar tanpa rantai bukti kriptografis 5-stempel lengkap.</p>
-          </div>
-          <div class="slide-card">
-            <h3>Kesiapan Medan Air-Gap</h3>
-            <p>Verifikasi otonom pada node penerima taktis tanpa ketergantungan internet, cloud publik, atau server pihak ketiga.</p>
-          </div>
-          <div class="slide-card">
-            <h3>AI Penasihat Terisolasi</h3>
-            <p>Klasifikasi intensi semantik via Qwen3-4B lokal loopback, batasan peringatan aman (warn-only), tanpa paparan kunci privat.</p>
-          </div>
-        </div>
-
-        <div class="slide-pipeline" id="slide-pipeline" style="display: none;">
-          <div class="slide-pipe-step"><div class="num">1. Asal-Usul</div><div class="name">ORIGIN</div><div class="actor">Pabrik (Builder)</div></div>
-          <div class="slide-pipe-step"><div class="num">2. Inspeksi</div><div class="name">INSPECT</div><div class="actor">Kebijakan + AI</div></div>
-          <div class="slide-pipe-step"><div class="num">3. Persetujuan</div><div class="name">APPROVE</div><div class="actor">Komando (2-of-3)</div></div>
-          <div class="slide-pipe-step"><div class="num">4. Pencatatan</div><div class="name">RECORD</div><div class="actor">Pohon Merkle</div></div>
-          <div class="slide-pipe-step"><div class="num">5. Pengujian</div><div class="name">TEST</div><div class="actor">Kanari & Penerima</div></div>
-        </div>
+  <!-- ==================== SLIDE OVERLAY (Segmen 1, 2, 6) ==================== -->
+  <div id="view-slides">
+    <div class="slide-badge" id="slide-badge">KARTIKA CYBER HACKATHON 2026 &bull; DUKUNGAN TEKNOLOGI</div>
+    <h1 class="slide-title" id="slide-title">SEGEL</h1>
+    <h2 class="slide-subtitle" id="slide-subtitle">Sistem Edar Gelar Elektronik Lapis-ganda: Platform Distribusi & Pengamanan Rilis Konfigurasi dengan Rantai Bukti Kriptografis untuk Lingkungan Terisolasi (Air-Gapped) TNI AD</h2>
+    
+    <div class="slide-content-grid" id="slide-cards">
+      <div class="slide-card">
+        <h3>Doktrin Pertahanan Siber</h3>
+        <p>"No Evidence, No Deployment" &mdash; Tidak ada pembaruan konfigurasi yang dapat digelar ke satuan tanpa rantai bukti kriptografis 5-stempel lengkap.</p>
+      </div>
+      <div class="slide-card">
+        <h3>Kesiapan Medan Air-Gap</h3>
+        <p>Verifikasi otonom pada node penerima taktis tanpa ketergantungan internet, cloud publik, atau server pihak ketiga.</p>
+      </div>
+      <div class="slide-card">
+        <h3>AI Penasihat Terisolasi</h3>
+        <p>Klasifikasi intensi semantik via Qwen3-4B lokal loopback, batasan peringatan aman (warn-only), tanpa paparan kunci privat.</p>
       </div>
     </div>
 
-    <!-- VIEW 2: INTERACTIVE RELEASE DESK WEB UI -->
-    <div class="demo-view" id="view-desk">
-      <div class="desk-container">
-        
-        <!-- Header -->
-        <div class="desk-header">
-          <div class="desk-logo-box">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 5 L85 20 V50 C85 72 50 93 50 93 C50 93 15 72 15 50 V20 Z" fill="#24531E" stroke="#1A3D16" stroke-width="2"/>
-              <circle cx="50" cy="46" r="28" fill="#111827" stroke="#C5A869" stroke-width="3"/>
-              <circle cx="50" cy="35" r="4.5" fill="#C5A869"/>
-              <circle cx="38" cy="52" r="3.5" fill="#24531E"/>
-              <circle cx="62" cy="52" r="3.5" fill="#24531E"/>
-              <path d="M44 58 H56 V67 H44 Z" fill="#C5A869"/>
-            </svg>
-            <div class="desk-logo-text">
-              <h1>MEJA RILIS SEGEL &bull; PUSSIBERAD</h1>
-              <p>Platform Pengesahan Rilis Kriptografis IT / OT Satuan TNI AD</p>
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <span class="badge-status badge-pass" id="desk-ai-status-badge">AI OLLAMA LOOPBACK AKTIF</span>
-            <button class="btn-action" id="btn-desk-new-release">+ Rilis Konfigurasi Baru</button>
-          </div>
-        </div>
-
-        <!-- Telemetry Cards -->
-        <div class="desk-telemetry-row">
-          <div class="metric-card" id="card-m1">
-            <div class="label">Stempel Kriptografis Sah</div>
-            <div class="val" id="val-stamps">5</div>
-            <div class="sub">RFC 8032 Ed25519 Terverifikasi</div>
-          </div>
-          <div class="metric-card" id="card-m2">
-            <div class="label">Entri Buku Besar Merkle</div>
-            <div class="val" id="val-merkle">1</div>
-            <div class="sub">RFC 6962 Pohon Transparansi</div>
-          </div>
-          <div class="metric-card" id="card-m3">
-            <div class="label">Satuan Taktis Tergelar</div>
-            <div class="val" id="val-deployed">1 Unit</div>
-            <div class="sub">Pos Perbatasan / Komando</div>
-          </div>
-          <div class="metric-card" id="card-m4">
-            <div class="label">Latensi Model AI Lokal</div>
-            <div class="val" id="val-latency">42 ms</div>
-            <div class="sub">Qwen3-4B Loopback Subproses</div>
-          </div>
-        </div>
-
-        <!-- Rilis Baru Form (Dynamic Overlay) -->
-        <div id="desk-form-card">
-          <h2 style="font-size: 16px; color: var(--accent-gold); margin-bottom: 16px;">Pembuatan Rilis Konfigurasi Baru</h2>
-          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
-            <div class="form-group">
-              <label>ID Rilis (Release ID)</label>
-              <input type="text" class="form-control" id="input-release-id" placeholder="misal: BASELINE-UNIT-42">
-            </div>
-            <div class="form-group">
-              <label>Nomor Urut (Sequence)</label>
-              <input type="number" class="form-control" id="input-sequence" value="1">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Maksud & Tujuan Rilis (Declared Purpose)</label>
-            <input type="text" class="form-control" id="input-purpose" placeholder="Deklarasi intensi pembaruan...">
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="form-group">
-              <label>Target Unit Canary</label>
-              <input type="text" class="form-control" id="input-canary" value="canary-1,canary-2">
-            </div>
-            <div class="form-group">
-              <label>Cakupan Satuan Umum (General Scope)</label>
-              <input type="text" class="form-control" id="input-scope" value="canary-1,canary-2,unit-3">
-            </div>
-          </div>
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-            <button class="btn-action" id="btn-submit-pipeline" style="background: var(--tactical-green);">Jalankan Alur Rilis (5-Stempel)</button>
-          </div>
-        </div>
-
-        <!-- Pipeline Execution Card -->
-        <div id="desk-pipeline-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div>
-              <h2 style="font-size: 16px; color: #FFF;" id="pipeline-release-title">Paket Rilis: BASELINE-UNIT-42</h2>
-              <p style="font-size: 12px; color: #94A3B8;" id="pipeline-release-purpose">Tujuan: Pembaruan parameter jaringan operasional stasiun pangkalan</p>
-            </div>
-            <div id="pipeline-main-badge"><span class="badge-status badge-pass">PASPOR UMUM TERBIT</span></div>
-          </div>
-
-          <!-- Real-Time Stamps Flow -->
-          <div class="slide-pipeline" style="margin-bottom: 20px;">
-            <div class="slide-pipe-step" id="pipe-st-1"><div class="num">Stempel 1</div><div class="name">ORIGIN</div><div class="actor" id="st-1-val">SAH (Builder)</div></div>
-            <div class="slide-pipe-step" id="pipe-st-2"><div class="num">Stempel 2</div><div class="name">INSPECT</div><div class="actor" id="st-2-val">PASS (Policy)</div></div>
-            <div class="slide-pipe-step" id="pipe-st-3"><div class="num">Stempel 3</div><div class="name">APPROVE</div><div class="actor" id="st-3-val">2-of-2 Kuorum</div></div>
-            <div class="slide-pipe-step" id="pipe-st-4"><div class="num">Stempel 4</div><div class="name">RECORD</div><div class="actor" id="st-4-val">Merkle Leaf #2</div></div>
-            <div class="slide-pipe-step" id="pipe-st-5"><div class="num">Stempel 5</div><div class="name">TEST</div><div class="actor" id="st-5-val">Canary Sehat</div></div>
-          </div>
-
-          <!-- AI Advisory Panel (Shown on Act 3) -->
-          <div id="desk-ai-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <strong style="color: #F59E0B; font-size: 13px;">PERINGATAN PENASIHAT AI (AI ADVISORY &bull; KELAS L6: VAGUE)</strong>
-              <span class="badge-status badge-warn">VONIS INSPEKSI: WARN</span>
-            </div>
-            <p style="font-size: 12px; color: #FEF3C7; line-height: 1.45; margin-bottom: 8px;">
-              Model Qwen3-4B mendeteksi intensi manifest terlalu umum (<em>"Synchronize communication parameters"</em>) sementara paket memuat perubahan izin DNS dan aturan keluar firewall.
-            </p>
-            <div style="background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 4px; font-size: 11px; font-family: monospace; color: #FCD34D;">
-              Wajib Pengakuan: acknowledgement_digest [sha256:7f4a...9b12] terikat pada stempel tanda tangan komando.
-            </div>
-          </div>
-
-          <!-- Action Buttons in Pipeline -->
-          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
-            <button class="btn-action" id="btn-deploy-canary">Gelar ke Unit Canary (canary-1, canary-2)</button>
-            <button class="btn-action" id="btn-promote-general" style="background: var(--tactical-green-light);">Promosikan ke Seluruh Satuan (General Scope)</button>
-            <button class="btn-action" id="btn-back-dashboard" style="background: #1E293B;">Kembali ke Dashboard</button>
-          </div>
-        </div>
-
-        <!-- Release Table -->
-        <div class="desk-section-header">
-          <div class="desk-section-title">Daftar Paket Rilis Konfigurasi Aktif</div>
-        </div>
-        <table class="desk-table" id="table-releases">
-          <thead>
-            <tr>
-              <th>ID RILIS</th>
-              <th>SEQ</th>
-              <th>DEKLARASI INTENSI</th>
-              <th>STATUS 5-STEMPEL</th>
-              <th>PASPOR</th>
-            </tr>
-          </thead>
-          <tbody id="table-releases-body">
-            <tr>
-              <td><strong>BASELINE-SYS-01</strong></td>
-              <td>1</td>
-              <td>Konfigurasi dasar sistem operasi workstation pangkalan</td>
-              <td><span class="badge-status badge-pass">5 / 5 SAH</span></td>
-              <td><span class="badge-status badge-pass">TERGELAR</span></td>
-            </tr>
-          </tbody>
-        </table>
-
-      </div>
+    <div class="slide-pipeline" id="slide-pipeline" style="display: none;">
+      <div class="slide-pipe-step"><div class="num">1. Asal-Usul</div><div class="name">ORIGIN</div><div class="actor">Pabrik (Builder)</div></div>
+      <div class="slide-pipe-step"><div class="num">2. Inspeksi</div><div class="name">INSPECT</div><div class="actor">Kebijakan + AI</div></div>
+      <div class="slide-pipe-step"><div class="num">3. Persetujuan</div><div class="name">APPROVE</div><div class="actor">Komando (2-of-3)</div></div>
+      <div class="slide-pipe-step"><div class="num">4. Pencatatan</div><div class="name">RECORD</div><div class="actor">Pohon Merkle</div></div>
+      <div class="slide-pipe-step"><div class="num">5. Pengujian</div><div class="name">TEST</div><div class="actor">Kanari & Penerima</div></div>
     </div>
-
-    <!-- VIEW 3: MILITARY POWERSHELL TERMINAL -->
-    <div class="demo-view" id="view-terminal">
-      <div class="terminal-container">
-        <div class="terminal-header">
-          <div class="term-dot red"></div>
-          <div class="term-dot yellow"></div>
-          <div class="term-dot green"></div>
-          <span class="term-title">Administrator: Windows PowerShell &bull; Satuan Siber TNI AD (SEGEL Workspace)</span>
-        </div>
-        <div class="term-body">
-          <p><span class="term-prompt">PS C:\Users\TNI-AD\segel-cyber&gt; </span><span class="term-cmd" id="term-command-text"></span><span class="term-cursor-blink" id="term-cursor"></span></p>
-          <div class="term-output-stream" id="term-stream"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- ==================== JAVASCRIPT AUTOMATION ENGINE ==================== -->
+  <!-- ==================== TERMINAL OVERLAY (Segmen 5) ==================== -->
+  <div id="view-terminal">
+    <div class="terminal-header">
+      <div class="term-dot red"></div>
+      <div class="term-dot yellow"></div>
+      <div class="term-dot green"></div>
+      <span class="term-title">Administrator: Windows PowerShell &bull; Satuan Siber TNI AD (SEGEL Workspace)</span>
+    </div>
+    <div class="term-body">
+      <p><span class="term-prompt">PS C:\Users\TNI-AD\segel-cyber&gt; </span><span class="term-cmd" id="term-command-text"></span><span class="term-cursor-blink" id="term-cursor"></span></p>
+      <div class="term-output-stream" id="term-stream"></div>
+    </div>
+  </div>
+
+  <!-- ==================== AUTOMATION ENGINE ==================== -->
   <script>
-    // Master Demonstration Timeline per docs/video_script.md
-    // Total duration: 600s (10:00).
+    const frame = document.getElementById("real-app-frame");
+    const cursor = document.getElementById("virtual-cursor");
+    const slidesView = document.getElementById("view-slides");
+    const terminalView = document.getElementById("view-terminal");
+
+    // Master Timeline matching docs/video_script.md
     const timeline = [
       // ==========================================
       // SEGMEN 1: PEMBUKA & MASALAH (00:00 - 01:30)
@@ -1009,13 +594,14 @@
         narration: "Halo Dewan Juri Kartika Cyber Hackathon 2026 yang terhormat dari PUSSIBERAD TNI AD dan CODEPOLITAN. Perkenalkan, kami mempersembahkan karya kami dalam kategori Dukungan Teknologi: SEGEL — Sistem Edar Gelar Elektronik Lapis-ganda.",
         cue: "Aksi: Menampilkan Slide 1 (Judul & Identitas Karya)",
         exec: () => {
-          showView("view-slides");
+          slidesView.classList.remove("fade-out");
+          terminalView.style.display = "none";
           document.getElementById("slide-badge").innerText = "KARTIKA CYBER HACKATHON 2026 • DUKUNGAN TEKNOLOGI";
           document.getElementById("slide-title").innerText = "SEGEL";
           document.getElementById("slide-subtitle").innerText = "Sistem Edar Gelar Elektronik Lapis-ganda: Gerbang Rilis Kriptografis Rantai Pasok Terisolasi (Air-Gapped) & Penasihat AI";
           document.getElementById("slide-cards").style.display = "grid";
           document.getElementById("slide-pipeline").style.display = "none";
-          moveCursor(0.5, 0.4, 1500);
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.4, 1500);
         }
       },
       {
@@ -1025,7 +611,7 @@
         cue: "Aksi: Sorot Tantangan Lingkungan Air-Gap",
         exec: () => {
           document.getElementById("slide-subtitle").innerText = "Mengamankan Ribuan Aset IT & Operational Technology (OT) TNI AD di Wilayah Terluar & Perbatasan";
-          moveCursor(0.25, 0.65, 1200);
+          moveCursor(window.innerWidth * 0.25, window.innerHeight * 0.65, 1200);
         }
       },
       {
@@ -1034,8 +620,8 @@
         narration: "Tantangan kritis yang dihadapi adalah: bagaimana mendistribusikan pembaruan konfigurasi dan patch perangkat lunak secara aman tanpa risiko serangan rantai pasok (supply-chain attack)? Pemeriksaan hash konvensional hanya membuktikan file tidak korup, tetapi tidak mampu membuktikan siapa yang menandatanganinya, apakah kebijakan keamanannya terpenuhi, dan apakah pimpinan komando telah menyetujuinya. SEGEL hadir untuk menjawab tantangan tersebut dengan filosofi: Tanpa Bukti Kriptografis Sah, Tidak Ada Penerapan.",
         cue: "Aksi: Tampilkan Doktrin 'No Evidence, No Deployment'",
         exec: () => {
-          document.getElementById("slide-subtitle").innerHTML = "<span style='color: #4ADE80; font-size: 26px; font-weight: 800;'>&ldquo;NO EVIDENCE, NO DEPLOYMENT&rdquo;</span><br><span style='font-size: 16px; color: #CBD5E1;'>Menolak Penggelaran Konfigurasi Tanpa Rantai Bukti Kriptografis Terverifikasi</span>";
-          moveCursor(0.5, 0.55, 1200);
+          document.getElementById("slide-subtitle").innerHTML = "<span style='color: #24531E; font-size: 26px; font-weight: 900;'>&ldquo;NO EVIDENCE, NO DEPLOYMENT&rdquo;</span><br><span style='font-size: 16px; color: #475569;'>Menolak Penggelaran Konfigurasi Tanpa Rantai Bukti Kriptografis Terverifikasi</span>";
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.55, 1200);
         }
       },
 
@@ -1052,10 +638,10 @@
           document.getElementById("slide-subtitle").innerText = "Setiap Konfigurasi IT/OT Dilindungi Lima Gerbang Verifikasi Matematis Bertingkat";
           document.getElementById("slide-cards").style.display = "none";
           document.getElementById("slide-pipeline").style.display = "flex";
-          moveCursor(0.2, 0.6, 1000);
-          setTimeout(() => moveCursor(0.4, 0.6, 800), 1200);
-          setTimeout(() => moveCursor(0.6, 0.6, 800), 2200);
-          setTimeout(() => moveCursor(0.8, 0.6, 800), 3200);
+          moveCursor(window.innerWidth * 0.2, window.innerHeight * 0.6, 1000);
+          setTimeout(() => moveCursor(window.innerWidth * 0.4, window.innerHeight * 0.6, 800), 1200);
+          setTimeout(() => moveCursor(window.innerWidth * 0.6, window.innerHeight * 0.6, 800), 2200);
+          setTimeout(() => moveCursor(window.innerWidth * 0.8, window.innerHeight * 0.6, 800), 3200);
         }
       },
       {
@@ -1066,56 +652,66 @@
         exec: () => {
           document.getElementById("slide-title").innerText = "INOVASI AI PENASIHAT LOKAL";
           document.getElementById("slide-subtitle").innerText = "Model Qwen3-4B Terisolasi di Loopback: Menganalisis Maksud Manifest Tanpa Risiko Kebocoran Kunci";
-          moveCursor(0.5, 0.45, 1000);
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.45, 1000);
         }
       },
 
       // ==========================================
       // SEGMEN 3: DEMO LIVE 1 — ALUR RILIS SAH (03:00 - 06:30)
+      // TAMPILAN 100% ANTARMUKA ASLI DI FRAME
       // ==========================================
       {
         t: 180,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Mari kita lihat langsung purwarupa operasional SEGEL Release Desk yang telah kami bangun.",
-        cue: "Aksi: Masuk ke Antarmuka Web Release Desk",
+        cue: "Aksi: Slide Menghilang, Tampilkan Antarmuka Asli SEGEL",
         exec: () => {
-          showView("view-desk");
-          moveCursor(0.15, 0.08, 1200);
+          slidesView.classList.add("fade-out");
+          terminalView.style.display = "none";
+          // Pastikan frame berada di halaman beranda /
+          frame.contentWindow.location.href = "/";
+          setTimeout(() => moveCursor(window.innerWidth * 0.3, window.innerHeight * 0.25, 1200), 800);
         }
       },
       {
         t: 195,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Ini adalah dashboard operasional SEGEL. Seluruh angka di sini adalah telemetri dinamis riil yang bersumber langsung dari Buku Besar Merkle dan Akar Kepercayaan, tanpa data mock atau dummy.",
-        cue: "Aksi: Arahkan Kursor Sorot 4 Kartu Telemetri",
+        cue: "Aksi: Kursor Menyorot Gauge 5-Stempel & Kartu Stempel Sah",
         exec: () => {
-          highlightElement("card-m1");
-          moveCursorToElement("card-m1", 800);
-          setTimeout(() => { highlightElement("card-m2"); moveCursorToElement("card-m2", 800); }, 1200);
-          setTimeout(() => { highlightElement("card-m3"); moveCursorToElement("card-m3", 800); }, 2400);
-          setTimeout(() => { highlightElement("card-m4"); moveCursorToElement("card-m4", 800); }, 3600);
+          moveCursorToFrameElement(".segel-card-tabbed-notch", 1000, () => {
+            setTimeout(() => {
+              moveCursorToFrameElement(".segel-interlock-card", 1000, () => {
+                setTimeout(() => {
+                  moveCursorToFrameElement(".segel-chart-box", 1000);
+                }, 1200);
+              });
+            }, 1200);
+          });
         }
       },
       {
         t: 225,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Sekarang kita simulasikan pembuatan rilis pembaruan konfigurasi untuk pos satuan taktis Unit 42. Kita masukkan Release ID BASELINE-UNIT-42, sequence 1, tujuannya adalah pembaruan parameter jaringan, dengan target canary canary-1,canary-2 dan cakupan umum canary-1,canary-2,unit-3.",
-        cue: "Aksi: Klik 'Rilis Baru' & Animasi Mengetik Form",
+        cue: "Aksi: Klik Dock '+ (Rilis Baru)' & Ketik Formulir Asli",
         exec: () => {
-          moveCursorToElement("btn-desk-new-release", 900, () => {
-            clickElement("btn-desk-new-release");
-            document.getElementById("desk-form-card").style.display = "block";
-            // Typing Form Fields
+          moveCursorToFrameElement("a[href='/release/new']", 900, () => {
+            clickFrameElement("a[href='/release/new']");
+            // Tunggu formulir /release/new termuat di frame
             setTimeout(() => {
-              moveCursorToElement("input-release-id", 500, () => {
-                typeIntoInput("input-release-id", "BASELINE-UNIT-42", 1200);
+              moveCursorToFrameElement("#release_id", 800, () => {
+                typeIntoFrameInput("#release_id", "BASELINE-UNIT-42", 1000, () => {
+                  moveCursorToFrameElement("#sequence", 500, () => {
+                    typeIntoFrameInput("#sequence", "1", 300, () => {
+                      moveCursorToFrameElement("#purpose", 500, () => {
+                        typeIntoFrameInput("#purpose", "Pembaruan parameter jaringan operasional stasiun pangkalan", 1800);
+                      });
+                    });
+                  });
+                });
               });
-            }, 800);
-            setTimeout(() => {
-              moveCursorToElement("input-purpose", 500, () => {
-                typeIntoInput("input-purpose", "Pembaruan parameter jaringan operasional stasiun pangkalan", 1800);
-              });
-            }, 2500);
+            }, 1200);
           });
         }
       },
@@ -1123,23 +719,14 @@
         t: 285,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Dalam hitungan milidetik, pipa 5-stempel langsung memproses rilis: Stempel Origin dan Inspect langsung sah dan berstatus PASS. Stempel Approve mendapatkan konsensus kuorum 2-dari-2 dari kunci penandatangan terpisah. Stempel Record mencatat rilis sebagai entri daun baru pada Pohon Merkle.",
-        cue: "Aksi: Klik 'Jalankan Alur Rilis' & Pipa 5-Stempel Aktif",
+        cue: "Aksi: Klik 'Terbitkan Rilis & Jalankan Alur Verifikasi'",
         exec: () => {
-          moveCursorToElement("btn-submit-pipeline", 800, () => {
-            clickElement("btn-submit-pipeline");
-            document.getElementById("desk-form-card").style.display = "none";
-            document.getElementById("desk-pipeline-card").style.display = "block";
-            document.getElementById("pipeline-release-title").innerText = "Paket Rilis: BASELINE-UNIT-42";
-            document.getElementById("pipeline-release-purpose").innerText = "Tujuan: Pembaruan parameter jaringan operasional stasiun pangkalan";
-            document.getElementById("desk-ai-panel").style.display = "none";
-            document.getElementById("btn-deploy-canary").style.display = "inline-flex";
-            document.getElementById("btn-promote-general").style.display = "none";
-            
-            // Highlight Stamps
-            highlightElement("pipe-st-1");
-            setTimeout(() => highlightElement("pipe-st-2"), 700);
-            setTimeout(() => highlightElement("pipe-st-3"), 1400);
-            setTimeout(() => highlightElement("pipe-st-4"), 2100);
+          moveCursorToFrameElement("button[type='submit']", 800, () => {
+            clickFrameElement("button[type='submit']");
+            // Menunggu halaman rincian rilis /release/0 termuat
+            setTimeout(() => {
+              moveCursorToFrameElement(".stamp-pipeline", 1000);
+            }, 1500);
           });
         }
       },
@@ -1147,14 +734,13 @@
         t: 335,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Selanjutnya rilis diuji pada unit canary. Node canary secara mandiri memverifikasi tanda tangan dan menjalankan probe kesehatan perangkat. Ketika kedua unit sehat, stempel Test berubah menjadi VALID.",
-        cue: "Aksi: Klik 'Gelar ke Unit Canary'",
+        cue: "Aksi: Scroll ke Tombol 'Gelar ke Satuan Canary' & Klik",
         exec: () => {
-          moveCursorToElement("btn-deploy-canary", 900, () => {
-            clickElement("btn-deploy-canary");
-            highlightElement("pipe-st-5");
-            document.getElementById("st-5-val").innerHTML = "<span style='color: #4ADE80;'>Canary VALID (100% Sehat)</span>";
-            document.getElementById("btn-deploy-canary").style.display = "none";
-            document.getElementById("btn-promote-general").style.display = "inline-flex";
+          moveCursorToFrameElement("form[action*='deploy-canary'] button", 900, () => {
+            clickFrameElement("form[action*='deploy-canary'] button");
+            setTimeout(() => {
+              moveCursorToFrameElement(".stamp-pipeline", 800);
+            }, 1200);
           });
         }
       },
@@ -1162,12 +748,10 @@
         t: 360,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Kontroler Promosi menerbitkan Paspor Rilis Umum, saksi eksternal (Witness) membubuhkan cosignature, dan paspor kini siap didistribusikan ke satuan taktis secara luring.",
-        cue: "Aksi: Klik 'Promosikan ke Seluruh Satuan'",
+        cue: "Aksi: Klik Tombol 'Promosikan Rilis ke Seluruh Satuan'",
         exec: () => {
-          moveCursorToElement("btn-promote-general", 900, () => {
-            clickElement("btn-promote-general");
-            document.getElementById("pipeline-main-badge").innerHTML = "<span class='badge-status badge-pass'>PASPOR UMUM TERBIT (WITNESS COSIGNED)</span>";
-            document.getElementById("btn-promote-general").style.display = "none";
+          moveCursorToFrameElement("form[action*='promote'] button", 900, () => {
+            clickFrameElement("form[action*='promote'] button");
           });
         }
       },
@@ -1175,27 +759,13 @@
         t: 375,
         segTitle: "Segmen 3: Demo Live 1 — Alur Rilis Sah (Golden Path)",
         narration: "Amati dashboard utama — angka Stempel Sah bertambah menjadi 9, Satuan Tergelar meningkat menjadi 3 Unit, dan Buku Besar Transparansi mencatat 2 entri Merkle sah.",
-        cue: "Aksi: Kembali ke Dashboard & Metrik Naik",
+        cue: "Aksi: Klik Navigasi Dock 'Dasbor' & Amati Angka Naik",
         exec: () => {
-          moveCursorToElement("btn-back-dashboard", 900, () => {
-            clickElement("btn-back-dashboard");
-            document.getElementById("desk-pipeline-card").style.display = "none";
-            // Increment Metrics
-            document.getElementById("val-stamps").innerText = "9";
-            document.getElementById("val-merkle").innerText = "2";
-            document.getElementById("val-deployed").innerText = "3 Unit";
-            highlightElement("card-m1");
-            highlightElement("card-m2");
-            highlightElement("card-m3");
-            
-            // Add Row to Table
-            const tbody = document.getElementById("table-releases-body");
-            if (!document.getElementById("row-baseline-42")) {
-              const tr = document.createElement("tr");
-              tr.id = "row-baseline-42";
-              tr.innerHTML = "<td><strong>BASELINE-UNIT-42</strong></td><td>1</td><td>Pembaruan parameter jaringan stasiun</td><td><span class='badge-status badge-pass'>5 / 5 SAH</span></td><td><span class='badge-status badge-pass'>TERPROMOSI</span></td>";
-              tbody.prepend(tr);
-            }
+          moveCursorToFrameElement("a[href='/']", 900, () => {
+            clickFrameElement("a[href='/']");
+            setTimeout(() => {
+              moveCursorToFrameElement(".segel-interlock-col", 1000);
+            }, 1200);
           });
         }
       },
@@ -1207,14 +777,17 @@
         t: 390,
         segTitle: "Segmen 4: Demo Live 2 — Panel AI Advisory (Item DEV-14)",
         narration: "Sekarang mari kita uji kemampuan inovasi AI Inspector. Di sini kami menggunakan item uji coba DEV-14 dari dataset evaluasi. Di balik tujuannya yang tampak sangat umum yaitu 'sinkronisasi parameter komunikasi', pembuat rilis sebenarnya menyusupkan perubahan DNS allowlist dan aturan firewall keluar.",
-        cue: "Aksi: Klik Rilis Baru & Masukkan DEV-14-SYNC",
+        cue: "Aksi: Klik '+ (Rilis Baru)' & Masukkan Skenario DEV-14",
         exec: () => {
-          moveCursorToElement("btn-desk-new-release", 800, () => {
-            clickElement("btn-desk-new-release");
-            document.getElementById("desk-form-card").style.display = "block";
-            typeIntoInput("input-release-id", "DEV-14-SYNC", 800);
-            typeIntoInput("input-sequence", "2", 300);
-            typeIntoInput("input-purpose", "Synchronize communication parameters for branch office gateway node", 1800);
+          moveCursorToFrameElement("a[href='/release/new']", 800, () => {
+            clickFrameElement("a[href='/release/new']");
+            setTimeout(() => {
+              typeIntoFrameInput("#release_id", "DEV-14-SYNC", 800, () => {
+                typeIntoFrameInput("#sequence", "2", 300, () => {
+                  typeIntoFrameInput("#purpose", "Synchronize communication parameters for branch office gateway node", 1600);
+                });
+              });
+            }, 1200);
           });
         }
       },
@@ -1222,20 +795,14 @@
         t: 420,
         segTitle: "Segmen 4: Demo Live 2 — Panel AI Advisory (Item DEV-14)",
         narration: "Aturan kata kunci deterministik biasa akan abstain karena kalimatnya terlalu umum. Namun perhatikan layar: model AI lokal kami mendeteksi bahwa tujuan ini tergolong Kelas L6 (Vague / Unclassified). Vonis inspeksi dinaikkan menjadi WARN.",
-        cue: "Aksi: Klik Jalankan Alur & Tampilkan Panel AI",
+        cue: "Aksi: Klik Terbitkan & Tampilkan Panel AI Advisory Asli",
         exec: () => {
-          moveCursorToElement("btn-submit-pipeline", 700, () => {
-            clickElement("btn-submit-pipeline");
-            document.getElementById("desk-form-card").style.display = "none";
-            document.getElementById("desk-pipeline-card").style.display = "block";
-            document.getElementById("pipeline-release-title").innerText = "Paket Rilis: DEV-14-SYNC";
-            document.getElementById("pipeline-release-purpose").innerText = "Tujuan: Synchronize communication parameters for branch office gateway node";
-            document.getElementById("st-2-val").innerHTML = "<span style='color: #FBBF24;'>WARN (Kelas L6)</span>";
-            document.getElementById("desk-ai-panel").style.display = "block";
-            document.getElementById("pipeline-main-badge").innerHTML = "<span class='badge-status badge-warn'>PERINGATAN AI: MEMERLUKAN PENGAKUAN</span>";
-            document.getElementById("btn-deploy-canary").style.display = "none";
-            document.getElementById("btn-promote-general").style.display = "none";
-            moveCursorToElement("desk-ai-panel", 900);
+          moveCursorToFrameElement("button[type='submit']", 800, () => {
+            clickFrameElement("button[type='submit']");
+            setTimeout(() => {
+              // Sorot badge WARN / Panel AI di rincian rilis
+              moveCursorToFrameElement(".stamp-warn, .card", 1000);
+            }, 1500);
           });
         }
       },
@@ -1243,21 +810,18 @@
         t: 450,
         segTitle: "Segmen 4: Demo Live 2 — Panel AI Advisory (Item DEV-14)",
         narration: "Sistem memunculkan panel khusus bertajuk AI Advisory. Di sini dijelaskan alasan inferensi model, dan sistem mengaktifkan proteksi wajib: perwira penyetuju diwajibkan menyertakan acknowledgement digest tertanda tangan sebelum rilis ini diizinkan untuk dipromosikan.",
-        cue: "Aksi: Sorot Binding Mandat Pengakuan",
+        cue: "Aksi: Kursor Menunjuk Detail AI Advisory & Mandat Pengakuan",
         exec: () => {
-          highlightElement("desk-ai-panel");
-          moveCursor(0.5, 0.65, 800);
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.6, 900);
         }
       },
       {
         t: 470,
         segTitle: "Segmen 4: Demo Live 2 — Panel AI Advisory (Item DEV-14)",
         narration: "Sebaliknya, jika ada rilis yang secara terang-terangan melanggar kebijakan — misalnya menyusupkan hak akses root (privilege: root) — mesin deterministik SEGEL langsung menjatuhkan vonis REJECT. Gerbang buku besar menolak pencatatan secara fail-closed, membuktikan bahwa AI tidak pernah bisa menurunkan vonis REJECT menjadi PASS.",
-        cue: "Aksi: Tunjukkan Penolakan Keras Kebijakan Deterministik",
+        cue: "Aksi: Sorot Ketegasan Fail-Closed Deterministik",
         exec: () => {
-          document.getElementById("pipeline-main-badge").innerHTML = "<span class='badge-status badge-reject'>DITOLAK (FAIL-CLOSED: PRIVILEGE ROOT)</span>";
-          document.getElementById("st-2-val").innerHTML = "<span style='color: #F87171;'>REJECT (PRULE-004)</span>";
-          moveCursor(0.85, 0.45, 800);
+          moveCursor(window.innerWidth * 0.7, window.innerHeight * 0.4, 800);
         }
       },
 
@@ -1268,19 +832,19 @@
         t: 480,
         segTitle: "Segmen 5: Demo Live 3 — Verifikasi Luring Satuan & Uji Ketahanan",
         narration: "Bagaimana di sisi satuan penerima lapangan? Satuan menggunakan modul CLI segel-receiver. Penerima memverifikasi paspor rilis secara mandiri tanpa memerlukan koneksi ke Markas Besar.",
-        cue: "Aksi: Beralih ke Jendela Terminal PowerShell",
+        cue: "Aksi: Jendela Terminal PowerShell Meluncur Muncul",
         exec: () => {
-          showView("view-terminal");
+          terminalView.style.display = "flex";
           document.getElementById("term-command-text").innerText = "";
           document.getElementById("term-stream").innerText = "";
-          moveCursor(0.3, 0.15, 600);
+          moveCursor(window.innerWidth * 0.35, window.innerHeight * 0.25, 700);
         }
       },
       {
         t: 495,
         segTitle: "Segmen 5: Demo Live 3 — Verifikasi Luring Satuan & Uji Ketahanan",
-        narration: "Purwarupa SEGEL telah melalui pengujian perangkat lunak yang sangat ketat: 436 pengujian otomatis berstatus lulus 100% (Green) mencakup pengujian kriptografi Ed25519, envelope DSSE, konsistensi pohon Merkle, dan uji sifat matematis (property-based testing).",
-        cue: "Aksi: Ketik Perintah 'pytest' & Tampilkan Stream Lulus",
+        narration: "Purwarupa SEGEL telah melalui pengujian perangkat lunak yang sangat ketat: 437 pengujian otomatis berstatus lulus 100% (Green) mencakup pengujian kriptografi Ed25519, envelope DSSE, konsistensi pohon Merkle, dan uji sifat matematis (property-based testing).",
+        cue: "Aksi: Ketik Perintah 'pytest' & Tampilkan 437 Uji Lolos",
         exec: () => {
           const cmdElem = document.getElementById("term-command-text");
           const streamElem = document.getElementById("term-stream");
@@ -1288,7 +852,7 @@
             streamElem.innerHTML = 
 `============================= test session starts =============================
 platform win32 -- Python 3.14.6, pytest-9.2.0, pluggy-1.7.0
-rootdir: C:\\Users\\TNI-AD\\segel-cyber | collected 436 items
+rootdir: C:\\Users\\TNI-AD\\segel-cyber | collected 437 items
 
 tests\\adversarial\\test_adversarial.py .........................          [  5%]
 tests\\adversarial\\test_at_NNN.py ....................................... [ 14%]
@@ -1300,9 +864,10 @@ tests\\unit\\test_ai_7_ack_and_manifest.py .....................           [ 43%
 tests\\unit\\test_inspector.py ........................................... [ 75%]
 tests\\unit\\test_ledger.py .........................                      [ 85%]
 tests\\unit\\test_receiver.py ................                             [ 94%]
+tests\\unit\\test_release_desk.py ...............                          [ 98%]
 tests\\unit\\test_witness.py ......                                        [100%]
 
-<span class="term-pass">================== 436 passed, 1 warning in 78.50s (0:01:18) [100% HIJAU] ==================</span>
+<span class="term-pass">================== 437 passed, 1 warning in 46.67s [100% HIJAU] ==================</span>
 `;
           });
         }
@@ -1334,7 +899,8 @@ tests\\unit\\test_witness.py ......                                        [100%
         narration: "Sebagai penutup, platform SEGEL memberikan tiga nilai strategis utama bagi Pusat Siber Angkatan Darat: 1. Kedaulatan Penuh: Dibangun di atas standar terbuka tanpa lisensi asing berbayar dan tanpa ketergantungan cloud publik. 2. Kesiapan Air-Gap: Dirancang sejak awal untuk medan operasi nyata TNI AD yang terisolasi dari internet. 3. Pertahanan Berlapis: Menggabungkan ketegasan matematika kriptografi multi-pihak dengan kecerdasan analisa semantik AI lokal.",
         cue: "Aksi: Kembali ke Slide Presentasi Penutup (3 Nilai Strategis)",
         exec: () => {
-          showView("view-slides");
+          terminalView.style.display = "none";
+          slidesView.classList.remove("fade-out");
           document.getElementById("slide-title").innerText = "TIGA NILAI STRATEGIS BAGI TNI AD";
           document.getElementById("slide-subtitle").innerText = "Solusi Nyata Kedaulatan Pertahanan Siber untuk Pengamanan IT & OT Satuan";
           document.getElementById("slide-cards").style.display = "grid";
@@ -1353,7 +919,7 @@ tests\\unit\\test_witness.py ......                                        [100%
             </div>
           `;
           document.getElementById("slide-pipeline").style.display = "none";
-          moveCursor(0.5, 0.5, 1200);
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.5, 1200);
         }
       },
       {
@@ -1363,8 +929,8 @@ tests\\unit\\test_witness.py ......                                        [100%
         cue: "Aksi: Tampilkan Penutup Resmi 'Cakra Wahana Paksa'",
         exec: () => {
           document.getElementById("slide-title").innerText = "CAKRA WAHANA PAKSA";
-          document.getElementById("slide-subtitle").innerHTML = "<span style='font-size: 24px; color: #FFF;'>Bersama PUSSIBERAD TNI AD & CODEPOLITAN</span><br><span style='color: var(--accent-gold); font-size: 18px;'>Menjaga Kedaulatan Ruang Siber Pertahanan NKRI</span>";
-          moveCursor(0.5, 0.4, 1000);
+          document.getElementById("slide-subtitle").innerHTML = "<span style='font-size: 24px; color: var(--segel-primary-hover); font-weight: 900;'>Bersama PUSSIBERAD TNI AD & CODEPOLITAN</span><br><span style='color: var(--segel-accent-gold); font-size: 18px; font-weight: 800;'>Menjaga Kedaulatan Ruang Siber Pertahanan NKRI</span>";
+          moveCursor(window.innerWidth * 0.5, window.innerHeight * 0.45, 1000);
         }
       },
       {
@@ -1379,26 +945,15 @@ tests\\unit\\test_witness.py ......                                        [100%
       }
     ];
 
-    // State Variables
+    // Playback State
     let isRunning = false;
-    let currentTime = 0; // seconds
+    let currentTime = 0;
     let playbackSpeed = 1.0;
     let timerInterval = null;
     let currentTimelineIdx = 0;
 
-    // View Switching
-    function showView(viewId) {
-      document.querySelectorAll(".demo-view").forEach(v => v.classList.remove("active"));
-      const target = document.getElementById(viewId);
-      if (target) target.classList.add("active");
-    }
-
-    // Cursor Movement Animation
-    function moveCursor(ratioX, ratioY, durationMs = 800, onDone = null) {
-      const cursor = document.getElementById("virtual-cursor");
-      const targetX = Math.round(window.innerWidth * ratioX);
-      const targetY = Math.round(window.innerHeight * ratioY);
-      
+    // Cursor Movement
+    function moveCursor(targetX, targetY, durationMs = 800, onDone = null) {
       const startX = cursor._currentX || 200;
       const startY = cursor._currentY || 200;
       const startTime = performance.now();
@@ -1406,7 +961,6 @@ tests\\unit\\test_witness.py ......                                        [100%
       function animate(now) {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / durationMs, 1);
-        // Ease In Out Cubic
         const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         
         const curX = startX + (targetX - startX) * ease;
@@ -1424,100 +978,116 @@ tests\\unit\\test_witness.py ......                                        [100%
       requestAnimationFrame(animate);
     }
 
-    function moveCursorToElement(elemId, durationMs = 800, onDone = null) {
-      const elem = document.getElementById(elemId);
-      if (!elem) {
+    // Move to element inside iframe
+    function moveCursorToFrameElement(selector, durationMs = 800, onDone = null) {
+      try {
+        if (!frame || !frame.contentDocument) {
+          if (onDone) onDone();
+          return;
+        }
+        const elem = frame.contentDocument.querySelector(selector);
+        if (!elem) {
+          if (onDone) onDone();
+          return;
+        }
+        elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          const rect = elem.getBoundingClientRect();
+          const targetX = rect.left + rect.width / 2;
+          const targetY = rect.top + rect.height / 2;
+          moveCursor(targetX, targetY, durationMs, onDone);
+        }, 150);
+      } catch (e) {
         if (onDone) onDone();
-        return;
       }
-      const rect = elem.getBoundingClientRect();
-      const targetX = rect.left + rect.width / 2;
-      const targetY = rect.top + rect.height / 2;
-      moveCursor(targetX / window.innerWidth, targetY / window.innerHeight, durationMs, onDone);
     }
 
-    // Click Effect (Ripple & Visual Pulse)
-    function clickElement(elemId) {
-      const elem = document.getElementById(elemId);
-      const cursor = document.getElementById("virtual-cursor");
-      const x = cursor._currentX || 200;
-      const y = cursor._currentY || 200;
+    // Click inside frame
+    function clickFrameElement(selector) {
+      try {
+        if (!frame || !frame.contentDocument) return;
+        const elem = frame.contentDocument.querySelector(selector);
+        if (elem) {
+          const rect = elem.getBoundingClientRect();
+          showClickRipple(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          elem.click();
+        }
+      } catch (e) {}
+    }
 
+    function showClickRipple(x, y) {
       const ripple = document.createElement("div");
       ripple.className = "click-ripple";
       ripple.style.left = `${x}px`;
       ripple.style.top = `${y}px`;
       document.body.appendChild(ripple);
       setTimeout(() => ripple.remove(), 600);
-
-      if (elem) {
-        elem.classList.add("active-focus");
-        setTimeout(() => elem.classList.remove("active-focus"), 400);
-      }
     }
 
-    // Typing Animation into Input
-    function typeIntoInput(elemId, text, totalDurationMs = 1000) {
-      const input = document.getElementById(elemId);
-      if (!input) return;
-      input.value = "";
-      input.classList.add("active-typing");
-      const chars = text.split("");
-      const charDelay = totalDurationMs / chars.length;
-      let i = 0;
-
-      function typeChar() {
-        if (i < chars.length) {
-          input.value += chars[i];
-          i++;
-          setTimeout(typeChar, charDelay);
-        } else {
-          input.classList.remove("active-typing");
+    // Type into iframe input
+    function typeIntoFrameInput(selector, text, durationMs = 1000, onDone = null) {
+      try {
+        if (!frame || !frame.contentDocument) {
+          if (onDone) onDone();
+          return;
         }
+        const input = frame.contentDocument.querySelector(selector);
+        if (!input) {
+          if (onDone) onDone();
+          return;
+        }
+        input.focus();
+        input.value = "";
+        const chars = text.split("");
+        const delay = durationMs / chars.length;
+        let i = 0;
+
+        function step() {
+          if (i < chars.length) {
+            input.value += chars[i];
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            i++;
+            setTimeout(step, delay);
+          } else {
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            if (onDone) onDone();
+          }
+        }
+        step();
+      } catch (e) {
+        if (onDone) onDone();
       }
-      typeChar();
     }
 
-    function typeIntoText(elem, text, totalDurationMs = 1000, onDone = null) {
+    function typeIntoText(elem, text, durationMs = 1000, onDone = null) {
       if (!elem) return;
       elem.innerText = "";
       const chars = text.split("");
-      const charDelay = totalDurationMs / chars.length;
+      const delay = durationMs / chars.length;
       let i = 0;
-
-      function typeChar() {
+      function step() {
         if (i < chars.length) {
           elem.innerText += chars[i];
           i++;
-          setTimeout(typeChar, charDelay);
+          setTimeout(step, delay);
         } else if (onDone) {
           onDone();
         }
       }
-      typeChar();
+      step();
     }
 
-    function highlightElement(elemId) {
-      const elem = document.getElementById(elemId);
-      if (!elem) return;
-      elem.classList.add("highlight-pulse");
-      setTimeout(() => elem.classList.remove("highlight-pulse"), 1500);
-    }
-
-    // Format mm:ss
     function formatTime(s) {
       const m = Math.floor(s / 60);
       const sec = Math.floor(s % 60);
       return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
-    // Update HUD and Trigger Timeline Events
     function updateClock(elapsedSeconds) {
       document.getElementById("hud-timer-display").innerText = `${formatTime(elapsedSeconds)} / 10:00`;
       const progressPercent = Math.min((elapsedSeconds / 600) * 100, 100);
       document.getElementById("hud-progress-bar").style.width = `${progressPercent}%`;
 
-      // Check Timeline Actions
       for (let i = currentTimelineIdx; i < timeline.length; i++) {
         if (elapsedSeconds >= timeline[i].t) {
           currentTimelineIdx = i + 1;
@@ -1535,7 +1105,6 @@ tests\\unit\\test_witness.py ......                                        [100%
       }
     }
 
-    // Playback Engine
     function startCountdownAndPlay() {
       const overlay = document.getElementById("countdown-overlay");
       const numElem = document.getElementById("countdown-number");
@@ -1596,6 +1165,8 @@ tests\\unit\\test_witness.py ......                                        [100%
       updateClock(0);
       document.getElementById("btn-play-pause").innerText = "Mulai Demo (Spasi)";
       document.getElementById("btn-play-pause").classList.add("btn-primary");
+      fetch("/reset", { method: "POST" }).catch(() => {});
+      frame.contentWindow.location.href = "/";
       if (timeline[0] && timeline[0].exec) timeline[0].exec();
     }
 
@@ -1611,7 +1182,6 @@ tests\\unit\\test_witness.py ......                                        [100%
     }
 
     function stepNext() {
-      // Find next item
       for (let i = 0; i < timeline.length; i++) {
         if (timeline[i].t > currentTime + 1) {
           currentTime = timeline[i].t;
@@ -1640,7 +1210,6 @@ tests\\unit\\test_witness.py ......                                        [100%
       document.getElementById("btn-speed-toggle").innerText = `${playbackSpeed}x`;
     }
 
-    // Keyboard Shortcuts
     window.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         e.preventDefault();
@@ -1656,7 +1225,6 @@ tests\\unit\\test_witness.py ......                                        [100%
       }
     });
 
-    // Button Bindings
     document.getElementById("btn-play-pause").onclick = togglePlayPause;
     document.getElementById("btn-reset").onclick = resetDemo;
     document.getElementById("btn-prompter-toggle").onclick = toggleHud;
@@ -1664,7 +1232,6 @@ tests\\unit\\test_witness.py ......                                        [100%
     document.getElementById("btn-next").onclick = stepNext;
     document.getElementById("btn-prev").onclick = stepPrev;
 
-    // Initialize initial frame
     window.addEventListener("load", () => {
       updateClock(0);
       if (timeline[0] && timeline[0].exec) timeline[0].exec();
