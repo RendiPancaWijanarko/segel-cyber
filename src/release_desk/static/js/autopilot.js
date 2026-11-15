@@ -1,6 +1,7 @@
 // ==============================================================================
 // SEGEL — Script Demonstrasi Otomatis Berbasis Penekanan Tombol Spasi
 // Beroperasi Langsung di Atas Antarmuka Asli http://127.0.0.1:8000/
+// Arsitektur Finite State Machine Anti-Loop & Anti-Miss-Click
 // ==============================================================================
 
 (function() {
@@ -9,11 +10,11 @@
   // Clear demo automation session if requested via URL
   if (window.location.search.includes('reset=1')) {
     sessionStorage.removeItem('segel_auto_active');
-    sessionStorage.removeItem('segel_auto_step');
+    sessionStorage.removeItem('segel_stage');
     fetch('/reset', { method: 'POST' }).catch(() => {});
   }
 
-  // Inject Styles for Virtual Cursor, Ripple, and Floating Terminal
+  // Inject Styles for Virtual OS Cursor, Subtle Ripple, and Floating Tactical Terminal
   const style = document.createElement('style');
   style.id = 'segel-autopilot-style';
   style.textContent = `
@@ -133,55 +134,60 @@
   `;
   document.body.appendChild(terminal);
 
-  // Smooth Cursor Movement
-  function moveCursor(targetX, targetY, durationMs = 800, onDone = null) {
+  // Smooth Cursor Movement with Real-Time Frame-by-Frame Scroll Tracking (Prevents Miss-Clicks)
+  function moveCursorTo(target, durationMs = 700, onDone = null) {
+    const elem = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!elem) {
+      if (onDone) setTimeout(onDone, 200);
+      return;
+    }
+
+    elem.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     cursor.style.display = 'block';
-    const startX = cursor._currentX || 200;
-    const startY = cursor._currentY || 200;
+
+    const startX = cursor._currentX !== undefined ? cursor._currentX : (window.innerWidth / 2);
+    const startY = cursor._currentY !== undefined ? cursor._currentY : (window.innerHeight / 2);
     const startTime = performance.now();
 
     function animate(now) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / durationMs, 1);
       const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-      const curX = startX + (targetX - startX) * ease;
-      const curY = startY + (targetY - startY) * ease;
+
+      // Real-time bounding rect evaluation so smooth scrolling doesn't cause mouse drift
+      const rect = elem.getBoundingClientRect();
+      const curTargetX = rect.left + rect.width / 2;
+      const curTargetY = rect.top + rect.height / 2;
+
+      const curX = startX + (curTargetX - startX) * ease;
+      const curY = startY + (curTargetY - startY) * ease;
+
       cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0)`;
       cursor._currentX = curX;
       cursor._currentY = curY;
 
       if (progress < 1) {
         requestAnimationFrame(animate);
-      } else if (onDone) {
-        onDone();
+      } else {
+        cursor.style.transform = `translate3d(${curTargetX}px, ${curTargetY}px, 0)`;
+        cursor._currentX = curTargetX;
+        cursor._currentY = curTargetY;
+        setTimeout(() => {
+          if (onDone) onDone(elem);
+        }, 120);
       }
     }
     requestAnimationFrame(animate);
   }
 
-  function moveCursorToElement(selector, durationMs = 800, onDone = null) {
-    const elem = document.querySelector(selector);
+  // Robust Native-Like Click with Button Transform and Fallback Navigation
+  function clickElement(target, onDone = null) {
+    const elem = typeof target === 'string' ? document.querySelector(target) : target;
     if (!elem) {
-      if (onDone) onDone();
+      if (onDone) setTimeout(onDone, 200);
       return;
     }
-    elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => {
-      const rect = elem.getBoundingClientRect();
-      const targetX = rect.left + rect.width / 2;
-      const targetY = rect.top + rect.height / 2;
-      moveCursor(targetX, targetY, durationMs, () => {
-        if (onDone) onDone();
-      });
-    }, 150);
-  }
 
-  function clickElement(selector, onDone = null) {
-    const elem = document.querySelector(selector);
-    if (!elem) {
-      if (onDone) onDone();
-      return;
-    }
     const rect = elem.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
@@ -191,24 +197,49 @@
     ripple.style.left = `${x}px`;
     ripple.style.top = `${y}px`;
     document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
+    setTimeout(() => ripple.remove(), 400);
+
+    // Subtle press-down animation
+    elem.style.transform = 'scale(0.97)';
+    elem.style.transition = 'transform 0.1s ease';
+    setTimeout(() => {
+      elem.style.transform = '';
+    }, 120);
 
     setTimeout(() => {
-      elem.click();
+      if (elem.tagName === 'BUTTON' && elem.type === 'submit' && elem.form) {
+        if (typeof elem.form.requestSubmit === 'function') {
+          elem.form.requestSubmit(elem);
+        } else {
+          elem.click();
+        }
+      } else if (elem.tagName === 'A' && elem.href) {
+        elem.click();
+        setTimeout(() => {
+          if (window.location.href !== elem.href) {
+            window.location.href = elem.href;
+          }
+        }, 300);
+      } else {
+        elem.click();
+      }
       if (onDone) onDone();
-    }, 200);
+    }, 180);
   }
 
+  // Human-Like Typing Animation
   function typeText(selector, text, durationMs = 800, onDone = null) {
     const input = document.querySelector(selector);
     if (!input) {
-      if (onDone) onDone();
+      if (onDone) setTimeout(onDone, 200);
       return;
     }
     input.focus();
     input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+
     const chars = text.split('');
-    const delay = durationMs / chars.length;
+    const delay = Math.max(16, Math.floor(durationMs / chars.length));
     let i = 0;
 
     function step() {
@@ -219,7 +250,9 @@
         setTimeout(step, delay);
       } else {
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        if (onDone) onDone();
+        setTimeout(() => {
+          if (onDone) onDone();
+        }, 100);
       }
     }
     step();
@@ -285,63 +318,79 @@
           setTimeout(() => {
             terminal.style.display = 'none';
             if (onDone) onDone();
-          }, 3500);
-        }, 1200);
-      }, 1500);
-    }, 1000);
+          }, 3200);
+        }, 1000);
+      }, 1200);
+    }, 800);
   }
+
+  // Execution lock to prevent double execution on page load
+  let isExecuting = false;
 
   // Main Autopilot Controller across pages
   function checkAndExecuteStep() {
     const active = sessionStorage.getItem('segel_auto_active') === 'true';
-    if (!active) return;
+    if (!active || isExecuting) return;
 
     cursor.style.display = 'block';
-    const step = parseInt(sessionStorage.getItem('segel_auto_step') || '1', 10);
+    const stage = sessionStorage.getItem('segel_stage') || 'start';
     const path = window.location.pathname;
 
-    // STEP 1 & 2: ON DASHBOARD (/)
-    if (path === '/' && step === 1) {
+    // ──────────────────────────────────────────────────────────────────────────
+    // 1. DASHBOARD INITIAL (/)
+    // ──────────────────────────────────────────────────────────────────────────
+    if (path === '/' && (stage === 'start' || stage === 'dashboard_intro')) {
+      isExecuting = true;
       showTerminalProofs(() => {
-        sessionStorage.setItem('segel_auto_step', '2');
+        sessionStorage.setItem('segel_stage', 'dashboard_explore');
+        isExecuting = false;
         checkAndExecuteStep();
       });
       return;
     }
 
-    if (path === '/' && step === 2) {
-      // Highlight dashboard metrics
-      moveCursorToElement('.segel-card-tabbed-notch', 900, () => {
-        setTimeout(() => {
-          moveCursorToElement('.segel-interlock-card', 900, () => {
-            setTimeout(() => {
-              moveCursorToElement('.segel-chart-box', 900, () => {
-                setTimeout(() => {
-                  // Navigate to New Release
-                  sessionStorage.setItem('segel_auto_step', '3');
-                  moveCursorToElement('a[href="/release/new"]', 800, () => {
-                    clickElement('a[href="/release/new"]');
-                  });
-                }, 1000);
-              });
-            }, 1000);
-          });
-        }, 1000);
-      });
+    if (path === '/' && stage === 'dashboard_explore') {
+      isExecuting = true;
+      setTimeout(() => {
+        // Showcase 5-stamp gauge
+        moveCursorTo('.segel-card-tabbed-notch', 800, () => {
+          setTimeout(() => {
+            // Showcase interlock card
+            moveCursorTo('.segel-interlock-card', 800, () => {
+              setTimeout(() => {
+                // Showcase telemetry chart
+                moveCursorTo('.segel-chart-box', 800, () => {
+                  setTimeout(() => {
+                    // Navigate to New Release
+                    sessionStorage.setItem('segel_stage', 'form_baseline');
+                    moveCursorTo('a[href="/release/new"]', 700, () => {
+                      clickElement('a[href="/release/new"]');
+                    });
+                  }, 800);
+                });
+              }, 800);
+            });
+          }, 800);
+        });
+      }, 400);
       return;
     }
 
-    // STEP 3: ON NEW RELEASE FORM (/release/new) - BASELINE-UNIT-42
-    if (path === '/release/new' && step === 3) {
+    // ──────────────────────────────────────────────────────────────────────────
+    // 2. NEW RELEASE FORM: BASELINE-UNIT-42 (/release/new)
+    // ──────────────────────────────────────────────────────────────────────────
+    if (path === '/release/new' && stage === 'form_baseline') {
+      isExecuting = true;
       setTimeout(() => {
-        moveCursorToElement('#release_id', 700, () => {
-          typeText('#release_id', 'BASELINE-UNIT-42', 900, () => {
-            moveCursorToElement('#sequence', 400, () => {
-              typeText('#sequence', '1', 300, () => {
-                moveCursorToElement('#purpose', 500, () => {
-                  typeText('#purpose', 'Pembaruan parameter jaringan operasional stasiun pangkalan', 1500, () => {
-                    sessionStorage.setItem('segel_auto_step', '4');
-                    moveCursorToElement('button[type="submit"]', 700, () => {
+        moveCursorTo('#release_id', 600, () => {
+          typeText('#release_id', 'BASELINE-UNIT-42', 700, () => {
+            moveCursorTo('#sequence', 350, () => {
+              typeText('#sequence', '1', 250, () => {
+                moveCursorTo('#purpose', 450, () => {
+                  typeText('#purpose', 'Pembaruan parameter jaringan operasional stasiun pangkalan', 1400, () => {
+                    // Pre-set stage so the response page knows to deploy canary
+                    sessionStorage.setItem('segel_stage', 'release_1_canary');
+                    moveCursorTo('button[type="submit"]', 600, () => {
                       clickElement('button[type="submit"]');
                     });
                   });
@@ -350,66 +399,102 @@
             });
           });
         });
+      }, 500);
+      return;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // 3. RELEASE DETAIL 1: DEPLOY TO CANARY (CANDIDATE_RECORDED)
+    // ──────────────────────────────────────────────────────────────────────────
+    const canaryBtn = document.querySelector('form[action*="deploy-canary"] button');
+    if (canaryBtn && (stage === 'release_1_canary' || stage === 'form_baseline')) {
+      isExecuting = true;
+      setTimeout(() => {
+        // Highlight 5-stamp pipeline
+        moveCursorTo('.stamp-pipeline', 700, () => {
+          setTimeout(() => {
+            sessionStorage.setItem('segel_stage', 'release_1_promote');
+            moveCursorTo(canaryBtn, 700, () => {
+              clickElement(canaryBtn);
+            });
+          }, 800);
+        });
+      }, 500);
+      return;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // 4. RELEASE DETAIL 1: PROMOTE RELEASE (CANARY_DEPLOYED)
+    // ──────────────────────────────────────────────────────────────────────────
+    const promoteBtn = document.querySelector('form[action*="promote"] button');
+    if (promoteBtn && (stage === 'release_1_promote' || stage === 'release_1_canary')) {
+      isExecuting = true;
+      setTimeout(() => {
+        moveCursorTo('.stamp-pipeline', 700, () => {
+          setTimeout(() => {
+            sessionStorage.setItem('segel_stage', 'release_1_done');
+            moveCursorTo(promoteBtn, 700, () => {
+              clickElement(promoteBtn);
+            });
+          }, 800);
+        });
+      }, 500);
+      return;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // 5. RELEASE DETAIL 1: PROMOTED -> RETURN TO DASHBOARD
+    // ──────────────────────────────────────────────────────────────────────────
+    const backToDashBtn = document.querySelector('a[href="/"]');
+    if (path.startsWith('/release/') && stage === 'release_1_done' && backToDashBtn) {
+      isExecuting = true;
+      setTimeout(() => {
+        // Highlight General Passport badge
+        moveCursorTo('.card', 700, () => {
+          setTimeout(() => {
+            sessionStorage.setItem('segel_stage', 'dashboard_updated');
+            moveCursorTo(backToDashBtn, 700, () => {
+              clickElement(backToDashBtn);
+            });
+          }, 900);
+        });
       }, 600);
       return;
     }
 
-    // STEP 4: ON RELEASE DETAIL PAGE (/release/0) - CANARY & PROMOTE
-    if (path.startsWith('/release/') && step === 4) {
+    // ──────────────────────────────────────────────────────────────────────────
+    // 6. DASHBOARD WITH UPDATED METRICS (/)
+    // ──────────────────────────────────────────────────────────────────────────
+    if (path === '/' && stage === 'dashboard_updated') {
+      isExecuting = true;
       setTimeout(() => {
-        moveCursorToElement('.stamp-pipeline', 800, () => {
+        // Showcase updated metrics (stamps: 9, merkle: 2, units: 3)
+        moveCursorTo('.segel-interlock-col', 800, () => {
           setTimeout(() => {
-            // Deploy canary
-            moveCursorToElement('form[action*="deploy-canary"] button', 800, () => {
-              clickElement('form[action*="deploy-canary"] button', () => {
-                setTimeout(() => {
-                  // Promote
-                  moveCursorToElement('form[action*="promote"] button', 800, () => {
-                    clickElement('form[action*="promote"] button', () => {
-                      setTimeout(() => {
-                        // Return to Dashboard
-                        sessionStorage.setItem('segel_auto_step', '5');
-                        moveCursorToElement('a[href="/"]', 800, () => {
-                          clickElement('a[href="/"]');
-                        });
-                      }, 1200);
-                    });
-                  });
-                }, 1500);
-              });
-            });
-          }, 1000);
-        });
-      }, 800);
-      return;
-    }
-
-    // STEP 5: ON DASHBOARD (/) - SHOW UPDATED METRICS & GO TO DEV-14
-    if (path === '/' && step === 5) {
-      setTimeout(() => {
-        moveCursorToElement('.segel-interlock-col', 1000, () => {
-          setTimeout(() => {
-            sessionStorage.setItem('segel_auto_step', '6');
-            moveCursorToElement('a[href="/release/new"]', 800, () => {
+            sessionStorage.setItem('segel_stage', 'form_dev14');
+            moveCursorTo('a[href="/release/new"]', 700, () => {
               clickElement('a[href="/release/new"]');
             });
-          }, 1500);
+          }, 1200);
         });
-      }, 800);
+      }, 500);
       return;
     }
 
-    // STEP 6: ON NEW RELEASE FORM (/release/new) - DEV-14-SYNC
-    if (path === '/release/new' && step === 6) {
+    // ──────────────────────────────────────────────────────────────────────────
+    // 7. NEW RELEASE FORM: DEV-14-SYNC (/release/new)
+    // ──────────────────────────────────────────────────────────────────────────
+    if (path === '/release/new' && stage === 'form_dev14') {
+      isExecuting = true;
       setTimeout(() => {
-        moveCursorToElement('#release_id', 700, () => {
-          typeText('#release_id', 'DEV-14-SYNC', 800, () => {
-            moveCursorToElement('#sequence', 400, () => {
-              typeText('#sequence', '2', 300, () => {
-                moveCursorToElement('#purpose', 500, () => {
-                  typeText('#purpose', 'Synchronize communication parameters for branch office gateway node', 1600, () => {
-                    sessionStorage.setItem('segel_auto_step', '7');
-                    moveCursorToElement('button[type="submit"]', 700, () => {
+        moveCursorTo('#release_id', 600, () => {
+          typeText('#release_id', 'DEV-14-SYNC', 700, () => {
+            moveCursorTo('#sequence', 350, () => {
+              typeText('#sequence', '2', 250, () => {
+                moveCursorTo('#purpose', 450, () => {
+                  typeText('#purpose', 'Synchronize communication parameters for branch office gateway node', 1500, () => {
+                    sessionStorage.setItem('segel_stage', 'release_2_inspect');
+                    moveCursorTo('button[type="submit"]', 600, () => {
                       clickElement('button[type="submit"]');
                     });
                   });
@@ -418,30 +503,43 @@
             });
           });
         });
-      }, 600);
+      }, 500);
       return;
     }
 
-    // STEP 7: ON RELEASE DETAIL PAGE (/release/1) - AI ADVISORY INSPECTION
-    if (path.startsWith('/release/') && step === 7) {
+    // ──────────────────────────────────────────────────────────────────────────
+    // 8. RELEASE DETAIL 2: AI ADVISORY INSPECTION DEMO
+    // ──────────────────────────────────────────────────────────────────────────
+    if (path.startsWith('/release/') && stage === 'release_2_inspect') {
+      isExecuting = true;
       setTimeout(() => {
-        moveCursorToElement('.stamp-warn, .card', 1000, () => {
-          setTimeout(() => {
-            // Finish demo
-            sessionStorage.removeItem('segel_auto_active');
-            sessionStorage.removeItem('segel_auto_step');
-            cursor.style.display = 'none';
-          }, 3000);
-        });
-      }, 1000);
+        // Target the AI Advisory Card
+        const aiCard = document.querySelector('#ai-advisory-panel') || document.querySelector('.card:has(.badge-purple), .card:has(.badge-yellow), .card:has(.badge-muted)') || document.querySelector('.card');
+        if (aiCard) {
+          moveCursorTo(aiCard, 900, () => {
+            setTimeout(() => {
+              // Successfully complete demonstration
+              sessionStorage.removeItem('segel_auto_active');
+              sessionStorage.removeItem('segel_stage');
+              cursor.style.display = 'none';
+              isExecuting = false;
+            }, 3000);
+          });
+        } else {
+          sessionStorage.removeItem('segel_auto_active');
+          sessionStorage.removeItem('segel_stage');
+          cursor.style.display = 'none';
+          isExecuting = false;
+        }
+      }, 600);
       return;
     }
   }
 
-  // Spacebar Listener
+  // Spacebar and Escape Hotkey Listener
   window.addEventListener('keydown', function(e) {
     if (e.code === 'Space') {
-      // Do not trigger if typing inside input or textarea
+      // Do not trigger if user is typing manually in input or textarea
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
         return;
       }
@@ -449,34 +547,38 @@
 
       const isActive = sessionStorage.getItem('segel_auto_active') === 'true';
       if (!isActive) {
-        // Reset state & Start
+        // Reset server state & start demonstration from beginning
         fetch('/reset', { method: 'POST' }).catch(() => {});
         sessionStorage.setItem('segel_auto_active', 'true');
-        sessionStorage.setItem('segel_auto_step', '1');
+        sessionStorage.setItem('segel_stage', 'start');
+        isExecuting = false;
         if (window.location.pathname !== '/') {
           window.location.href = '/';
         } else {
           checkAndExecuteStep();
         }
       } else {
-        // Pause
+        // Pause demo
         sessionStorage.setItem('segel_auto_active', 'false');
+        isExecuting = false;
         cursor.style.display = 'none';
         terminal.style.display = 'none';
       }
     } else if (e.code === 'Escape') {
-      // Stop and reset
+      // Emergency stop and reset
       sessionStorage.removeItem('segel_auto_active');
-      sessionStorage.removeItem('segel_auto_step');
+      sessionStorage.removeItem('segel_stage');
+      isExecuting = false;
       cursor.style.display = 'none';
       terminal.style.display = 'none';
     }
   });
 
-  // Run on page load if active
-  window.addEventListener('DOMContentLoaded', checkAndExecuteStep);
-  if (document.readyState !== 'loading') {
-    checkAndExecuteStep();
+  // Safe Single Initiation on Page Load
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', checkAndExecuteStep, { once: true });
+  } else {
+    setTimeout(checkAndExecuteStep, 250);
   }
 
 })();
