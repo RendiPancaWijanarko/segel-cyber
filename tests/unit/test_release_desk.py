@@ -208,5 +208,13 @@ def test_create_release_uses_config_ai_enabled(monkeypatch, client):
     assert called_with_ai is True
 
 
+def test_autopilot_page(client):
+    """Verify automated demonstration autopilot route returns 200 with required elements."""
+    res = client.get("/autopilot")
+    assert res.status_code == 200
+    assert "SEGEL" in res.text
+    assert "Autopilot" in res.text or "Demonstrasi Otomatis" in res.text
+
+
 
 

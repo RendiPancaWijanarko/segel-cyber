@@ -661,6 +661,16 @@ async def segel_analytics_view(request: Request) -> HTMLResponse:
     )
 
 
+@app.get("/autopilot", response_class=HTMLResponse)
+async def autopilot_demo_view(request: Request) -> HTMLResponse:
+    """Automated synchronized demonstration player for talking head video recording."""
+    return templates.TemplateResponse(
+        request=request,
+        name="autopilot.html",
+        context={"request": request},
+    )
+
+
 @app.post("/release/{idx}/deploy-canary", response_class=HTMLResponse)
 async def deploy_canary(request: Request, idx: int) -> HTMLResponse:
     """Deploy a candidate release to canary units and collect health receipts."""
